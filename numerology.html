@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#2B2A6B"><link rel="manifest" href="manifest.json"><link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml"><link rel="stylesheet" href="css/style.css"><title>Numerology | Ank Jyotish</title></head><body>
+<div id="chrome-top"></div><main class="wrap" style="padding:28px 0 40px;max-width:760px">
+<h1 style="font-size:2.2rem">Numerology</h1><p class="lede">Enter your name. Add your date of birth for Mulank, Bhagyank, personal year and future-year cautions.</p>
+<div class="panel" style="margin-top:20px"><form id="nf" novalidate>
+<div class="field"><label for="nm">Name</label><input id="nm" name="name" maxlength="60" autocomplete="name" required></div>
+<div id="live"></div>
+<div class="field"><label for="dob">Date of birth (optional)</label><input id="dob" name="dob" type="date" min="1900-01-01"></div>
+<p class="err" id="err" role="alert"></p><button class="btn btn-gold" type="submit">Calculate</button></form></div>
+<div id="res"></div></main><div id="chrome-bottom"></div>
+<script src="js/config.js"></script><script src="js/api.js"></script><script src="js/ui.js"></script><script src="js/numerology.js"></script><script src="js/auth.js"></script><script>
+renderChrome('num');
+const nm=$('#nm'); const q=new URLSearchParams(location.search).get('name'); if(q) nm.value=q;
+const live=()=>renderNameCard($('#live'),previewName(nm.value));
+nm.addEventListener('input',live); live();
+API.bootstrap(d=>{ if(!d)return; NUM_MAP=d.mapping; applyBranding(d.settings); live(); });
+
+const planetTxt=p=>p?' ('+esc(p)+')':'';
+function interpHTML(i){
+  const items=i.items.map(x=>x.locked?'<div class="interp"><b>'+esc(x.title)+'</b><div class="locked">Premium. Subscribe to read this.</div></div>':'<div class="interp"><b>'+esc(x.title)+'</b><div>'+esc(x.text)+'</div></div>').join('');
+  return '<h3 style="margin-top:14px">'+esc(i.label)+': '+i.number+planetTxt(i.planet)+'</h3>'+(items||'<div class="interp none">'+esc(i.message)+'</div>');
+}
+function remedyHTML(r){ if(r.locked) return '<div class="locked">Premium remedy</div>';
+  const f=[['Deity',r.deity],['Mantra',r.mantra],['Puja',r.puja],['Donation',r.donation],['Gemstone',r.gemstone],['Lifestyle',r.lifestyle],['',r.description],['',r.instructions]].filter(x=>x[1]);
+  return '<div class="hint">'+f.map(x=>(x[0]?esc(x[0])+': ':'')+esc(x[1])).join('<br>')+'</div>'; }
+function warnHTML(w){ if(w.locked) return '<div class="interp"><b>'+esc(w.title)+'</b><div class="locked">Premium. Subscribe to read this.</div></div>';
+  return '<div class="interp"><b>'+esc(w.title)+'</b>'+(w.planet?' <span class="pill">'+esc(w.planet)+'</span>':'')+'<div>'+esc(w.text)+'</div>'+
+   (w.problemAreas&&w.problemAreas.length?'<div style="margin-top:6px">'+w.problemAreas.map(a=>'<span class="pill">'+esc(a)+'</span>').join('')+'</div>':'')+
+   (w.remedies||[]).map(remedyHTML).join('')+'</div>'; }
+
+$('#nf').addEventListener('submit',async e=>{
+  e.preventDefault(); const btn=$('button[type=submit]'), err=$('#err'); err.textContent='';
+  const v=Object.fromEntries(new FormData(e.target));
+  try{
+    const r=await busy(btn,()=>API.call('calculateNumerology',v,'user'));
+    let h='<div class="panel result-sec"><h2>'+esc(r.name.name)+'</h2><div id="rc"></div>';
+    if(r.dob){ const d=r.dob; h+='<div class="result-sec"><h2>Date of birth numbers</h2>'+
+      [['Mulank',d.mulank],['Bhagyank',d.bhagyank]].map(x=>'<p><b>'+x[0]+':</b> '+x[1].compound+' / '+x[1].root+planetTxt(x[1].planet)+'</p>').join('')+
+      '<p><b>Personal year '+d.personalYear.year+':</b> '+d.personalYear.root+planetTxt(d.personalYear.planet)+'</p>'+
+      '<p><b>Personal month:</b> '+d.personalMonth.root+' &nbsp; <b>Personal day:</b> '+d.personalDay.root+'</p></div>'; }
+    h+='<div class="result-sec"><h2>Meaning</h2>'+r.interpretations.map(interpHTML).join('')+'</div>';
+    if(r.futureYears.length){ h+='<div class="result-sec"><h2>Coming years</h2>'+r.futureYears.map(y=>
+      '<div class="yr"><h3><span>'+y.year+'</span><span class="hint">Year number '+y.yearNumber.compound+' / '+y.yearNumber.root+planetTxt(y.yearNumber.planet)+'</span></h3>'+
+      (y.warnings.length?y.warnings.map(warnHTML).join(''):'<div class="interp none">'+esc(y.message)+'</div>')+'</div>').join('')+'</div>'; }
+    h+='</div>'; $('#res').innerHTML=h;
+    renderNameCard($('#rc'),{letters:r.name.letters,compound:r.name.compound,root:r.name.root,planet:r.name.planet});
+    $('#res').scrollIntoView({behavior:'smooth'});
+  }catch(x){ err.textContent=x.message; }
+});
+</script></body></html>

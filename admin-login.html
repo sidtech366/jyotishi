@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Admin login</title><link rel="stylesheet" href="css/style.css"></head><body>
+<main class="narrow"><div class="panel"><h1>Admin login</h1>
+<form id="af" novalidate class="stack" style="margin-top:14px">
+<div class="field"><label for="m">Admin mobile</label><input id="m" name="mobile" inputmode="numeric" maxlength="10" autocomplete="username" required></div>
+<div class="field"><label for="p">Password</label><input id="p" name="password" type="password" autocomplete="current-password" required></div>
+<p class="err" id="err" role="alert"></p><button class="btn btn-ink" type="submit">Log in</button></form></div></main>
+<script src="js/config.js"></script><script src="js/api.js"></script><script src="js/ui.js"></script>
+<script>
+if(API.tok.admin()) location.href='admin-dashboard.html';
+$('#af').addEventListener('submit',async e=>{ e.preventDefault(); const btn=$('button',e.target); $('#err').textContent='';
+ try{ const d=await busy(btn,()=>API.call('adminLogin',Object.fromEntries(new FormData(e.target)),'none'));
+   API.tok.setAdmin(d.token); sessionStorage.setItem('ap_admin_info',JSON.stringify(d.admin)); location.href='admin-dashboard.html';
+ }catch(x){ $('#err').textContent=''; popup('Login failed',x.message); } });
+</script></body></html>
