@@ -10,7 +10,7 @@
 <meta property="og:description" content="अपनी संपूर्ण कुंडली और भविष्यफल हिंदी में मुफ्त पाएं।">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23f5b942'/%3E%3Cpath d='M32 10l5 15h16l-13 9 5 16-13-10-13 10 5-16-13-9h16z' fill='%230c0a24'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Mukta:wght@400;500;600;700;800&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Mukta:wght@400;500;600;700;800&family=Tiro+Devanagari+Hindi&family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0c0a24;--bg2:#13103a;--card:#17143f;--card2:#1d1a4c;--line:#2c2867;--txt:#f3f1ff;--mut:#a9a4d4;--gold:#f5b942;--gold2:#ffd98a;--sf:#ff7a3d;--mg:#e8488f;--vi:#7c6cff;--gr:#22c983;--r:18px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -198,10 +198,71 @@ h4{font-size:18px;margin:22px 0 8px;color:hsl(var(--h),90%,76%);font-weight:800}
 .r-consult .btns{justify-content:center;margin-top:12px}
 @media(max-width:900px){.hero{grid-template-columns:1fr;padding-top:30px;gap:28px}.links{display:none}.svc,.steps{grid-template-columns:1fr 1fr}.consult{grid-template-columns:1fr}.consult .btns{justify-content:flex-start}.grid-info{grid-template-columns:repeat(2,1fr)}.lk{grid-template-columns:1fr}}
 @media(max-width:600px){body{font-size:16.5px}.row,.charts,.two,.svc,.steps,.fgrid{grid-template-columns:1fr}.sec{padding:18px 14px}.sec h2{font-size:22px}#manualBox{grid-template-columns:1fr 1fr}.strip .hide-m{display:none}.nav-call{display:none}.block{padding:40px 0}.hero .lead{font-size:17px}}
+
+/* ===== EMBED MODE: मुख्य वेबसाइट (Astro Vikas) के iframe में — वही रंग और फॉन्ट ===== */
+html.embed{--bg:#fdf5e6;--card:#fffaf1;--card2:#fffaf1;--line:#efdcb6;--txt:#2e1a12;--mut:#86664f;--gold:#c99a2e;--gold2:#93301f;--sf:#ee6f16;--mar:#6b1418}
+html.embed body{background:#fdf5e6;color:#2e1a12;font-family:'Noto Sans Devanagari','Mukta',sans-serif}
+html.embed body:before,html.embed .stars,html.embed .strip,html.embed nav,html.embed .hero>div:first-child,html.embed #services,html.embed #how,html.embed #contact,html.embed #faq,html.embed footer,html.embed .float-wa{display:none!important}
+html.embed .wrap{padding:0 12px}
+html.embed .hero{grid-template-columns:1fr;padding:12px 0 6px;gap:0}
+html.embed .formcard{background:#fffaf1;border:1px solid #efdcb6;box-shadow:0 12px 30px -14px #6b141855;padding:20px 16px}
+html.embed .formcard:before{display:none}
+html.embed .formcard h2,html.embed .sec h2,html.embed .r-name,html.embed .quote,html.embed .mantra b{font-family:'Yatra One','Noto Sans Devanagari',serif}
+html.embed .formcard h2{color:#6b1418}
+html.embed label{color:#6b1418}
+html.embed input{background:#fff;border-color:#e6cf9f;color:#2e1a12}
+html.embed input:focus{border-color:#ee6f16;box-shadow:0 0 0 4px #ee6f161f}
+html.embed input::placeholder{color:#b49a80}
+html.embed input::-webkit-calendar-picker-indicator{filter:none}
+html.embed #placeSug{background:#fff;border-color:#e6cf9f;box-shadow:0 16px 40px -10px #6b141866}
+html.embed .sug{border-color:#f3e6c9}html.embed .sug.act,html.embed .sug:hover{background:#fdecd2}
+html.embed .sug i{color:#ee6f16}
+html.embed .hint{color:#1d7d4b}html.embed .linkbtn{color:#93301f}
+html.embed .go,html.embed .btn,html.embed .cta{background:linear-gradient(90deg,#ffa53a,#ee6f16);color:#fff;box-shadow:0 10px 24px -10px #ee6f16aa}
+html.embed .btn.wa,html.embed .cta.wa{background:#1d7d4b;color:#fff}
+html.embed .btn.ghost{background:#fff;color:#6b1418;border:1px solid #efdcb6;box-shadow:none}
+html.embed #toast{background:#fffaf1;color:#2e1a12;border-color:#ee6f16;box-shadow:0 10px 30px -10px #6b141888}
+html.embed #loader{background:#fdf5e6ee;color:#6b1418}html.embed .spin div{background:#fdf5e6;color:#ee6f16}
+html.embed .r-hero{background:radial-gradient(circle at 50% 0,#ee6f16,#93301f 55%,#3d0a0d);border:0;color:#fff;box-shadow:0 12px 30px -14px #6b141899}
+html.embed .r-hero .om{color:#f3d27a;opacity:.12}
+html.embed .r-brand{color:#fde7c8;border-color:#ffffff33}html.embed .r-brand b{color:#f3d27a}
+html.embed .r-kicker{color:#f3d27a}html.embed .r-meta{color:#fde7c8}
+html.embed .chip{background:#ffffff1f;border-color:#ffffff55;color:#fff}html.embed .chip.c1{color:#f3d27a;border-color:#f3d27a99}
+html.embed .sec{background:#fffaf1;border:1px solid #efdcb6;border-top:3px solid hsl(var(--h),75%,45%);box-shadow:0 12px 30px -18px #6b141855}
+html.embed .sec-no{color:hsl(var(--h),70%,38%)}
+html.embed .sec h2{color:#6b1418}
+html.embed .sec-ic{background:hsla(var(--h),80%,50%,.12);border-color:hsla(var(--h),70%,45%,.35)}
+html.embed .sec p,html.embed .tl-b p{color:#3b2418}
+html.embed h4{color:hsl(var(--h),65%,32%)}
+html.embed .ct{color:#6b1418}
+html.embed .info,html.embed .pc,html.embed .yc,html.embed .dc,html.embed .hc,html.embed .lkc,html.embed .an,html.embed .num,html.embed .mantra,html.embed .pills span{background:#fff;border-color:#efdcb6}
+html.embed .info{border-left-color:var(--c)}html.embed .pc{border-top-color:var(--c)}html.embed .lkc{border-left-color:var(--c)}html.embed .num{border-top-color:var(--c)}
+html.embed .hc{border-left-color:hsl(var(--h),75%,45%)}
+html.embed .yc{border-color:#e8c46a;background:#fffbef}html.embed .yc-h{color:#8a5a00}
+html.embed .dc{border-color:#f0b8ae;background:#fff6f4}html.embed .dc-h{color:#b83227}
+html.embed .dc.ss{border-color:#c9c0f0;background:#f8f6ff}html.embed .dc.ss .dc-h{color:#4b3bb0}
+html.embed .up{background:#eaf7ef;border-color:#bfe3cc}
+html.embed .finding{background:#fff4dc;border-color:#ecd08a}html.embed .finding b{color:#8a5a00}
+html.embed .quote{background:#fff1dc;border-left-color:#ee6f16;color:#5a2a12}
+html.embed .good{background:#eef8f1;border-color:#bfe3cc}html.embed .bad{background:#fff3f1;border-color:#f0c2b9}
+html.embed .good>b{color:#1d7d4b}html.embed .bad>b{color:#b83227}
+html.embed .tbl-wrap{border-color:#efdcb6;background:#fff}
+html.embed .tbl th{background:#6b1418;color:#fde7c8}html.embed .tbl td{border-color:#f3e6c9}
+html.embed .tbl tr:nth-child(even) td{background:#fdf5e6}
+html.embed .st-uchch,html.embed .st-swa{color:#8a5a00}html.embed .st-neech{color:#b83227}html.embed .st-shatru{color:#b0502e}html.embed .st-mitra{color:#1d7d4b}
+html.embed .tag.r{background:#fde2ec;color:#a3245d}html.embed .tag.a{background:#ffe6d2;color:#a84a10}
+html.embed .an.now{border-color:#1d7d4b;background:#eef8f1}
+html.embed .tl{border-color:#f3e6c9}html.embed .tl.now{background:#fff1dc}
+html.embed .num b{color:#6b1418}
+html.embed .chart{background:#fffaf1;border:1px solid #efdcb6}html.embed .chart .sn{fill:#b49a80}
+html.embed .r-consult{background:linear-gradient(120deg,#6b1418,#93301f);border:0;color:#fff}html.embed .r-consult p{color:#fde7c8}
+html.embed .calc,html.embed .note,html.embed .sub,html.embed .an-d,html.embed .dim{color:#86664f}
+@media print{html.embed .r-hero{background:#93301f}}
 @media print{body{background:#fff;color:#111;font-size:12.5px}body:before,.stars,.strip,nav,.hero,.block,.consult,footer,.actions,#toast,.float-wa,.r-consult .btns{display:none!important}.sec,.r-hero,.r-consult{break-inside:avoid-page;box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
 </head>
 <body>
+<script>(function(){var e=/[?&]embed=1/.test(location.search);try{e=e||window.self!==window.top}catch(x){e=true}if(e)document.documentElement.classList.add("embed")})()</script>
 <div class="stars"></div>
 <div class="strip"><div class="wrap"><span>☎ परामर्श हेतु कॉल करें: <a href="tel:+917069492135">7069492135</a></span><a class="hide-m" href="https://wa.me/917069492135" target="_blank" rel="noopener">WhatsApp पर संदेश भेजें →</a></div></div>
 <nav><div class="wrap">

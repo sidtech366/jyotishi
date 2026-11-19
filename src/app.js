@@ -19,6 +19,10 @@ const AVOID = { Sun: 'अहंकार और पिता का अपमा
 const PY = [null, 'नई शुरुआत, नए अवसर और आत्मनिर्भरता का वर्ष', 'साझेदारी, धैर्य और संबंधों को मजबूत करने का वर्ष', 'रचनात्मकता, यश और सामाजिक विस्तार का वर्ष', 'कड़ी मेहनत और मजबूत नींव बनाने का वर्ष', 'बदलाव, यात्रा और नए अनुभवों का वर्ष', 'परिवार, विवाह और जिम्मेदारियों का वर्ष', 'आत्मचिंतन, अध्ययन और आध्यात्म का वर्ष', 'धन, करियर और अधिकार में वृद्धि का वर्ष', 'पुराने काम पूरे करने, दान और समापन का वर्ष'];
 const CHALDEAN = { A: 1, I: 1, J: 1, Q: 1, Y: 1, B: 2, K: 2, R: 2, C: 3, G: 3, L: 3, S: 3, D: 4, M: 4, T: 4, E: 5, H: 5, N: 5, X: 5, U: 6, V: 6, W: 6, O: 7, Z: 7, F: 8, P: 8 };
 
+
+/* embed मोड में हल्की पृष्ठभूमि के लिए गहरे ग्रह रंग */
+const EMBED = document.documentElement.classList.contains('embed');
+if (EMBED) Object.entries({ Sun: '#c25e00', Moon: '#2f6fc9', Mars: '#c8102e', Mercury: '#138a52', Jupiter: '#9a6b00', Venus: '#b8378f', Saturn: '#3d4bbf', Rahu: '#5b4bb7', Ketu: '#7f4bb7' }).forEach(([p, c]) => K.P[p].c = c);
 /* ---------- फॉर्म + जन्म स्थान खोज ---------- */
 const norm = s => s.toLowerCase().replace(/[^a-zऀ-ॿ]/g, '');
 let sugItems = [], sugIdx = -1, geoTimer = null, geoSeq = 0;
@@ -206,11 +210,11 @@ function chartSVG(k, mode) {
     txt += `<text x="${sx}" y="${sy + 4}" class="sn">${signNo}</text>`;
     const ps = inHouse(k, h);
     const lines = ps.map(p => ({ t: K.P[p].short + (k.planets[p].retro && p !== 'Rahu' && p !== 'Ketu' ? '(व)' : '') + ' ' + Math.floor(k.planets[p].deg) + '°', c: K.P[p].c }));
-    if (h === 1 && mode !== 'lk') lines.unshift({ t: 'लग्न ' + Math.floor(k.lagnaDeg) + '°', c: '#ffd76a' });
+    if (h === 1 && mode !== 'lk') lines.unshift({ t: 'लग्न ' + Math.floor(k.lagnaDeg) + '°', c: EMBED ? '#93301f' : '#ffd76a' });
     const big = [1, 4, 7, 10].includes(h), lh = big ? 17 : 13, y0 = y - (lines.length - 1) * lh / 2 - (big ? 10 : 0);
     lines.forEach((l, i) => txt += `<text x="${x}" y="${y0 + i * lh + 5}" class="pl${big ? '' : ' sm'}" style="fill:${l.c}">${l.t}</text>`);
   }
-  return `<svg viewBox="0 0 400 400" class="chart"><defs><linearGradient id="cg${mode}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a3c"/><stop offset=".5" stop-color="#ff4fa3"/><stop offset="1" stop-color="#7b6cff"/></linearGradient></defs>
+  return `<svg viewBox="0 0 400 400" class="chart"><defs><linearGradient id="cg${mode}" x1="0" y1="0" x2="1" y2="1">${EMBED ? '<stop offset="0" stop-color="#ee6f16"/><stop offset="1" stop-color="#6b1418"/>' : '<stop offset="0" stop-color="#ff9a3c"/><stop offset=".5" stop-color="#ff4fa3"/><stop offset="1" stop-color="#7b6cff"/>'}</linearGradient></defs>
   <rect x="2" y="2" width="396" height="396" rx="14" fill="rgba(255,255,255,.03)" stroke="url(#cg${mode})" stroke-width="3"/>
   <path d="M2 2L398 398M398 2L2 398M200 2L398 200L200 398L2 200Z" fill="none" stroke="url(#cg${mode})" stroke-width="2"/>${txt}</svg>`;
 }
@@ -350,7 +354,7 @@ function buildReport(k, u) {
 
   const share = `${u.name} की कुंडली: ${K.SIGN[ln]} लग्न, ${K.SIGN[ms]} राशि, ${nak[0]} नक्षत्र, ${K.P[curMaha.lord].hi} महादशा। Astro Vikass पर अपनी मुफ्त लाल किताब कुंडली बनाएं: ${location.href.split('#')[0]}`;
   h += `<div class="actions"><button class="btn" onclick="doPrint()">📄 PDF डाउनलोड</button><a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">💬 WhatsApp पर शेयर</a><button class="btn ghost" onclick="document.getElementById('form').scrollIntoView({behavior:'smooth'})">🔄 नई कुंडली</button></div>
-  <div class="r-consult"><b>अपनी कुंडली पर विस्तृत परामर्श चाहिए?</b><p>विवाह मिलान, करियर, व्यापार या किसी समस्या के समाधान के लिए Astro Vikass से संपर्क करें — ☎ 7069492135</p><div class="btns"><a class="cta" href="tel:+917069492135">☎ कॉल करें</a><a class="cta wa" href="https://wa.me/917069492135?text=${encodeURIComponent(`नमस्ते, मेरी कुंडली (${u.name}, ${u.dob}, ${u.tob}, ${u.place}) पर परामर्श चाहिए`)}" target="_blank" rel="noopener">WhatsApp करें</a></div></div>
+  <div class="r-consult"><b>अपनी कुंडली पर विस्तृत परामर्श चाहिए?</b><p>विवाह मिलान, करियर, व्यापार या किसी समस्या के समाधान के लिए Astro Vikass से संपर्क करें — ☎ 7069492135</p><div class="btns"><a class="cta" href="tel:+917069492135" target="_blank">☎ कॉल करें</a><a class="cta wa" href="https://wa.me/917069492135?text=${encodeURIComponent(`नमस्ते, मेरी कुंडली (${u.name}, ${u.dob}, ${u.tob}, ${u.place}) पर परामर्श चाहिए`)}" target="_blank" rel="noopener">WhatsApp करें</a></div></div>
   <p class="calc">गणना: लाहिरी अयनांश ${k.ayanamsa.toFixed(3)}° • अक्षांश ${u.inp.lat}, देशांतर ${u.inp.lon}, समय क्षेत्र UTC${u.inp.tz >= 0 ? '+' : ''}${u.inp.tz}</p>`;
   return h;
 }
