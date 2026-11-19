@@ -156,14 +156,23 @@ function toast(m) { const t = $('toast'); t.textContent = m; t.classList.add('on
 function merge() {
   const srvMods = (SRV && SRV.mods) || [];
   const norm = t => String(t || '').replace(/\s+/g, '');
+  const known = new Set((SRV && SRV.ghKnown) || []);          // शीट (एडमिन पैनल) में आ चुके GitHub टूल — बंद वाले भी
+  const byPath = {}; LOCAL.forEach(c => { byPath[c.path] = c; });
+  // 1) एडमिन पैनल वाले GitHub टूल — एक्सेस/क्रम/नाम वहीं से
+  const gh = srvMods.filter(m => m.Type === 'gh' && m.Content).map(m => {
+    const lc = byPath[m.Content], pub = (m.Access || 'login') === 'public';
+    return { id: 't-' + (lc ? lc.id : m.ModID), mid: m.ModID, title: m.Title, icon: m.Icon, desc: m.Description || '', order: Number(m.SortOrder) || 0, kind: 'local', path: m.Content, free: pub, locked: !pub, access: m.Access };
+  });
+  // 2) cards.json के नए टूल जो अभी शीट में नहीं आए ➜ फ्री
   const replaced = new Set();
-  const loc = LOCAL.filter(c => c.active !== false).map(c => {
+  const loc = LOCAL.filter(c => c.active !== false && !known.has(c.path) && !gh.some(g => g.path === c.path)).map(c => {
     let order = Number(c.order) || 0;
-    [].concat(c.replace || []).forEach(t => { const m = srvMods.find(x => norm(x.Title) === norm(t)); if (m) { replaced.add(m.ModID); order = Number(m.SortOrder) || order; } });
+    [].concat(c.replace || []).forEach(t => { const m = srvMods.find(x => x.Type !== 'gh' && norm(x.Title) === norm(t)); if (m) { replaced.add(m.ModID); order = Number(m.SortOrder) || order; } });
     return { id: 't-' + c.id, title: c.title, icon: c.icon, desc: c.desc || '', order, kind: 'local', path: c.path, free: true };
   });
-  const srv = srvMods.filter(m => !replaced.has(m.ModID)).map(m => ({ id: m.ModID, title: m.Title, icon: m.Icon, desc: m.Description || '', order: Number(m.SortOrder) || 0, kind: 'srv', type: m.Type, access: m.Access, content: m.Content, ver: m.UpdatedAt, free: m.Access === 'public', locked: !!m.locked }));
-  ALL = loc.concat(srv).sort((a, b) => a.order - b.order);
+  // 3) एडमिन पैनल के HTML / URL कार्ड
+  const srv = srvMods.filter(m => m.Type !== 'gh' && !replaced.has(m.ModID)).map(m => ({ id: m.ModID, title: m.Title, icon: m.Icon, desc: m.Description || '', order: Number(m.SortOrder) || 0, kind: 'srv', type: m.Type, access: m.Access, content: m.Content, ver: m.UpdatedAt, free: m.Access === 'public', locked: !!m.locked }));
+  ALL = gh.concat(loc, srv).sort((a, b) => a.order - b.order);
 }
 function render() {
   merge();
@@ -187,7 +196,7 @@ async function load() {
 /* ================= कार्ड खोलना ================= */
 async function openCard(c) {
   if (!c) return;
-  if (c.kind === 'local') { location.hash = c.id; return; }
+  if (c.kind === 'local') { if (c.locked) return lockSheet(c); location.hash = c.id; return; }
   if (c.locked || c.type === 'builtin' || !c.free) return lockSheet(c);
   if (c.type === 'url' && c.content) { window.open(c.content, '_blank'); return; }
   const key = 'av_c_' + c.id; let k = ls.get(key);
@@ -202,7 +211,7 @@ async function openCard(c) {
   f.srcdoc = k.c; $('vBody').innerHTML = ''; $('vBody').appendChild(f);
 }
 function lockSheet(c) {
-  $('sBox').innerHTML = `<div class="mi">${esc(c.icon || '📦')}</div><h4>${esc(c.title)}</h4><p>🔒 यह सेवा लॉगिन के बाद खुलेगी। लॉगिन करते ही यही सेवा अपने आप खुल जाएगी।</p><div class="cta"><a class="btn lg" target="_top" href="${loginUrl(c.id)}">🔑 लॉगिन / रजिस्ट्रेशन</a><button class="btn lg ln" id="sClose">बाद में</button></div>`;
+  $('sBox').innerHTML = `<div class="mi">${esc(c.icon || '📦')}</div><h4>${esc(c.title)}</h4><p>${c.access === 'sub' ? '💳 यह सेवा सब्सक्रिप्शन वालों के लिए है।' : '🔒 यह सेवा लॉगिन के बाद खुलेगी।'} लॉगिन करते ही यही सेवा अपने आप खुल जाएगी।</p><div class="cta"><a class="btn lg" target="_top" href="${loginUrl(c.mid || c.id)}">🔑 लॉगिन / रजिस्ट्रेशन</a><button class="btn lg ln" id="sClose">बाद में</button></div>`;
   $('sheet').classList.add('on'); $('sClose').onclick = () => $('sheet').classList.remove('on');
 }
 $('sheet').addEventListener('click', e => { if (e.target.id === 'sheet') $('sheet').classList.remove('on'); });
@@ -213,6 +222,7 @@ function openFromHash() {
   const id = decodeURIComponent(location.hash.slice(1));
   if (!id) { if ($('view').classList.contains('on')) closeView(); return; }
   const c = ALL.find(x => x.id === id && x.kind === 'local');
+  if (c && c.locked) { history.replaceState(null, '', location.pathname + location.search); closeView(); return lockSheet(c); }
   if (!c || $('vTitle').dataset.id === id && $('view').classList.contains('on')) return;
   $('vTitle').dataset.id = id;
   showView(c.title, `<iframe src="${esc(c.path)}" allow="clipboard-write; geolocation; accelerometer; gyroscope; magnetometer; screen-wake-lock"></iframe>`);
