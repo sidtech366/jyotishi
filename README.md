@@ -1,9 +1,17 @@
-# Astro Vikass — मुफ्त लाल किताब कुंडली वेबसाइट
+# Astro Vikass — होमपेज + कार्ड सिस्टम
 
 **लाइव:** https://sidtech366.github.io/jyotishi/ • संपर्क: 7069492135
 
-- होमपेज (`index.html`) = Astro Vikass कुंडली वेबसाइट। इसके स्रोत और बदलाव का तरीका: [`src/README.md`](src/README.md)
-- पुराना Ank Jyotish होमपेज सुरक्षित है: `ank-jyotish-old-home.html` (बाकी पेज — login, admin, numerology — पहले जैसे हैं)
+| हिस्सा | कहाँ | कौन बदलता है |
+|---|---|---|
+| होमपेज (`index.html`) | GitHub | Claude (इसी chat से) |
+| फ्री टूल्स (`cards.json` + `tools/`) | GitHub | Claude (आप prompt/HTML दें) |
+| प्रीमियम कार्ड (लॉगिन/सब्सक्रिप्शन) | main site Admin Dashboard (Apps Script + Sheet) | आप — Admin में URL/HTML डालें |
+| कुंडली ऐप (`kundli/`) | GitHub — स्रोत `kundli/src/` | Claude |
+
+- होमपेज main site से `?api=cards` द्वारा कार्ड्स की सूची लाता है (HTML नहीं)। फ्री कार्ड `?api=open` से खुलते हैं; 🔒 कार्ड पर main site `?open=ID` खुलता है — लॉगिन के बाद वही कार्ड अपने आप खुलता है।
+- पुराने लिंक `…/jyotishi/?embed=1` अपने आप `kundli/` पर चले जाते हैं।
+- पुराना Ank Jyotish होमपेज: `ank-jyotish-old-home.html` (login, admin, numerology पेज पहले जैसे)
 
 ---
 
