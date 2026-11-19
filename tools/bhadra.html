@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>भद्रा एवं पंचक | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+</head>
+<body>
+<header class="av-head"><div class="ic">⚠️</div><h1>भद्रा एवं पंचक</h1><p>अगले 60 दिनों की भद्रा व पंचक — कब से कब तक, किस लोक में</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<!--body-->
+<div class="av-card"><div class="tabs" id="tb"><button data-k="b" class="on">भद्रा</button><button data-k="p">पंचक</button></div><div id="out" class="empty">गणना हो रही है…</div></div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script>
+const { $, share } = AVUI, A = AVAstro, N = A.N, TZ = 5.5;
+let tab = 'b', B = null, P = null;
+const isV = k => k >= 2 && k <= 57 && (k - 2) % 7 === 6;
+function calcB() {
+  const out = []; let jd = A.jdFromDate(new Date()) - 1, end = jd + 61;
+  while (jd < end) { const k = A.karanaNo(jd), nx = A.nextChange(jd, A.karanaNo, 0.04); if (!nx) break; if (isV(k)) { const ms = Math.floor(A.sunMoon((jd + nx) / 2).moon / 30); out.push({ a: jd, b: nx, ms }); } jd = nx + 1e-5; }
+  return out.filter(x => x.b > A.jdFromDate(new Date()));
+}
+function calcP() {
+  const inP = jd => A.sunMoon(jd).moon >= 293.3333, out = []; let jd = A.jdFromDate(new Date()) - 3, end = jd + 63;
+  while (jd < end) { const on = inP(jd), nx = A.nextChange(jd, inP, 0.1); if (!nx) break; if (on) out.push({ a: jd, b: nx }); jd = nx + 1e-5; }
+  return out.filter(x => x.b > A.jdFromDate(new Date()));
+}
+const LOK = ms => [3, 4, 10, 11].includes(ms) ? ['पृथ्वी लोक', 'bad', 'अशुभ — शुभ कार्य न करें'] : [0, 1, 2, 7].includes(ms) ? ['स्वर्ग लोक', 'good', 'पृथ्वी पर प्रभाव नहीं — कार्य कर सकते हैं'] : ['पाताल लोक', 'good', 'पृथ्वी पर प्रभाव नहीं — कार्य कर सकते हैं'];
+const PTYPE = ['रोग पंचक', 'राज पंचक', 'अग्नि पंचक', 'सामान्य पंचक', 'सामान्य पंचक', 'चोर पंचक', 'मृत्यु पंचक'];
+function render() {
+  const now = A.jdFromDate(new Date());
+  if (tab === 'b') {
+    B = B || calcB();
+    $('out').className = ''; $('out').innerHTML = `<div class="tbl-wrap"><table class="tbl"><tr><th>भद्रा का समय</th><th>वास</th></tr>${B.map(x => { const l = LOK(x.ms); return `<tr class="${now >= x.a && now < x.b ? 'now' : ''}"><td>${A.fmtJd(x.a, TZ)}<br>→ ${A.fmtJd(x.b, TZ)}${now >= x.a && now < x.b ? '<br><b class="t-bad">अभी चल रही है</b>' : ''}</td><td class="${l[1] === 'bad' ? 't-bad' : 't-good'}"><b>${l[0]}</b><br><small>${l[2]}</small></td></tr>`; }).join('')}</table></div>
+      <p class="note">भद्रा (विष्टि करण) में विवाह, गृह प्रवेश, नया व्यापार, यात्रा व राखी जैसे शुभ कार्य वर्जित माने जाते हैं — विशेषकर जब भद्रा पृथ्वी लोक में हो (चंद्रमा कर्क, सिंह, कुंभ, मीन में)। समय भारतीय समयानुसार।</p><button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button>`;
+    $('sh').onclick = () => share('⚠️ *आने वाली भद्रा*\n' + B.slice(0, 8).map(x => `${A.fmtJd(x.a, TZ)} → ${A.fmtJd(x.b, TZ)} (${LOK(x.ms)[0]})`).join('\n'));
+  } else {
+    P = P || calcP();
+    $('out').className = ''; $('out').innerHTML = `<div class="tbl-wrap"><table class="tbl"><tr><th>पंचक का समय</th><th>प्रकार</th></tr>${P.map(x => { const w = A.dateFromJd(x.a + TZ / 24).getUTCDay(); return `<tr class="${now >= x.a && now < x.b ? 'now' : ''}"><td>${A.fmtJd(x.a, TZ)}<br>→ ${A.fmtJd(x.b, TZ)}${now >= x.a && now < x.b ? '<br><b class="t-bad">अभी चल रहा है</b>' : ''}</td><td><b>${PTYPE[w]}</b><br><small>${N.VAAR[w]} से आरंभ</small></td></tr>`; }).join('')}</table></div>
+      <p class="note">पंचक (चंद्रमा धनिष्ठा तृतीय चरण से रेवती तक) में दक्षिण दिशा की यात्रा, लकड़ी इकट्ठा करना, छत डालना, चारपाई बनवाना और दाह संस्कार विशेष विधि के बिना वर्जित माने जाते हैं।</p><button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button>`;
+    $('sh').onclick = () => share('⚠️ *आने वाले पंचक*\n' + P.map(x => `${A.fmtJd(x.a, TZ)} → ${A.fmtJd(x.b, TZ)} (${PTYPE[A.dateFromJd(x.a + TZ / 24).getUTCDay()]})`).join('\n'));
+  }
+}
+$('tb').onclick = e => { const b = e.target.closest('button'); if (!b) return; tab = b.dataset.k; [...$('tb').children].forEach(x => x.classList.toggle('on', x === b)); render(); };
+setTimeout(render, 20);
+</script>
+</body>
+</html>

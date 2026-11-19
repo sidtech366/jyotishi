@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>शुभ मुहूर्त | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+<style>.mnav{display:flex;align-items:center;gap:8px;margin:6px 0 10px}
+.mnav b{flex:1;text-align:center;font-family:'Yatra One',serif;font-weight:400;color:var(--mar);font-size:20px}
+.mnav button{width:44px;height:40px;border-radius:12px;border:1.5px solid var(--line);background:#fff;color:var(--mar);font-size:18px;cursor:pointer}
+.md{display:flex;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.md:last-child{border:0}
+.md .dn{flex:0 0 52px;text-align:center;border-radius:12px;background:var(--okbg);border:1px solid #a9dcbc;padding:4px 0}
+.md .dn b{display:block;font-family:'Poppins',sans-serif;font-size:21px;color:var(--ok);line-height:1.1}.md .dn small{font-size:11px;color:var(--mut)}
+.blk{background:var(--badbg);border:1px solid #f0b8ae;border-radius:12px;padding:10px 12px;color:var(--bad);font-weight:600;margin-bottom:10px}</style>
+</head>
+<body>
+<header class="av-head"><div class="ic">📿</div><h1>शुभ मुहूर्त</h1><p>विवाह, गृह प्रवेश, मुंडन, वाहन, व्यापार, नामकरण — महीने भर की शुभ तिथियाँ</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<div class="av-card">
+  <label class="l">कार्य चुनें</label><div class="chips" id="ev"></div>
+  <div id="pl"></div>
+</div>
+<div class="av-card">
+  <div class="mnav"><button id="pv">◀</button><b id="mt"></b><button id="nx">▶</button></div>
+  <div id="out" class="empty">गणना हो रही है…</div>
+  <p class="note">शुभ नक्षत्र, तिथि, वार के साथ भद्रा, पंचक, खरमास, चातुर्मास और गुरु-शुक्र अस्त का विचार किया गया है। अंतिम मुहूर्त (लग्न, समय) के लिए पंडित जी से मिलान अवश्य कराएं — Astro Vikass ☎ 7069492135</p>
+  <button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button>
+</div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script src="lib/calendar.js"></script>
+<script>
+const { $, share, store } = AVUI, A = AVAstro, N = A.N;
+const MN = ['जनवरी', 'फरवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'];
+const nk = s => s.split(',').map(x => N.NAK.indexOf(x.trim()));
+const EV = {
+  vivah: { t: '💍 विवाह', nak: nk('रोहिणी,मृगशिरा,मघा,उत्तराफाल्गुनी,हस्त,स्वाति,अनुराधा,मूल,उत्तराषाढ़ा,उत्तराभाद्रपद,रेवती'), tithi: [2, 3, 5, 7, 10, 11, 12, 13, 15], vaar: [1, 3, 4, 5], kh: 1, ch: 1, asta: 1 },
+  griha: { t: '🏠 गृह प्रवेश', nak: nk('रोहिणी,मृगशिरा,उत्तराफाल्गुनी,चित्रा,अनुराधा,उत्तराषाढ़ा,धनिष्ठा,शतभिषा,उत्तराभाद्रपद,रेवती'), tithi: [2, 3, 5, 7, 10, 11, 12, 13], vaar: [1, 3, 4, 5], kh: 1, ch: 1, asta: 1, panchak: 1 },
+  mundan: { t: '✂️ मुंडन', nak: nk('अश्विनी,मृगशिरा,पुनर्वसु,पुष्य,हस्त,चित्रा,स्वाति,ज्येष्ठा,श्रवण,धनिष्ठा,शतभिषा'), tithi: [2, 3, 5, 7, 10, 11, 13], vaar: [1, 3, 4, 5], kh: 1, ch: 1, shukla: 0 },
+  vahan: { t: '🚗 वाहन खरीद', nak: nk('अश्विनी,रोहिणी,मृगशिरा,पुनर्वसु,पुष्य,हस्त,चित्रा,स्वाति,अनुराधा,श्रवण,धनिष्ठा,शतभिषा,रेवती'), tithi: [1, 2, 3, 5, 6, 7, 10, 11, 12, 13, 15], vaar: [0, 1, 3, 4, 5] },
+  vyapar: { t: '🏪 व्यापार आरंभ', nak: nk('अश्विनी,रोहिणी,पुष्य,उत्तराफाल्गुनी,हस्त,चित्रा,अनुराधा,उत्तराषाढ़ा,श्रवण,रेवती'), tithi: [2, 3, 5, 6, 7, 10, 11, 13], vaar: [1, 3, 4, 5] },
+  naam: { t: '👶 नामकरण', nak: nk('अश्विनी,रोहिणी,मृगशिरा,पुनर्वसु,पुष्य,उत्तराफाल्गुनी,हस्त,चित्रा,स्वाति,अनुराधा,उत्तराषाढ़ा,श्रवण,धनिष्ठा,शतभिषा,उत्तराभाद्रपद,रेवती'), tithi: [1, 2, 3, 5, 6, 7, 10, 11, 12, 13], vaar: [1, 3, 4, 5] },
+  bhumi: { t: '🧱 भूमि पूजन / नींव', nak: nk('रोहिणी,मृगशिरा,पुष्य,उत्तराफाल्गुनी,हस्त,चित्रा,स्वाति,अनुराधा,उत्तराषाढ़ा,श्रवण,धनिष्ठा,शतभिषा,उत्तराभाद्रपद,रेवती'), tithi: [2, 3, 5, 7, 10, 11, 13, 15], vaar: [1, 3, 4, 5], kh: 1, ch: 1, panchak: 1 },
+};
+let E = store.get('av_mu_ev', 'vivah'), now = new Date(), Y = now.getFullYear(), M = now.getMonth() + 1, res = [];
+$('ev').innerHTML = Object.entries(EV).map(([k, v]) => `<span class="chip ${k === E ? 'on' : ''}" data-k="${k}">${v.t}</span>`).join('');
+$('ev').onclick = e => { const c = e.target.closest('.chip'); if (!c) return; E = c.dataset.k; store.set('av_mu_ev', E); [...$('ev').children].forEach(x => x.classList.toggle('on', x === c)); run(); };
+const pf = AVUI.placeField($('pl'), { onPick: () => run(), hint: 'स्थान चुनें (डिफ़ॉल्ट: दिल्ली)' });
+const loc = () => { const L = pf.get(); return L ? { lat: L.lat, lon: L.lon, tz: pf.tz() } : { lat: 28.61, lon: 77.21, tz: 5.5 }; };
+$('pv').onclick = () => { M--; if (M < 1) { M = 12; Y--; } run(); };
+$('nx').onclick = () => { M++; if (M > 12) { M = 1; Y++; } run(); };
+const isV = k => k >= 2 && k <= 57 && (k - 2) % 7 === 6;
+function asta(jd) { const p = A.planets(jd), sep = (a, b) => Math.abs(((a - b + 540) % 360) - 180); return { guru: sep(p.Jupiter, p.Sun) < 11, shukra: sep(p.Venus, p.Sun) < (A.retro('Venus', jd) ? 8 : 10) }; }
+function chaturmas(d) { return (d.maas === 3 && d.tithi > 11 && d.tithi <= 30) || [4, 5, 6].includes(d.maas) || (d.maas === 7 && d.tithi < 11); }
+function run() {
+  $('mt').textContent = MN[M - 1] + ' ' + Y; $('out').className = 'empty'; $('out').textContent = 'गणना हो रही है…';
+  setTimeout(() => {
+    const R = EV[E], days = AVCal.month(Y, M, loc()), blocks = new Set(); res = [];
+    days.forEach(d => {
+      const t = ((d.tithi - 1) % 15) + 1, sun = Math.floor(d.sun / 30);
+      if (!R.nak.includes(d.nak) || !R.vaar.includes(d.vaar)) return;
+      if (!R.tithi.includes(t) || d.tithi === 30 || [4, 9, 14].includes(t)) return;
+      if (isV(d.karana)) return;
+      if (R.kh && (sun === 8 || sun === 11)) { blocks.add('☀️ खरमास (सूर्य ' + N.SIGN[sun] + ' में) — यह कार्य वर्जित'); return; }
+      if (R.ch && chaturmas(d)) { blocks.add('🛌 चातुर्मास (देवशयनी से देवउठनी एकादशी तक) — यह कार्य वर्जित'); return; }
+      if (R.panchak && d.moon >= 293.333) return;
+      if (R.asta) { const a = asta(d.jdRise); if (a.guru) { blocks.add('🟡 गुरु अस्त — विवाह/गृह प्रवेश वर्जित'); return; } if (a.shukra) { blocks.add('💎 शुक्र अस्त — विवाह/गृह प्रवेश वर्जित'); return; } }
+      res.push(d);
+    });
+    $('out').className = '';
+    $('out').innerHTML = (blocks.size ? [...blocks].map(b => `<div class="blk">${b}</div>`).join('') : '') + (res.length ? `<div class="note" style="margin-bottom:6px">${R.t} के लिए ${res.length} शुभ दिन</div>` + res.map(d => `<div class="md"><div class="dn"><b>${d.d}</b><small>${N.VAAR[d.vaar].replace('वार', '')}</small></div><div><b>${A.tithiName(d.tithi)}</b> • ${N.NAK[d.nak]} नक्षत्र<br><small class="note">सूर्योदय ${A.fmtH(d.rise)} • ${N.MAAS[d.maas]} मास</small></div></div>`).join('') : '<div class="empty">इस माह इस कार्य के लिए शुभ दिन नहीं मिला — अगला माह देखें ▶</div>');
+  }, 20);
+}
+$('sh').onclick = () => share(`📿 *${EV[E].t} — शुभ तिथियाँ (${MN[M - 1]} ${Y})*\n` + (res.map(d => `${d.d} ${MN[M - 1].slice(0, 3)} ${N.VAAR[d.vaar]} — ${A.tithiName(d.tithi)}, ${N.NAK[d.nak]}`).join('\n') || 'इस माह शुभ दिन नहीं'));
+run();
+</script>
+</body>
+</html>

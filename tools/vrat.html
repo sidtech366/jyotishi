@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>व्रत-त्योहार कैलेंडर | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+<style>.mnav{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.mnav b{flex:1;text-align:center;font-family:'Yatra One',serif;font-weight:400;color:var(--mar);font-size:20px}
+.mnav button{width:44px;height:40px;border-radius:12px;border:1.5px solid var(--line);background:#fff;color:var(--mar);font-size:18px;cursor:pointer}
+.dy{display:flex;gap:12px;padding:10px 4px;border-bottom:1px dashed var(--line)}
+.dy:last-child{border:0}
+.dy.today{background:#fff1dc;border-radius:12px;padding:10px}
+.dn{flex:0 0 52px;text-align:center;border-radius:12px;background:#fff;border:1px solid var(--line);padding:4px 0}
+.dn b{display:block;font-family:'Poppins',sans-serif;font-size:21px;color:var(--mar);line-height:1.1}.dn small{font-size:11px;color:var(--mut)}
+.ev{display:block;font-weight:700;font-size:15.5px}.ev.fest{color:var(--mar3)}.ev.vrat{color:var(--ok)}.ev.sank{color:#9a6b00}
+.flt{margin-bottom:10px}</style>
+</head>
+<body>
+<header class="av-head"><div class="ic">🪔</div><h1>व्रत-त्योहार कैलेंडर</h1><p>एकादशी, पूर्णिमा, अमावस्या, प्रदोष, चतुर्थी, संक्रांति और सभी प्रमुख त्योहार</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<div class="av-card"><div id="pl"></div></div>
+<div class="av-card">
+  <div class="mnav"><button id="pv">◀</button><b id="mt"></b><button id="nx">▶</button></div>
+  <div class="chips flt" id="flt"><span class="chip on" data-f="all">सभी</span><span class="chip" data-f="fest">त्योहार</span><span class="chip" data-f="ek">एकादशी</span><span class="chip" data-f="pa">पूर्णिमा/अमावस्या</span><span class="chip" data-f="vr">अन्य व्रत</span></div>
+  <div class="note" id="maas"></div>
+  <div id="out" class="empty">गणना हो रही है…</div>
+  <p class="note">तिथि उदया तिथि के अनुसार; दीपावली/धनतेरस प्रदोष काल, जन्माष्टमी/शिवरात्रि निशीथ काल और दशहरा अपराह्न के अनुसार। क्षेत्रीय परंपरा में एक दिन का अंतर संभव है।</p>
+  <button class="btn ok share" id="sh">💬 इस माह की सूची WhatsApp पर भेजें</button>
+</div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script src="lib/calendar.js"></script>
+<script>
+const { $, share } = AVUI, A = AVAstro, N = A.N;
+const MN = ['जनवरी', 'फरवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'];
+const now = new Date(); let Y = now.getFullYear(), M = now.getMonth() + 1, F = 'all', days = [];
+const pf = AVUI.placeField($('pl'), { onPick: () => run(), hint: 'स्थान चुनें (डिफ़ॉल्ट: दिल्ली)' });
+const loc = () => { const L = pf.get(); return L ? { lat: L.lat, lon: L.lon, tz: pf.tz() } : { lat: 28.61, lon: 77.21, tz: 5.5 }; };
+$('pv').onclick = () => { M--; if (M < 1) { M = 12; Y--; } run(); };
+$('nx').onclick = () => { M++; if (M > 12) { M = 1; Y++; } run(); };
+$('flt').onclick = e => { const c = e.target.closest('.chip'); if (!c) return; F = c.dataset.f; [...$('flt').children].forEach(x => x.classList.toggle('on', x === c)); draw(); };
+const pass = e => F === 'all' || (F === 'fest' && (e[2] === 'fest' || e[2] === 'sank')) || (F === 'ek' && /एकादशी/.test(e[1])) || (F === 'pa' && /पूर्णिमा$|अमावस्या$/.test(e[1])) || (F === 'vr' && e[2] === 'vrat' && !/एकादशी|पूर्णिमा$|अमावस्या$/.test(e[1]));
+function run() { $('mt').textContent = MN[M - 1] + ' ' + Y; $('out').className = 'empty'; $('out').textContent = 'गणना हो रही है…'; setTimeout(() => { days = AVCal.month(Y, M, loc()); draw(); }, 20); }
+function draw() {
+  const ms = [...new Set(days.map(d => (d.adhik ? 'अधिक ' : '') + N.MAAS[d.maas]))];
+  $('maas').textContent = 'हिंदू मास (अमांत): ' + ms.join(' → ');
+  const today = AVUI.iso(new Date());
+  const rows = days.filter(d => d.events.some(pass)).map(d => { const iso = d.y + '-' + String(d.m).padStart(2, '0') + '-' + String(d.d).padStart(2, '0'); return `<div class="dy ${iso === today ? 'today' : ''}"><div class="dn"><b>${d.d}</b><small>${N.VAAR[d.vaar].replace('वार', '')}</small></div><div>${d.events.filter(pass).map(e => `<span class="ev ${e[2]}">${e[0]} ${e[1]}</span>`).join('')}<small class="note">${A.tithiName(d.tithi)} • ${N.NAK[d.nak]}</small></div></div>`; });
+  $('out').className = ''; $('out').innerHTML = rows.join('') || '<div class="empty">इस फ़िल्टर में कुछ नहीं</div>';
+}
+$('sh').onclick = () => share(`🪔 *व्रत-त्योहार — ${MN[M - 1]} ${Y}*\n` + days.filter(d => d.events.length).map(d => `${d.d} ${MN[M - 1].slice(0, 3)} (${N.VAAR[d.vaar]}): ${d.events.map(e => e[1]).join(', ')}`).join('\n'));
+run();
+</script>
+</body>
+</html>

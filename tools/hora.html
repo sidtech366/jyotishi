@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>होरा मुहूर्त | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+</head>
+<body>
+<header class="av-head"><div class="ic">⏰</div><h1>होरा मुहूर्त</h1><p>दिन-रात के 24 होरा • अभी किस ग्रह का होरा • किस काम के लिए शुभ</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<!--body-->
+<div class="av-card"><div id="pl"></div><label class="l">दिनांक</label><input class="in" type="date" id="d"><button class="btn blk" id="go">⏰ होरा देखें</button></div>
+<div id="now"></div><div id="out"></div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script>
+const { $, share } = AVUI, A = AVAstro, N = A.N;
+const ORD = ['Sun', 'Venus', 'Mercury', 'Moon', 'Saturn', 'Jupiter', 'Mars'], DL = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
+const USE = { Sun: ['सरकारी काम, अधिकारी से मिलना, नौकरी के आवेदन', 'good'], Moon: ['यात्रा, जनसंपर्क, खरीदारी, जल-दूध संबंधी काम', 'good'], Mars: ['भूमि, मुकदमा, व्यायाम, सर्जरी — शुभ काम टालें', 'bad'], Mercury: ['व्यापार, लेखन, पढ़ाई, बैंक, अनुबंध', 'good'], Jupiter: ['पूजा, विवाह बात, शिक्षा, बड़े निर्णय — सर्वश्रेष्ठ', 'good'], Venus: ['प्रेम, कला, सौंदर्य, वाहन-आभूषण खरीद', 'good'], Saturn: ['मेहनत, मशीनरी, पुराने काम निपटाना — नए शुभ काम टालें', 'bad'] };
+const pf = AVUI.placeField($('pl'), { onPick: () => run() });
+$('d').value = AVUI.iso(new Date()); $('go').onclick = run;
+function run() {
+  const L = pf.get(); if (!L) { $('out').innerHTML = '<div class="av-card empty">ऊपर स्थान चुनें</div>'; return; }
+  const [y, m, d] = $('d').value.split('-').map(Number), tz = pf.tz($('d').value), t1 = A.sunTimes(y, m, d, L.lat, L.lon, tz);
+  const nx = new Date(Date.UTC(y, m - 1, d + 1)), t2 = A.sunTimes(nx.getUTCFullYear(), nx.getUTCMonth() + 1, nx.getUTCDate(), L.lat, L.lon, tz);
+  const r = t1.rise || 6, s = t1.set || 18, r2 = (t2.rise || 6) + 24, w = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+  let i = ORD.indexOf(DL[w]); const rows = [];
+  for (let k = 0; k < 24; k++) { const a = k < 12 ? r + k * (s - r) / 12 : s + (k - 12) * (r2 - s) / 12, b = k < 12 ? a + (s - r) / 12 : a + (r2 - s) / 12; rows.push({ p: ORD[(i + k) % 7], a, b, day: k < 12 }); }
+  const nd = new Date(), isToday = AVUI.iso(nd) === $('d').value, nh = nd.getHours() + nd.getMinutes() / 60, h2 = nh < r ? nh + 24 : nh;
+  const cur = isToday ? rows.find(x => h2 >= x.a && h2 < x.b) : null;
+  $('now').innerHTML = cur ? `<div class="av-card"><div class="box ${USE[cur.p][1]}"><small>अभी का होरा (${A.fmtH(cur.a)} – ${A.fmtH(cur.b)})</small><b>${N.PIC[cur.p]} ${N.P[cur.p]} होरा</b><div>${USE[cur.p][0]}</div></div></div>` : '';
+  const tr = x => `<tr class="${x === cur ? 'now' : ''}"><td><b>${N.PIC[x.p]} ${N.P[x.p]}</b></td><td>${A.fmtH(x.a)} – ${A.fmtH(x.b)}</td><td class="${USE[x.p][1] === 'good' ? 't-good' : 't-bad'}">${USE[x.p][0]}</td></tr>`;
+  $('out').innerHTML = `<div class="av-card"><h3>${A.fmtDate(y, m, d)}, ${N.VAAR[w]}</h3><div class="note">${L.name} • सूर्योदय ${A.fmtH(r)} • सूर्यास्त ${A.fmtH(s)}</div>
+    <h4>☀️ दिन के होरा</h4><div class="tbl-wrap"><table class="tbl"><tr><th>होरा</th><th>समय</th><th>किसके लिए</th></tr>${rows.filter(x => x.day).map(tr).join('')}</table></div>
+    <h4>🌙 रात्रि के होरा</h4><div class="tbl-wrap"><table class="tbl"><tr><th>होरा</th><th>समय</th><th>किसके लिए</th></tr>${rows.filter(x => !x.day).map(tr).join('')}</table></div>
+    <p class="note">जिस काम का स्वामी ग्रह हो, उसी के होरा में काम शुरू करना शुभ माना जाता है — जैसे व्यापार बुध होरा में, पूजा गुरु होरा में।</p><button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button></div>`;
+  $('sh').onclick = () => share(`⏰ *होरा — ${A.fmtDate(y, m, d)} (${L.name})*\n` + rows.filter(x => x.day).map(x => `${N.P[x.p]}: ${A.fmtH(x.a)} – ${A.fmtH(x.b)}`).join('\n'));
+}
+run();
+</script>
+</body>
+</html>
