@@ -154,8 +154,15 @@ function toast(m) { const t = $('toast'); t.textContent = m; t.classList.add('on
 
 /* ================= कार्ड लोड ================= */
 function merge() {
-  const loc = LOCAL.filter(c => c.active !== false).map(c => ({ id: 't-' + c.id, title: c.title, icon: c.icon, desc: c.desc || '', order: Number(c.order) || 0, kind: 'local', path: c.path, free: true }));
-  const srv = ((SRV && SRV.mods) || []).map(m => ({ id: m.ModID, title: m.Title, icon: m.Icon, desc: m.Description || '', order: Number(m.SortOrder) || 0, kind: 'srv', type: m.Type, access: m.Access, content: m.Content, ver: m.UpdatedAt, free: m.Access === 'public', locked: !!m.locked }));
+  const srvMods = (SRV && SRV.mods) || [];
+  const norm = t => String(t || '').replace(/\s+/g, '');
+  const replaced = new Set();
+  const loc = LOCAL.filter(c => c.active !== false).map(c => {
+    let order = Number(c.order) || 0;
+    [].concat(c.replace || []).forEach(t => { const m = srvMods.find(x => norm(x.Title) === norm(t)); if (m) { replaced.add(m.ModID); order = Number(m.SortOrder) || order; } });
+    return { id: 't-' + c.id, title: c.title, icon: c.icon, desc: c.desc || '', order, kind: 'local', path: c.path, free: true };
+  });
+  const srv = srvMods.filter(m => !replaced.has(m.ModID)).map(m => ({ id: m.ModID, title: m.Title, icon: m.Icon, desc: m.Description || '', order: Number(m.SortOrder) || 0, kind: 'srv', type: m.Type, access: m.Access, content: m.Content, ver: m.UpdatedAt, free: m.Access === 'public', locked: !!m.locked }));
   ALL = loc.concat(srv).sort((a, b) => a.order - b.order);
 }
 function render() {
@@ -201,17 +208,18 @@ function lockSheet(c) {
 $('sheet').addEventListener('click', e => { if (e.target.id === 'sheet') $('sheet').classList.remove('on'); });
 function showView(title, html) { $('vTitle').textContent = title; $('vBody').innerHTML = html; $('view').classList.add('on'); document.body.style.overflow = 'hidden'; }
 function closeView() { $('view').classList.remove('on'); $('vBody').innerHTML = ''; document.body.style.overflow = ''; }
-$('vBack').onclick = () => { if (location.hash) history.back(); else closeView(); setTimeout(() => { if ($('view').classList.contains('on') && !location.hash) closeView(); }, 300); };
+$('vBack').onclick = () => { closeView(); $('vTitle').dataset.id = ''; if (location.hash) history.replaceState(null, '', location.pathname + location.search); };
 function openFromHash() {
   const id = decodeURIComponent(location.hash.slice(1));
   if (!id) { if ($('view').classList.contains('on')) closeView(); return; }
   const c = ALL.find(x => x.id === id && x.kind === 'local');
   if (!c || $('vTitle').dataset.id === id && $('view').classList.contains('on')) return;
   $('vTitle').dataset.id = id;
-  showView(c.title, `<iframe src="${esc(c.path)}" allow="clipboard-write"></iframe>`);
+  showView(c.title, `<iframe src="${esc(c.path)}" allow="clipboard-write; geolocation"></iframe>`);
 }
 window.addEventListener('hashchange', () => { $('vTitle').dataset.id = ''; openFromHash(); });
 load();
+if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => { });
 </script>
 </body>
 </html>

@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>पूर्ण पंचांग गणक | Astro Vikass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+#pnc-root {
+  --pnc-bg: #1a0a0f;
+  --pnc-bg2: #240d13;
+  --pnc-gold: #d4af37;
+  --pnc-gold-soft: #e8c766;
+  --pnc-cream: #f3e6c8;
+  --pnc-muted: #b89a7a;
+  --pnc-crimson: #7a1128;
+  --pnc-crimson-br: #9e1b34;
+  --pnc-good: #2f7d4f;
+  --pnc-good-bg: #12291d;
+  --pnc-bad: #a63a3a;
+  --pnc-bad-bg: #2c1414;
+  --pnc-neutral: #b8860b;
+  --pnc-neutral-bg: #2a2011;
+  font-family: 'Tiro Devanagari Hindi', 'Noto Sans Devanagari', serif;
+  max-width: 760px;
+  margin: 0 auto;
+  color: var(--pnc-cream);
+  background: radial-gradient(ellipse at top, var(--pnc-bg2) 0%, var(--pnc-bg) 65%);
+  border: 1px solid #4a2530;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(0,0,0,0.5), inset 0 0 60px rgba(122,17,40,0.08);
+}
+#pnc-root * { box-sizing: border-box; }
+
+.pnc-head {
+  padding: 26px 22px 20px;
+  text-align: center;
+  background: radial-gradient(circle at 50% -20%, rgba(212,175,55,0.18), transparent 60%), linear-gradient(180deg, #350c15, #1a0a0f);
+  border-bottom: 1px solid #4a2530;
+}
+.pnc-om { font-size: 24px; color: var(--pnc-gold); opacity: 0.85; letter-spacing: 5px; margin-bottom: 6px; }
+.pnc-title { font-size: 25px; color: var(--pnc-gold-soft); font-weight: 700; text-shadow: 0 0 18px rgba(212,175,55,0.35); margin: 0; }
+.pnc-sub { font-size: 13px; color: var(--pnc-muted); margin-top: 6px; }
+.pnc-brand { font-size: 11px; color: var(--pnc-muted); margin-top: 10px; opacity: 0.75; letter-spacing: 1px; }
+
+.pnc-body { padding: 20px 20px 24px; }
+
+.pnc-field { margin-bottom: 15px; }
+.pnc-label { display: block; font-size: 14px; color: var(--pnc-gold-soft); margin-bottom: 7px; }
+.pnc-row { display: flex; gap: 10px; }
+.pnc-row > div { flex: 1; }
+
+select.pnc-select, input.pnc-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #5a2a35;
+  background: #260d14;
+  color: var(--pnc-cream);
+  font-size: 15px;
+  font-family: inherit;
+}
+select.pnc-select {
+  background: #260d14 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>") no-repeat right 12px center;
+  appearance: none; -webkit-appearance: none;
+}
+select.pnc-select:focus, input.pnc-input:focus { outline: 2px solid var(--pnc-gold); outline-offset: 1px; }
+
+.pnc-custom-loc { display: none; margin-top: 10px; }
+.pnc-custom-loc.show { display: block; }
+
+.pnc-btn {
+  width: 100%;
+  padding: 13px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--pnc-crimson-br), var(--pnc-crimson));
+  color: var(--pnc-gold-soft);
+  font-size: 16.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(122,17,40,0.5);
+}
+.pnc-btn:active { transform: translateY(1px); }
+
+.pnc-results { display: none; margin-top: 22px; }
+.pnc-results.show { display: block; animation: pnc-fade 0.4s ease; }
+@keyframes pnc-fade { from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+.pnc-date-strip {
+  text-align: center;
+  padding: 12px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(212,175,55,0.1), transparent);
+  border: 1px solid #4a2530;
+  margin-bottom: 16px;
+}
+.pnc-date-main { font-size: 18px; color: var(--pnc-gold-soft); font-weight: 700; }
+.pnc-date-sub { font-size: 12.5px; color: var(--pnc-muted); margin-top: 3px; }
+
+.pnc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.pnc-card {
+  border: 1px solid #5a2a35;
+  border-radius: 10px;
+  padding: 12px 13px;
+  background: #200a10;
+}
+.pnc-card-label { font-size: 11.5px; color: var(--pnc-muted); margin-bottom: 4px; letter-spacing: 0.3px; }
+.pnc-card-val { font-size: 15.5px; color: var(--pnc-gold-soft); font-weight: 700; }
+.pnc-card-extra { font-size: 12px; color: var(--pnc-cream); margin-top: 3px; opacity: 0.85; }
+.pnc-card-time { font-size: 11px; color: var(--pnc-muted); margin-top: 4px; }
+.pnc-card.wide { grid-column: 1 / -1; }
+
+.pnc-section-title {
+  font-size: 15px;
+  color: var(--pnc-gold-soft);
+  margin: 18px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed #4a2530;
+}
+
+.pnc-kaal-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.pnc-kaal-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 13px; border-radius: 8px; border: 1px solid #5a2a35; background: #200a10;
+}
+.pnc-kaal-name { font-size: 14px; color: var(--pnc-cream); }
+.pnc-kaal-time { font-size: 14px; color: var(--pnc-gold-soft); font-weight: 700; }
+.pnc-kaal-item.good { border-color: var(--pnc-good); }
+.pnc-kaal-item.good .pnc-kaal-time { color: #6fd696; }
+
+.pnc-chog-wrap { margin-bottom: 10px; }
+.pnc-chog-label { font-size: 13px; color: var(--pnc-muted); margin: 10px 0 6px; }
+.pnc-chog-table { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.pnc-chog-slot {
+  padding: 7px 5px; border-radius: 6px; text-align: center; font-size: 11.5px;
+  border: 1px solid #5a2a35;
+}
+.pnc-chog-slot .nm { font-weight: 700; font-size: 12px; }
+.pnc-chog-slot .tm { color: var(--pnc-muted); font-size: 10px; margin-top: 2px; }
+.pnc-chog-good { background: var(--pnc-good-bg); border-color: var(--pnc-good); color: #6fd696; }
+.pnc-chog-bad { background: var(--pnc-bad-bg); border-color: var(--pnc-bad); color: #ef8b8b; }
+.pnc-chog-neutral { background: var(--pnc-neutral-bg); border-color: var(--pnc-neutral); color: #e8c766; }
+
+.pnc-note { margin-top: 14px; font-size: 11.5px; color: var(--pnc-muted); line-height: 1.6; text-align: center; }
+
+.pnc-foot { text-align: center; padding: 14px; font-size: 11.5px; color: var(--pnc-muted); border-top: 1px solid #4a2530; background: #1a0a0f; }
+
+@media (max-width: 480px) {
+  .pnc-title { font-size: 20px; }
+  .pnc-grid { grid-template-columns: 1fr 1fr; }
+  .pnc-chog-table { grid-template-columns: repeat(2, 1fr); }
+}
+
+html,body{margin:0;background:#1a0a0f;min-height:100%}
+body{padding:0}
+#pnc-root{border-radius:0;border:0;max-width:760px;min-height:100vh;box-shadow:none}
+.pnc-locrow,.pnc-daterow{display:flex;gap:8px;align-items:stretch}
+.pnc-locrow .avp-wrap{flex:1}
+.pnc-gps,.pnc-nav{flex:0 0 46px;border-radius:8px;border:1px solid #5a2a35;background:#2a1015;color:#e8c766;font-size:18px;cursor:pointer}
+.pnc-today{margin-top:8px;padding:6px 16px;border-radius:999px;border:1px solid #d4af37;background:transparent;color:#e8c766;font-family:inherit;font-size:13.5px;cursor:pointer}
+.pnc-loc-note{font-size:12.5px;color:#6fd696;margin-top:6px;min-height:16px}
+.pnc-msg{display:none;margin:4px 0 10px;padding:9px 12px;border-radius:8px;background:#2a2011;border:1px solid #b8860b;color:#e8c766;font-size:14px}
+.pnc-share{width:100%;margin-top:14px;padding:12px;border:0;border-radius:9px;background:#1f8f50;color:#fff;font-family:inherit;font-size:15.5px;font-weight:700;cursor:pointer}
+.pnc-chog-slot.pnc-now{outline:2px solid #6fd696;outline-offset:1px;box-shadow:0 0 12px rgba(111,214,150,.5)}
+.avp-wrap{position:relative}
+.avp-sug{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;background:#2a1015;border:1px solid #d4af37;border-radius:10px;max-height:300px;overflow:auto;box-shadow:0 14px 34px rgba(0,0,0,.6)}
+.avp-sug.open{display:block}
+.avp-it{display:flex;gap:9px;padding:10px 12px;cursor:pointer;border-bottom:1px solid #4a2530;color:#f3e6c8}
+.avp-it.act,.avp-it:hover{background:#3a1520}
+.avp-it i{font-style:normal;color:#e8c766;font-size:13px;margin-left:4px}.avp-it small{display:block;color:#b89a7a;font-size:12px}
+.avp-empty{padding:10px 12px;color:#b89a7a;font-size:13px}
+</style>
+</head>
+<body>
+<div id="pnc-root">
+<div class="pnc-head">
+  <div class="pnc-om">卐 ॐ नमः शिवाय 卐</div>
+  <div class="pnc-title">पूर्ण पंचांग गणक</div>
+  <div class="pnc-sub">तिथि, नक्षत्र, योग, करण, मुहूर्त एवं चौघड़िया</div>
+  <div class="pnc-brand">Astro Vikass Mishra</div>
+</div>
+
+<div class="pnc-body">
+
+  <div class="pnc-field">
+    <label class="pnc-label">स्थान</label>
+    <div class="pnc-locrow"><input type="text" class="pnc-input" id="pnc-place" placeholder="शहर लिखें — Bagaha या बगहा" autocomplete="off" spellcheck="false"><button type="button" class="pnc-gps" onclick="pncGps()" title="मेरा वर्तमान स्थान">📍</button></div>
+    <div class="pnc-loc-note" id="pnc-loc-note"></div>
+  </div>
+  <div class="pnc-field">
+    <label class="pnc-label">दिनांक</label>
+    <div class="pnc-daterow"><button type="button" class="pnc-nav" onclick="pncShift(-1)">◀</button><input type="date" class="pnc-input" id="pnc-date"><button type="button" class="pnc-nav" onclick="pncShift(1)">▶</button></div>
+    <button type="button" class="pnc-today" onclick="pncShift(0)">आज</button>
+  </div>
+  <div class="pnc-msg" id="pnc-msg"></div>
+  <button class="pnc-btn" onclick="pncCalculate()">पंचांग देखें</button>
+
+  <div class="pnc-results" id="pnc-results">
+
+    <div class="pnc-date-strip">
+      <div class="pnc-date-main" id="pnc-r-date">—</div>
+      <div class="pnc-date-sub" id="pnc-r-place">—</div>
+    </div>
+
+    <div class="pnc-grid">
+      <div class="pnc-card"><div class="pnc-card-label">सूर्योदय</div><div class="pnc-card-val" id="pnc-r-sunrise">—</div></div>
+      <div class="pnc-card"><div class="pnc-card-label">सूर्यास्त</div><div class="pnc-card-val" id="pnc-r-sunset">—</div></div>
+
+      <div class="pnc-card"><div class="pnc-card-label">तिथि</div><div class="pnc-card-val" id="pnc-r-tithi">—</div><div class="pnc-card-time" id="pnc-r-tithi-time"></div></div>
+      <div class="pnc-card"><div class="pnc-card-label">पक्ष</div><div class="pnc-card-val" id="pnc-r-paksha">—</div></div>
+
+      <div class="pnc-card"><div class="pnc-card-label">नक्षत्र</div><div class="pnc-card-val" id="pnc-r-nakshatra">—</div><div class="pnc-card-extra" id="pnc-r-pada"></div><div class="pnc-card-time" id="pnc-r-nakshatra-time"></div></div>
+      <div class="pnc-card"><div class="pnc-card-label">योग</div><div class="pnc-card-val" id="pnc-r-yoga">—</div><div class="pnc-card-time" id="pnc-r-yoga-time"></div></div>
+
+      <div class="pnc-card"><div class="pnc-card-label">करण</div><div class="pnc-card-val" id="pnc-r-karana">—</div><div class="pnc-card-time" id="pnc-r-karana-time"></div></div>
+      <div class="pnc-card"><div class="pnc-card-label">वार</div><div class="pnc-card-val" id="pnc-r-vaar">—</div></div>
+
+      <div class="pnc-card"><div class="pnc-card-label">सूर्य राशि</div><div class="pnc-card-val" id="pnc-r-sunsign">—</div></div>
+      <div class="pnc-card"><div class="pnc-card-label">चंद्र राशि</div><div class="pnc-card-val" id="pnc-r-moonsign">—</div></div>
+    </div>
+
+    <div class="pnc-section-title">शुभ-अशुभ मुहूर्त</div>
+    <div class="pnc-kaal-row">
+      <div class="pnc-kaal-item"><span class="pnc-kaal-name">राहु काल</span><span class="pnc-kaal-time" id="pnc-r-rahu">—</span></div>
+      <div class="pnc-kaal-item"><span class="pnc-kaal-name">यमगण्ड काल</span><span class="pnc-kaal-time" id="pnc-r-yama">—</span></div>
+      <div class="pnc-kaal-item"><span class="pnc-kaal-name">गुलिक काल</span><span class="pnc-kaal-time" id="pnc-r-gulika">—</span></div>
+      <div class="pnc-kaal-item good"><span class="pnc-kaal-name">अभिजित मुहूर्त</span><span class="pnc-kaal-time" id="pnc-r-abhijit">—</span></div>
+    </div>
+
+    <div class="pnc-section-title">चौघड़िया</div>
+    <div class="pnc-chog-wrap">
+      <div class="pnc-chog-label">दिन चौघड़िया</div>
+      <div class="pnc-chog-table" id="pnc-chog-day"></div>
+      <div class="pnc-chog-label">रात्रि चौघड़िया</div>
+      <div class="pnc-chog-table" id="pnc-chog-night"></div>
+    </div>
+
+    <button type="button" class="pnc-share" onclick="pncShare()">💬 WhatsApp पर पंचांग भेजें</button>
+    <div class="pnc-note">गणना सूर्योदयकालिक पंचांग पर आधारित है। समय स्थानीय (Local) घड़ी अनुसार है। हरे घेरे वाली चौघड़िया अभी चल रही है।</div>
+  </div>
+
+</div>
+
+<div class="pnc-foot">॥ हर हर महादेव ॥ &nbsp;•&nbsp; Astro Vikass • ☎ 7069492135</div>
+</div>
+
+</div>
+<script src="lib/places.js"></script>
+<script>
+
+(function(){
+
+// ================= \u0936\u0939\u0930 \u0938\u0942\u091a\u0940 (lat, lon, tz) =================
+// ================= \u0916\u0917\u094b\u0932\u0940\u092f \u0917\u0923\u0928\u093e \u0907\u0902\u091c\u0928 =================
+function rad(d){ return d*Math.PI/180; }
+function norm360(d){ d = d % 360; if(d<0) d+=360; return d; }
+
+function julianDay(y,m,d,hourUT){
+  if(m<=2){ y-=1; m+=12; }
+  var A = Math.floor(y/100);
+  var B = 2 - A + Math.floor(A/4);
+  return Math.floor(365.25*(y+4716)) + Math.floor(30.6001*(m+1)) + d + hourUT/24 + B - 1524.5;
+}
+
+function sunLongitude(jd){
+  var T = (jd - 2451545.0)/36525;
+  var L0 = 280.46646 + 36000.76983*T + 0.0003032*T*T;
+  var M = 357.52911 + 35999.05029*T - 0.0001537*T*T;
+  var Mrad = rad(M);
+  var C = (1.914602 - 0.004817*T - 0.000014*T*T)*Math.sin(Mrad)
+         + (0.019993 - 0.000101*T)*Math.sin(2*Mrad)
+         + 0.000289*Math.sin(3*Mrad);
+  var trueLong = L0 + C;
+  var omega = 125.04 - 1934.136*T;
+  var lambda = trueLong - 0.00569 - 0.00478*Math.sin(rad(omega));
+  return norm360(lambda);
+}
+
+var MOON_TERMS = [
+[0,0,1,0,6288774],[2,0,-1,0,1274027],[2,0,0,0,658314],[0,0,2,0,213618],
+[0,1,0,0,-185116],[0,0,0,2,-114332],[2,0,-2,0,58793],[2,-1,-1,0,57066],
+[2,0,1,0,53322],[2,-1,0,0,45758],[0,1,-1,0,-40923],[1,0,0,0,-34720],
+[0,1,1,0,-30383],[0,0,1,2,-12528],[0,0,1,-2,10980],[4,0,-1,0,10675],
+[0,0,3,0,10034],[4,0,-2,0,8548],[2,1,-1,0,-7888],[2,1,0,0,-6766],
+[1,0,-1,0,-5163],[1,1,0,0,4987],[2,-1,1,0,4036],[2,0,2,0,3994],
+[4,0,0,0,3861],[2,0,-3,0,3665]
+];
+
+function moonLongitude(jd){
+  var T = (jd - 2451545.0)/36525;
+  var Lp = 218.3164477 + 481267.88123421*T - 0.0015786*T*T + T*T*T/538841;
+  var D = 297.8501921 + 445267.1114034*T - 0.0018819*T*T;
+  var M = 357.5291092 + 35999.0502909*T - 0.0001536*T*T;
+  var Mp = 134.9633964 + 477198.8675055*T + 0.0087414*T*T;
+  var F = 93.2720950 + 483202.0175233*T - 0.0036539*T*T;
+  var E = 1 - 0.002516*T - 0.0000074*T*T;
+  var sumL = 0;
+  for(var i=0;i<MOON_TERMS.length;i++){
+    var t = MOON_TERMS[i];
+    var arg = t[0]*D + t[1]*M + t[2]*Mp + t[3]*F;
+    var eFactor = Math.abs(t[1])===1 ? E : (Math.abs(t[1])===2 ? E*E : 1);
+    sumL += t[4] * eFactor * Math.sin(rad(arg));
+  }
+  return norm360(Lp + sumL/1000000);
+}
+
+function lahiriAyanamsa(jd){
+  var year = 2000 + (jd - 2451545.0)/365.25;
+  return 22.460148 + (year - 1900) * (50.2388475/3600);
+}
+
+function sunSidereal(jd){ return norm360(sunLongitude(jd) - lahiriAyanamsa(jd)); }
+function moonSidereal(jd){ return norm360(moonLongitude(jd) - lahiriAyanamsa(jd)); }
+
+// ---- \u0938\u0942\u0930\u094d\u092f\u094b\u0926\u092f / \u0938\u0942\u0930\u094d\u092f\u093e\u0938\u094d\u0924 (classic public algorithm) ----
+function getDayOfYear(y,m,d){
+  var days=[31,28,31,30,31,30,31,31,30,31,30,31];
+  var leap = (y%4===0 && (y%100!==0||y%400===0));
+  if(leap) days[1]=29;
+  var n=d;
+  for(var i=0;i<m-1;i++) n+=days[i];
+  return n;
+}
+function sunEventTime(year,month,day,lat,lon,tzOffset,rising){
+  var N = getDayOfYear(year,month,day);
+  var lngHour = lon/15;
+  var t = rising ? N + ((6-lngHour)/24) : N + ((18-lngHour)/24);
+  var M = 0.9856*t - 3.289;
+  var Mrad = rad(M);
+  var L = norm360(M + 1.916*Math.sin(Mrad) + 0.020*Math.sin(2*Mrad) + 282.634);
+  var Lrad = rad(L);
+  var RA = norm360(Math.atan2(0.91764*Math.tan(Lrad),1) * 180/Math.PI);
+  var Lquadrant = Math.floor(L/90)*90;
+  var RAquadrant = Math.floor(RA/90)*90;
+  RA = (RA + (Lquadrant - RAquadrant))/15;
+  var sinDec = 0.39782*Math.sin(Lrad);
+  var cosDec = Math.cos(Math.asin(sinDec));
+  var zenith = 90.833;
+  var cosH = (Math.cos(rad(zenith)) - sinDec*Math.sin(rad(lat))) / (cosDec*Math.cos(rad(lat)));
+  if(cosH>1||cosH<-1) return null;
+  var H = rising ? 360 - Math.acos(cosH)*180/Math.PI : Math.acos(cosH)*180/Math.PI;
+  H = H/15;
+  var T = H + RA - 0.06571*t - 6.622;
+  var UT = ((T - lngHour)%24+24)%24;
+  return ((UT + tzOffset)%24+24)%24;
+}
+
+function hoursToHM(h){
+  if(h===null || isNaN(h)) return "\u2014";
+  var hh = Math.floor(h);
+  var mm = Math.round((h-hh)*60);
+  if(mm===60){mm=0;hh+=1;}
+  hh = ((hh%24)+24)%24;
+  var period = hh<12 ? "AM" : "PM";
+  var hh12 = hh%12; if(hh12===0) hh12=12;
+  return hh12+":"+(mm<10?"0":"")+mm+" "+period;
+}
+
+// ---- \u0938\u0940\u092e\u093e-\u092a\u093e\u0930 \u0916\u094b\u091c (bisection for end-times) ----
+// angleFn(jdUT) => degree value; find next time angle crosses a multiple of segSize
+function nextBoundary(jdStart, angleFn, segSize){
+  var a0 = angleFn(jdStart);
+  var seg0 = Math.floor(a0/segSize);
+  var prevJD = jdStart, prevSeg = seg0;
+  var step = segSize <= 6 ? 0.05 : 0.15; // days
+  for(var i=1;i<=400;i++){
+    var jd = jdStart + i*step;
+    var a = angleFn(jd);
+    var seg = Math.floor(a/segSize);
+    if(seg !== prevSeg){
+      var lo = prevJD, hi = jd;
+      var loSeg = prevSeg;
+      for(var k=0;k<40;k++){
+        var mid = (lo+hi)/2;
+        var segMid = Math.floor(angleFn(mid)/segSize);
+        if(segMid === loSeg) lo = mid; else hi = mid;
+      }
+      return hi;
+    }
+    prevJD = jd; prevSeg = seg;
+  }
+  return null;
+}
+
+function jdToLocalHM(jdUT, tzOffset, refYear, refMonth, refDay){
+  // returns {dayOffset, text} local time string relative to reference date
+  var diffDays = jdUT - julianDay(refYear, refMonth, refDay, 0);
+  var localHour = (diffDays*24) + tzOffset;
+  var dayOffset = Math.floor(localHour/24);
+  var hourOfDay = ((localHour%24)+24)%24;
+  return { dayOffset: dayOffset, text: hoursToHM(hourOfDay) + (dayOffset>0 ? " (+1 \u0926\u093f\u0928)" : "") };
+}
+
+// ================= \u092a\u0902\u091a\u093e\u0902\u0917 \u0924\u0924\u094d\u0935 \u0928\u093e\u092e =================
+var TITHI_NAMES = ["\u092a\u094d\u0930\u0924\u093f\u092a\u0926\u093e","\u0926\u094d\u0935\u093f\u0924\u0940\u092f\u093e","\u0924\u0943\u0924\u0940\u092f\u093e","\u091a\u0924\u0941\u0930\u094d\u0925\u0940","\u092a\u0902\u091a\u092e\u0940","\u0937\u0937\u094d\u0920\u0940","\u0938\u092a\u094d\u0924\u092e\u0940","\u0905\u0937\u094d\u091f\u092e\u0940","\u0928\u0935\u092e\u0940","\u0926\u0936\u092e\u0940","\u090f\u0915\u093e\u0926\u0936\u0940","\u0926\u094d\u0935\u093e\u0926\u0936\u0940","\u0924\u094d\u0930\u092f\u094b\u0926\u0936\u0940","\u091a\u0924\u0941\u0930\u094d\u0926\u0936\u0940","\u092a\u0942\u0930\u094d\u0923\u093f\u092e\u093e"];
+var TITHI_NAMES_K = ["\u092a\u094d\u0930\u0924\u093f\u092a\u0926\u093e","\u0926\u094d\u0935\u093f\u0924\u0940\u092f\u093e","\u0924\u0943\u0924\u0940\u092f\u093e","\u091a\u0924\u0941\u0930\u094d\u0925\u0940","\u092a\u0902\u091a\u092e\u0940","\u0937\u0937\u094d\u0920\u0940","\u0938\u092a\u094d\u0924\u092e\u0940","\u0905\u0937\u094d\u091f\u092e\u0940","\u0928\u0935\u092e\u0940","\u0926\u0936\u092e\u0940","\u090f\u0915\u093e\u0926\u0936\u0940","\u0926\u094d\u0935\u093e\u0926\u0936\u0940","\u0924\u094d\u0930\u092f\u094b\u0926\u0936\u0940","\u091a\u0924\u0941\u0930\u094d\u0926\u0936\u0940","\u0905\u092e\u093e\u0935\u0938\u094d\u092f\u093e"];
+
+var NAKSHATRA_NAMES = ["\u0905\u0936\u094d\u0935\u093f\u0928\u0940","\u092d\u0930\u0923\u0940","\u0915\u0943\u0924\u094d\u0924\u093f\u0915\u093e","\u0930\u094b\u0939\u093f\u0923\u0940","\u092e\u0943\u0917\u0936\u093f\u0930\u093e","\u0906\u0930\u094d\u0926\u094d\u0930\u093e","\u092a\u0941\u0928\u0930\u094d\u0935\u0938\u0941","\u092a\u0941\u0937\u094d\u092f","\u0906\u0936\u094d\u0932\u0947\u0937\u093e","\u092e\u0918\u093e","\u092a\u0942\u0930\u094d\u0935\u093e\u092b\u093e\u0932\u094d\u0917\u0941\u0928\u0940","\u0909\u0924\u094d\u0924\u0930\u093e\u092b\u093e\u0932\u094d\u0917\u0941\u0928\u0940","\u0939\u0938\u094d\u0924","\u091a\u093f\u0924\u094d\u0930\u093e","\u0938\u094d\u0935\u093e\u0924\u0940","\u0935\u093f\u0936\u093e\u0916\u093e","\u0905\u0928\u0941\u0930\u093e\u0927\u093e","\u091c\u094d\u092f\u0947\u0937\u094d\u0920\u093e","\u092e\u0942\u0932","\u092a\u0942\u0930\u094d\u0935\u093e\u0937\u093e\u0922\u093c\u093e","\u0909\u0924\u094d\u0924\u0930\u093e\u0937\u093e\u0922\u093c\u093e","\u0936\u094d\u0930\u0935\u0923","\u0927\u0928\u093f\u0937\u094d\u0920\u093e","\u0936\u0924\u092d\u093f\u0937\u093e","\u092a\u0942\u0930\u094d\u0935\u093e\u092d\u093e\u0926\u094d\u0930\u092a\u0926","\u0909\u0924\u094d\u0924\u0930\u093e\u092d\u093e\u0926\u094d\u0930\u092a\u0926","\u0930\u0947\u0935\u0924\u0940"];
+
+var YOGA_NAMES = ["\u0935\u093f\u0937\u094d\u0915\u0941\u092e\u094d\u092d","\u092a\u094d\u0930\u0940\u0924\u093f","\u0906\u092f\u0941\u0937\u094d\u092e\u093e\u0928","\u0938\u094c\u092d\u093e\u0917\u094d\u092f","\u0936\u094b\u092d\u0928","\u0905\u0924\u093f\u0917\u0923\u094d\u0921","\u0938\u0941\u0915\u0930\u094d\u092e\u093e","\u0927\u0943\u0924\u093f","\u0936\u0942\u0932","\u0917\u0923\u094d\u0921","\u0935\u0943\u0926\u094d\u0927\u093f","\u0927\u094d\u0930\u0941\u0935","\u0935\u094d\u092f\u093e\u0918\u093e\u0924","\u0939\u0930\u094d\u0937\u0923","\u0935\u091c\u094d\u0930","\u0938\u093f\u0926\u094d\u0927\u093f","\u0935\u094d\u092f\u0924\u0940\u092a\u093e\u0924","\u0935\u0930\u0940\u092f\u093e\u0928","\u092a\u0930\u093f\u0918","\u0936\u093f\u0935","\u0938\u093f\u0926\u094d\u0927","\u0938\u093e\u0927\u094d\u092f","\u0936\u0941\u092d","\u0936\u0941\u0915\u094d\u0932","\u092c\u094d\u0930\u0939\u094d\u092e","\u0907\u0928\u094d\u0926\u094d\u0930","\u0935\u0948\u0927\u0943\u0924\u093f"];
+
+var KARANA_MOVABLE = ["\u092c\u0935","\u092c\u093e\u0932\u0935","\u0915\u094c\u0932\u0935","\u0924\u0948\u0924\u093f\u0932","\u0917\u0930","\u0935\u0923\u093f\u091c","\u0935\u093f\u0937\u094d\u091f\u093f"];
+var KARANA_FIXED = { 1:"\u0915\u093f\u0902\u0938\u094d\u0924\u0941\u0918\u094d\u0928", 58:"\u0936\u0915\u0941\u0928\u093f", 59:"\u091a\u0924\u0941\u0937\u094d\u092a\u093e\u0926", 60:"\u0928\u093e\u0917" };
+
+var RASHI_NAMES = ["\u092e\u0947\u0937","\u0935\u0943\u0937\u092d","\u092e\u093f\u0925\u0941\u0928","\u0915\u0930\u094d\u0915","\u0938\u093f\u0902\u0939","\u0915\u0928\u094d\u092f\u093e","\u0924\u0941\u0932\u093e","\u0935\u0943\u0936\u094d\u091a\u093f\u0915","\u0927\u0928\u0941","\u092e\u0915\u0930","\u0915\u0941\u092e\u094d\u092d","\u092e\u0940\u0928"];
+
+var VAAR_NAMES = ["\u0930\u0935\u093f\u0935\u093e\u0930","\u0938\u094b\u092e\u0935\u093e\u0930","\u092e\u0902\u0917\u0932\u0935\u093e\u0930","\u092c\u0941\u0927\u0935\u093e\u0930","\u0917\u0941\u0930\u0941\u0935\u093e\u0930","\u0936\u0941\u0915\u094d\u0930\u0935\u093e\u0930","\u0936\u0928\u093f\u0935\u093e\u0930"];
+
+var CHOGHADIYA_ORDER = ["\u0909\u0926\u094d\u0935\u0947\u0917","\u091a\u0932","\u0932\u093e\u092d","\u0905\u092e\u0943\u0924","\u0915\u093e\u0932","\u0936\u0941\u092d","\u0930\u094b\u0917"];
+var CHOGHADIYA_TAG = { "\u0905\u092e\u0943\u0924":"good","\u0936\u0941\u092d":"good","\u0932\u093e\u092d":"good","\u091a\u0932":"neutral","\u0909\u0926\u094d\u0935\u0947\u0917":"bad","\u0930\u094b\u0917":"bad","\u0915\u093e\u0932":"bad" };
+var DAY_START_IDX = [0,3,6,2,5,1,4];   // \u0930\u0935\u093f,\u0938\u094b\u092e,\u092e\u0902\u0917\u0932,\u092c\u0941\u0927,\u0917\u0941\u0930\u0941,\u0936\u0941\u0915\u094d\u0930,\u0936\u0928\u093f -> index into CHOGHADIYA_ORDER
+var NIGHT_START_IDX = [5,1,4,0,3,6,2];
+
+var RAHU_SEGMENT = [8,2,7,5,6,4,3];      // sunday..saturday (1-indexed of 8 segments)
+var YAMA_SEGMENT = [5,4,3,2,1,7,6];
+var GULIKA_SEGMENT = [7,6,5,4,3,2,1];
+
+// ================= \u092e\u0941\u0916\u094d\u092f \u0917\u0923\u0928\u093e =================
+window.pncCalculate = function(){
+  var dateInput = document.getElementById('pnc-date').value;
+  if(!dateInput){ pncMsg("\u0915\u0943\u092a\u092f\u093e \u0926\u093f\u0928\u093e\u0902\u0915 \u091a\u0941\u0928\u0947\u0902"); return; }
+  var parts = dateInput.split('-');
+  var year = parseInt(parts[0],10), month = parseInt(parts[1],10), day = parseInt(parts[2],10);
+
+  var L = window.pncLoc;
+  if(!L){ pncMsg("\u0915\u0943\u092a\u092f\u093e \u0938\u094d\u0925\u093e\u0928 \u091a\u0941\u0928\u0947\u0902"); document.getElementById('pnc-place').focus(); return; }
+  var lat = L.lat, lon = L.lon, tz = (L.zone ? AVPlaces.tzOf(L.zone, dateInput) : L.tz);
+  var city = { name: L.name };
+  var sunriseH = sunEventTime(year,month,day,lat,lon,tz,true);
+  var sunsetH = sunEventTime(year,month,day,lat,lon,tz,false);
+  if(sunriseH === null || sunsetH === null){
+    pncMsg("\u0907\u0938 \u0938\u094d\u0925\u093e\u0928/\u0926\u093f\u0928\u093e\u0902\u0915 \u0939\u0947\u0924\u0941 \u0938\u0942\u0930\u094d\u092f\u094b\u0926\u092f-\u0938\u0942\u0930\u094d\u092f\u093e\u0938\u094d\u0924 \u0917\u0923\u0928\u093e \u0938\u0902\u092d\u0935 \u0928\u0939\u0940\u0902 (\u0927\u094d\u0930\u0941\u0935\u0940\u092f \u0915\u094d\u0937\u0947\u0924\u094d\u0930)\u0964");
+    return;
+  }
+
+  // \u0938\u0942\u0930\u094d\u092f\u094b\u0926\u092f \u0915\u0947 \u0915\u094d\u0937\u0923 \u0915\u0940 Julian Day (UT)
+  var sunriseUT = sunriseH - tz;
+  var jdSunrise = julianDay(year, month, day, sunriseUT);
+  var jdMidnight = julianDay(year, month, day, -tz); // local midnight in UT terms (reference)
+
+  var sunSid = sunSidereal(jdSunrise);
+  var moonSid = moonSidereal(jdSunrise);
+
+  // ---- \u0924\u093f\u0925\u093f ----
+  var tithiAngle = norm360(moonSid - sunSid);
+  var tithiNum = Math.floor(tithiAngle/12) + 1; // 1-30
+  var paksha, tithiName;
+  if(tithiNum <= 15){ paksha = "\u0936\u0941\u0915\u094d\u0932 \u092a\u0915\u094d\u0937"; tithiName = TITHI_NAMES[tithiNum-1]; }
+  else { paksha = "\u0915\u0943\u0937\u094d\u0923 \u092a\u0915\u094d\u0937"; tithiName = TITHI_NAMES_K[tithiNum-16]; }
+  var tithiEndJD = nextBoundary(jdSunrise, function(jd){ return norm360(moonSidereal(jd)-sunSidereal(jd)); }, 12);
+
+  // ---- \u0928\u0915\u094d\u0937\u0924\u094d\u0930 ----
+  var nakStep = 360/27;
+  var nakNum = Math.floor(moonSid/nakStep);
+  var nakName = NAKSHATRA_NAMES[nakNum];
+  var pada = Math.floor((moonSid % nakStep)/(nakStep/4)) + 1;
+  var nakEndJD = nextBoundary(jdSunrise, function(jd){ return moonSidereal(jd); }, nakStep);
+
+  // ---- \u092f\u094b\u0917 ----
+  var yogaStep = 360/27;
+  var yogaAngle = norm360(sunSid + moonSid);
+  var yogaNum = Math.floor(yogaAngle/yogaStep);
+  var yogaName = YOGA_NAMES[yogaNum];
+  var yogaEndJD = nextBoundary(jdSunrise, function(jd){ return norm360(sunSidereal(jd)+moonSidereal(jd)); }, yogaStep);
+
+  // ---- \u0915\u0930\u0923 ----
+  var karanaNum = Math.floor(tithiAngle/6) + 1; // 1-60
+  var karanaName;
+  if(KARANA_FIXED[karanaNum]) karanaName = KARANA_FIXED[karanaNum];
+  else karanaName = KARANA_MOVABLE[(karanaNum-2) % 7];
+  var karanaEndJD = nextBoundary(jdSunrise, function(jd){ return norm360(moonSidereal(jd)-sunSidereal(jd)); }, 6);
+
+  // ---- \u0930\u093e\u0936\u093f ----
+  var sunRashi = RASHI_NAMES[Math.floor(sunSid/30)];
+  var moonRashi = RASHI_NAMES[Math.floor(moonSid/30)];
+
+  // ---- \u0935\u093e\u0930 ----
+  var jsDate = new Date(year, month-1, day);
+  var vaarIdx = jsDate.getDay();
+  var vaarName = VAAR_NAMES[vaarIdx];
+
+  // ================= \u0930\u093e\u0939\u0941 \u0915\u093e\u0932, \u092f\u092e\u0917\u0923\u094d\u0921, \u0917\u0941\u0932\u093f\u0915 =================
+  var dayLen = sunsetH - sunriseH;
+  var segLen = dayLen/8;
+  function segTime(segNum){
+    var start = sunriseH + (segNum-1)*segLen;
+    var end = start + segLen;
+    return hoursToHM(start) + " \u2013 " + hoursToHM(end);
+  }
+  var rahuTxt = segTime(RAHU_SEGMENT[vaarIdx]);
+  var yamaTxt = segTime(YAMA_SEGMENT[vaarIdx]);
+  var gulikaTxt = segTime(GULIKA_SEGMENT[vaarIdx]);
+
+  // ---- \u0905\u092d\u093f\u091c\u093f\u0924 \u092e\u0941\u0939\u0942\u0930\u094d\u0924 ----
+  var noon = (sunriseH + sunsetH)/2;
+  var muhurtaLen = dayLen/15;
+  var abhijitStartT = noon - muhurtaLen/2;
+  var abhijitEndT = noon + muhurtaLen/2;
+  var abhijitTxt = hoursToHM(abhijitStartT) + " \u2013 " + hoursToHM(abhijitEndT);
+
+  // ================= \u091a\u094c\u0918\u0921\u093c\u093f\u092f\u093e =================
+  function buildChoghadiya(startH, endH, startIdx, containerId){
+    var len = (endH - startH)/8;
+    var container = document.getElementById(containerId);
+    container.innerHTML = "";
+    for(var i=0;i<8;i++){
+      var name = CHOGHADIYA_ORDER[(startIdx + i) % 7];
+      var tag = CHOGHADIYA_TAG[name];
+      var st = startH + i*len;
+      var en = st + len;
+      var div = document.createElement('div');
+      div.className = 'pnc-chog-slot pnc-chog-' + tag;
+      div.innerHTML = '<div class="nm">'+name+'</div><div class="tm">'+hoursToHM(st)+'</div>';
+      container.appendChild(div);
+    }
+  }
+  buildChoghadiya(sunriseH, sunsetH, DAY_START_IDX[vaarIdx], 'pnc-chog-day');
+  buildChoghadiya(sunsetH, sunsetH + (24-dayLen), NIGHT_START_IDX[vaarIdx], 'pnc-chog-night');
+
+  // ================= \u092a\u0930\u093f\u0923\u093e\u092e \u092a\u094d\u0930\u0926\u0930\u094d\u0936\u0928 =================
+  var placeLabel = (L.gps) ? ("\u0905\u0915\u094d\u0937\u093e\u0902\u0936 "+lat.toFixed(2)+", \u0926\u0947\u0936\u093e\u0902\u0924\u0930 "+lon.toFixed(2)) : city.name;
+  document.getElementById('pnc-r-date').textContent = day+"/"+month+"/"+year+" \u2014 "+vaarName;
+  document.getElementById('pnc-r-place').textContent = placeLabel;
+
+  document.getElementById('pnc-r-sunrise').textContent = hoursToHM(sunriseH);
+  document.getElementById('pnc-r-sunset').textContent = hoursToHM(sunsetH);
+
+  document.getElementById('pnc-r-tithi').textContent = tithiName;
+  document.getElementById('pnc-r-paksha').textContent = paksha;
+  document.getElementById('pnc-r-tithi-time').textContent = tithiEndJD ? ("\u0938\u092e\u093e\u092a\u094d\u0924\u093f: " + jdToLocalHM(tithiEndJD, tz, year, month, day).text) : "";
+
+  document.getElementById('pnc-r-nakshatra').textContent = nakName;
+  document.getElementById('pnc-r-pada').textContent = "\u091a\u0930\u0923 " + pada;
+  document.getElementById('pnc-r-nakshatra-time').textContent = nakEndJD ? ("\u0938\u092e\u093e\u092a\u094d\u0924\u093f: " + jdToLocalHM(nakEndJD, tz, year, month, day).text) : "";
+
+  document.getElementById('pnc-r-yoga').textContent = yogaName;
+  document.getElementById('pnc-r-yoga-time').textContent = yogaEndJD ? ("\u0938\u092e\u093e\u092a\u094d\u0924\u093f: " + jdToLocalHM(yogaEndJD, tz, year, month, day).text) : "";
+
+  document.getElementById('pnc-r-karana').textContent = karanaName;
+  document.getElementById('pnc-r-karana-time').textContent = karanaEndJD ? ("\u0938\u092e\u093e\u092a\u094d\u0924\u093f: " + jdToLocalHM(karanaEndJD, tz, year, month, day).text) : "";
+
+  document.getElementById('pnc-r-vaar').textContent = vaarName;
+  document.getElementById('pnc-r-sunsign').textContent = sunRashi;
+  document.getElementById('pnc-r-moonsign').textContent = moonRashi;
+
+  document.getElementById('pnc-r-rahu').textContent = rahuTxt;
+  document.getElementById('pnc-r-yama').textContent = yamaTxt;
+  document.getElementById('pnc-r-gulika').textContent = gulikaTxt;
+  document.getElementById('pnc-r-abhijit').textContent = abhijitTxt;
+
+  document.getElementById('pnc-results').classList.add('show');
+  pncMsg('');
+  window.pncLast = { date: day+"/"+month+"/"+year, vaar: vaarName, place: placeLabel, sunrise: hoursToHM(sunriseH), sunset: hoursToHM(sunsetH), tithi: paksha+' '+tithiName, nak: nakName, yoga: yogaName, karana: karanaName, rahu: rahuTxt, abhijit: abhijitTxt, moon: moonRashi };
+  // आज है तो अभी चल रही चौघड़िया चिह्नित करें
+  var now = new Date(), iso = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  if (iso === dateInput) {
+    var nh = now.getHours() + now.getMinutes()/60, slots = [], lenD = (sunsetH - sunriseH)/8, lenN = (24 - (sunsetH - sunriseH))/8;
+    document.querySelectorAll('#pnc-chog-day .pnc-chog-slot').forEach(function(el,i){ var st=sunriseH+i*lenD; if(nh>=st && nh<st+lenD) el.classList.add('pnc-now'); });
+    document.querySelectorAll('#pnc-chog-night .pnc-chog-slot').forEach(function(el,i){ var st=sunsetH+i*lenN, h2=nh<sunriseH?nh+24:nh; if(h2>=st && h2<st+lenN) el.classList.add('pnc-now'); });
+  }
+};
+
+// ================= \u092a\u094d\u0930\u093e\u0930\u0902\u092d\u093f\u0915 \u0938\u0947\u091f\u0905\u092a =================
+function iso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+window.pncMsg = function(t){ var m=document.getElementById('pnc-msg'); m.textContent=t||''; m.style.display=t?'block':'none'; };
+window.pncShift = function(n){ var el=document.getElementById('pnc-date'); var d=n===0?new Date():new Date(el.value+'T12:00:00'); if(n) d.setDate(d.getDate()+n); el.value=iso(d); pncCalculate(); };
+window.pncSetLoc = function(L){ window.pncLoc = L; AVPlaces.save(L); document.getElementById('pnc-place').value = L.name + (L.st ? ', ' + L.st.split(',').pop().trim() : ''); document.getElementById('pnc-loc-note').textContent = '✓ ' + Math.abs(L.lat).toFixed(2) + '°' + (L.lat>=0?'N':'S') + ', ' + Math.abs(L.lon).toFixed(2) + '°' + (L.lon>=0?'E':'W') + ' — यह स्थान याद रखा गया है'; pncCalculate(); };
+window.pncGps = function(){ pncMsg('📍 स्थान ढूंढ रहे हैं…'); AVPlaces.gps().then(pncSetLoc).catch(function(e){ pncMsg(e.message + ' — शहर का नाम लिखकर चुनें'); }); };
+window.pncShare = function(){ var p=window.pncLast; if(!p) return; var t='🕉️ *पंचांग — '+p.date+' ('+p.vaar+')*\n📍 '+p.place+'\n🌅 सूर्योदय: '+p.sunrise+'  🌇 सूर्यास्त: '+p.sunset+'\n🌙 तिथि: '+p.tithi+'\n✨ नक्षत्र: '+p.nak+'\n☯️ योग: '+p.yoga+' • करण: '+p.karana+'\n🌕 चंद्र राशि: '+p.moon+'\n⚠️ राहु काल: '+p.rahu+'\n✅ अभिजित मुहूर्त: '+p.abhijit+'\n\n— Astro Vikass • ☎ 7069492135'; window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); };
+document.getElementById('pnc-date').value = iso(new Date());
+document.getElementById('pnc-date').addEventListener('change', function(){ if(window.pncLoc) pncCalculate(); });
+AVPlaces.mount(document.getElementById('pnc-place'), pncSetLoc);
+var saved = AVPlaces.load();
+if (saved) pncSetLoc(saved); else { document.getElementById('pnc-loc-note').textContent = 'पहली बार: अपना शहर चुनें या 📍 दबाएं — अगली बार अपने आप खुलेगा'; }
+
+})();
+</script>
+</body>
+</html>

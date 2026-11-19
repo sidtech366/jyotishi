@@ -1,13 +1,50 @@
 {
-  "_help": "फ्री टूल्स की सूची। हर टूल tools/ फ़ोल्डर में एक HTML फ़ाइल है। order = होमपेज पर क्रम (main site के कार्ड्स का SortOrder 10, 20, 30… होता है, उसी के बीच कोई भी नंबर दें)। active: false = कार्ड छिपाएं।",
+  "_help": "फ्री टूल्स की सूची। हर टूल tools/ फ़ोल्डर में एक HTML फ़ाइल है। order = होमपेज पर क्रम। replace = main site के उसी नाम वाले कार्ड की जगह यह कार्ड दिखेगा (क्रम भी उसी का लेगा)। active: false = कार्ड छिपाएं।",
   "cards": [
+    {
+      "id": "panchang",
+      "title": "पंचांग एवं चौघड़िया",
+      "icon": "📅",
+      "desc": "तिथि, नक्षत्र, मुहूर्त, चौघड़िया",
+      "path": "tools/panchang.html",
+      "order": 50,
+      "replace": "पंचांग एवं चौघड़िया"
+    },
+    {
+      "id": "shivvas",
+      "title": "शिव और अग्निवास देखें",
+      "icon": "🔱",
+      "desc": "आज का शिव वास व अग्नि वास",
+      "path": "tools/shivvas.html",
+      "order": 60,
+      "replace": "शिव और अग्निवास देखें"
+    },
+    {
+      "id": "dhyan",
+      "title": "सर्वदेव ध्यानमन्त्र",
+      "icon": "🙏",
+      "desc": "देवताओं के ध्यान मंत्र",
+      "path": "tools/dhyan.html",
+      "order": 90,
+      "replace": "सर्वदेव ध्यानमन्त्र"
+    },
+    {
+      "id": "jaap",
+      "title": "जाप गिनती",
+      "icon": "📿",
+      "desc": "पंडित जप लेखा रजिस्टर",
+      "path": "tools/jaap.html",
+      "order": 110,
+      "replace": "जाप गिनती"
+    },
     {
       "id": "prem",
       "title": "प्रेम %",
       "icon": "💞",
       "desc": "दो नामों का प्रेम मिलान",
       "path": "tools/prem.html",
-      "order": 125
+      "order": 120,
+      "replace": "प्रेम प्रतिशतता"
     }
   ]
 }

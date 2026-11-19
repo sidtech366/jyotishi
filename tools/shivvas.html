@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>शिव वास एवं अग्नि वास | Astro Vikass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+#sav-root {
+  --sav-bg: #1a0a0f;
+  --sav-bg2: #240d13;
+  --sav-panel: #2a1015;
+  --sav-crimson: #7a1128;
+  --sav-crimson-br: #9e1b34;
+  --sav-gold: #d4af37;
+  --sav-gold-soft: #e8c766;
+  --sav-cream: #f3e6c8;
+  --sav-muted: #b89a7a;
+  --sav-good: #2f7d4f;
+  --sav-good-bg: #12291d;
+  --sav-bad: #a63a3a;
+  --sav-bad-bg: #2c1414;
+  --sav-warn: #b8860b;
+  --sav-warn-bg: #2a2011;
+  font-family: 'Tiro Devanagari Hindi', 'Noto Sans Devanagari', serif;
+  max-width: 720px;
+  margin: 0 auto;
+  color: var(--sav-cream);
+  background: radial-gradient(ellipse at top, var(--sav-bg2) 0%, var(--sav-bg) 65%);
+  border: 1px solid #4a2530;
+  border-radius: 14px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(0,0,0,0.5), inset 0 0 60px rgba(122,17,40,0.08);
+}
+#sav-root * { box-sizing: border-box; }
+
+.sav-head {
+  position: relative;
+  padding: 28px 24px 22px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% -20%, rgba(212,175,55,0.18), transparent 60%),
+    linear-gradient(180deg, #350c15, #1a0a0f);
+  border-bottom: 1px solid #4a2530;
+}
+.sav-om {
+  font-size: 26px;
+  color: var(--sav-gold);
+  opacity: 0.85;
+  letter-spacing: 6px;
+  margin-bottom: 6px;
+}
+.sav-title {
+  font-size: 26px;
+  color: var(--sav-gold-soft);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 0 0 18px rgba(212,175,55,0.35);
+  margin: 0;
+}
+.sav-sub {
+  font-size: 13.5px;
+  color: var(--sav-muted);
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+}
+.sav-brand {
+  font-size: 11px;
+  color: var(--sav-muted);
+  margin-top: 10px;
+  opacity: 0.75;
+  letter-spacing: 1px;
+}
+
+.sav-body { padding: 24px 22px 26px; }
+
+.sav-menu { display: block; }
+.sav-menu.hide { display: none; }
+.sav-menu-row { display: flex; flex-direction: column; gap: 14px; }
+.sav-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 18px;
+  border: 1px solid #5a2a35;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2a1015, #200a10);
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.sav-menu-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--sav-gold);
+  box-shadow: 0 6px 20px rgba(212,175,55,0.18);
+}
+.sav-menu-icon { font-size: 30px; line-height: 1; }
+.sav-menu-text { text-align: left; }
+.sav-menu-title { font-size: 18px; font-weight: 700; color: var(--sav-gold-soft); }
+.sav-menu-desc { font-size: 12.5px; color: var(--sav-muted); margin-top: 3px; }
+
+.sav-panel { display: none; }
+.sav-panel.active { display: block; animation: sav-fade 0.35s ease; }
+@keyframes sav-fade { from { opacity: 0; transform: translateY(6px);} to {opacity:1; transform: translateY(0);} }
+
+.sav-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  color: var(--sav-muted);
+  cursor: pointer;
+  margin-bottom: 16px;
+  user-select: none;
+}
+.sav-back:hover { color: var(--sav-gold-soft); }
+
+.sav-field { margin-bottom: 16px; }
+.sav-label {
+  display: block;
+  font-size: 14.5px;
+  color: var(--sav-gold-soft);
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+
+.sav-pillrow {
+  display: flex;
+  gap: 10px;
+}
+.sav-pill {
+  flex: 1;
+  padding: 10px 6px;
+  text-align: center;
+  border: 1px solid #5a2a35;
+  border-radius: 8px;
+  background: #260d14;
+  color: var(--sav-cream);
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+.sav-pill.selected {
+  background: linear-gradient(135deg, var(--sav-crimson), var(--sav-crimson-br));
+  border-color: var(--sav-gold);
+  color: var(--sav-gold-soft);
+  box-shadow: 0 0 14px rgba(212,175,55,0.25);
+}
+
+select.sav-select {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 8px;
+  border: 1px solid #5a2a35;
+  background: #260d14 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>") no-repeat right 12px center;
+  color: var(--sav-cream);
+  font-size: 15.5px;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+}
+select.sav-select:focus { outline: 2px solid var(--sav-gold); outline-offset: 1px; }
+
+.sav-btn {
+  width: 100%;
+  padding: 13px;
+  margin-top: 6px;
+  border: none;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--sav-crimson-br), var(--sav-crimson));
+  color: var(--sav-gold-soft);
+  font-size: 16.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(122,17,40,0.5);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.sav-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(212,175,55,0.25); }
+.sav-btn:active { transform: translateY(0); }
+
+.sav-result {
+  margin-top: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #5a2a35;
+  display: none;
+}
+.sav-result.show { display: block; animation: sav-fade 0.4s ease; }
+.sav-result-head {
+  padding: 14px 16px 10px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(212,175,55,0.1), transparent);
+}
+.sav-result-place {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--sav-gold-soft);
+}
+.sav-result-tag {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.sav-tag-good { background: var(--sav-good-bg); color: #6fd696; border: 1px solid var(--sav-good); }
+.sav-tag-bad { background: var(--sav-bad-bg); color: #ef8b8b; border: 1px solid var(--sav-bad); }
+.sav-tag-warn { background: var(--sav-warn-bg); color: #e8c766; border: 1px solid var(--sav-warn); }
+
+.sav-result-body {
+  padding: 14px 18px 18px;
+  background: #200a10;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--sav-cream);
+}
+.sav-result-body strong { color: var(--sav-gold-soft); }
+
+.sav-foot {
+  text-align: center;
+  padding: 14px;
+  font-size: 11.5px;
+  color: var(--sav-muted);
+  border-top: 1px solid #4a2530;
+  background: #1a0a0f;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 480px) {
+  .sav-title { font-size: 21px; }
+  .sav-pill { font-size: 13.5px; padding: 9px 4px; }
+  .sav-result-place { font-size: 19px; }
+}
+
+html,body{margin:0;background:#1a0a0f;min-height:100%}
+#sav-root{border-radius:0;border:0;min-height:100vh;box-shadow:none}
+.sav-today{margin-bottom:18px;padding:14px;border-radius:12px;border:1px solid #d4af37;background:linear-gradient(180deg,rgba(212,175,55,.1),transparent)}
+.sav-today-h{font-size:15px;color:#e8c766;font-weight:700;margin-bottom:10px;text-align:center}
+.sav-today-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sav-today-box{padding:11px 10px;border-radius:10px;border:1px solid #5a2a35;background:#200a10;text-align:center}
+.sav-today-box small{display:block;font-size:12.5px;color:#b89a7a}
+.sav-today-box b{display:block;font-size:15.5px;color:#f3e6c8;margin:4px 0 2px}
+.sav-today-box span{font-size:12px}
+.sav-today-box.g{border-color:#2f7d4f;background:#12291d}.sav-today-box.g span{color:#6fd696}
+.sav-today-box.b{border-color:#a63a3a;background:#2c1414}.sav-today-box.b span{color:#ef8b8b}
+.sav-today-note{font-size:11.5px;color:#b89a7a;text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+<div id="sav-root">
+<div class="sav-head">
+  <div class="sav-om">卐 ॐ नमः शिवाय 卐</div>
+  <div class="sav-title">शिव वास एवं अग्नि वास गणक</div>
+  <div class="sav-sub">पूजा, अनुष्ठान व हवन का शुभ मुहूर्त जानें</div>
+  <div class="sav-brand">Astro Vikass Mishra</div>
+</div>
+
+<div class="sav-body">
+
+  <!-- ===================== मुख्य मेनू ===================== -->
+  <div class="sav-today" id="sav-today">
+    <div class="sav-today-h">📅 आज — <span id="sav-today-d">गणना हो रही है…</span></div>
+    <div class="sav-today-row">
+      <div class="sav-today-box" id="sav-today-shiv"><small>🔱 शिव वास</small><b>—</b><span></span></div>
+      <div class="sav-today-box" id="sav-today-agni"><small>🔥 अग्नि वास</small><b>—</b><span></span></div>
+    </div>
+    <div class="sav-today-note" id="sav-today-note"></div>
+  </div>
+  <div class="sav-menu" id="sav-menu">
+    <div class="sav-menu-row">
+      <div class="sav-menu-btn" onclick="savOpenPanel('shiv')">
+        <div class="sav-menu-icon">🔱</div>
+        <div class="sav-menu-text">
+          <div class="sav-menu-title">शिव वास</div>
+          <div class="sav-menu-desc">पार्थिव शिव पूजा व अनुष्ठान हेतु शिव वास जानें</div>
+        </div>
+      </div>
+      <div class="sav-menu-btn" onclick="savOpenPanel('agni')">
+        <div class="sav-menu-icon">🔥</div>
+        <div class="sav-menu-text">
+          <div class="sav-menu-title">अग्नि वास</div>
+          <div class="sav-menu-desc">हवन व यज्ञ हेतु अग्नि वास जानें</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== शिव वास पैनल ===================== -->
+  <div class="sav-panel" id="sav-panel-shiv">
+    <div class="sav-back" onclick="savGoHome()">← मुख्य मेनू</div>
+    <div class="sav-field">
+      <label class="sav-label">पक्ष चुनें</label>
+      <div class="sav-pillrow">
+        <div class="sav-pill selected" id="sav-shiv-paksh-shukla" onclick="savSetPaksh('shiv','shukla')">शुक्ल पक्ष</div>
+        <div class="sav-pill" id="sav-shiv-paksh-krishna" onclick="savSetPaksh('shiv','krishna')">कृष्ण पक्ष</div>
+      </div>
+    </div>
+
+    <div class="sav-field">
+      <label class="sav-label">तिथि चुनें</label>
+      <select class="sav-select" id="sav-shiv-tithi"></select>
+    </div>
+
+    <button class="sav-btn" onclick="savCalcShivVas()">शिव वास ज्ञात करें</button>
+
+    <div class="sav-result" id="sav-shiv-result">
+      <div class="sav-result-head">
+        <div style="font-size:13px;color:var(--sav-muted);">शिव वास है</div>
+        <div class="sav-result-place" id="sav-shiv-place">—</div>
+        <div class="sav-result-tag" id="sav-shiv-tag">—</div>
+      </div>
+      <div class="sav-result-body">
+        <div id="sav-shiv-fal">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== अग्नि वास पैनल ===================== -->
+  <div class="sav-panel" id="sav-panel-agni">
+    <div class="sav-back" onclick="savGoHome()">← मुख्य मेनू</div>
+    <div class="sav-field">
+      <label class="sav-label">पक्ष चुनें</label>
+      <div class="sav-pillrow">
+        <div class="sav-pill selected" id="sav-agni-paksh-shukla" onclick="savSetPaksh('agni','shukla')">शुक्ल पक्ष</div>
+        <div class="sav-pill" id="sav-agni-paksh-krishna" onclick="savSetPaksh('agni','krishna')">कृष्ण पक्ष</div>
+      </div>
+    </div>
+
+    <div class="sav-field">
+      <label class="sav-label">तिथि चुनें</label>
+      <select class="sav-select" id="sav-agni-tithi"></select>
+    </div>
+
+    <div class="sav-field">
+      <label class="sav-label">वार (दिन) चुनें</label>
+      <select class="sav-select" id="sav-agni-day">
+        <option value="1">रविवार</option>
+        <option value="2" selected>सोमवार</option>
+        <option value="3">मंगलवार</option>
+        <option value="4">बुधवार</option>
+        <option value="5">बृहस्पतिवार</option>
+        <option value="6">शुक्रवार</option>
+        <option value="7">शनिवार</option>
+      </select>
+    </div>
+
+    <button class="sav-btn" onclick="savCalcAgniVas()">अग्नि वास ज्ञात करें</button>
+
+    <div class="sav-result" id="sav-agni-result">
+      <div class="sav-result-head">
+        <div style="font-size:13px;color:var(--sav-muted);">अग्नि वास है</div>
+        <div class="sav-result-place" id="sav-agni-place">—</div>
+        <div class="sav-result-tag" id="sav-agni-tag">—</div>
+      </div>
+      <div class="sav-result-body">
+        <div id="sav-agni-fal">—</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="sav-foot">॥ हर हर महादेव ॥ &nbsp;•&nbsp; Astro Vikass • ☎ 7069492135</div>
+
+</div>
+<script src="lib/places.js"></script>
+<script>
+
+(function(){
+
+var TITHI_NAMES = ["\u092a\u094d\u0930\u0924\u093f\u092a\u0926\u093e","\u0926\u094d\u0935\u093f\u0924\u0940\u092f\u093e","\u0924\u0943\u0924\u0940\u092f\u093e","\u091a\u0924\u0941\u0930\u094d\u0925\u0940","\u092a\u0902\u091a\u092e\u0940","\u0937\u0937\u094d\u0920\u0940","\u0938\u092a\u094d\u0924\u092e\u0940","\u0905\u0937\u094d\u091f\u092e\u0940","\u0928\u0935\u092e\u0940","\u0926\u0936\u092e\u0940","\u090f\u0915\u093e\u0926\u0936\u0940","\u0926\u094d\u0935\u093e\u0926\u0936\u0940","\u0924\u094d\u0930\u092f\u094b\u0926\u0936\u0940","\u091a\u0924\u0941\u0930\u094d\u0926\u0936\u0940"];
+
+function buildTithiOptions(selectId, paksh){
+  var sel = document.getElementById(selectId);
+  var prevVal = sel.value;
+  sel.innerHTML = "";
+  for (var i = 0; i < 14; i++){
+    var opt = document.createElement("option");
+    opt.value = (i+1);
+    opt.text = TITHI_NAMES[i];
+    sel.appendChild(opt);
+  }
+  var last = document.createElement("option");
+  last.value = 15;
+  last.text = (paksh === 'shukla') ? "\u092a\u0942\u0930\u094d\u0923\u093f\u092e\u093e" : "\u0905\u092e\u093e\u0935\u0938\u094d\u092f\u093e";
+  sel.appendChild(last);
+  if (prevVal && prevVal >= 1 && prevVal <= 15) sel.value = prevVal;
+}
+
+window.savState = { shiv: {paksh:'shukla'}, agni: {paksh:'shukla'} };
+
+window.savOpenPanel = function(tab){
+  document.getElementById('sav-menu').classList.add('hide');
+  document.getElementById('sav-panel-shiv').classList.toggle('active', tab === 'shiv');
+  document.getElementById('sav-panel-agni').classList.toggle('active', tab === 'agni');
+};
+
+window.savGoHome = function(){
+  document.getElementById('sav-panel-shiv').classList.remove('active');
+  document.getElementById('sav-panel-agni').classList.remove('active');
+  document.getElementById('sav-menu').classList.remove('hide');
+};
+
+window.savSetPaksh = function(which, paksh){
+  savState[which].paksh = paksh;
+  document.getElementById('sav-'+which+'-paksh-shukla').classList.toggle('selected', paksh === 'shukla');
+  document.getElementById('sav-'+which+'-paksh-krishna').classList.toggle('selected', paksh === 'krishna');
+  buildTithiOptions('sav-'+which+'-tithi', paksh);
+  document.getElementById('sav-'+which+'-result').classList.remove('show');
+};
+
+// \u0936\u093f\u0935 \u0935\u093e\u0938 \u092b\u0932 \u0924\u093e\u0932\u093f\u0915\u093e (\u0936\u0947\u0937\u092b\u0932 0-6)
+var SHIV_VAS = {
+  1: { place: "\u0915\u0948\u0932\u093e\u0936 \u092a\u0930\u094d\u0935\u0924 \u092a\u0930", tag: "good", tagLabel: "\u0936\u0941\u092d \u00b7 \u0938\u0941\u0916\u0926\u093e\u092f\u0940", fal: "\u092d\u0917\u0935\u093e\u0928 \u0936\u093f\u0935 \u0915\u0948\u0932\u093e\u0936 \u092a\u0930 \u0935\u093f\u0930\u093e\u091c\u092e\u093e\u0928 \u0939\u0948\u0902\u0964 \u092f\u0939 \u0938\u092e\u092f \u092a\u0942\u091c\u093e-\u0905\u0930\u094d\u091a\u0928\u093e \u0935 \u0905\u0928\u0941\u0937\u094d\u0920\u093e\u0928 \u0915\u0947 \u0932\u093f\u090f <strong>\u0905\u0924\u094d\u092f\u0902\u0924 \u0938\u0941\u0916\u0926\u093e\u092f\u0940</strong> \u092e\u093e\u0928\u093e \u091c\u093e\u0924\u093e \u0939\u0948\u0964" },
+  2: { place: "\u092e\u093e\u0924\u093e \u0917\u094c\u0930\u0940 \u0915\u0947 \u092a\u093e\u0938 (\u0917\u094c\u0930\u0940 \u092a\u093e\u0930\u094d\u0936\u094d\u0935)", tag: "good", tagLabel: "\u0936\u0941\u092d \u00b7 \u0938\u0941\u0916-\u0938\u092e\u094d\u092a\u0926\u093e", fal: "\u0936\u093f\u0935 \u092e\u093e\u0924\u093e \u092a\u093e\u0930\u094d\u0935\u0924\u0940 \u0915\u0947 \u0938\u092e\u0940\u092a \u0939\u0948\u0902\u0964 \u0907\u0938 \u0938\u092e\u092f \u0915\u0940 \u0917\u0908 \u092a\u0942\u091c\u093e \u0938\u0947 <strong>\u0938\u0941\u0916 \u0914\u0930 \u0938\u092e\u094d\u092a\u0926\u093e</strong> \u0915\u0940 \u092a\u094d\u0930\u093e\u092a\u094d\u0924\u093f \u0939\u094b\u0924\u0940 \u0939\u0948\u0964" },
+  3: { place: "\u0935\u0943\u0937\u092d (\u0928\u0902\u0926\u0940) \u092a\u0930 \u0906\u0930\u0942\u0922\u093c", tag: "good", tagLabel: "\u0936\u0941\u092d \u00b7 \u0905\u092d\u0940\u0937\u094d\u091f \u0938\u093f\u0926\u094d\u0927\u093f", fal: "\u092d\u0917\u0935\u093e\u0928 \u0936\u093f\u0935 \u0928\u0902\u0926\u0940 \u092a\u0930 \u0938\u0935\u093e\u0930 \u0939\u0948\u0902\u0964 \u092f\u0939 \u0938\u092e\u092f <strong>\u0905\u092d\u0940\u0937\u094d\u091f \u0915\u093e\u0930\u094d\u092f\u094b\u0902 \u0915\u0940 \u0938\u093f\u0926\u094d\u0927\u093f</strong> \u0915\u0947 \u0932\u093f\u090f \u0909\u0924\u094d\u0924\u092e \u0939\u0948\u0964" },
+  4: { place: "\u0938\u092d\u093e \u092e\u0947\u0902", tag: "bad", tagLabel: "\u0905\u0936\u0941\u092d \u00b7 \u0938\u0902\u0924\u093e\u092a", fal: "\u0936\u093f\u0935 \u0938\u092d\u093e \u092e\u0947\u0902 \u0935\u093f\u0930\u093e\u091c\u092e\u093e\u0928 \u0939\u0948\u0902\u0964 \u0907\u0938 \u0938\u092e\u092f \u0915\u0940 \u0917\u0908 \u092a\u0942\u091c\u093e <strong>\u0938\u0902\u0924\u093e\u092a \u0935 \u0915\u0937\u094d\u091f</strong> \u0909\u0924\u094d\u092a\u0928\u094d\u0928 \u0915\u0930 \u0938\u0915\u0924\u0940 \u0939\u0948 \u2014 \u092a\u093e\u0930\u094d\u0925\u093f\u0935 \u092a\u0942\u091c\u093e \u0939\u0947\u0924\u0941 \u091f\u093e\u0932\u0947\u0902\u0964" },
+  5: { place: "\u092d\u094b\u091c\u0928 \u092e\u0947\u0902", tag: "bad", tagLabel: "\u0905\u0936\u0941\u092d \u00b7 \u092a\u0940\u0921\u093c\u093e\u0926\u093e\u092f\u0940", fal: "\u0936\u093f\u0935 \u092d\u094b\u091c\u0928\u0930\u0924 \u0939\u0948\u0902\u0964 \u092f\u0939 \u0938\u092e\u092f <strong>\u092a\u0940\u0921\u093c\u093e\u0926\u093e\u092f\u0940</strong> \u092e\u093e\u0928\u093e \u0917\u092f\u093e \u0939\u0948, \u0928\u092f\u093e \u0938\u0902\u0915\u0932\u094d\u092a\u093f\u0924 \u0905\u0928\u0941\u0937\u094d\u0920\u093e\u0928 \u0928 \u0915\u0930\u0947\u0902\u0964" },
+  6: { place: "\u0915\u094d\u0930\u0940\u0921\u093c\u093e (\u0916\u0947\u0932) \u092e\u0947\u0902", tag: "bad", tagLabel: "\u0905\u0936\u0941\u092d \u00b7 \u0915\u0937\u094d\u091f\u0915\u093e\u0930\u0940", fal: "\u0936\u093f\u0935 \u0915\u094d\u0930\u0940\u0921\u093c\u093e\u0930\u0924 \u0939\u0948\u0902\u0964 \u0907\u0938 \u0938\u092e\u092f \u0915\u0940 \u092a\u0942\u091c\u093e \u0938\u0947 <strong>\u0915\u0937\u094d\u091f \u0915\u0940 \u0938\u0902\u092d\u093e\u0935\u0928\u093e</strong> \u0930\u0939\u0924\u0940 \u0939\u0948\u0964" },
+  0: { place: "\u0936\u094d\u092e\u0936\u093e\u0928 \u092e\u0947\u0902", tag: "bad", tagLabel: "\u0905\u0924\u093f \u0905\u0936\u0941\u092d \u00b7 \u092e\u0943\u0924\u094d\u092f\u0941\u0915\u093e\u0930\u0915", fal: "\u0936\u093f\u0935 \u0936\u094d\u092e\u0936\u093e\u0928 \u092e\u0947\u0902 \u0935\u093e\u0938 \u0915\u0930 \u0930\u0939\u0947 \u0939\u0948\u0902\u0964 \u092f\u0939 \u0938\u092e\u092f \u0938\u093e\u092e\u093e\u0928\u094d\u092f \u092a\u0942\u091c\u093e \u0939\u0947\u0924\u0941 <strong>\u0935\u0930\u094d\u091c\u093f\u0924</strong> \u0939\u0948, \u0915\u0947\u0935\u0932 \u0924\u093e\u0902\u0924\u094d\u0930\u093f\u0915/\u0935\u093f\u0936\u0947\u0937 \u0938\u093e\u0927\u0928\u093e \u092e\u0947\u0902 \u092a\u094d\u0930\u092f\u094b\u0917 \u0939\u094b\u0924\u093e \u0939\u0948\u0964" }
+};
+
+window.savCalcShivVas = function(){
+  var paksh = savState.shiv.paksh;
+  var tithiInput = parseInt(document.getElementById('sav-shiv-tithi').value, 10);
+  var tithi = (paksh === 'shukla') ? tithiInput : (15 + tithiInput);
+  var product = tithi * 2 + 5;
+  var rem = product % 7;
+  var res = SHIV_VAS[rem];
+
+  document.getElementById('sav-shiv-place').textContent = res.place;
+  var tagEl = document.getElementById('sav-shiv-tag');
+  tagEl.textContent = res.tagLabel;
+  tagEl.className = 'sav-result-tag ' + (res.tag === 'good' ? 'sav-tag-good' : 'sav-tag-bad');
+  document.getElementById('sav-shiv-fal').innerHTML = res.fal;
+  document.getElementById('sav-shiv-result').classList.add('show');
+};
+
+// \u0905\u0917\u094d\u0928\u093f \u0935\u093e\u0938 \u092b\u0932 \u0924\u093e\u0932\u093f\u0915\u093e (\u0936\u0947\u0937\u092b\u0932 0-3)
+var AGNI_VAS = {
+  0: { place: "\u092a\u0943\u0925\u094d\u0935\u0940 \u092a\u0930", tag: "good", tagLabel: "\u0936\u0941\u092d \u00b7 \u0938\u0941\u0916\u0915\u093e\u0930\u0940", fal: "\u0905\u0917\u094d\u0928\u093f \u0915\u093e \u0935\u093e\u0938 \u092a\u0943\u0925\u094d\u0935\u0940 \u092a\u0930 \u0939\u0948\u0964 \u092f\u0939 \u0938\u094d\u0925\u093f\u0924\u093f <strong>\u0938\u0941\u0916\u0915\u093e\u0930\u0940</strong> \u0939\u0948 \u2014 \u0939\u0935\u0928 \u0935 \u0905\u0928\u0941\u0937\u094d\u0920\u093e\u0928 \u0915\u0930\u0928\u093e \u0936\u094d\u0930\u0947\u0937\u094d\u0920 \u0930\u0939\u0947\u0917\u093e\u0964" },
+  1: { place: "\u0938\u094d\u0935\u0930\u094d\u0917 \u092e\u0947\u0902", tag: "bad", tagLabel: "\u0905\u0936\u0941\u092d \u00b7 \u092a\u094d\u0930\u093e\u0923\u0928\u093e\u0936\u0915", fal: "\u0905\u0917\u094d\u0928\u093f \u0915\u093e \u0935\u093e\u0938 \u0938\u094d\u0935\u0930\u094d\u0917 \u092e\u0947\u0902 \u0939\u0948\u0964 \u092f\u0939 \u0938\u094d\u0925\u093f\u0924\u093f <strong>\u0905\u0936\u0941\u092d \u0935 \u092a\u094d\u0930\u093e\u0923\u0928\u093e\u0936\u0915</strong> \u092e\u093e\u0928\u0940 \u0917\u0908 \u0939\u0948 \u2014 \u0939\u0935\u0928 \u0907\u0938 \u0938\u092e\u092f \u091f\u093e\u0932\u0947\u0902\u0964" },
+  2: { place: "\u092a\u093e\u0924\u093e\u0932 \u092e\u0947\u0902", tag: "bad", tagLabel: "\u0905\u0936\u0941\u092d \u00b7 \u0927\u0928\u0928\u093e\u0936\u0915", fal: "\u0905\u0917\u094d\u0928\u093f \u0915\u093e \u0935\u093e\u0938 \u092a\u093e\u0924\u093e\u0932 \u092e\u0947\u0902 \u0939\u0948\u0964 \u0907\u0938 \u0938\u094d\u0925\u093f\u0924\u093f \u092e\u0947\u0902 <strong>\u0927\u0928 \u0939\u093e\u0928\u093f</strong> \u0915\u0940 \u0938\u0902\u092d\u093e\u0935\u0928\u093e \u0930\u0939\u0924\u0940 \u0939\u0948 \u2014 \u0939\u0935\u0928 \u0907\u0938 \u0938\u092e\u092f \u091f\u093e\u0932\u0947\u0902\u0964" },
+  3: { place: "\u092a\u0943\u0925\u094d\u0935\u0940 \u092a\u0930", tag: "good", tagLabel: "\u0936\u0941\u092d \u00b7 \u0938\u0941\u0916\u0915\u093e\u0930\u0940", fal: "\u0905\u0917\u094d\u0928\u093f \u0915\u093e \u0935\u093e\u0938 \u092a\u0943\u0925\u094d\u0935\u0940 \u092a\u0930 \u0939\u0948\u0964 \u092f\u0939 \u0938\u094d\u0925\u093f\u0924\u093f <strong>\u0938\u0941\u0916\u0915\u093e\u0930\u0940</strong> \u0939\u0948 \u2014 \u0939\u0935\u0928 \u0935 \u0905\u0928\u0941\u0937\u094d\u0920\u093e\u0928 \u0915\u0930\u0928\u093e \u0936\u094d\u0930\u0947\u0937\u094d\u0920 \u0930\u0939\u0947\u0917\u093e\u0964" }
+};
+
+window.savCalcAgniVas = function(){
+  var paksh = savState.agni.paksh;
+  var tithiInput = parseInt(document.getElementById('sav-agni-tithi').value, 10);
+  var dayVal = parseInt(document.getElementById('sav-agni-day').value, 10);
+
+  // \u0924\u093f\u0925\u093f \u092e\u093e\u0928: \u0936\u0941\u0915\u094d\u0932 \u092a\u0915\u094d\u0937 \u092e\u0947\u0902 \u0938\u0940\u0927\u093e \u092e\u093e\u0928, \u0915\u0943\u0937\u094d\u0923 \u092a\u0915\u094d\u0937 \u092e\u0947\u0902 15 + \u0924\u093f\u0925\u093f
+  var tithiMaan = (paksh === 'shukla') ? tithiInput : (15 + tithiInput);
+
+  var sum = tithiMaan + 1 + dayVal;
+  var rem = sum % 4;
+  var res = AGNI_VAS[rem];
+
+  document.getElementById('sav-agni-place').textContent = res.place;
+  var tagEl = document.getElementById('sav-agni-tag');
+  tagEl.textContent = res.tagLabel;
+  tagEl.className = 'sav-result-tag ' + (res.tag === 'good' ? 'sav-tag-good' : 'sav-tag-bad');
+  document.getElementById('sav-agni-fal').innerHTML = res.fal;
+  document.getElementById('sav-agni-result').classList.add('show');
+};
+
+// \u092a\u094d\u0930\u093e\u0930\u0902\u092d\u093f\u0915 \u0938\u0947\u091f\u0905\u092a
+buildTithiOptions('sav-shiv-tithi', 'shukla');
+buildTithiOptions('sav-agni-tithi', 'shukla');
+
+
+/* ===== आज की तिथि व वार अपने आप (सूर्योदय के समय) ===== */
+function rad(d){ return d*Math.PI/180; }
+function norm360(d){ d = d % 360; if(d<0) d+=360; return d; }
+
+function julianDay(y,m,d,hourUT){
+  if(m<=2){ y-=1; m+=12; }
+  var A = Math.floor(y/100);
+  var B = 2 - A + Math.floor(A/4);
+  return Math.floor(365.25*(y+4716)) + Math.floor(30.6001*(m+1)) + d + hourUT/24 + B - 1524.5;
+}
+
+function sunLongitude(jd){
+  var T = (jd - 2451545.0)/36525;
+  var L0 = 280.46646 + 36000.76983*T + 0.0003032*T*T;
+  var M = 357.52911 + 35999.05029*T - 0.0001537*T*T;
+  var Mrad = rad(M);
+  var C = (1.914602 - 0.004817*T - 0.000014*T*T)*Math.sin(Mrad)
+         + (0.019993 - 0.000101*T)*Math.sin(2*Mrad)
+         + 0.000289*Math.sin(3*Mrad);
+  var trueLong = L0 + C;
+  var omega = 125.04 - 1934.136*T;
+  var lambda = trueLong - 0.00569 - 0.00478*Math.sin(rad(omega));
+  return norm360(lambda);
+}
+
+var MOON_TERMS = [
+[0,0,1,0,6288774],[2,0,-1,0,1274027],[2,0,0,0,658314],[0,0,2,0,213618],
+[0,1,0,0,-185116],[0,0,0,2,-114332],[2,0,-2,0,58793],[2,-1,-1,0,57066],
+[2,0,1,0,53322],[2,-1,0,0,45758],[0,1,-1,0,-40923],[1,0,0,0,-34720],
+[0,1,1,0,-30383],[0,0,1,2,-12528],[0,0,1,-2,10980],[4,0,-1,0,10675],
+[0,0,3,0,10034],[4,0,-2,0,8548],[2,1,-1,0,-7888],[2,1,0,0,-6766],
+[1,0,-1,0,-5163],[1,1,0,0,4987],[2,-1,1,0,4036],[2,0,2,0,3994],
+[4,0,0,0,3861],[2,0,-3,0,3665]
+];
+
+function moonLongitude(jd){
+  var T = (jd - 2451545.0)/36525;
+  var Lp = 218.3164477 + 481267.88123421*T - 0.0015786*T*T + T*T*T/538841;
+  var D = 297.8501921 + 445267.1114034*T - 0.0018819*T*T;
+  var M = 357.5291092 + 35999.0502909*T - 0.0001536*T*T;
+  var Mp = 134.9633964 + 477198.8675055*T + 0.0087414*T*T;
+  var F = 93.2720950 + 483202.0175233*T - 0.0036539*T*T;
+  var E = 1 - 0.002516*T - 0.0000074*T*T;
+  var sumL = 0;
+  for(var i=0;i<MOON_TERMS.length;i++){
+    var t = MOON_TERMS[i];
+    var arg = t[0]*D + t[1]*M + t[2]*Mp + t[3]*F;
+    var eFactor = Math.abs(t[1])===1 ? E : (Math.abs(t[1])===2 ? E*E : 1);
+    sumL += t[4] * eFactor * Math.sin(rad(arg));
+  }
+  return norm360(Lp + sumL/1000000);
+}
+
+function lahiriAyanamsa(jd){
+  var year = 2000 + (jd - 2451545.0)/365.25;
+  return 22.460148 + (year - 1900) * (50.2388475/3600);
+}
+
+function sunSidereal(jd){ return norm360(sunLongitude(jd) - lahiriAyanamsa(jd)); }
+function moonSidereal(jd){ return norm360(moonLongitude(jd) - lahiriAyanamsa(jd)); }
+
+// ---- \u0938\u0942\u0930\u094d\u092f\u094b\u0926\u092f / \u0938\u0942\u0930\u094d\u092f\u093e\u0938\u094d\u0924 (classic public algorithm) ----
+function getDayOfYear(y,m,d){
+  var days=[31,28,31,30,31,30,31,31,30,31,30,31];
+  var leap = (y%4===0 && (y%100!==0||y%400===0));
+  if(leap) days[1]=29;
+  var n=d;
+  for(var i=0;i<m-1;i++) n+=days[i];
+  return n;
+}
+function sunEventTime(year,month,day,lat,lon,tzOffset,rising){
+  var N = getDayOfYear(year,month,day);
+  var lngHour = lon/15;
+  var t = rising ? N + ((6-lngHour)/24) : N + ((18-lngHour)/24);
+  var M = 0.9856*t - 3.289;
+  var Mrad = rad(M);
+  var L = norm360(M + 1.916*Math.sin(Mrad) + 0.020*Math.sin(2*Mrad) + 282.634);
+  var Lrad = rad(L);
+  var RA = norm360(Math.atan2(0.91764*Math.tan(Lrad),1) * 180/Math.PI);
+  var Lquadrant = Math.floor(L/90)*90;
+  var RAquadrant = Math.floor(RA/90)*90;
+  RA = (RA + (Lquadrant - RAquadrant))/15;
+  var sinDec = 0.39782*Math.sin(Lrad);
+  var cosDec = Math.cos(Math.asin(sinDec));
+  var zenith = 90.833;
+  var cosH = (Math.cos(rad(zenith)) - sinDec*Math.sin(rad(lat))) / (cosDec*Math.cos(rad(lat)));
+  if(cosH>1||cosH<-1) return null;
+  var H = rising ? 360 - Math.acos(cosH)*180/Math.PI : Math.acos(cosH)*180/Math.PI;
+  H = H/15;
+  var T = H + RA - 0.06571*t - 6.622;
+  var UT = ((T - lngHour)%24+24)%24;
+  return ((UT + tzOffset)%24+24)%24;
+}
+
+function hoursToHM(h){
+  if(h===null || isNaN(h)) return "\u2014";
+  var hh = Math.floor(h);
+  var mm = Math.round((h-hh)*60);
+  if(mm===60){mm=0;hh+=1;}
+  hh = ((hh%24)+24)%24;
+  var period = hh<12 ? "AM" : "PM";
+  var hh12 = hh%12; if(hh12===0) hh12=12;
+  return hh12+":"+(mm<10?"0":"")+mm+" "+period;
+}
+
+
+function savToday(){
+  var L = (window.AVPlaces && AVPlaces.load()) || { name:'दिल्ली', lat:28.6139, lon:77.2090, tz:5.5 };
+  var now = new Date(), y=now.getFullYear(), m=now.getMonth()+1, d=now.getDate();
+  var tz = L.zone ? AVPlaces.tzOf(L.zone) : L.tz;
+  var sr = sunEventTime(y,m,d,L.lat,L.lon,tz,true); if (sr===null) sr = 6;
+  var jd = julianDay(y,m,d,sr - tz);
+  var ang = norm360(moonLongitude(jd) - sunLongitude(jd));
+  var t30 = Math.floor(ang/12) + 1, paksh = t30 <= 15 ? 'shukla' : 'krishna', tIn = t30 <= 15 ? t30 : t30 - 15;
+  var vaar = now.getDay() + 1;
+  var VAAR = ['रविवार','सोमवार','मंगलवार','बुधवार','बृहस्पतिवार','शुक्रवार','शनिवार'];
+  var tName = tIn===15 ? (paksh==='shukla'?'पूर्णिमा':'अमावस्या') : TITHI_NAMES[tIn-1];
+  document.getElementById('sav-today-d').textContent = (paksh==='shukla'?'शुक्ल':'कृष्ण') + ' ' + tName + ', ' + VAAR[vaar-1];
+  document.getElementById('sav-today-note').textContent = 'तिथि सूर्योदय (' + L.name + ') के अनुसार। किसी और दिन के लिए नीचे से तिथि चुनें।';
+  var s = SHIV_VAS[(t30*2+5)%7], a = AGNI_VAS[(t30+1+vaar)%4];
+  function fill(id,r){ var el=document.getElementById(id); el.className='sav-today-box '+(r.tag==='good'?'g':'b'); el.querySelector('b').textContent=r.place; el.querySelector('span').textContent=r.tagLabel; }
+  fill('sav-today-shiv', s); fill('sav-today-agni', a);
+  // पैनल में भी आज की तिथि/वार पहले से भरें
+  ['shiv','agni'].forEach(function(w){ savSetPaksh(w, paksh); document.getElementById('sav-'+w+'-tithi').value = tIn; });
+  document.getElementById('sav-agni-day').value = vaar;
+}
+savToday();
+
+})();
+</script>
+</body>
+</html>

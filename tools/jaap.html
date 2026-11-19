@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>पंडित जप लेखा — अनुष्ठान रजिस्टर</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;600;700&family=Tinos:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --maroon:#7A1F2B;
+    --maroon-dark:#5C1620;
+    --ivory:#FBF4E6;
+    --saffron:#D98E28;
+    --brass:#B8863A;
+    --ink:#2A2018;
+    --sandal:#F0E4C8;
+    --line:#D9C8A0;
+    --white:#FFFDF8;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--sandal);
+    font-family:'Tinos', serif;
+    color:var(--ink);
+    padding:14px;
+    min-height:100vh;
+  }
+  .wrap{max-width:1200px;margin:0 auto;}
+
+  /* Header */
+  .head{
+    background:var(--maroon);
+    color:var(--ivory);
+    border-radius:10px 10px 0 0;
+    padding:18px 22px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    align-items:center;
+    justify-content:space-between;
+    box-shadow:0 2px 0 var(--brass);
+  }
+  .head h1{
+    font-family:'Noto Serif Devanagari', serif;
+    font-size:1.35rem;
+    margin:0;
+    font-weight:700;
+    letter-spacing:.3px;
+  }
+  .head .om{color:var(--saffron);margin-left:6px;}
+  .anushthan-name{
+    font-family:'Noto Serif Devanagari', serif;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.35);
+    color:var(--ivory);
+    padding:7px 12px;
+    border-radius:6px;
+    font-size:.95rem;
+    min-width:220px;
+  }
+  .anushthan-name::placeholder{color:rgba(255,253,248,.6);}
+
+  /* Toolbar */
+  .toolbar{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-top:none;
+    padding:10px 16px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+    font-family:'Noto Serif Devanagari', serif;
+    font-size:.88rem;
+  }
+  button{
+    font-family:'Noto Serif Devanagari', serif;
+    background:var(--ivory);
+    border:1px solid var(--brass);
+    color:var(--maroon-dark);
+    padding:7px 13px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:.85rem;
+    font-weight:600;
+    transition:background .15s, transform .1s;
+  }
+  button:hover{background:var(--sandal);}
+  button:active{transform:scale(.97);}
+  button.primary{background:var(--maroon);color:var(--ivory);border-color:var(--maroon-dark);}
+  button.primary:hover{background:var(--maroon-dark);}
+  button.danger{color:#8a2b1f;}
+  .toolbar .divider{width:1px;height:22px;background:var(--line);margin:0 4px;}
+  .status-msg{
+    margin-left:auto;
+    font-size:.8rem;
+    color:var(--brass);
+    font-style:italic;
+    min-height:1.1em;
+  }
+
+  /* Sheet tabs — ledger style */
+  .tabs{
+    display:flex;
+    gap:2px;
+    background:var(--maroon-dark);
+    padding:6px 10px 0 10px;
+    overflow-x:auto;
+  }
+  .tab{
+    font-family:'Noto Serif Devanagari', serif;
+    background:var(--brass);
+    color:var(--ivory);
+    padding:8px 16px 7px 16px;
+    border-radius:8px 8px 0 0;
+    font-size:.85rem;
+    cursor:pointer;
+    white-space:nowrap;
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    opacity:.75;
+    border:1px solid var(--maroon-dark);
+    border-bottom:none;
+  }
+  .tab:hover{opacity:.92;}
+  .tab.active{
+    background:var(--ivory);
+    color:var(--maroon-dark);
+    opacity:1;
+    font-weight:700;
+    box-shadow:0 -2px 4px rgba(0,0,0,.15);
+  }
+  .tab .close-tab{
+    font-size:.75rem;
+    opacity:.6;
+    padding:0 2px;
+  }
+  .tab .close-tab:hover{opacity:1;color:#8a2b1f;}
+  .tab.add-tab{
+    background:transparent;
+    border:1px dashed rgba(255,253,248,.5);
+    color:var(--ivory);
+    opacity:.85;
+    font-weight:700;
+  }
+
+  /* Sheet name editable */
+  .sheet-name-row{
+    background:var(--ivory);
+    border:1px solid var(--line);
+    border-top:none;
+    padding:8px 16px;
+    font-family:'Noto Serif Devanagari', serif;
+    font-size:.85rem;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .sheet-name-row input{
+    font-family:'Noto Serif Devanagari', serif;
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:4px 8px;
+    font-size:.85rem;
+    background:var(--white);
+  }
+
+  /* Grid */
+  .grid-scroll{
+    overflow-x:auto;
+    border:1px solid var(--line);
+    border-top:none;
+    background:var(--white);
+  }
+  table{
+    border-collapse:collapse;
+    width:100%;
+    min-width:600px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:.82rem;
+  }
+  thead th{
+    background:var(--maroon);
+    color:var(--ivory);
+    font-family:'Noto Serif Devanagari', serif;
+    font-weight:600;
+    padding:8px 6px;
+    text-align:center;
+    border:1px solid var(--maroon-dark);
+    position:sticky;
+    top:0;
+    font-size:.8rem;
+    white-space:nowrap;
+  }
+  thead th.col-letter{
+    background:var(--brass);
+    font-size:.72rem;
+    font-family:'JetBrains Mono', monospace;
+  }
+  tbody th{
+    background:var(--sandal);
+    color:var(--maroon-dark);
+    font-weight:700;
+    padding:5px 8px;
+    border:1px solid var(--line);
+    text-align:center;
+    font-size:.78rem;
+    min-width:36px;
+  }
+  td{
+    border:1px solid var(--line);
+    padding:0;
+    min-width:96px;
+    height:32px;
+  }
+  td input{
+    width:100%;
+    height:100%;
+    border:none;
+    background:transparent;
+    padding:5px 8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:.82rem;
+    color:var(--ink);
+    text-align:left;
+  }
+  td input:focus{
+    outline:2px solid var(--saffron);
+    outline-offset:-2px;
+    background:#FFF9EA;
+  }
+  td.name-col input{
+    font-family:'Noto Serif Devanagari', serif;
+    font-size:.85rem;
+  }
+  td input[type="date"]{
+    font-family:'JetBrains Mono', monospace;
+    font-size:.76rem;
+  }
+  tr.total-row td, tr.total-row th{
+    background:var(--maroon);
+    color:var(--ivory);
+    font-weight:700;
+    position:sticky;
+    bottom:0;
+  }
+  tr.total-row input{
+    color:var(--ivory);
+    font-weight:700;
+    background:transparent;
+  }
+  tr:nth-child(even):not(.total-row) td{background:#FDF9EF;}
+  td.formula-cell input{
+    background:#F6F0DC;
+    font-weight:600;
+    color:var(--maroon-dark);
+  }
+
+  .footer-note{
+    font-family:'Noto Serif Devanagari', serif;
+    font-size:.78rem;
+    color:var(--brass);
+    padding:10px 16px;
+    background:var(--white);
+    border:1px solid var(--line);
+    border-top:none;
+    border-radius:0 0 10px 10px;
+    line-height:1.6;
+  }
+  .footer-note b{color:var(--maroon-dark);}
+
+  @media (max-width:640px){
+    .head h1{font-size:1.05rem;}
+    .anushthan-name{min-width:150px;font-size:.85rem;}
+    .toolbar{font-size:.8rem;}
+    button{padding:6px 9px;font-size:.78rem;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <h1>पंडित जप लेखा रजिस्टर<span class="om">🕉</span></h1>
+    <input type="text" class="anushthan-name" id="anushthanName" placeholder="अनुष्ठान का नाम (जैसे: महामृत्युंजय अनुष्ठान)">
+  </div>
+
+  <div class="toolbar">
+    <button class="primary" id="btnAddDate">+ दिनांक कॉलम जोड़ें</button>
+    <button id="btnAddRow">+ पंडित/ब्राह्मण जोड़ें</button>
+    <div class="divider"></div>
+    <button id="btnSave">💾 सेव करें</button>
+    <button id="btnExport">⬇ बैकअप (JSON)</button>
+    <button id="btnImport">⬆ बैकअप लोड करें</button>
+    <input type="file" id="fileImport" accept=".json" style="display:none">
+    <div class="divider"></div>
+    <button class="danger" id="btnClearSheet">🗑 इस शीट का डेटा हटाएँ</button>
+    <span class="status-msg" id="statusMsg"></span>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="sheet-name-row">
+    शीट का नाम:
+    <input type="text" id="sheetNameInput" placeholder="शीट 1">
+  </div>
+
+  <div class="grid-scroll">
+    <table id="grid">
+      <thead>
+        <tr id="headerRow"></tr>
+      </thead>
+      <tbody id="gridBody"></tbody>
+    </table>
+  </div>
+
+  <div class="footer-note">
+    <b>प्रयोग विधि:</b> हर <b>दिनांक कॉलम</b> में उस दिन जो जप हुआ वह संख्या भरें। "टोटल" कॉलम अपने आप उस पंडित की सभी तिथियों का योग दिखाता है (=SUM वाला काम अपने आप होता है)। सबसे नीचे की <b>माँ पंक्ति (टोटल)</b> में सभी ब्राह्मणों के योग का कुल योग दिखता है — यानी पूरे अनुष्ठान में कुल कितना जप हुआ। डेटा आपके ब्राउज़र के <b>लोकल स्टोरेज</b> में अपने आप सेव होता रहता है (हर बदलाव पर)। एक से अधिक अनुष्ठान/शीट के लिए ऊपर टैब में <b>+</b> दबाकर नई शीट बनाएँ।
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'japLekhaData_v1';
+  let state = null;
+  let activeSheetId = null;
+  let saveTimer = null;
+
+  function uid(prefix){ return prefix + '_' + Math.random().toString(36).slice(2,9); }
+
+  function defaultSheet(name){
+    return {
+      id: uid('sheet'),
+      name: name || 'शीट 1',
+      dateCols: [ uid('date') ],      // array of date-column ids
+      dateLabels: {},                  // dateColId -> label/date string
+      rows: [ { id: uid('row'), name: '' } ], // pandit rows
+      values: {}                       // "rowId:dateColId" -> number
+    };
+  }
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        const parsed = JSON.parse(raw);
+        if(parsed && parsed.sheets && parsed.sheets.length){
+          return parsed;
+        }
+      }
+    }catch(e){ console.warn('load failed', e); }
+    const s = defaultSheet('शीट 1');
+    return { anushthanName:'', sheets:[s], activeSheetId: s.id };
+  }
+
+  function persist(showMsg){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      if(showMsg) flashStatus('सेव हो गया ✓');
+    }catch(e){
+      flashStatus('सेव नहीं हो पाया — स्टोरेज भरा हो सकता है');
+    }
+  }
+
+  function scheduleSave(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(()=>persist(true), 400);
+  }
+
+  function flashStatus(msg){
+    const el = document.getElementById('statusMsg');
+    el.textContent = msg;
+    clearTimeout(el._t);
+    el._t = setTimeout(()=>{ el.textContent=''; }, 2200);
+  }
+
+  function getActiveSheet(){
+    return state.sheets.find(s=>s.id===activeSheetId) || state.sheets[0];
+  }
+
+  function colLetter(n){
+    // 0-indexed -> A, B, C ... for header display
+    let s='';
+    n++;
+    while(n>0){
+      let m=(n-1)%26;
+      s = String.fromCharCode(65+m)+s;
+      n = Math.floor((n-1)/26);
+    }
+    return s;
+  }
+
+  function renderTabs(){
+    const tabsEl = document.getElementById('tabs');
+    tabsEl.innerHTML = '';
+    state.sheets.forEach(sheet=>{
+      const tab = document.createElement('div');
+      tab.className = 'tab' + (sheet.id===activeSheetId ? ' active':'');
+      const label = document.createElement('span');
+      label.textContent = sheet.name || 'शीट';
+      tab.appendChild(label);
+      if(state.sheets.length>1){
+        const close = document.createElement('span');
+        close.className = 'close-tab';
+        close.textContent = '✕';
+        close.title = 'शीट हटाएँ';
+        close.onclick = (e)=>{
+          e.stopPropagation();
+          if(confirm('क्या इस पूरी शीट "'+ (sheet.name||'शीट') +'" को हटाना है?')){
+            state.sheets = state.sheets.filter(s=>s.id!==sheet.id);
+            if(activeSheetId===sheet.id){
+              activeSheetId = state.sheets[0].id;
+            }
+            state.activeSheetId = activeSheetId;
+            scheduleSave();
+            renderAll();
+          }
+        };
+        tab.appendChild(close);
+      }
+      tab.onclick = ()=>{
+        activeSheetId = sheet.id;
+        state.activeSheetId = activeSheetId;
+        renderAll();
+      };
+      tabsEl.appendChild(tab);
+    });
+    const addTab = document.createElement('div');
+    addTab.className = 'tab add-tab';
+    addTab.textContent = '+ नई शीट';
+    addTab.onclick = ()=>{
+      const n = state.sheets.length+1;
+      const s = defaultSheet('शीट ' + n);
+      state.sheets.push(s);
+      activeSheetId = s.id;
+      state.activeSheetId = activeSheetId;
+      scheduleSave();
+      renderAll();
+    };
+    tabsEl.appendChild(addTab);
+  }
+
+  function computeRowTotal(sheet, rowId){
+    let total = 0;
+    sheet.dateCols.forEach(dc=>{
+      const v = parseFloat(sheet.values[rowId+':'+dc]);
+      if(!isNaN(v)) total += v;
+    });
+    return total;
+  }
+
+  function computeGrandTotal(sheet){
+    let total = 0;
+    sheet.rows.forEach(r=>{ total += computeRowTotal(sheet, r.id); });
+    return total;
+  }
+
+  function computeColTotal(sheet, dateColId){
+    let total = 0;
+    sheet.rows.forEach(r=>{
+      const v = parseFloat(sheet.values[r.id+':'+dateColId]);
+      if(!isNaN(v)) total += v;
+    });
+    return total;
+  }
+
+  function renderGrid(){
+    const sheet = getActiveSheet();
+    document.getElementById('sheetNameInput').value = sheet.name;
+
+    // Header
+    const headerRow = document.getElementById('headerRow');
+    headerRow.innerHTML = '';
+
+    const thSno = document.createElement('th');
+    thSno.textContent = 'S.No';
+    thSno.style.minWidth = '46px';
+    headerRow.appendChild(thSno);
+
+    const thName = document.createElement('th');
+    thName.textContent = 'ब्राह्मण / पंडित का नाम';
+    thName.style.minWidth = '160px';
+    headerRow.appendChild(thName);
+
+    sheet.dateCols.forEach((dc, idx)=>{
+      const th = document.createElement('th');
+      th.style.position='relative';
+      const dateInput = document.createElement('input');
+      dateInput.type = 'date';
+      dateInput.value = sheet.dateLabels[dc] || '';
+      dateInput.style.background='transparent';
+      dateInput.style.border='none';
+      dateInput.style.color='var(--ivory)';
+      dateInput.style.colorScheme='dark';
+      dateInput.style.fontFamily="'JetBrains Mono', monospace";
+      dateInput.style.fontSize='.78rem';
+      dateInput.style.width='100%';
+      dateInput.onchange = (e)=>{
+        sheet.dateLabels[dc] = e.target.value;
+        scheduleSave();
+      };
+      th.appendChild(dateInput);
+
+      if(sheet.dateCols.length>1){
+        const rm = document.createElement('div');
+        rm.textContent = '✕';
+        rm.title = 'यह दिनांक कॉलम हटाएँ';
+        rm.style.cssText='position:absolute;top:2px;right:4px;font-size:.65rem;cursor:pointer;opacity:.7;';
+        rm.onclick = ()=>{
+          if(confirm('यह दिनांक कॉलम हटाना है?')){
+            sheet.dateCols = sheet.dateCols.filter(d=>d!==dc);
+            delete sheet.dateLabels[dc];
+            sheet.rows.forEach(r=> delete sheet.values[r.id+':'+dc]);
+            scheduleSave();
+            renderGrid();
+          }
+        };
+        th.appendChild(rm);
+      }
+      headerRow.appendChild(th);
+    });
+
+    const thTotal = document.createElement('th');
+    thTotal.textContent = 'टोटल (SUM)';
+    thTotal.style.minWidth='90px';
+    thTotal.style.background='var(--saffron)';
+    headerRow.appendChild(thTotal);
+
+    // Body
+    const body = document.getElementById('gridBody');
+    body.innerHTML = '';
+
+    sheet.rows.forEach((row, i)=>{
+      const tr = document.createElement('tr');
+
+      const thSn = document.createElement('th');
+      thSn.textContent = i+1;
+      tr.appendChild(thSn);
+
+      const tdName = document.createElement('td');
+      tdName.className = 'name-col';
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.placeholder = 'नाम लिखें';
+      nameInput.value = row.name || '';
+      nameInput.onchange = (e)=>{ row.name = e.target.value; scheduleSave(); };
+      tdName.appendChild(nameInput);
+      tr.appendChild(tdName);
+
+      sheet.dateCols.forEach(dc=>{
+        const td = document.createElement('td');
+        const inp = document.createElement('input');
+        inp.type = 'number';
+        inp.inputMode = 'numeric';
+        inp.placeholder = '0';
+        const key = row.id+':'+dc;
+        inp.value = sheet.values[key] !== undefined ? sheet.values[key] : '';
+        inp.oninput = (e)=>{
+          sheet.values[key] = e.target.value;
+          updateTotalsOnly();
+          scheduleSave();
+        };
+        td.appendChild(inp);
+        tr.appendChild(td);
+      });
+
+      const tdTotal = document.createElement('td');
+      tdTotal.className = 'formula-cell';
+      const totalInp = document.createElement('input');
+      totalInp.type = 'text';
+      totalInp.disabled = true;
+      totalInp.id = 'rowtotal_'+row.id;
+      totalInp.value = computeRowTotal(sheet, row.id);
+      tdTotal.appendChild(totalInp);
+      tr.appendChild(tdTotal);
+
+      // row delete on long-press / right area — add small delete via double click on S.No
+      thSn.title = 'हटाने के लिए डबल-क्लिक करें';
+      thSn.style.cursor='pointer';
+      thSn.ondblclick = ()=>{
+        if(confirm('इस पंडित की पंक्ति हटानी है?')){
+          sheet.rows = sheet.rows.filter(r=>r.id!==row.id);
+          sheet.dateCols.forEach(dc=> delete sheet.values[row.id+':'+dc]);
+          scheduleSave();
+          renderGrid();
+        }
+      };
+
+      body.appendChild(tr);
+    });
+
+    // Total row
+    const totalRow = document.createElement('tr');
+    totalRow.className = 'total-row';
+    const thT = document.createElement('th');
+    thT.textContent = '';
+    totalRow.appendChild(thT);
+    const tdLabel = document.createElement('td');
+    tdLabel.textContent = 'कुल योग (अनुष्ठान टोटल)';
+    tdLabel.style.fontFamily = "'Noto Serif Devanagari', serif";
+    tdLabel.style.padding = '6px 8px';
+    totalRow.appendChild(tdLabel);
+
+    sheet.dateCols.forEach(dc=>{
+      const td = document.createElement('td');
+      td.id = 'coltotal_'+dc;
+      td.style.textAlign='center';
+      td.style.padding='6px 4px';
+      td.textContent = computeColTotal(sheet, dc);
+      totalRow.appendChild(td);
+    });
+
+    const tdGrand = document.createElement('td');
+    tdGrand.id = 'grandtotal';
+    tdGrand.style.textAlign='center';
+    tdGrand.style.background='var(--saffron)';
+    tdGrand.style.color='var(--maroon-dark)';
+    tdGrand.style.fontWeight='800';
+    tdGrand.textContent = computeGrandTotal(sheet);
+    totalRow.appendChild(tdGrand);
+
+    body.appendChild(totalRow);
+  }
+
+  function updateTotalsOnly(){
+    const sheet = getActiveSheet();
+    sheet.rows.forEach(row=>{
+      const el = document.getElementById('rowtotal_'+row.id);
+      if(el) el.value = computeRowTotal(sheet, row.id);
+    });
+    sheet.dateCols.forEach(dc=>{
+      const el = document.getElementById('coltotal_'+dc);
+      if(el) el.textContent = computeColTotal(sheet, dc);
+    });
+    const gt = document.getElementById('grandtotal');
+    if(gt) gt.textContent = computeGrandTotal(sheet);
+  }
+
+  function renderAll(){
+    renderTabs();
+    renderGrid();
+    document.getElementById('anushthanName').value = state.anushthanName || '';
+  }
+
+  // ---- Toolbar actions ----
+  document.getElementById('btnAddDate').onclick = ()=>{
+    const sheet = getActiveSheet();
+    sheet.dateCols.push(uid('date'));
+    scheduleSave();
+    renderGrid();
+  };
+
+  document.getElementById('btnAddRow').onclick = ()=>{
+    const sheet = getActiveSheet();
+    sheet.rows.push({ id: uid('row'), name:'' });
+    scheduleSave();
+    renderGrid();
+  };
+
+  document.getElementById('btnSave').onclick = ()=> persist(true);
+
+  document.getElementById('btnClearSheet').onclick = ()=>{
+    if(confirm('इस शीट का सारा डेटा (नाम, तिथियाँ, संख्या) हटाना है? यह वापस नहीं होगा।')){
+      const sheet = getActiveSheet();
+      const fresh = defaultSheet(sheet.name);
+      fresh.id = sheet.id;
+      const idx = state.sheets.findIndex(s=>s.id===sheet.id);
+      state.sheets[idx] = fresh;
+      scheduleSave();
+      renderGrid();
+    }
+  };
+
+  document.getElementById('sheetNameInput').onchange = (e)=>{
+    getActiveSheet().name = e.target.value || 'शीट';
+    scheduleSave();
+    renderTabs();
+  };
+
+  document.getElementById('anushthanName').oninput = (e)=>{
+    state.anushthanName = e.target.value;
+    scheduleSave();
+  };
+
+  document.getElementById('btnExport').onclick = ()=>{
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const fname = (state.anushthanName || 'jap-lekha').replace(/[^a-zA-Z0-9अ-ह_-]+/g,'_');
+    a.download = fname + '-backup.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    flashStatus('बैकअप डाउनलोड हुआ ✓');
+  };
+
+  document.getElementById('btnImport').onclick = ()=>{
+    document.getElementById('fileImport').click();
+  };
+  document.getElementById('fileImport').onchange = (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev)=>{
+      try{
+        const parsed = JSON.parse(ev.target.result);
+        if(parsed && parsed.sheets && parsed.sheets.length){
+          state = parsed;
+          activeSheetId = state.activeSheetId || state.sheets[0].id;
+          persist(true);
+          renderAll();
+          flashStatus('बैकअप लोड हो गया ✓');
+        } else {
+          alert('फ़ाइल सही प्रारूप में नहीं है।');
+        }
+      }catch(err){
+        alert('फ़ाइल पढ़ने में त्रुटि हुई।');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
+  // ---- init ----
+  state = loadState();
+  activeSheetId = state.activeSheetId || state.sheets[0].id;
+  renderAll();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>सर्वदेव ध्यान मंत्र | Astro Vikass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+#purohit-app-v6 {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: #FFFBF7; z-index: 999999; display: flex; flex-direction: column;
+    font-family: 'Mukta', sans-serif; overflow: hidden;
+}
+
+/* App Header */
+.app-top-bar {
+    background: linear-gradient(135deg, #8B0000 0%, #a50000 100%);
+    color: #FFD700; padding: 25px 15px; text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.25); border-bottom: 3px solid #FFD700;
+}
+
+.app-top-bar h1 { margin: 0; font-size: 1.6rem; font-weight: 800; }
+
+/* Search Box */
+.search-wrap { padding: 12px 15px 0; background: #FFFBF7; }
+.search-box {
+    display: flex; align-items: center; background: #ffffff; border-radius: 12px;
+    padding: 10px 14px; box-shadow: 0 3px 10px rgba(139,0,0,0.08); border: 1px solid rgba(139,0,0,0.1);
+}
+.search-box span { font-size: 1.1rem; margin-right: 10px; color: #8B0000; }
+.search-box input {
+    border: none; outline: none; flex: 1; font-size: 1rem; font-family: 'Mukta', sans-serif;
+    color: #333; background: transparent;
+}
+.search-box input::placeholder { color: #b98a8a; }
+.no-results { text-align: center; color: #a50000; padding: 30px 10px; font-size: 0.95rem; display: none; }
+
+/* Main Content Area */
+.app-main-content { flex: 1; overflow-y: auto; padding: 15px 15px 40px; }
+
+.grid-container { display: grid; grid-template-columns: 1fr; gap: 10px; }
+
+/* Menu Cards */
+.nav-card {
+    background: #ffffff; border-radius: 14px; padding: 15px 18px;
+    display: flex; align-items: center; box-shadow: 0 4px 10px rgba(139, 0, 0, 0.05);
+    border: 1px solid rgba(139, 0, 0, 0.08); transition: 0.2s; cursor: pointer;
+}
+
+.nav-card:active { transform: scale(0.97); background: #FFF5F5; }
+
+.symbol-box {
+    width: 40px; height: 40px; background: #FFF0F0; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; color: #8B0000; margin-right: 15px;
+}
+
+.text-box { flex: 1; text-align: left; }
+.text-box span { font-weight: 700; color: #8B0000; font-size: 1.05rem; }
+
+/* Full Screen Popup */
+.full-overlay {
+    position: fixed; top: 0; left: 100%; width: 100%; height: 100%;
+    background: #FFFBF7; z-index: 1000000; transition: 0.3s ease-out;
+    display: flex; flex-direction: column;
+}
+
+.full-overlay.active { left: 0; }
+.overlay-header { background: white; padding: 15px 20px; display: flex; align-items: center; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 10; }
+.back-icon { font-size: 24px; color: #8B0000; margin-right: 15px; cursor: pointer; }
+.overlay-content { flex: 1; padding: 15px; overflow-y: auto; }
+
+/* Mantra Styles */
+.mantra-block {
+    background: white; border-radius: 12px; padding: 15px;
+    margin-bottom: 12px; border: 1px solid #f0f0f0; box-shadow: 0 3px 8px rgba(0,0,0,0.03);
+}
+
+.mantra-label { font-size: 0.75rem; color: #a50000; font-weight: bold; margin-bottom: 6px; display: block; text-transform: uppercase; }
+.mantra-preview { color: #8B0000; font-weight: bold; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.mantra-hindi {
+    font-size: 1.2rem; line-height: 1.8; color: #333; text-align: center;
+    display: none; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #ddd;
+    white-space: pre-line;
+}
+.meaning-box { background: #fdf2f2; padding: 10px; border-radius: 6px; font-size: 0.9rem; color: #555; margin-top: 10px; text-align: left; border-left: 3px solid #8B0000; }
+
+.bottom-tab-bar { position: absolute; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #eee; }
+.tab-item { text-align: center; color: #999; font-size: 0.7rem; }
+.tab-item.active { color: #8B0000; font-weight: bold; }
+
+.app-top-bar{position:relative;padding:18px 15px 14px}
+.fs-ctl{display:inline-flex;align-items:center;gap:8px;margin-top:10px;background:rgba(0,0,0,.18);border:1px solid rgba(255,215,0,.4);border-radius:999px;padding:3px 6px;font-size:.8rem;color:#FFD700}
+.fs-ctl button{border:0;background:#FFD700;color:#8B0000;font-weight:800;border-radius:999px;width:34px;height:28px;font-family:inherit;cursor:pointer}
+.mantra-hindi{font-size:calc(1.2rem * var(--fs,1))}
+.meaning-box{font-size:calc(.9rem * var(--fs,1))}
+.copy-btn{display:block;margin:12px auto 0;border:1px solid #8B0000;background:#fff;color:#8B0000;border-radius:999px;padding:5px 16px;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div id="purohit-app-v6">
+    <div class="app-top-bar">
+        <h1>शास्त्री विकाश</h1>
+        <div style="font-size: 0.8rem; color: #FFD700;">॥ नित्य पूजा ध्यान पद्धति ॥</div>
+        <div class="fs-ctl"><button onclick="fontStep(-1)" aria-label="अक्षर छोटे">अ−</button><span>अक्षर</span><button onclick="fontStep(1)" aria-label="अक्षर बड़े">अ+</button></div>
+    </div>
+
+    <div class="search-wrap">
+        <div class="search-box">
+            <span>🔍</span>
+            <input type="text" id="searchInput" placeholder="देवता या मंत्र खोजें... (जैसे: गणेश, दुर्गा, हनुमान)" oninput="filterCards()">
+        </div>
+    </div>
+
+    <div class="app-main-content">
+        <div class="grid-container" id="gridContainer">
+            <div class="nav-card" data-keywords="bhairav भैरव बटुक भैरव काल भैरव batuk kaal kal bhairav" onclick="openPage('bhairav')"><div class="symbol-box">🔱</div><div class="text-box"><span>१. श्री भैरव ध्यान</span></div></div>
+            <div class="nav-card" data-keywords="kshetrapal क्षेत्रपाल चतुष्षष्टियोगिनी योगिनी yogini chatushashti" onclick="openPage('kshetrapal')"><div class="symbol-box">🛡️</div><div class="text-box"><span>२. क्षेत्रपाल व चतुष्षष्टियोगिनी ध्यान</span></div></div>
+            <div class="nav-card" data-keywords="ganesh गणेश गणपति विघ्नेश्वर ganpati vighneshwar" onclick="openPage('ganesh')"><div class="symbol-box">ॐ</div><div class="text-box"><span>३. श्री गणेश ध्यान</span></div></div>
+            <div class="nav-card" data-keywords="varun वरुण varuna" onclick="openPage('varun')"><div class="symbol-box">🏺</div><div class="text-box"><span>४. वरुण ध्यान</span></div></div>
+            <div class="nav-card" data-keywords="mata durga दुर्गा माता गौरी षोडश मातृका सप्तघृतमातृका महाकाली महालक्ष्मी महासरस्वती gauri shodash matrika saptaghrit" onclick="openPage('mata')"><div class="symbol-box">🌺</div><div class="text-box"><span>५. माता (दुर्गा) ध्यान</span></div></div>
+            <div class="nav-card" data-keywords="navgrah नवग्रह ग्रह सूर्य चन्द्र मंगल बुध गुरु शुक्र शनि राहु केतु surya budh guru shukra shani rahu ketu" onclick="openPage('navgrah')"><div class="symbol-box">☀️</div><div class="text-box"><span>६. नवग्रह ध्यान व प्रार्थना</span></div></div>
+            <div class="nav-card" data-keywords="hanuman हनुमान काली महाकाली kali mahakali" onclick="openPage('hanuman')"><div class="symbol-box">🚩</div><div class="text-box"><span>७. हनुमान व काली ध्यान</span></div></div>
+            <div class="nav-card" data-keywords="adhi pratyadhi अधि प्रत्यधि देवता पितृ pitru vedokt वेदोक्त" onclick="openPage('adhi')"><div class="symbol-box">🙏</div><div class="text-box"><span>८. अधि-प्रत्यधि देवता ध्यान</span></div></div>
+            <div class="nav-card" data-keywords="ram krishna राम कृष्ण सीता सीताराम रघुनाथ sita raghunath" onclick="openPage('sitaram')"><div class="symbol-box">🏹</div><div class="text-box"><span>९. सीता राम व कृष्ण ध्यान</span></div></div>
+            <div class="nav-card" data-keywords="lakshmi saraswati लक्ष्मी सरस्वती महालक्ष्मी" onclick="openPage('lakshmi')"><div class="symbol-box">💰</div><div class="text-box"><span>१०. लक्ष्मी व सरस्वती ध्यान</span></div></div>
+            <div class="nav-card" data-keywords="sarvatobhadra सर्वतोभद्र ब्रह्मा विष्णु महेश शिव brahma vishnu shiv mahesh" onclick="openPage('bhadra')"><div class="symbol-box">🏛️</div><div class="text-box"><span>११. सर्वतोभद्र देवता (ब्रह्मा-विष्णु-महेश)</span></div></div>
+            <div class="nav-card" data-keywords="mrityunjay महामृत्युंजय मृत्युंजय shiv mahadev triyambakam" onclick="openPage('mrityunjay')"><div class="symbol-box">🕉️</div><div class="text-box"><span>१२. महामृत्युंजय ध्यान</span></div></div>
+            <div class="nav-card" data-keywords="ganga गंगा गंगा मैया bhagirathi भागीरथी" onclick="openPage('ganga')"><div class="symbol-box">🌊</div><div class="text-box"><span>१३. गंगा मैया ध्यान</span></div></div>
+            <div class="nav-card" data-keywords="vindhyavasini kamakhya विंध्यवासिनी कामाख्या" onclick="openPage('vidhya')"><div class="symbol-box">🕉️</div><div class="text-box"><span>१४. विंध्यवासिनी व कामाख्या ध्यान</span></div></div>
+            <div class="nav-card" data-keywords="vividh विविध श्लोक तिलक वसोर्धारा tilak vasordhara" onclick="openPage('vividh')"><div class="symbol-box">📿</div><div class="text-box"><span>१५. विविध श्लोक (तिलक, वसोर्धारा)</span></div></div>
+            <div class="nav-card" data-keywords="pushpanjali पुष्पांजलि पुष्प अंजलि" onclick="openPage('pushpanjali')"><div class="symbol-box">🌸</div><div class="text-box"><span>१६. पुष्पांजलि</span></div></div>
+        </div>
+        <div class="no-results" id="noResults">कोई परिणाम नहीं मिला 🙏</div>
+    </div>
+
+</div>
+
+<div id="page-bhairav" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('bhairav')">←</div><div style="font-weight:bold;color:#8B0000">बटुक भैरव ध्यान</div></div>
+    <div class="overlay-content">
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">मंत्र - १ (शुद्ध)</span><div class="mantra-preview"><span>करकलितकपालः कुण्डली...</span><span>▼</span></div><div class="mantra-hindi">करकलितकपालः कुण्डली दण्डपाणिःतरुणतिमिरनीलः व्यालयज्ञोपवीती। क्रतुसमयसपर्या विघ्नविच्छेदहेतुःजयति बटुकनाथः सिद्धिदः साधकानाम्।।</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">मंत्र - २</span><div class="mantra-preview"><span>ॐ तीक्ष्ण-दंष्ट्र...</span><span>▼</span></div><div class="mantra-hindi">ॐ तीक्ष्ण-दंष्ट्र महाकाय कल्पांत दहन प्रभो! भैरवाय नमस्तुभ्यं अनुज्ञां दातु महर्षि!!</div></div>
+    </div>
+</div>
+
+<div id="page-kshetrapal" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('kshetrapal')">←</div><div style="font-weight:bold;color:#8B0000">क्षेत्रपाल व चतुष्षष्टियोगिनी</div></div>
+    <div class="overlay-content">
+        <span class="mantra-label">॥ क्षेत्रपाल स्मरण ॥</span>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>यं यं यं यक्षरूपं...</span><span>▼</span></div><div class="mantra-hindi">यं यं यं यक्षरूपं दशदिशि वदनं भूमिकम्पायमानंसं सं सं संहारमूर्ति शिरमुकुटजटाशेखरं चन्द्रविम्बम् ॥ दं दं दं दीप्तकायं विकृत नखमुखं चोर्ध्वरेखाकपालंपं पं पं पापनाशं प्रणतपशुपतिं क्षेत्रपालं नमामि ॥</div></div>
+        <span class="mantra-label">॥ चतुष्षष्टियोगिनी ॥</span>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>ब्रह्माणी कमलेन्दुसौम्यवदना...</span><span>▼</span></div><div class="mantra-hindi">ब्रह्माणी कमलेन्दुसौम्यवदना माहेश्वरी लीलया, कौमारी रिपुदर्पनाशनकरी चक्रायुधा वैष्णवी। वाराही घनघोरघर्घरमुखी चैन्द्री च वज्रायुधा, चामुण्डा गणनाथरूद्रसहिता रक्षन्तु नो मातरः ॥</div></div>
+    </div>
+</div>
+
+<div id="page-ganesh" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('ganesh')">←</div><div style="font-weight:bold;color:#8B0000">श्री गणेश ध्यान</div></div>
+    <div class="overlay-content">
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">मंत्र - १</span><div class="mantra-preview"><span>गजाननं भूतगणादि...</span><span>▼</span></div><div class="mantra-hindi">गजाननं भूतगणादिसेवितं कपित्थजम्बूफलचारुभक्षणम्। उमासुतं शोकविनाशकारकं नमामि विघ्नेश्वरपादपंकजम्॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">मंत्र - २</span><div class="mantra-preview"><span>प्रातः स्मरामि गणनाथ...</span><span>▼</span></div><div class="mantra-hindi">प्रातः स्मरामि गणनाथमनाथबन्धुं सिन्दूरपूरपरिशोभितगण्डयुग्मम् | उद्‌दण्डविघ्नपरिखण्डनचण्डदण्ड- माखण्डलादिसुरनायकवृन्दवन्द्यम् ||</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">मंत्र - ३</span><div class="mantra-preview"><span>नमो गणेभ्यो...</span><span>▼</span></div><div class="mantra-hindi">नमो गणेभ्यो गणपतिभ्यश्च वो नमो नमो व्रातेभ्यो व्रातपतिभ्यश्च वो नमो। नमो गृत्सेभ्यो गृत्सपतिभ्यश्च वो नमो नमो विरूपेभ्यो विश्वरूपेभ्यश्च वो नमो:।।</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">मंत्र - ४</span><div class="mantra-preview"><span>लम्बोदरं परम सुन्दर...</span><span>▼</span></div><div class="mantra-hindi">लम्बोदरं परम सुन्दर एकदन्तं पीताम्बरं त्रिनयनं परमंपवित्रम्। उद्यद्धिवाकर निभोज्ज्वल कान्ति कान्तं विध्नेश्वरं सकल विध्नहरं नमामि।।<div class="meaning-box"><b>अर्थ:</b> वे देव जो लम्बोदर होते हुए भी अत्यन्त सुन्दर हैं, जिनके एक ही दान्त है। जो पीताम्बर धारी तथा तीन नेत्रों वाले हैं, जो परम पवित्र हैं, जिनकी कान्ति उदयकालीन सूर्य के समान उज्ज्वल दिखाई देती है, उन सर्व विघ्नहारी विघ्नेश्वर को मैं नमस्कार करता हूँ।</div></div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">मंत्र - ५</span><div class="mantra-preview"><span>खर्वं स्थूलतनुं गजेन्द्रवदनं...</span><span>▼</span></div><div class="mantra-hindi">खर्वंस्थूलतनुंगजेन्द्रवदनंलम्बोदरंसुन्दरं प्रस्यन्दन्मद गन्धलुब्धमधुप व्यालोलगण्डस्थलम्। दन्ताघातविदारितारिरुधिरैः सिन्दूरशोभाकरं वन्देशैलसुतासुतं गणपतिंसिद्धिप्रदं कामदम्।</div></div>
+    </div>
+</div>
+
+<div id="page-varun" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('varun')">←</div><div style="font-weight:bold;color:#8B0000">वरुण ध्यान</div></div>
+    <div class="overlay-content">
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">ध्यान</span><div class="mantra-preview"><span>नमो नमस्ते स्फटिक प्रभाय...</span><span>▼</span></div><div class="mantra-hindi">नमो नमस्ते स्फटिक प्रभाय</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">आवाहन</span><div class="mantra-preview"><span>ॐ तत्त्वा यामि ब्रह्मणा...</span><span>▼</span></div><div class="mantra-hindi">ॐ तत्त्वा यामि ब्रह्मणा वन्दमानस्तदा शास्ते यजमानो हविर्भिः। अहेडमानो वरुणेह बोद्ध्युरुश गुंस् मा नऽ आयुः प्रमोषीः।।</div></div>
+    </div>
+</div>
+
+<div id="page-mata" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('mata')">←</div><div style="font-weight:bold;color:#8B0000">माता दुर्गा ध्यान</div></div>
+    <div class="overlay-content">
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">दुर्गा ध्यान</span><div class="mantra-preview"><span>विद्युद्दामसमप्रभां...</span><span>▼</span></div><div class="mantra-hindi">विद्युद्दामसमप्रभां मृगपतिस्कन्धस्थितां भीषणां कन्याभिः करवालखेटविलसद्धस्ताभिरासेविताम्। हस्तैश्चक्रगदासिखेटविशिखांश्चापं गुणं तर्जनीं बिभ्राणामनलात्मिकां शशिधरां दुर्गां त्रिनेत्रां भजे।।</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">प्रार्थना (शुद्ध)</span><div class="mantra-preview"><span>ॐ या श्रीः स्वयं सुकृतिनां...</span><span>▼</span></div><div class="mantra-hindi">ॐ या श्रीः स्वयं सुकृतिनां भवनेष्वलक्ष्मीःपापात्मनां कृतधियां हृदयेषु बुद्धिः। श्रद्धा सतां कुलजनप्रभवस्य लज्जातां त्वां नताः स्म परिपालय देवि विश्वम्॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">षोडश मातृका</span><div class="mantra-preview"><span>गौरी पद्मा शची मेधा...</span><span>▼</span></div><div class="mantra-hindi">गौरी पद्मा शची मेधा, सावित्री विजया जया । देवसेना स्वधा स्वाहा, मातरो लोकमातरः॥ धृतिः पुष्टिस्तथा तुष्टिः, आत्मनः कुलदेवता । गणेशेनाधिका ह्येता, वृद्धौ पूज्याश्च षोडश॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">गौरी ध्यान</span><div class="mantra-preview"><span>मुखे ताम्बूलं नयनयुगले...</span><span>▼</span></div><div class="mantra-hindi">मुखेतेताम्बूलं नयनयुगलेकज्जलकला, ललाटेकाश्मीरंविल्लसतिगलेमौक्तिकलता। स्फुरत्काञ्चीशाटीपृथुकटितटे हाटकमयी, भजामित्वां गौरींनगपतिकिशोरीमविरतम्।।</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">सप्तघृतमातृका</span><div class="mantra-preview"><span>श्रीलक्ष्मीर्धृतिर्मेधा...</span><span>▼</span></div><div class="mantra-hindi">श्रीलक्ष्मीर्धृतिर्मेधा स्वाहा प्रज्ञा सरस्वती। माङ्गल्येषु प्रपूज्यन्ते सप्तैता घृतमातरः॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">महाकाली महालक्ष्मी महासरस्वती</span><div class="mantra-preview"><span>खड्गं चक्रगदेषुचाप...</span><span>▼</span></div><div class="mantra-hindi">खड्गं चक्रगदेषुचापपरिघाञ्छूलं भुशुण्डीं शिरः शङ्खं संदधतीं करैस्त्रिनयनां सर्वाङ्गभूषावृताम्। नीलाश्मद्युतिमास्यपाददशकां सेवे महाकालिकां यामस्तौत्स्वपिते हरौ कमलजो हन्तुं मधुं कैटभम्॥
+—
+अक्षस्रक्परशुं गदेषुकुलिशं पद्मं धनुष्कुण्डिकां दण्डं शक्तिमसिं च चर्म जलजं घण्टां सुराभाजनम्। शूलं पाशसुदर्शने च दधतीं हस्तैः प्रसन्नाननां सेवे सैरिभमर्दिनीमिह महा लक्ष्मीं सरोजस्थिताम्॥
+—
+घण्टाशूलहलानि शङ्खमुसले चक्रं धनुः सायकं हस्ताब्जैर्दधतीं घनान्तविलसच्छीतांशुतुल्यप्रभाम। गौरीदेहसमुद्भवां त्रिजगतामाधारभूता महा-पूर्वामत्र सरस्वतीमनुभजे शुम्भादिदैत्यार्दिनीम्॥</div></div>
+    </div>
+</div>
+
+<div id="page-navgrah" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('navgrah')">←</div><div style="font-weight:bold;color:#8B0000">नवग्रह ध्यान व प्रार्थना</div></div>
+    <div class="overlay-content">
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">ध्यान</span><div class="mantra-preview"><span>ॐ आ कृष्णेन रजसा...</span><span>▼</span></div><div class="mantra-hindi">ॐ आ कृष्णेन रजसा वर्तमानो निवेशयन्नमृतं मर्त्यं च। हिरण्ययेन सविता रथेना देवो याति भुवनानि पश्यन्।।</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">प्रार्थना</span><div class="mantra-preview"><span>सूर्यः शौर्य मथेन्दु...</span><span>▼</span></div><div class="mantra-hindi">"सूर्यः शौर्य मथेन्दु रुच्च पदवीं, संमंगलम मंगल: सदबुद्धिम च बुधो, गुरूशच गुरुताम शुक्रः सुखं सम शनि । राहुर्बाहुबलं करोतु विपुलं, केतु कुलस्योउन्नति, नित्यं प्रीती करा भवन्तु भवतां, सर्वे प्रसन्ना ग्रहा:"।।</div></div>
+    </div>
+</div>
+
+<div id="page-hanuman" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('hanuman')">←</div><div style="font-weight:bold;color:#8B0000">हनुमान व काली ध्यान</div></div>
+    <div class="overlay-content">
+        <span class="mantra-label">॥ हनुमान ॥</span>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>मनोजवं मारुततुल्यवेगं...</span><span>▼</span></div><div class="mantra-hindi">मनोजवं मारुततुल्यवेगं, जितेन्द्रियं बुद्धिमतां वरिष्ठम्। वातात्मजं वानरयूथमुख्यं, श्रीरामदूतं शरणं प्रपद्ये॥</div></div>
+        <span class="mantra-label">॥ महाकाली ॥</span>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>ॐ जयंती मंगला काली...</span><span>▼</span></div><div class="mantra-hindi">ॐ जयंती मंगला काली भद्रकाली कपालिनी। दुर्गा क्षमा शिवा धात्री स्वाहा स्वधा नमोऽस्तुते।।</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>सिंहस्था शशिशेखरा...</span><span>▼</span></div><div class="mantra-hindi">सिंहस्था शशिशेखरा मरकतप्रख्यैश्चतुर्भिर्भुजै: शङ्खं चक्रधनु:शरांश्च दधती नेत्रैस्त्रिभि: शोभिता। आमुक्ताङ्गदहारकङ्कणरणत्काञ्चीरणन्नूपुरा दुर्गा दुर्गतिहारिणी भवतु नो रत्‍‌नोल्लसत्कुण्डला।।</div></div>
+    </div>
+</div>
+
+<div id="page-adhi" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('adhi')">←</div><div style="font-weight:bold;color:#8B0000">अधि-प्रत्यधि देवता</div></div>
+    <div class="overlay-content">
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">पितृ-देव ध्यान</span><div class="mantra-preview"><span>ॐ देवताभ्यः पितृभ्यश्च...</span><span>▼</span></div><div class="mantra-hindi">ॐ देवताभ्यः पितृभ्यश्च महायोगिभ्य एव च। नमः स्वाहायै स्वधायै नित्यमेव नमो नमः।।</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">वेदोक्त गणेश</span><div class="mantra-preview"><span>नमो गणेभ्यो...</span><span>▼</span></div><div class="mantra-hindi">नमो गणेभ्यो गणपतिभ्यश्च वो नमो नमो व्रातेभ्यो व्रातपतिभ्यश्च वो नमो। नमो गृत्सेभ्यो गृत्सपतिभ्यश्च वो नमो नमो विरूपेभ्यो विश्वरूपेभ्यश्च वो नमो:।।<div class="meaning-box"><b>अर्थ:</b> समस्त गणों, गणपतियों, संघपतियों और विश्वरूप परमात्मा को कोटिश: नमन है।</div></div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">समस्त नवग्रह पूजन</span><div class="mantra-preview"><span>ॐ भूर्भुवः स्वः...</span><span>▼</span></div><div class="mantra-hindi">ॐ भूर्भुवः स्वः सांगेभ्यः सपरिवारेभ्यः सायुधेभ्यः सशक्तिकेभ्यः अधिदेवता-प्रत्यधिदेवता- विनायकादिपञ्चलोकपाल-वास्तोष्पतिक्षेत्राधिपतीन्द्रादिदशदिक्पालसहितेभ्यो नवग्रहेभ्यो नमः आसनार्थे पुष्पाक्षतान् समर्पयामि।</div></div>
+    </div>
+</div>
+
+<div id="page-sitaram" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('sitaram')">←</div><div style="font-weight:bold;color:#8B0000">राम व कृष्ण ध्यान</div></div>
+    <div class="overlay-content">
+        <span class="mantra-label">॥ श्री राम ॥</span>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>नीलाम्बुजश्यामल...</span><span>▼</span></div><div class="mantra-hindi">नीलाम्बुजश्यामलकोमलांगं सीतासमारोपितवामभागम्। पाणौ महासायकचारुचापं नमामि रामं रघुवंशनाथम्॥
+—
+लोकाभिरामं रणरंगधीरं राजीवनेत्रं रघुवंशनाथम्। कारुण्यरूपं करुणाकरं तं श्रीरामचन्द्रं शरणं प्रपद्ये॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">हनुमान वंदना (रामचरितमानस)</span><div class="mantra-preview"><span>अतुलितबलधामं हेमशैलाभदेहं...</span><span>▼</span></div><div class="mantra-hindi">अतुलितबलधामं हेमशैलाभदेहं दनुजवनकृशानुं ज्ञानिनामग्रगण्यम्‌। सकलगुणनिधानं वानराणामधीशं रघुपतिप्रियभक्तं वातजातं नमामि॥</div></div>
+        <span class="mantra-label">॥ श्री कृष्ण ॥</span>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>ॐ कृष्णाय वासुदेवाय...</span><span>▼</span></div><div class="mantra-hindi">ॐ कृष्णाय वासुदेवाय हरये परमात्मने।प्रणतः क्लेशनाशाय गोविन्दाय नमो नमः॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>वंशी विभूषित...</span><span>▼</span></div><div class="mantra-hindi">वंशी विभूषित करान नवनीरदाभात पीतांम्बराकृष्णविशालाक्षयोरुदात। पूर्णेन्दुसुन्दरमुखारविन्दनेत्रात् कृष्णात्परं किमपि तत्त्वमहं न जाने॥</div></div>
+    </div>
+</div>
+
+<div id="page-lakshmi" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('lakshmi')">←</div><div style="font-weight:bold;color:#8B0000">लक्ष्मी व सरस्वती</div></div>
+    <div class="overlay-content">
+        <span class="mantra-label">॥ महालक्ष्मी ॥</span>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>या श्री: स्वयं सुकृतिनां...</span><span>▼</span></div><div class="mantra-hindi">या श्री: स्वयं सुकृतिनां भवनेष्व लक्ष्मी:, पापात्मना कृतधियाँ हृदयेषु बुद्धि:। श्रद्धा सतां कुलजन प्रभवस्य लज्जा, तां त्वां नता: स्म परिपालय देविविश्वम॥</div></div>
+        <span class="mantra-label">॥ सरस्वती ॥</span>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>या कुन्देन्दुतुषारहार...</span><span>▼</span></div><div class="mantra-hindi">या कुन्देन्दुतुषारहारधवला या शुभ्रवस्त्रावृता | या वीणावरदण्डमण्डितकरा या श्वेतपद्मासना || या ब्रह्माच्युतशंकरप्रभृतिभिर्देवैः सदा वन्दिता | सा मां पातु सरस्वती भगवती निःशेषजाड्यापहा ||
+—
+शुक्लां ब्रह्मविचार सार परमां आद्यां जगद्व्यापिनीं, वीणा-पुस्तक-धारिणीम् अभयदां जाड्यान्धकारापहाम्। हस्ते स्फटिकमालिकां विदधतीं पद्मासने संस्थिताम्वन्दे, तां परमेश्वरीं भगवतीं बुद्धिप्रदां शारदाम्॥
+—
+ॐ ऐं ह्रीं क्लीं। महासरस्वती देव्यै नमः।। ध्यानं समर्पयामि।।</div></div>
+    </div>
+</div>
+
+<div id="page-bhadra" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('bhadra')">←</div><div style="font-weight:bold;color:#8B0000">सर्वतोभद्र देवता</div></div>
+    <div class="overlay-content">
+        <span class="mantra-label" style="text-align:center">॥ ब्रह्मा ॥</span>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>ब्रह्म जज्ञानं प्रथमं...</span><span>▼</span></div><div class="mantra-hindi">ब्रह्म जज्ञानं प्रथमं पुरस्ताद् वि सीमतः सुरुचो वेन आवः। स बुध्न्याऽ उपमाऽ अस्यविष्ठाः सतश्चयोनिमसतश्च विवः॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>यं ब्रह्मा वरुणेन्द्र...</span><span>▼</span></div><div class="mantra-hindi">यं ब्रह्मा वरुणेन्द्र-रुद्र-मरुतः स्तुन्वन्ति दिव्यैः स्तवैर् वेदैः साङ्ग-पद-क्रमोपनिषदैर् गायन्ति यं सामगाः। ध्यानावस्थित-तद्-गतेन मनसा पश्यन्ति यं योगिनो यस्यान्तं न विदुः सुरासुर-गणा देवाय तस्मै नमः॥</div></div>
+        
+        <span class="mantra-label" style="text-align:center">॥ विष्णु ॥</span>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>इदं विष्णुर्वि चक्रमे...</span><span>▼</span></div><div class="mantra-hindi">इदं विष्णुर्वि चक्रमे त्रेधा नि दधे पदम्। समूढमस्य पा गूं सुरे स्वाहा ॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>शान्ताकारं भुजगशयनं...</span><span>▼</span></div><div class="mantra-hindi">शान्ताकारं भुजगशयनं पद्मनाभं सुरेशं विश्वाधारं गगनसदृशं मेघवर्णं शुभाङ्गम् । लक्ष्मीकान्तं कमलनयनं योगिभिर्ध्यानगम्यम् वन्दे विष्णुं भवभयहरं सर्वलोकैकनाथम् ॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>जले विष्णु: स्थले विष्णु:...</span><span>▼</span></div><div class="mantra-hindi">जले विष्णु: स्थले विष्णुर्विष्णु: पर्वतमस्तके। ज्वालामालाकुले विष्णु: सर्वं विष्णुमयं जगत्॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">विष्णु ध्यान</span><div class="mantra-preview"><span>सशङ्खचक्रं सकिरीट...</span><span>▼</span></div><div class="mantra-hindi">सशङ्खचक्रं सकिरीटकुण्डलम्सपीतवस्त्रं सरसीरुहेक्षणम्। सहारवक्षःस्थलकौस्तुभश्रियम्नमामि विष्णुं शिरसा चतुर्भुजम्॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">रामचरितमानस</span><div class="mantra-preview"><span>शान्तं शाश्वतमप्रमेयम्...</span><span>▼</span></div><div class="mantra-hindi">शान्तं शाश्वतमप्रमेयमनघं निर्वाणशान्तिप्रदं ब्रह्माशम्भुफणीन्द्रसेव्यमनिशं वेदान्तवेद्यं विभुम्‌। रामाख्यं जगदीश्वरं सुरगुरुं मायामनुष्यं हरिं वन्देऽहं करुणाकरं रघुवरं भूपालचूडामणिम्‌॥
+—
+नान्या स्पृहा रघुपते हृदयेऽस्मदीये सत्यं वदामि च भवानखिलान्तरात्मा। भक्तिं प्रयच्छ रघुपुंगव निर्भरां मे कामादिदोषरहितं कुरु मानसं च॥</div></div>
+
+        <span class="mantra-label" style="text-align:center">॥ महेश (शिव) ॥</span>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>ॐ नमस्ते रुद्रं मन्यव...</span><span>▼</span></div><div class="mantra-hindi">ॐ नमस्ते रुद्रं मन्यव उतो त इषवे नमः । बाहुभ्यामुत ते नमः ॥ या ते रुद्र शिवा तनूरघोराऽपापकाशिनी । तया नस्तन्वा शन्तमया गिरिशन्ताभि चाकशीहि ॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>ॐ वन्दे देव उमापतिं...</span><span>▼</span></div><div class="mantra-hindi">ॐ वन्दे देव उमापतिं सुरगुरुं, वन्दे जगत्कारणम् । वन्दे पन्नगभूषणं मृगधरं, वन्दे पशूनां पतिम् ॥ वन्दे सूर्य शशांक वह्नि नयनं, वन्दे मुकुन्दप्रियम् । वन्दे भक्त जनाश्रयं च वरदं, वन्दे शिवंशंकरम् ॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>आत्मा त्वं गिरिजा मतिः...</span><span>▼</span></div><div class="mantra-hindi">आत्मा त्वं गिरिजा मतिः सहचराः प्राणाः शरीरं गृहं पूजा ते विषयोपभोगरचना निद्रा समाधिस्थितिः । सञ्चारः पदयोः प्रदक्षिणविधिः स्तोत्राणि सर्वा गिरो यद्यत्कर्म करोमि तत्तदखिलं शम्भो तवाराधनम् ॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>कण्ठे यस्य विराजते...</span><span>▼</span></div><div class="mantra-hindi">कण्ठे यस्य विराजते हि गरलं, गङ्गा जलं मस्तके। वामाङ्गे गिरिराज राजतनया, जाया भवानी स्थिता॥ नन्दी स्कन्द गणाधिनाथ सहित, केदारनाथ प्रभु। केदारंचल संस्थितो हि संततं, कुर्यात् सदा मङ्गलम्॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">महादेव ध्यान</span><div class="mantra-preview"><span>ध्यायेन्नित्यं महेशं...</span><span>▼</span></div><div class="mantra-hindi">ध्यायेन्नित्यं महेशं रजतगिरिनिभं चारुचन्द्रावतंसं रत्नाकल्पोज्ज्वलाङ्गं परशुमृगवराभीतिहस्तं प्रसन्नम्। पद्मासीनं समन्तात् स्तुतममरगणैर्व्याघ्रकृत्ति वसानं विश्वाद्यं विश्वबीजं निखिलभयहरं पञ्चवक्त्रं त्रिनेत्रम्॥ ५॥</div></div>
+    </div>
+</div>
+
+<div id="page-mrityunjay" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('mrityunjay')">←</div><div style="font-weight:bold;color:#8B0000">महामृत्युंजय ध्यान</div></div>
+    <div class="overlay-content">
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">महामृत्युंजय ध्यान</span><div class="mantra-preview"><span>हस्ताम्भोज-युगस्थ-कुम्भयुगला...</span><span>▼</span></div><div class="mantra-hindi">हस्ताम्भोज-युगस्थ-कुम्भयुगलादुद्धृत्य तोयं शिरः सिञ्चन्तं करयोर्युगेन दधतं स्वाङ्के सकुम्भौ करौ। अक्ष-स्रग्-मृगहस्तमम्बुजगतं मूर्ध्दस्थचन्द्रं स्रवत् पीयूषोऽत्र तनुं भजे स-गिरिजं मृत्युञ्जयं त्र्यम्बकम्॥ १॥
+—
+चन्द्रोद्भासित-मूर्द्धजं सुरपतिं पीयूषपात्रं वहद् हस्ताब्जेन दधत् सुदिव्यममलं हास्यायपङ्केरुहम्। सूर्येन्द्राग्नि-विलोचनं करतले पाशाक्षसूत्राङ्कुशा-म्भोजं बिभ्रतमक्षयं पशुपतिं मृत्युञ्जयं संस्मरे॥ २॥
+—
+ध्यायेन्नित्यं महेशं रजतगिरिनिभं चारुचन्द्रावतंसं रत्नाकल्पोज्ज्वलाङ्गं परशुमृगवराभीतिहस्तं प्रसन्नम्। पद्मासीनं समन्तात् स्तुतममरगणैर्व्याघ्रकृत्ति वसानं विश्वाद्यं विश्वबीजं निखिलभयहरं पञ्चवक्त्रं त्रिनेत्रम्॥ ५॥</div></div>
+    </div>
+</div>
+
+<div id="page-ganga" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('ganga')">←</div><div style="font-weight:bold;color:#8B0000">गंगा मैया ध्यान</div></div>
+    <div class="overlay-content">
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>देवी सुरेश्वरी भगवती...</span><span>▼</span></div><div class="mantra-hindi">देवी सुरेश्वरी भगवती गंगे त्रिभुवन-तारिणी तरल तरंगे। शंकर-मौली-विहारिणी विमले मम मतिर अस्तं तव पद-कमले॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>भागीरथी सुखदायिनी...</span><span>▼</span></div><div class="mantra-hindi">भागीरथी सुखदायिनी माताएँ तव जल-महिमा निगमे ख्यातः। नाहं जने तव महिमानम् पाहि कृपामयी मम अज्ञानम्॥</div></div>
+    </div>
+</div>
+
+<div id="page-vidhya" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('vidhya')">←</div><div style="font-weight:bold;color:#8B0000">विंध्यवासिनी व कामाख्या</div></div>
+    <div class="overlay-content">
+        <span class="mantra-label">॥ विंध्यवासिनी ॥</span>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>नंद गोप गृहे जाता...</span><span>▼</span></div><div class="mantra-hindi">नंद गोप गृहे जाता, यशोदा गर्भ सम्भवा। ततस्तौ नाशयिष्यामि, विंध्याचल निवासिनी।।</div></div>
+        <span class="mantra-label">॥ कामाख्या ॥</span>
+        <div class="mantra-block" onclick="toggleMantra(this)"><div class="mantra-preview"><span>कामाख्ये काम-संपन्ने...</span><span>▼</span></div><div class="mantra-hindi">कामाख्ये काम-संपन्ने, कामेश्वरी! हर-प्रिये। कामनां देहि में नित्यम् , कामेश्वरि! नमोस्तुते।।</div></div>
+    </div>
+</div>
+
+<div id="page-vividh" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('vividh')">←</div><div style="font-weight:bold;color:#8B0000">विविध श्लोक</div></div>
+    <div class="overlay-content">
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">तिलक श्लोक</span><div class="mantra-preview"><span>कस्तूरीतिलकं ललाटपटले...</span><span>▼</span></div><div class="mantra-hindi">कस्तूरीतिलकं ललाटपटले वक्षःस्थले कौस्तुभं, नासाग्रे वरमौक्तिकं करतले वेणुं करे कङ्कणम्। सर्वाङ्गे हरिचन्दनं सुललितं कण्ठे च मुक्तावली, गोपस्त्रीपरिवेष्टितो विजयते गोपालचूड़ामणिः॥</div></div>
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">वसोर्धारा</span><div class="mantra-preview"><span>ॐ वसोः पवित्रमसि शतधारं...</span><span>▼</span></div><div class="mantra-hindi">ॐ वसोः पवित्रमसि शतधारं वसोः पवित्रमसि सहस्रधारम्। देवस्त्वा सविता पुनातु वसोः पवित्रेण शतधारेण सुप्वा कामधुक्षः॥</div></div>
+    </div>
+</div>
+
+<div id="page-pushpanjali" class="full-overlay">
+    <div class="overlay-header"><div class="back-icon" onclick="closePage('pushpanjali')">←</div><div style="font-weight:bold;color:#8B0000">पुष्पांजलि</div></div>
+    <div class="overlay-content">
+        <div class="mantra-block" onclick="toggleMantra(this)"><span class="mantra-label">पुष्पांजलि</span><div class="mantra-preview"><span>हरिः ॐ यज्ञेन यज्ञमयजन्त...</span><span>▼</span></div><div class="mantra-hindi">हरिः ॐ यज्ञेन यज्ञमयजन्त देवास्तानि धर्माणि प्रथमान्यासन्। तेह नाकं महिमानः सचन्त यत्र पूर्वे साध्याः सन्ति देवाः।।
+—
+हरिःॐ राजा धिराजाय प्रसह्य साहिने नमोवयं वैश्रवणाय कुर्महे स मेकामान् काम कामाय मह्यम् कामेश्वरो वैश्रवणो ददातु कुबेराय वैश्रवणाय महाराजाय धिराजायनमः।।
+—
+ॐ सेवन्ति काव कुल चम्पक पाटलाब्जैः, पुन्नागजाति करबीर रसाल पुष्पैः। विल्व्यप्रवाल तुलसी दल मञ्जरीभिः, त्वां पूजयामि जगदीश्वर मे प्रसीद।।
+—
+ॐ नाना सुगन्धि पुष्पाणि, यथा कालोद् भवानि च। पुष्पाञ्जली मयादत्त गृहाण परमेश्वरी (परमेश्वर)।
+—
+त्वमेव माता च पिता त्वमेव, त्वमेव बन्धुश्च सखा त्वमेव। त्वमेव विद्या द्रविणं त्वमेव, त्वमेव सर्वम् मम देव देव।।
+—
+पापोऽहं पापकर्माऽहं पापात्मा पाप सम्भवः। त्राहिमां सर्वमातः सर्व पाप हरो भव।। आवाहनं न जानामि न जानामि विसर्जनम्। पूजां चैव न जानामि क्षमस्व परमेश्वर।।</div></div>
+    </div>
+</div>
+
+
+<script>
+function filterCards() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const cards = document.querySelectorAll('#gridContainer .nav-card');
+    let anyVisible = false;
+    cards.forEach(card => {
+        const keywords = (card.getAttribute('data-keywords') || '').toLowerCase();
+        const text = card.textContent.toLowerCase();
+        const match = query === '' || keywords.includes(query) || text.includes(query);
+        card.style.display = match ? 'flex' : 'none';
+        if (match) anyVisible = true;
+    });
+    document.getElementById('noResults').style.display = anyVisible ? 'none' : 'block';
+}
+
+function openPage(id) { document.getElementById('page-' + id).classList.add('active'); window.history.pushState({page: id}, ""); }
+function closePage(id) { document.getElementById('page-' + id).classList.remove('active'); }
+function toggleMantra(block) {
+    const content = block.querySelector('.mantra-hindi');
+    const arrow = block.querySelector('span:last-child');
+    if (content.style.display === "block") { content.style.display = "none"; arrow.innerHTML = "▼"; }
+    else { content.style.display = "block"; arrow.innerHTML = "▲"; }
+}
+
+/* अक्षर का आकार (याद रहता है) */
+function setFs(v){ v=Math.max(.8,Math.min(1.8,v)); document.documentElement.style.setProperty('--fs',v); try{localStorage.setItem('av_dhyan_fs',v)}catch(e){} }
+function fontStep(n){ var cur=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||1; setFs(Math.round((cur+n*0.1)*10)/10); }
+try{ var f=parseFloat(localStorage.getItem('av_dhyan_fs')); if(f) setFs(f); }catch(e){}
+/* हर मंत्र में कॉपी बटन */
+document.querySelectorAll('.mantra-hindi').forEach(function(el){
+  var b=document.createElement('button'); b.className='copy-btn'; b.type='button'; b.textContent='📋 कॉपी करें';
+  b.addEventListener('click',function(e){ e.stopPropagation(); var t=el.cloneNode(true); t.querySelectorAll('.copy-btn,.meaning-box').forEach(function(x){x.remove()});
+    var txt=t.textContent.trim(); var done=function(){ b.textContent='✓ कॉपी हो गया'; setTimeout(function(){b.textContent='📋 कॉपी करें'},1500); };
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done,function(){fallback(txt);done();}); else {fallback(txt);done();} });
+  el.appendChild(b);
+});
+function fallback(t){ var a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); try{document.execCommand('copy')}catch(e){} a.remove(); }
+window.onpopstate = function() {
+    const overlays = document.querySelectorAll('.full-overlay');
+    overlays.forEach(o => o.classList.remove('active'));
+};
+</script>
+
+</body>
+</html>

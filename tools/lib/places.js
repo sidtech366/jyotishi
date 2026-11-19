@@ -1,0 +1,91 @@
+/* जन्म स्थान सूची: [हिंदी नाम, English नाम, राज्य, अक्षांश, देशांतर, समय क्षेत्र]
+   नया स्थान जोड़ने के लिए बस एक पंक्ति जोड़ें। सूची में न मिलने पर वेबसाइट ऑनलाइन भी खोजती है। */
+const CITIES = [
+['बगहा','Bagaha','बिहार',27.10,84.09,5.5],['बेतिया','Bettiah','बिहार',26.80,84.50,5.5],['नरकटियागंज','Narkatiaganj','बिहार',27.10,84.47,5.5],['रामनगर','Ramnagar','बिहार',27.17,84.32,5.5],['वाल्मीकिनगर','Valmikinagar','बिहार',27.45,83.88,5.5],['मोतिहारी','Motihari','बिहार',26.65,84.92,5.5],['रक्सौल','Raxaul','बिहार',26.98,84.85,5.5],
+['पटना','Patna','बिहार',25.59,85.14,5.5],['गया','Gaya','बिहार',24.79,85.00,5.5],['मुजफ्फरपुर','Muzaffarpur','बिहार',26.12,85.39,5.5],['भागलपुर','Bhagalpur','बिहार',25.24,86.97,5.5],['दरभंगा','Darbhanga','बिहार',26.15,85.90,5.5],['छपरा','Chhapra','बिहार',25.78,84.73,5.5],['सिवान','Siwan','बिहार',26.22,84.36,5.5],['गोपालगंज','Gopalganj','बिहार',26.47,84.44,5.5],['आरा','Arrah','बिहार',25.56,84.66,5.5],['बक्सर','Buxar','बिहार',25.56,83.98,5.5],['पूर्णिया','Purnia','बिहार',25.78,87.47,5.5],['बेगूसराय','Begusarai','बिहार',25.42,86.13,5.5],['समस्तीपुर','Samastipur','बिहार',25.86,85.78,5.5],['सीतामढ़ी','Sitamarhi','बिहार',26.59,85.49,5.5],['बिहार शरीफ','Bihar Sharif','बिहार',25.20,85.52,5.5],['सासाराम','Sasaram','बिहार',24.95,84.03,5.5],['औरंगाबाद','Aurangabad Bihar','बिहार',24.75,84.37,5.5],['हाजीपुर','Hajipur','बिहार',25.69,85.21,5.5],['मधुबनी','Madhubani','बिहार',26.35,86.07,5.5],['सहरसा','Saharsa','बिहार',25.88,86.60,5.5],['कटिहार','Katihar','बिहार',25.54,87.57,5.5],['मुंगेर','Munger','बिहार',25.37,86.47,5.5],['किशनगंज','Kishanganj','बिहार',26.10,87.95,5.5],['अररिया','Araria','बिहार',26.15,87.47,5.5],['जहानाबाद','Jehanabad','बिहार',25.21,84.99,5.5],['नवादा','Nawada','बिहार',24.89,85.54,5.5],['जमुई','Jamui','बिहार',24.92,86.22,5.5],['शिवहर','Sheohar','बिहार',26.51,85.29,5.5],['सुपौल','Supaul','बिहार',26.12,86.60,5.5],['मधेपुरा','Madhepura','बिहार',25.92,86.79,5.5],['खगड़िया','Khagaria','बिहार',25.50,86.48,5.5],['डेहरी','Dehri','बिहार',24.91,84.18,5.5],['भभुआ','Bhabua','बिहार',25.04,83.61,5.5],
+['दिल्ली','Delhi','दिल्ली',28.61,77.21,5.5],['नोएडा','Noida','उत्तर प्रदेश',28.54,77.39,5.5],['गुरुग्राम','Gurugram Gurgaon','हरियाणा',28.46,77.03,5.5],['लखनऊ','Lucknow','उत्तर प्रदेश',26.85,80.95,5.5],['कानपुर','Kanpur','उत्तर प्रदेश',26.45,80.33,5.5],['वाराणसी','Varanasi Banaras','उत्तर प्रदेश',25.32,82.97,5.5],['प्रयागराज','Prayagraj Allahabad','उत्तर प्रदेश',25.44,81.85,5.5],['गोरखपुर','Gorakhpur','उत्तर प्रदेश',26.76,83.37,5.5],['आगरा','Agra','उत्तर प्रदेश',27.18,78.01,5.5],['मथुरा','Mathura','उत्तर प्रदेश',27.49,77.67,5.5],['मेरठ','Meerut','उत्तर प्रदेश',28.98,77.71,5.5],['बरेली','Bareilly','उत्तर प्रदेश',28.37,79.43,5.5],['अयोध्या','Ayodhya Faizabad','उत्तर प्रदेश',26.80,82.20,5.5],['झांसी','Jhansi','उत्तर प्रदेश',25.45,78.57,5.5],['गाजियाबाद','Ghaziabad','उत्तर प्रदेश',28.67,77.45,5.5],['अलीगढ़','Aligarh','उत्तर प्रदेश',27.88,78.08,5.5],['बलिया','Ballia','उत्तर प्रदेश',25.76,84.15,5.5],['देवरिया','Deoria','उत्तर प्रदेश',26.50,83.78,5.5],['कुशीनगर','Kushinagar Padrauna','उत्तर प्रदेश',26.74,83.89,5.5],['महराजगंज','Maharajganj','उत्तर प्रदेश',27.13,83.56,5.5],['आजमगढ़','Azamgarh','उत्तर प्रदेश',26.07,83.18,5.5],['जौनपुर','Jaunpur','उत्तर प्रदेश',25.75,82.69,5.5],['मिर्जापुर','Mirzapur','उत्तर प्रदेश',25.15,82.58,5.5],['गाजीपुर','Ghazipur','उत्तर प्रदेश',25.58,83.58,5.5],['बस्ती','Basti','उत्तर प्रदेश',26.80,82.73,5.5],['सुल्तानपुर','Sultanpur','उत्तर प्रदेश',26.26,82.07,5.5],['मुरादाबाद','Moradabad','उत्तर प्रदेश',28.84,78.77,5.5],['सहारनपुर','Saharanpur','उत्तर प्रदेश',29.96,77.55,5.5],
+['देहरादून','Dehradun','उत्तराखंड',30.32,78.03,5.5],['हरिद्वार','Haridwar','उत्तराखंड',29.95,78.16,5.5],['हल्द्वानी','Haldwani','उत्तराखंड',29.22,79.51,5.5],['शिमला','Shimla','हिमाचल प्रदेश',31.10,77.17,5.5],['चंडीगढ़','Chandigarh','चंडीगढ़',30.73,76.78,5.5],['लुधियाना','Ludhiana','पंजाब',30.90,75.86,5.5],['अमृतसर','Amritsar','पंजाब',31.63,74.87,5.5],['जालंधर','Jalandhar','पंजाब',31.33,75.58,5.5],['पटियाला','Patiala','पंजाब',30.34,76.39,5.5],['अंबाला','Ambala','हरियाणा',30.38,76.78,5.5],['हिसार','Hisar','हरियाणा',29.15,75.72,5.5],['रोहतक','Rohtak','हरियाणा',28.90,76.61,5.5],['पानीपत','Panipat','हरियाणा',29.39,76.97,5.5],['फरीदाबाद','Faridabad','हरियाणा',28.41,77.32,5.5],['जम्मू','Jammu','जम्मू-कश्मीर',32.73,74.86,5.5],['श्रीनगर','Srinagar','जम्मू-कश्मीर',34.08,74.80,5.5],
+['जयपुर','Jaipur','राजस्थान',26.91,75.79,5.5],['जोधपुर','Jodhpur','राजस्थान',26.24,73.02,5.5],['उदयपुर','Udaipur','राजस्थान',24.59,73.71,5.5],['कोटा','Kota','राजस्थान',25.21,75.86,5.5],['अजमेर','Ajmer','राजस्थान',26.45,74.64,5.5],['बीकानेर','Bikaner','राजस्थान',28.02,73.31,5.5],['अलवर','Alwar','राजस्थान',27.55,76.60,5.5],
+['भोपाल','Bhopal','मध्य प्रदेश',23.26,77.41,5.5],['इंदौर','Indore','मध्य प्रदेश',22.72,75.86,5.5],['ग्वालियर','Gwalior','मध्य प्रदेश',26.22,78.18,5.5],['जबलपुर','Jabalpur','मध्य प्रदेश',23.18,79.99,5.5],['उज्जैन','Ujjain','मध्य प्रदेश',23.18,75.78,5.5],['सागर','Sagar','मध्य प्रदेश',23.84,78.74,5.5],['रीवा','Rewa','मध्य प्रदेश',24.53,81.30,5.5],['सतना','Satna','मध्य प्रदेश',24.60,80.83,5.5],['रायपुर','Raipur','छत्तीसगढ़',21.25,81.63,5.5],['बिलासपुर','Bilaspur','छत्तीसगढ़',22.08,82.14,5.5],['भिलाई','Bhilai','छत्तीसगढ़',21.21,81.38,5.5],
+['रांची','Ranchi','झारखंड',23.34,85.31,5.5],['जमशेदपुर','Jamshedpur','झारखंड',22.80,86.20,5.5],['धनबाद','Dhanbad','झारखंड',23.80,86.43,5.5],['बोकारो','Bokaro','झारखंड',23.67,86.15,5.5],['देवघर','Deoghar','झारखंड',24.48,86.69,5.5],['हजारीबाग','Hazaribagh','झारखंड',23.99,85.36,5.5],
+['कोलकाता','Kolkata Calcutta','पश्चिम बंगाल',22.57,88.36,5.5],['सिलीगुड़ी','Siliguri','पश्चिम बंगाल',26.73,88.40,5.5],['आसनसोल','Asansol','पश्चिम बंगाल',23.68,86.98,5.5],['दुर्गापुर','Durgapur','पश्चिम बंगाल',23.52,87.31,5.5],['भुवनेश्वर','Bhubaneswar','ओडिशा',20.30,85.82,5.5],['कटक','Cuttack','ओडिशा',20.46,85.88,5.5],['पुरी','Puri','ओडिशा',19.81,85.83,5.5],['राउरकेला','Rourkela','ओडिशा',22.26,84.85,5.5],['गुवाहाटी','Guwahati','असम',26.14,91.74,5.5],['डिब्रूगढ़','Dibrugarh','असम',27.47,94.91,5.5],['शिलांग','Shillong','मेघालय',25.58,91.89,5.5],['अगरतला','Agartala','त्रिपुरा',23.83,91.29,5.5],['इंफाल','Imphal','मणिपुर',24.82,93.94,5.5],['गंगटोक','Gangtok','सिक्किम',27.33,88.61,5.5],
+['मुंबई','Mumbai Bombay','महाराष्ट्र',19.08,72.88,5.5],['पुणे','Pune','महाराष्ट्र',18.52,73.86,5.5],['नागपुर','Nagpur','महाराष्ट्र',21.15,79.09,5.5],['नासिक','Nashik','महाराष्ट्र',20.00,73.79,5.5],['छत्रपति संभाजीनगर','Aurangabad Sambhajinagar','महाराष्ट्र',19.88,75.34,5.5],['ठाणे','Thane','महाराष्ट्र',19.22,72.98,5.5],['सोलापुर','Solapur','महाराष्ट्र',17.66,75.91,5.5],['कोल्हापुर','Kolhapur','महाराष्ट्र',16.70,74.24,5.5],
+['अहमदाबाद','Ahmedabad','गुजरात',23.02,72.57,5.5],['सूरत','Surat','गुजरात',21.17,72.83,5.5],['वडोदरा','Vadodara Baroda','गुजरात',22.31,73.18,5.5],['राजकोट','Rajkot','गुजरात',22.30,70.80,5.5],['भावनगर','Bhavnagar','गुजरात',21.76,72.15,5.5],['द्वारका','Dwarka','गुजरात',22.24,68.97,5.5],['गांधीनगर','Gandhinagar','गुजरात',23.22,72.65,5.5],['पणजी','Panaji Goa','गोवा',15.49,73.83,5.5],
+['बेंगलुरु','Bengaluru Bangalore','कर्नाटक',12.97,77.59,5.5],['मैसूर','Mysuru Mysore','कर्नाटक',12.30,76.64,5.5],['मंगलुरु','Mangaluru Mangalore','कर्नाटक',12.91,74.86,5.5],['हुबली','Hubli','कर्नाटक',15.36,75.12,5.5],['चेन्नई','Chennai Madras','तमिलनाडु',13.08,80.27,5.5],['मदुरै','Madurai','तमिलनाडु',9.93,78.12,5.5],['कोयंबटूर','Coimbatore','तमिलनाडु',11.02,76.96,5.5],['तिरुचिरापल्ली','Tiruchirappalli Trichy','तमिलनाडु',10.79,78.70,5.5],['हैदराबाद','Hyderabad','तेलंगाना',17.39,78.49,5.5],['वारंगल','Warangal','तेलंगाना',17.97,79.59,5.5],['विशाखापत्तनम','Visakhapatnam Vizag','आंध्र प्रदेश',17.69,83.22,5.5],['विजयवाड़ा','Vijayawada','आंध्र प्रदेश',16.51,80.65,5.5],['तिरुपति','Tirupati','आंध्र प्रदेश',13.63,79.42,5.5],['तिरुवनंतपुरम','Thiruvananthapuram Trivandrum','केरल',8.52,76.94,5.5],['कोच्चि','Kochi Cochin','केरल',9.93,76.27,5.5],['कोझिकोड','Kozhikode Calicut','केरल',11.26,75.78,5.5],['पुडुचेरी','Puducherry Pondicherry','पुडुचेरी',11.94,79.81,5.5],['पोर्ट ब्लेयर','Port Blair','अंडमान',11.62,92.73,5.5],
+['काठमांडू','Kathmandu','नेपाल',27.72,85.32,5.75],['बीरगंज','Birgunj','नेपाल',27.01,84.88,5.75],['ढाका','Dhaka','बांग्लादेश',23.81,90.41,6],['दुबई','Dubai','UAE',25.20,55.27,4],['लंदन','London','UK',51.51,-0.13,0],['न्यूयॉर्क','New York','USA',40.71,-74.01,-5],['टोरंटो','Toronto','कनाडा',43.65,-79.38,-5],['सिंगापुर','Singapore','सिंगापुर',1.35,103.82,8],['सिडनी','Sydney','ऑस्ट्रेलिया',-33.87,151.21,10],
+];
+
+/* ===== साझा जन्म/पंचांग स्थान खोज — Astro Vikass ===== */
+(function () {
+  const KEY = 'av_loc';
+  const norm = s => String(s || '').toLowerCase().replace(/[^a-zऀ-ॿ]/g, '');
+  function local(q) {
+    const n = norm(q); if (!n) return [];
+    const out = [];
+    for (const c of CITIES) {
+      const hi = norm(c[0]), en = c[1].toLowerCase().split(' ').map(norm);
+      let s = -1;
+      if (hi.startsWith(n) || en.some(e => e.startsWith(n))) s = 0; else if (hi.includes(n) || en.some(e => e.includes(n))) s = 1;
+      if (s >= 0) out.push([s, { name: c[0], en: c[1].split(' ')[0], st: c[2], lat: c[3], lon: c[4], tz: c[5] }]);
+    }
+    return out.sort((a, b) => a[0] - b[0]).slice(0, 8).map(x => x[1]);
+  }
+  function tzOf(zone, dateStr) {
+    try {
+      const d = new Date((dateStr || new Date().toISOString().slice(0, 10)) + 'T12:00:00Z');
+      const loc = new Date(d.toLocaleString('en-US', { timeZone: zone })), utc = new Date(d.toLocaleString('en-US', { timeZone: 'UTC' }));
+      return Math.round((loc - utc) / 900000) / 4;
+    } catch (e) { return 5.5; }
+  }
+  async function online(q) {
+    try {
+      const r = await fetch('https://geocoding-api.open-meteo.com/v1/search?count=8&language=en&name=' + encodeURIComponent(q));
+      const j = await r.json();
+      return (j.results || []).map(g => ({ name: g.name, en: '', st: [g.admin2, g.admin1, g.country].filter(Boolean).join(', '), lat: +g.latitude.toFixed(4), lon: +g.longitude.toFixed(4), tz: g.country_code === 'IN' ? 5.5 : tzOf(g.timezone), zone: g.timezone, online: true }));
+    } catch (e) { return []; }
+  }
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
+  function save(p) { try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { } }
+  /* इनपुट पर सुझाव सूची लगाएं: mount(input, onPick) */
+  function mount(input, onPick) {
+    const wrap = document.createElement('div'); wrap.className = 'avp-wrap';
+    input.parentNode.insertBefore(wrap, input); wrap.appendChild(input);
+    const box = document.createElement('div'); box.className = 'avp-sug'; wrap.appendChild(box);
+    let items = [], idx = -1, timer = null, seq = 0;
+    const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    function paint(done) {
+      if (!items.length) { const q = input.value.trim(); box.innerHTML = q.length >= 2 ? `<div class="avp-empty">${done || q.length < 3 ? 'स्थान नहीं मिला — नजदीकी बड़ा शहर लिखें या 📍 दबाएं' : 'खोज रहे हैं…'}</div>` : ''; box.classList.toggle('open', !!box.innerHTML); return; }
+      box.innerHTML = items.map((s, i) => `<div class="avp-it${i === idx ? ' act' : ''}" data-i="${i}"><span>${s.online ? '🌐' : '📍'}</span><span><b>${esc(s.name)}</b>${s.en ? ` <i>${esc(s.en)}</i>` : ''}<small>${esc(s.st)}</small></span></div>`).join('');
+      box.classList.add('open');
+    }
+    function pick(i) { const s = items[i]; if (!s) return; clearTimeout(timer); seq++; input.value = s.name + (s.st ? ', ' + s.st.split(',').pop().trim() : ''); box.classList.remove('open'); items = []; onPick(s); }
+    box.addEventListener('mousedown', e => { const el = e.target.closest('.avp-it'); if (el) { e.preventDefault(); pick(+el.dataset.i); } });
+    input.addEventListener('input', () => {
+      items = local(input.value); idx = items.length ? 0 : -1; paint(); clearTimeout(timer);
+      const q = input.value.trim();
+      if (q.length >= 3) timer = setTimeout(async () => { const my = ++seq; const on = await online(q); if (my !== seq) return; items = items.concat(on.filter(o => !items.some(s => Math.abs(s.lat - o.lat) < 0.08 && Math.abs(s.lon - o.lon) < 0.08))).slice(0, 10); if (idx < 0 && items.length) idx = 0; if (document.activeElement === input) paint(true); }, 400);
+    });
+    input.addEventListener('keydown', e => {
+      if (!items.length) return;
+      if (e.key === 'ArrowDown') { idx = (idx + 1) % items.length; paint(); e.preventDefault(); }
+      else if (e.key === 'ArrowUp') { idx = (idx - 1 + items.length) % items.length; paint(); e.preventDefault(); }
+      else if (e.key === 'Enter') { pick(Math.max(0, idx)); e.preventDefault(); }
+    });
+    input.addEventListener('focus', () => { if (input.value) input.select(); });
+    document.addEventListener('click', e => { if (!wrap.contains(e.target)) box.classList.remove('open'); });
+  }
+  /* GPS से वर्तमान स्थान */
+  function gps() {
+    return new Promise((res, rej) => {
+      if (!navigator.geolocation) return rej(new Error('यह फ़ोन GPS स्थान नहीं दे रहा'));
+      navigator.geolocation.getCurrentPosition(p => {
+        const lat = +p.coords.latitude.toFixed(4), lon = +p.coords.longitude.toFixed(4);
+        let best = null, bd = 1e9;
+        for (const c of CITIES) { const d = (c[3] - lat) ** 2 + (c[4] - lon) ** 2; if (d < bd) { bd = d; best = c; } }
+        const near = best && bd < 0.25 ? best[0] : '';
+        res({ name: near ? 'मेरा स्थान (' + near + ' के पास)' : 'मेरा स्थान', st: '', lat, lon, tz: -new Date().getTimezoneOffset() / 60, gps: true });
+      }, () => rej(new Error('स्थान की अनुमति नहीं मिली')), { enableHighAccuracy: false, timeout: 12000, maximumAge: 600000 });
+    });
+  }
+  window.AVPlaces = { CITIES, local, online, load, save, mount, gps, tzOf };
+})();
