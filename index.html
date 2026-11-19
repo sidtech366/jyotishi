@@ -7,8 +7,8 @@
 <meta name="description" content="Astro Vikass — मुफ्त कुंडली, पंचांग, पूजा-पाठ, वास्तु और ज्योतिष सेवाएं। परामर्श: 7069492135">
 <meta name="theme-color" content="#6b1418">
 <script>
-/* पुराने लिंक (main site के iframe में ?embed=1) ➜ कुंडली ऐप */
-(function(){var e=/[?&]embed=1/.test(location.search);try{e=e||window.self!==window.top}catch(x){e=true}if(e)location.replace('kundli/'+location.search+location.hash)})();
+/* सिर्फ़ पुराना कुंडली लिंक (…/jyotishi/?embed=1) ➜ कुंडली ऐप। iframe में खुलने पर होमपेज ही दिखेगा। */
+if(/[?&]embed=1/.test(location.search))location.replace('kundli/'+location.search+location.hash);
 </script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23e0b24a'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%233d0a0d'%3E%E0%A5%90%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
