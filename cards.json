@@ -45,6 +45,182 @@
       "path": "tools/prem.html",
       "order": 120,
       "replace": "प्रेम प्रतिशतता"
+    },
+    {
+      "id": "rashifal",
+      "title": "राशिफल",
+      "icon": "♈",
+      "desc": "दैनिक, साप्ताहिक, वार्षिक",
+      "path": "tools/rashifal.html",
+      "order": 130
+    },
+    {
+      "id": "milan",
+      "title": "कुंडली मिलान",
+      "icon": "💍",
+      "desc": "36 गुण व मांगलिक मिलान",
+      "path": "tools/milan.html",
+      "order": 140
+    },
+    {
+      "id": "muhurat",
+      "title": "शुभ मुहूर्त",
+      "icon": "📿",
+      "desc": "विवाह, गृह प्रवेश, वाहन",
+      "path": "tools/muhurat.html",
+      "order": 150
+    },
+    {
+      "id": "vrat",
+      "title": "व्रत-त्योहार कैलेंडर",
+      "icon": "🪔",
+      "desc": "एकादशी, पूर्णिमा, त्योहार",
+      "path": "tools/vrat.html",
+      "order": 160
+    },
+    {
+      "id": "sadesati",
+      "title": "साढ़ेसाती-ढैय्या",
+      "icon": "🪐",
+      "desc": "कब से कब तक",
+      "path": "tools/sadesati.html",
+      "order": 170
+    },
+    {
+      "id": "gochar",
+      "title": "आज का गोचर",
+      "icon": "🌌",
+      "desc": "ग्रह किस राशि में",
+      "path": "tools/gochar.html",
+      "order": 180
+    },
+    {
+      "id": "lagna",
+      "title": "लग्न तालिका",
+      "icon": "🌅",
+      "desc": "आज के लग्न का समय",
+      "path": "tools/lagna.html",
+      "order": 190
+    },
+    {
+      "id": "hora",
+      "title": "होरा मुहूर्त",
+      "icon": "⏰",
+      "desc": "अभी किस ग्रह का होरा",
+      "path": "tools/hora.html",
+      "order": 200
+    },
+    {
+      "id": "bhadra",
+      "title": "भद्रा एवं पंचक",
+      "icon": "⚠️",
+      "desc": "अगले 60 दिन",
+      "path": "tools/bhadra.html",
+      "order": 210
+    },
+    {
+      "id": "grahan",
+      "title": "ग्रहण एवं सूतक",
+      "icon": "🌘",
+      "desc": "आने वाले ग्रहण",
+      "path": "tools/grahan.html",
+      "order": 220
+    },
+    {
+      "id": "namakshar",
+      "title": "नामाक्षर / नामकरण",
+      "icon": "👶",
+      "desc": "शुभ अक्षर व नाम",
+      "path": "tools/namakshar.html",
+      "order": 230
+    },
+    {
+      "id": "ratna",
+      "title": "रत्न सुझाव",
+      "icon": "💎",
+      "desc": "लग्न अनुसार रत्न",
+      "path": "tools/ratna.html",
+      "order": 240
+    },
+    {
+      "id": "mulank",
+      "title": "अंक ज्योतिष",
+      "icon": "🔢",
+      "desc": "मूलांक, भाग्यांक, लो-शू",
+      "path": "tools/mulank.html",
+      "order": 250
+    },
+    {
+      "id": "aarti",
+      "title": "आरती संग्रह",
+      "icon": "🪔",
+      "desc": "सभी प्रमुख आरतियां",
+      "path": "tools/stuti.html#aarti",
+      "order": 260
+    },
+    {
+      "id": "chalisa",
+      "title": "चालीसा",
+      "icon": "📖",
+      "desc": "हनुमान व शिव चालीसा",
+      "path": "tools/stuti.html#chalisa",
+      "order": 265
+    },
+    {
+      "id": "naamavali",
+      "title": "नामावली",
+      "icon": "🕉️",
+      "desc": "जप हेतु नाम मंत्र",
+      "path": "tools/stuti.html#naam",
+      "order": 270
+    },
+    {
+      "id": "mala",
+      "title": "डिजिटल जप माला",
+      "icon": "📿",
+      "desc": "टैप से 108 गिनती",
+      "path": "tools/mala.html",
+      "order": 280
+    },
+    {
+      "id": "dakshina",
+      "title": "पूजा खर्च एवं दक्षिणा",
+      "icon": "🧾",
+      "desc": "हिसाब व WhatsApp बिल",
+      "path": "tools/dakshina.html",
+      "order": 290
+    },
+    {
+      "id": "vastu",
+      "title": "वास्तु दिशा कंपास",
+      "icon": "🧭",
+      "desc": "दिशा व वास्तु सलाह",
+      "path": "tools/vastu.html",
+      "order": 300
+    },
+    {
+      "id": "upay",
+      "title": "लाल किताब टोटके",
+      "icon": "📕",
+      "desc": "समस्या अनुसार उपाय",
+      "path": "tools/upay.html",
+      "order": 310
+    },
+    {
+      "id": "swapna",
+      "title": "स्वप्न फल",
+      "icon": "🌙",
+      "desc": "सपनों का अर्थ",
+      "path": "tools/swapna.html",
+      "order": 320
+    },
+    {
+      "id": "shakun",
+      "title": "शकुन शास्त्र",
+      "icon": "🔮",
+      "desc": "आँख फड़कना, छींक आदि",
+      "path": "tools/swapna.html#shakun",
+      "order": 330
     }
   ]
 }

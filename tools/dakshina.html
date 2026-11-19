@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>पूजा खर्च एवं दक्षिणा | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+<style>.it{display:grid;grid-template-columns:1fr 54px 78px 34px;gap:6px;align-items:center;margin-bottom:6px}
+.it .in{padding:9px 8px;font-size:15px}
+.it button{border:0;background:#fdecea;color:var(--bad);border-radius:10px;height:38px;font-size:16px;cursor:pointer}
+.sec{display:flex;justify-content:space-between;align-items:center;margin:14px 0 6px}
+.sec h4{margin:0}
+.sum{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line)}
+.grand{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:12px 14px;border-radius:14px;background:var(--mar);color:#fff}
+.grand b{font-family:'Poppins',sans-serif;font-size:24px}
+.hd{display:grid;grid-template-columns:1fr 54px 78px 34px;gap:6px;font-size:12px;color:var(--mut);font-weight:700}</style>
+</head>
+<body>
+<header class="av-head"><div class="ic">🧾</div><h1>पूजा खर्च एवं दक्षिणा</h1><p>सामग्री, दक्षिणा, भोजन — पूरा हिसाब, WhatsApp पर बिल भेजें</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<div class="av-card">
+  <label class="l">अनुष्ठान / पूजा</label><select class="in" id="tp"></select>
+  <div class="av-row"><div><label class="l">यजमान का नाम</label><input class="in" id="yj" placeholder="नाम"></div><div><label class="l">दिनांक</label><input class="in" type="date" id="dt"></div></div>
+</div>
+<div class="av-card"><div id="secs"></div>
+  <div id="sums"></div><div class="grand"><span>कुल योग</span><b id="tot">₹0</b></div>
+  <div class="av-row" style="margin-top:12px"><button class="btn ok" id="sh">💬 WhatsApp पर बिल</button><button class="btn ln" id="clr">🗑️ खाली करें</button></div>
+</div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script>
+const { $, esc, store, share, toast } = AVUI;
+const SEC = [['sam', '🪔 पूजन सामग्री'], ['dak', '🙏 दक्षिणा (पंडित/ब्राह्मण)'], ['bhoj', '🍲 भोजन / प्रसाद'], ['any', '📦 अन्य खर्च']];
+const T = {
+  'सत्यनारायण कथा': { sam: 'रोली-मौली,अक्षत (चावल),पान-सुपारी,नारियल,फल,फूल-माला,केले के पत्ते,पंचामृत सामग्री,धूप-दीप-घी,तुलसी दल,कलश', dak: 'पंडित जी (कथा)', bhoj: 'प्रसाद (पंजीरी/हलवा)' },
+  'गृह प्रवेश': { sam: 'कलश व आम पल्लव,नारियल,हवन सामग्री,समिधा (लकड़ी),घी,रोली-मौली,अक्षत,फूल-माला,फल,नवग्रह सामग्री,वास्तु पूजन सामग्री', dak: 'मुख्य पंडित जी,सहायक ब्राह्मण', bhoj: 'ब्राह्मण भोजन,परिवार भोजन' },
+  'रुद्राभिषेक': { sam: 'दूध,दही,घी,शहद,गंगाजल,बेलपत्र,धतूरा,भांग,चंदन,फूल-माला,रोली-मौली', dak: 'पंडित जी (पाठ)', bhoj: 'प्रसाद' },
+  'विवाह पूजन': { sam: 'हवन सामग्री,समिधा,घी,कलश,नारियल,रोली-मौली,अक्षत,फूल-माला,सिंदूर,मंगलसूत्र पूजन सामग्री,लावा (खील)', dak: 'मुख्य पंडित जी,सहायक ब्राह्मण', bhoj: 'ब्राह्मण भोजन' },
+  'मुंडन संस्कार': { sam: 'रोली-मौली,अक्षत,नारियल,फूल-माला,फल,हल्दी,कलश', dak: 'पंडित जी,नाई', bhoj: 'प्रसाद' },
+  'नवग्रह शांति': { sam: 'नवग्रह समिधा,नवधान्य,हवन सामग्री,घी,नवग्रह वस्त्र,रोली-मौली,फूल-माला,फल', dak: 'पंडित जी (जप),सहायक ब्राह्मण', bhoj: 'ब्राह्मण भोजन' },
+  'खाली (अपना बनाएं)': {},
+};
+let D = store.get('av_dak', null);
+function fresh(tp) { const t = T[tp] || {}, d = { tp, yj: D ? D.yj : '', dt: AVUI.iso(new Date()), rows: {} }; SEC.forEach(([k]) => d.rows[k] = (t[k] ? t[k].split(',') : ['']).map(n => ({ n, q: 1, r: '' }))); return d; }
+if (!D) D = fresh('सत्यनारायण कथा');
+$('tp').innerHTML = Object.keys(T).map(k => `<option>${k}</option>`).join(''); $('tp').value = D.tp;
+$('yj').value = D.yj || ''; $('dt').value = D.dt || AVUI.iso(new Date());
+const save = () => store.set('av_dak', D), amt = r => (+r.q || 0) * (+r.r || 0), fmt = n => '₹' + n.toLocaleString('en-IN');
+function draw() {
+  $('secs').innerHTML = SEC.map(([k, t]) => `<div class="sec"><h4>${t}</h4><button class="btn sm ln" data-add="${k}">+ जोड़ें</button></div><div class="hd"><span>विवरण</span><span>मात्रा</span><span>दर ₹</span><span></span></div>${D.rows[k].map((r, i) => `<div class="it"><input class="in" data-k="${k}" data-i="${i}" data-f="n" value="${esc(r.n)}" placeholder="विवरण"><input class="in" data-k="${k}" data-i="${i}" data-f="q" type="number" inputmode="decimal" value="${esc(r.q)}"><input class="in" data-k="${k}" data-i="${i}" data-f="r" type="number" inputmode="decimal" value="${esc(r.r)}" placeholder="0"><button data-del="${k}:${i}">✕</button></div>`).join('')}`).join('');
+  totals();
+}
+function totals() { let g = 0; $('sums').innerHTML = SEC.map(([k, t]) => { const s = D.rows[k].reduce((a, r) => a + amt(r), 0); g += s; return `<div class="sum"><span>${t}</span><b>${fmt(s)}</b></div>`; }).join(''); $('tot').textContent = fmt(g); return g; }
+$('secs').addEventListener('input', e => { const el = e.target; if (!el.dataset.k) return; D.rows[el.dataset.k][+el.dataset.i][el.dataset.f] = el.value; save(); totals(); });
+$('secs').addEventListener('click', e => { const a = e.target.closest('[data-add]'), d = e.target.closest('[data-del]'); if (a) { D.rows[a.dataset.add].push({ n: '', q: 1, r: '' }); save(); draw(); } if (d) { const [k, i] = d.dataset.del.split(':'); D.rows[k].splice(+i, 1); if (!D.rows[k].length) D.rows[k].push({ n: '', q: 1, r: '' }); save(); draw(); } });
+$('tp').onchange = () => { D = fresh($('tp').value); D.yj = $('yj').value; save(); draw(); toast('सूची भर दी — अब दर लिखें'); };
+$('yj').oninput = () => { D.yj = $('yj').value; save(); }; $('dt').onchange = () => { D.dt = $('dt').value; save(); };
+$('clr').onclick = () => { D = fresh('खाली (अपना बनाएं)'); $('tp').value = D.tp; save(); draw(); };
+$('sh').onclick = () => { const g = totals(); let t = `🧾 *${D.tp} — खर्च विवरण*\n👤 यजमान: ${D.yj || '-'}\n📅 ${(D.dt || '').split('-').reverse().join('/')}\n`; SEC.forEach(([k, n]) => { const rs = D.rows[k].filter(r => r.n && amt(r)); if (rs.length) { t += `\n${n}\n` + rs.map(r => `• ${r.n}${+r.q !== 1 ? ' × ' + r.q : ''} = ${fmt(amt(r))}`).join('\n') + '\n'; } }); t += `\n💰 *कुल योग: ${fmt(g)}*`; share(t); };
+draw();
+</script>
+</body>
+</html>

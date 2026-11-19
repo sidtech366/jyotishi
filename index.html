@@ -215,7 +215,7 @@ function openFromHash() {
   const c = ALL.find(x => x.id === id && x.kind === 'local');
   if (!c || $('vTitle').dataset.id === id && $('view').classList.contains('on')) return;
   $('vTitle').dataset.id = id;
-  showView(c.title, `<iframe src="${esc(c.path)}" allow="clipboard-write; geolocation"></iframe>`);
+  showView(c.title, `<iframe src="${esc(c.path)}" allow="clipboard-write; geolocation; accelerometer; gyroscope; magnetometer; screen-wake-lock"></iframe>`);
 }
 window.addEventListener('hashchange', () => { $('vTitle').dataset.id = ''; openFromHash(); });
 load();

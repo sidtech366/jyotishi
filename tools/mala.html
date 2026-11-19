@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>डिजिटल जप माला | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+<style>.mtop{display:flex;gap:8px;align-items:center}
+.mtop select{flex:1}
+.ring{position:relative;width:min(300px,78vw);aspect-ratio:1;margin:14px auto 6px;border-radius:50%;background:conic-gradient(var(--saf) calc(var(--p)*1%),#f3e6c9 0);display:grid;place-items:center;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;box-shadow:0 18px 40px -20px #6b1418}
+.ring:active{transform:scale(.985)}
+.ring .in{width:84%;height:84%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fffaf1,#fbe7c2);display:grid;place-items:center;text-align:center;box-shadow:inset 0 0 0 2px #f3dba6}
+.cnt{font-family:'Poppins',sans-serif;font-weight:700;font-size:64px;color:var(--mar);line-height:1}
+.mn{font-family:'Yatra One',serif;color:var(--mar3);font-size:17px;padding:0 14px;line-height:1.35}
+.tap{font-size:12.5px;color:var(--mut)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.stats .box{text-align:center}.stats b{font-family:'Poppins',sans-serif;font-size:22px}
+.ctl{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.hist div{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line)}</style>
+</head>
+<body>
+<header class="av-head"><div class="ic">📿</div><h1>डिजिटल जप माला</h1><p>टैप करें, गिनती अपने आप — 108 पर माला पूरी, कंपन व ध्वनि के साथ</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<div class="av-card">
+  <div class="mtop"><select class="in" id="mt"></select><button class="btn sm ln" id="add">+ अपना</button></div>
+  <div class="ring" id="ring" style="--p:0"><div class="in"><div><div class="cnt" id="cnt">0</div><div class="mn" id="mn"></div><div class="tap">यहाँ टैप करें</div></div></div></div>
+  <div class="stats"><div class="box"><small>पूरी माला</small><b id="ml">0</b></div><div class="box"><small>आज कुल जप</small><b id="td">0</b></div><div class="box"><small>लक्ष्य (माला)</small><b id="tg">11</b></div></div>
+  <div class="ctl"><button class="btn sm ln" id="undo">↶ एक कम</button><button class="btn sm ln" id="snd">🔔 ध्वनि: चालू</button><button class="btn sm ln" id="vib">📳 कंपन: चालू</button><button class="btn sm ln" id="tgt">🎯 लक्ष्य</button><button class="btn sm ln" id="rst">⟲ नई माला</button></div>
+</div>
+<div class="av-card"><h3>📅 जप डायरी</h3><div class="hist" id="hist"></div></div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script>
+const { $, store, toast } = AVUI;
+const PRE = ['ॐ नमः शिवाय', 'ॐ नमो भगवते वासुदेवाय', 'श्री राम जय राम जय जय राम', 'ॐ गं गणपतये नमः', 'ॐ हनुमते नमः', 'हरे कृष्ण हरे कृष्ण कृष्ण कृष्ण हरे हरे', 'ॐ श्रीं महालक्ष्म्यै नमः', 'ॐ ऐं ह्रीं क्लीं चामुण्डायै विच्चे', 'गायत्री मंत्र', 'महामृत्युंजय मंत्र', 'ॐ शं शनैश्चराय नमः', 'राधे राधे'];
+let S = store.get('av_mala', { m: 0, c: 0, malas: 0, snd: 1, vib: 1, tgt: 11, custom: [], hist: {} });
+const today = AVUI.iso(new Date()); S.hist[today] = S.hist[today] || 0;
+const all = () => PRE.concat(S.custom || []);
+function fillSel() { $('mt').innerHTML = all().map((m, i) => `<option value="${i}">${m}</option>`).join(''); $('mt').value = S.m; }
+let ac = null;
+function beep(f, d) { if (!S.snd) return; try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = f; o.type = 'sine'; g.gain.setValueAtTime(.18, ac.currentTime); g.gain.exponentialRampToValueAtTime(.001, ac.currentTime + d); o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + d); } catch (e) { } }
+function vib(p) { if (S.vib && navigator.vibrate) try { navigator.vibrate(p); } catch (e) { } }
+function save() { store.set('av_mala', S); }
+function draw() {
+  $('cnt').textContent = S.c; $('mn').textContent = all()[S.m] || ''; $('ring').style.setProperty('--p', S.c / 108 * 100);
+  $('ml').textContent = S.malas; $('td').textContent = S.hist[today]; $('tg').textContent = S.tgt;
+  $('snd').textContent = '🔔 ध्वनि: ' + (S.snd ? 'चालू' : 'बंद'); $('vib').textContent = '📳 कंपन: ' + (S.vib ? 'चालू' : 'बंद');
+  const h = Object.entries(S.hist).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 10);
+  $('hist').innerHTML = h.map(([d, n]) => `<div><span>${d.split('-').reverse().join('/')}</span><b>${n} जप (${Math.floor(n / 108)} माला)</b></div>`).join('');
+}
+$('ring').addEventListener('click', () => {
+  S.c++; S.hist[today]++;
+  if (S.c >= 108) { S.c = 0; S.malas++; beep(660, .6); vib([120, 80, 220]); toast(`🙏 ${S.malas} माला पूर्ण`); if (S.malas === S.tgt) setTimeout(() => toast('🎯 लक्ष्य पूरा! जय हो 🙏'), 1500); }
+  else { beep(880, .06); vib(15); }
+  save(); draw();
+});
+$('undo').onclick = () => { if (S.c > 0) { S.c--; S.hist[today] = Math.max(0, S.hist[today] - 1); save(); draw(); } };
+$('snd').onclick = () => { S.snd = !S.snd; save(); draw(); };
+$('vib').onclick = () => { S.vib = !S.vib; save(); draw(); };
+$('rst').onclick = () => { S.c = 0; S.malas = 0; save(); draw(); toast('नई शुरुआत 🙏'); };
+$('tgt').onclick = () => { const v = parseInt(prompt('कितनी माला का लक्ष्य?', S.tgt), 10); if (v > 0) { S.tgt = v; save(); draw(); } };
+$('mt').onchange = () => { S.m = +$('mt').value; save(); draw(); };
+$('add').onclick = () => { const v = (prompt('अपना मंत्र लिखें') || '').trim(); if (v) { S.custom = (S.custom || []).concat(v); S.m = all().length - 1; save(); fillSel(); draw(); } };
+try { navigator.wakeLock && navigator.wakeLock.request('screen').catch(() => { }); } catch (e) { }
+fillSel(); draw();
+</script>
+</body>
+</html>

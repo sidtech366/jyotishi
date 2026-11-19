@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>वास्तु दिशा कंपास | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+<style>.cmp{position:relative;width:min(290px,76vw);aspect-ratio:1;margin:8px auto}
+.dial{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,#fffaf1 58%,#fbe7c2 59%,#fbe7c2 70%,#fff 71%);border:3px solid var(--mar);transition:transform .15s linear}
+.dial span{position:absolute;font-weight:800;color:var(--mar);font-size:14px;transform:translate(-50%,-50%)}
+.dial span.mj{color:var(--saf);font-size:19px}
+.needle{position:absolute;left:50%;top:6%;width:4px;height:44%;background:linear-gradient(var(--bad),#b8323200);transform:translateX(-50%);border-radius:4px;z-index:2}
+.hub{position:absolute;left:50%;top:50%;width:16px;height:16px;border-radius:50%;background:var(--mar);transform:translate(-50%,-50%);z-index:3}
+.hdg{text-align:center;font-family:'Poppins',sans-serif;font-weight:700;font-size:30px;color:var(--mar)}
+.hdg small{display:block;font-family:'Noto Sans Devanagari';font-size:17px;color:var(--mar3)}
+.dirs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.dirs button{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:8px 2px;font-weight:700;color:var(--mar);cursor:pointer;font-size:13.5px}
+.dirs button.on{background:var(--mar);color:#fff}</style>
+</head>
+<body>
+<header class="av-head"><div class="ic">🧭</div><h1>वास्तु दिशा कंपास</h1><p>फ़ोन से दिशा देखें • हर दिशा का वास्तु — क्या रखें, क्या न रखें</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<div class="av-card">
+  <div class="cmp"><div class="needle"></div><div class="dial" id="dial"></div><div class="hub"></div></div>
+  <div class="hdg" id="hdg">—<small id="hn">फ़ोन को समतल रखकर घुमाएं</small></div>
+  <button class="btn blk" id="start">🧭 कंपास चालू करें</button>
+  <p class="note">घर के मुख्य द्वार पर अंदर से बाहर की ओर मुँह करके खड़े हों — फ़ोन जो दिशा बताए, वही घर का मुख है। धातु/चुंबक से दूर रखें।</p>
+</div>
+<div class="av-card"><h3>दिशा चुनें</h3><div class="dirs" id="dirs"></div><div id="info" style="margin-top:12px"></div></div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script>
+const { $, share } = AVUI;
+const DIR = [
+  ['उत्तर', 'N', 'कुबेर', 'जल', 'धन, अवसर, करियर', 'तिजोरी/कैश बॉक्स, पानी का स्रोत, हरे पौधे, खुला स्थान', 'भारी सामान, शौचालय, कूड़ा', 'मुख्य द्वार उत्तर में बहुत शुभ — धन और अवसर बढ़ते हैं।'],
+  ['उत्तर-पूर्व (ईशान)', 'NE', 'ईश्वर / शिव', 'जल', 'पूजा, ज्ञान, शांति', 'पूजा घर, जल का कलश, बोरिंग/हैंडपंप, खुला व हल्का स्थान', 'शौचालय, रसोई, भारी निर्माण, सीढ़ी, कूड़ा', 'सबसे पवित्र दिशा — मुख्य द्वार ईशान में अत्यंत शुभ; इसे हमेशा साफ रखें।'],
+  ['पूर्व', 'E', 'इंद्र / सूर्य', 'वायु', 'स्वास्थ्य, सामाजिक मान', 'खिड़कियां, बैठक, सूर्य का प्रकाश, तुलसी', 'ऊंची दीवारें, भारी सामान, शौचालय', 'पूर्व मुखी द्वार शुभ — मान-सम्मान और स्वास्थ्य देता है।'],
+  ['दक्षिण-पूर्व (आग्नेय)', 'SE', 'अग्नि', 'अग्नि', 'ऊर्जा, धन प्रवाह, रसोई', 'रसोई, गैस/चूल्हा, बिजली मीटर, इन्वर्टर', 'पानी की टंकी, बेडरूम (नवविवाहित), पूजा', 'आग्नेय द्वार से खर्च व विवाद बढ़ सकते हैं — द्वार पर लाल स्वास्तिक व पिरामिड लगाएं।'],
+  ['दक्षिण', 'S', 'यम', 'पृथ्वी', 'स्थिरता, प्रसिद्धि', 'भारी अलमारी, मास्टर बेडरूम का सामान, ऊंची दीवार', 'मुख्य द्वार (बिना उपाय), खाली स्थान, पानी', 'दक्षिण मुखी द्वार में उपाय जरूरी — पंचमुखी हनुमान चित्र या तांबे का स्वास्तिक लगाएं।'],
+  ['दक्षिण-पश्चिम (नैऋत्य)', 'SW', 'नैऋति / राहु', 'पृथ्वी', 'संबंध, स्थायित्व, मुखिया', 'मास्टर बेडरूम, भारी सामान, लॉकर (कागजात)', 'मुख्य द्वार, शौचालय, बोरिंग, गड्ढा', 'नैऋत्य द्वार सबसे अशुभ माना जाता है — संभव हो तो बदलें, अन्यथा वास्तु पिरामिड व सीसे की पट्टी।'],
+  ['पश्चिम', 'W', 'वरुण / शनि', 'वायु', 'लाभ, स्थिरता, संतान', 'डाइनिंग, बच्चों का कमरा, पानी की ओवरहेड टंकी', 'मुख्य पूजा स्थान, बहुत बड़ी खिड़कियां', 'पश्चिम मुखी द्वार सामान्य/शुभ — व्यापारियों के लिए लाभदायक।'],
+  ['उत्तर-पश्चिम (वायव्य)', 'NW', 'वायु / चंद्र', 'वायु', 'संबंध, सहायता, गति', 'गेस्ट रूम, अनाज भंडार, वाहन पार्किंग, बेटी का कमरा', 'तिजोरी, भारी निर्माण', 'वायव्य द्वार ठीक है — मित्र व सहयोग बढ़ते हैं, पर स्थिरता के लिए द्वार पर चांदी का स्वास्तिक।'],
+];
+const ANG = [0, 45, 90, 135, 180, 225, 270, 315];
+$('dial').innerHTML = ['उ', 'ई', 'पू', 'आ', 'द', 'नै', 'प', 'वा'].map((t, i) => { const a = ANG[i] * Math.PI / 180, r = 41; return `<span class="${i % 2 ? '' : 'mj'}" style="left:${50 + Math.sin(a) * r}%;top:${50 - Math.cos(a) * r}%">${t}</span>`; }).join('');
+$('dirs').innerHTML = DIR.map((d, i) => `<button data-i="${i}">${d[1]}<br>${d[0].split(' ')[0]}</button>`).join('');
+$('dirs').onclick = e => { const b = e.target.closest('button'); if (b) show(+b.dataset.i); };
+function show(i) {
+  [...$('dirs').children].forEach(x => x.classList.toggle('on', +x.dataset.i === i)); const d = DIR[i];
+  $('info').innerHTML = `<h3>${d[0]} (${d[1]})</h3><div class="grid2"><div class="box"><small>स्वामी देवता</small><b>${d[2]}</b></div><div class="box"><small>तत्व</small><b>${d[3]}</b></div></div><div class="box" style="margin-top:8px"><small>यह दिशा देती है</small><b>${d[4]}</b></div><div class="box good" style="margin-top:8px"><small>✅ यहाँ रखें</small><b style="font-size:15px">${d[5]}</b></div><div class="box bad" style="margin-top:8px"><small>❌ यहाँ न रखें</small><b style="font-size:15px">${d[6]}</b></div><div class="box mid" style="margin-top:8px"><small>🚪 मुख्य द्वार इस दिशा में हो तो</small><b style="font-size:15px">${d[7]}</b></div><button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button>`;
+  $('sh').onclick = () => share(`🧭 *वास्तु — ${d[0]} दिशा*\nस्वामी: ${d[2]} • तत्व: ${d[3]}\n✅ रखें: ${d[5]}\n❌ न रखें: ${d[6]}\n🚪 ${d[7]}`);
+}
+let last = -1;
+function onHead(h) {
+  if (h == null || isNaN(h)) return; h = (h + 360) % 360;
+  $('dial').style.transform = `rotate(${-h}deg)`;
+  const i = Math.round(h / 45) % 8; $('hdg').firstChild.nodeValue = Math.round(h) + '° '; $('hn').textContent = DIR[i][0];
+  if (i !== last) { last = i; show(i); }
+}
+function handler(e) { let h = e.webkitCompassHeading != null ? e.webkitCompassHeading : (e.absolute || e.type === 'deviceorientationabsolute') && e.alpha != null ? 360 - e.alpha : null; if (h != null) onHead(h); }
+$('start').onclick = async () => {
+  try { if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') { const r = await DeviceOrientationEvent.requestPermission(); if (r !== 'granted') throw 0; } } catch (e) { $('hn').textContent = 'अनुमति नहीं मिली — नीचे से दिशा चुनें'; return; }
+  window.addEventListener('deviceorientationabsolute', handler, true); window.addEventListener('deviceorientation', handler, true);
+  $('start').textContent = '✓ कंपास चालू है'; setTimeout(() => { if (last < 0) $('hn').textContent = 'इस फ़ोन/ब्राउज़र में कंपास सेंसर नहीं मिला — नीचे से दिशा चुनें'; }, 2500);
+};
+show(1);
+</script>
+</body>
+</html>
