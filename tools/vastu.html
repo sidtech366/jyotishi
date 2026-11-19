@@ -58,17 +58,41 @@ function show(i) {
 }
 let last = -1;
 function onHead(h) {
-  if (h == null || isNaN(h)) return; h = (h + 360) % 360;
+  if (h == null || isNaN(h)) return; h = (h + 360) % 360; if ($('start').tagName === 'BUTTON') $('start').textContent = '✓ कंपास चालू है';
   $('dial').style.transform = `rotate(${-h}deg)`;
   const i = Math.round(h / 45) % 8; $('hdg').firstChild.nodeValue = Math.round(h) + '° '; $('hn').textContent = DIR[i][0];
   if (i !== last) { last = i; show(i); }
 }
 function handler(e) { let h = e.webkitCompassHeading != null ? e.webkitCompassHeading : (e.absolute || e.type === 'deviceorientationabsolute') && e.alpha != null ? 360 - e.alpha : null; if (h != null) onHead(h); }
+let started = false;
+function listen() {
+  if (started) return; started = true;
+  window.addEventListener('deviceorientationabsolute', handler, true);
+  window.addEventListener('deviceorientation', handler, true);
+  try {   // नया सेंसर API (कुछ Android फ़ोन में)
+    if ('AbsoluteOrientationSensor' in window) {
+      const sn = new AbsoluteOrientationSensor({ frequency: 20 });
+      sn.addEventListener('reading', () => { const [x, y, z, w] = sn.quaternion; const a = Math.atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z)) * 180 / Math.PI; onHead(360 - a); });
+      sn.addEventListener('error', () => { }); sn.start();
+    }
+  } catch (e) { }
+}
+const framed = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
+function noSensor() {
+  if (last >= 0) return;
+  if (framed) {
+    $('hn').innerHTML = 'यहाँ फ़ोन का सेंसर ब्लॉक है — कंपास पूरे पेज में खोलें 👇';
+    $('start').outerHTML = `<a class="btn blk" id="start" href="${location.href.split('#')[0]}" target="_blank" rel="noopener">🧭 कंपास पूरे पेज में खोलें</a>`;
+  } else $('hn').textContent = 'इस फ़ोन में कंपास (मैग्नेटोमीटर) सेंसर नहीं मिला — नीचे से दिशा चुनें';
+}
 $('start').onclick = async () => {
-  try { if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') { const r = await DeviceOrientationEvent.requestPermission(); if (r !== 'granted') throw 0; } } catch (e) { $('hn').textContent = 'अनुमति नहीं मिली — नीचे से दिशा चुनें'; return; }
-  window.addEventListener('deviceorientationabsolute', handler, true); window.addEventListener('deviceorientation', handler, true);
-  $('start').textContent = '✓ कंपास चालू है'; setTimeout(() => { if (last < 0) $('hn').textContent = 'इस फ़ोन/ब्राउज़र में कंपास सेंसर नहीं मिला — नीचे से दिशा चुनें'; }, 2500);
+  let denied = false;
+  try { if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') { const r = await DeviceOrientationEvent.requestPermission(); if (r !== 'granted') denied = true; } } catch (e) { }
+  listen(); if (denied && !framed) { $('hn').textContent = 'सेंसर की अनुमति नहीं मिली — ब्राउज़र सेटिंग में "Motion sensors" चालू करें'; } $('start').textContent = '🧭 कंपास चल रहा है…'; $('hn').textContent = 'फ़ोन को समतल रखकर धीरे घुमाएं…';
+  setTimeout(noSensor, 3000);
 };
+// Android में बिना बटन दबाए भी चालू
+listen(); setTimeout(() => { if (last < 0 && framed) noSensor(); }, 3000);
 show(1);
 </script>
 </body>
