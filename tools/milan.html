@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>कुंडली मिलान | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+<style>.kt td:last-child,.kt th:last-child{text-align:center;white-space:nowrap}
+.res{text-align:center}
+.ring{width:150px;height:150px;border-radius:50%;margin:6px auto 8px;display:grid;place-items:center;background:conic-gradient(var(--c) calc(var(--p)*1%),#f3e6c9 0)}
+.ring>div{width:118px;height:118px;border-radius:50%;background:var(--paper);display:grid;place-items:center}
+.ring b{font-family:'Poppins',sans-serif;font-size:34px;color:var(--mar);line-height:1}
+.ring small{color:var(--mut)}
+.mode{margin-bottom:10px}</style>
+</head>
+<body>
+<header class="av-head"><div class="ic">💍</div><h1>कुंडली मिलान</h1><p>अष्टकूट 36 गुण • नाड़ी-भकूट दोष • मांगलिक मिलान</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<div class="av-card">
+  <div class="tabs mode" id="mode"><button data-m="birth" class="on">जन्म विवरण से</button><button data-m="name">नाम/नक्षत्र से</button></div>
+  <div id="fBirth"><div id="boy"></div><div style="height:8px"></div><div id="girl"></div></div>
+  <div id="fName" style="display:none">
+    <h4>👦 वर</h4><div class="av-row"><div><label class="l">नाम</label><input class="in" id="bn" placeholder="नाम"></div><div><label class="l">नक्षत्र-चरण</label><select class="in" id="bk"></select></div></div>
+    <h4>👧 वधू</h4><div class="av-row"><div><label class="l">नाम</label><input class="in" id="gn" placeholder="नाम"></div><div><label class="l">नक्षत्र-चरण</label><select class="in" id="gk"></select></div></div>
+    <div class="note">नक्षत्र नहीं पता? नाम लिखते ही पहले अक्षर से अपने आप भर जाएगा।</div>
+  </div>
+  <button class="btn blk" id="go">💍 गुण मिलान करें</button>
+</div>
+<div id="out"></div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script src="lib/akshar.js"></script>
+<script>
+const { $, esc, store, share, toast } = AVUI, A = AVAstro, N = A.N;
+const boy = AVUI.birthForm($('boy'), 'av_mb', '👦 वर (लड़का)'), girl = AVUI.birthForm($('girl'), 'av_mg', '👧 वधू (लड़की)');
+let mode = 'birth';
+$('mode').onclick = e => { const b = e.target.closest('button'); if (!b) return; mode = b.dataset.m; [...$('mode').children].forEach(x => x.classList.toggle('on', x === b)); $('fBirth').style.display = mode === 'birth' ? '' : 'none'; $('fName').style.display = mode === 'name' ? '' : 'none'; };
+const opts = N.NAK.map((n, i) => [0, 1, 2, 3].map(p => `<option value="${i * 4 + p}">${n} — चरण ${p + 1} (${AVAkshar.SYL[i][p]})</option>`).join('')).join('');
+$('bk').innerHTML = $('gk').innerHTML = opts;
+[['bn', 'bk'], ['gn', 'gk']].forEach(([n, k]) => $(n).addEventListener('input', () => { const r = AVAkshar.fromName($(n).value); if (r) $(k).value = r.n * 4 + r.p; }));
+/* --- अष्टकूट तालिकाएं --- */
+const VARNA = [1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0].map(x => x);           // मेष=क्षत्रिय... (0 ब्राह्मण,1 क्षत्रिय,2 वैश्य,3 शूद्र)
+const VARNA_OF = s => [1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0][s];
+const VARNA_N = ['ब्राह्मण', 'क्षत्रिय', 'वैश्य', 'शूद्र'];
+function vashyaOf(lon) { const s = Math.floor(lon / 30), d = lon % 30; if ([0, 1].includes(s)) return 0; if (s === 8) return d < 15 ? 1 : 0; if (s === 9) return d < 15 ? 0 : 2; if ([2, 5, 6, 10].includes(s)) return 1; if ([3, 11].includes(s)) return 2; if (s === 4) return 3; return 4; }
+const VASHYA_N = ['चतुष्पद', 'मानव', 'जलचर', 'वनचर', 'कीट'];
+const VASHYA_T = [[2, 1, 1, 0.5, 1], [1, 2, 0.5, 0, 1], [1, 0.5, 2, 1, 1], [0, 0, 0, 2, 0], [1, 1, 1, 0, 2]];
+const YONI = [0, 1, 2, 3, 3, 4, 5, 2, 5, 6, 6, 7, 8, 9, 8, 9, 10, 10, 4, 11, 12, 11, 13, 0, 13, 7, 1];
+const YONI_N = ['अश्व', 'गज', 'मेष', 'सर्प', 'श्वान', 'मार्जार', 'मूषक', 'गौ', 'महिष', 'व्याघ्र', 'मृग', 'वानर', 'नकुल', 'सिंह'];
+const YONI_T = [[4, 2, 2, 3, 2, 2, 2, 1, 0, 1, 3, 3, 2, 1], [2, 4, 3, 3, 2, 2, 2, 2, 3, 1, 2, 3, 2, 0], [2, 3, 4, 2, 1, 2, 1, 3, 3, 1, 2, 0, 3, 1], [3, 3, 2, 4, 2, 1, 1, 1, 1, 2, 2, 2, 0, 2], [2, 2, 1, 2, 4, 2, 1, 2, 2, 1, 0, 2, 1, 1], [2, 2, 2, 1, 2, 4, 0, 2, 2, 1, 3, 3, 2, 1], [2, 2, 1, 1, 1, 0, 4, 2, 2, 2, 2, 2, 1, 2], [1, 2, 3, 1, 2, 2, 2, 4, 3, 0, 3, 2, 2, 1], [0, 3, 3, 1, 2, 2, 2, 3, 4, 1, 2, 2, 2, 1], [1, 1, 1, 2, 1, 1, 2, 0, 1, 4, 1, 1, 2, 1], [3, 2, 2, 2, 0, 3, 2, 3, 2, 1, 4, 2, 2, 1], [3, 3, 0, 2, 2, 3, 2, 2, 2, 1, 2, 4, 3, 2], [2, 2, 3, 0, 1, 2, 1, 2, 2, 2, 2, 3, 4, 2], [1, 0, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 2, 4]];
+const FR = { Sun: { f: ['Moon', 'Mars', 'Jupiter'], e: ['Venus', 'Saturn'] }, Moon: { f: ['Sun', 'Mercury'], e: [] }, Mars: { f: ['Sun', 'Moon', 'Jupiter'], e: ['Mercury'] }, Mercury: { f: ['Sun', 'Venus'], e: ['Moon'] }, Jupiter: { f: ['Sun', 'Moon', 'Mars'], e: ['Mercury', 'Venus'] }, Venus: { f: ['Mercury', 'Saturn'], e: ['Sun', 'Moon'] }, Saturn: { f: ['Mercury', 'Venus'], e: ['Sun', 'Moon', 'Mars'] } };
+const rel = (a, b) => a === b ? 2 : FR[a].f.includes(b) ? 2 : FR[a].e.includes(b) ? 0 : 1;   // 2 मित्र, 1 सम, 0 शत्रु
+function maitri(a, b) { if (a === b) return 5; const x = rel(a, b), y = rel(b, a), s = x + y; if (s === 4) return 5; if (s === 3) return 4; if (s === 2) return x === 1 ? 3 : 1; if (s === 1) return 0.5; return 0; }
+const GANA = [0, 1, 2, 1, 0, 1, 0, 0, 2, 2, 1, 1, 0, 2, 0, 2, 0, 2, 2, 1, 1, 0, 2, 2, 1, 1, 0];
+const GANA_N = ['देव', 'मनुष्य', 'राक्षस'], GANA_T = [[6, 6, 1], [5, 6, 0], [1, 0, 6]];
+const NADI_N = ['आदि', 'मध्य', 'अंत्य'], nadiOf = n => [0, 1, 2, 2, 1, 0][n % 6];
+function tara(from, to) { const r = (((to - from + 27) % 27) + 1) % 9; return ![3, 5, 7].includes(r); }
+function chart(f) {
+  const p = A.planets(f.jd), asc = A.ascendant(f.jd, f.L.lat, f.L.lon), ls = Math.floor(asc / 30), ms = Math.floor(p.Moon / 30), mars = Math.floor(p.Mars / 30);
+  const hL = ((mars - ls + 12) % 12) + 1, hM = ((mars - ms + 12) % 12) + 1, bad = [1, 2, 4, 7, 8, 12];
+  return { name: f.name, moon: p.Moon, nak: Math.floor(p.Moon / (360 / 27)), pada: Math.floor((p.Moon % (360 / 27)) / (360 / 108)), sign: ms, manglik: bad.includes(hL) ? 2 : bad.includes(hM) ? 1 : 0, marsH: hL, lagna: ls, marsSwa: [0, 7, 9].includes(mars) };
+}
+function fromNak(name, v) { const n = Math.floor(v / 4), p = v % 4; const lon = n * (360 / 27) + (p + 0.5) * (360 / 108); return { name, moon: lon, nak: n, pada: p, sign: Math.floor(lon / 30), manglik: null }; }
+$('go').onclick = () => {
+  let B, G;
+  if (mode === 'birth') { const b = boy.get(); if (!b) return; const g = girl.get(); if (!g) return; B = chart(b); G = chart(g); }
+  else { B = fromNak($('bn').value.trim() || 'वर', +$('bk').value); G = fromNak($('gn').value.trim() || 'वधू', +$('gk').value); }
+  const bL = N.LORD[B.sign], gL = N.LORD[G.sign];
+  const k = [];
+  k.push(['वर्ण', 1, VARNA_OF(B.sign) <= VARNA_OF(G.sign) ? 1 : 0, `${VARNA_N[VARNA_OF(B.sign)]} / ${VARNA_N[VARNA_OF(G.sign)]}`, 'कार्य व स्वभाव का मेल']);
+  const vb = vashyaOf(B.moon), vg = vashyaOf(G.moon);
+  k.push(['वश्य', 2, VASHYA_T[vb][vg], `${VASHYA_N[vb]} / ${VASHYA_N[vg]}`, 'आपसी आकर्षण व नियंत्रण']);
+  const t1 = tara(G.nak, B.nak), t2 = tara(B.nak, G.nak);
+  k.push(['तारा', 3, t1 && t2 ? 3 : t1 || t2 ? 1.5 : 0, `${N.NAK[B.nak]} / ${N.NAK[G.nak]}`, 'भाग्य व स्वास्थ्य']);
+  k.push(['योनि', 4, YONI_T[YONI[B.nak]][YONI[G.nak]], `${YONI_N[YONI[B.nak]]} / ${YONI_N[YONI[G.nak]]}`, 'शारीरिक अनुकूलता']);
+  const gm = maitri(bL, gL);
+  k.push(['ग्रह मैत्री', 5, gm, `${N.P[bL]} / ${N.P[gL]}`, 'मानसिक मेल व मित्रता']);
+  k.push(['गण', 6, GANA_T[GANA[B.nak]][GANA[G.nak]], `${GANA_N[GANA[B.nak]]} / ${GANA_N[GANA[G.nak]]}`, 'स्वभाव का मेल']);
+  const d1 = ((B.sign - G.sign + 12) % 12) + 1, d2 = ((G.sign - B.sign + 12) % 12) + 1, bk = [2, 12, 5, 9, 6, 8].includes(d1) ? 0 : 7;
+  k.push(['भकूट', 7, bk, `${N.SIGN[B.sign]} / ${N.SIGN[G.sign]}`, 'प्रेम, धन व परिवार की वृद्धि']);
+  const nd = nadiOf(B.nak) === nadiOf(G.nak) ? 0 : 8;
+  k.push(['नाड़ी', 8, nd, `${NADI_N[nadiOf(B.nak)]} / ${NADI_N[nadiOf(G.nak)]}`, 'संतान व स्वास्थ्य']);
+  const tot = k.reduce((a, x) => a + x[2], 0);
+  const verdict = tot >= 32 ? ['उत्तम मिलान 🌟', 'good', '#1d7d4b'] : tot >= 25 ? ['बहुत अच्छा मिलान', 'good', '#1d7d4b'] : tot >= 18 ? ['सामान्य — विवाह योग्य', 'mid', '#c27c0e'] : ['कम गुण — विवाह की सलाह नहीं', 'bad', '#b83227'];
+  const notes = [];
+  if (nd === 0) notes.push(B.nak !== G.nak && B.sign === G.sign ? '✅ नाड़ी दोष है, पर राशि एक और नक्षत्र अलग होने से दोष का परिहार (निवारण) हो जाता है।' : B.nak === G.nak && B.pada !== G.pada ? '✅ नाड़ी दोष है, पर नक्षत्र एक और चरण अलग होने से परिहार माना जाता है।' : bL === gL ? '✅ नाड़ी दोष है, पर दोनों राशियों के स्वामी एक होने से परिहार माना जाता है।' : '⚠️ नाड़ी दोष — संतान व स्वास्थ्य पक्ष के लिए महामृत्युंजय जप, गौदान या स्वर्ण दान जैसा उपाय पंडित जी से कराएं।');
+  if (bk === 0) notes.push(bL === gL || (rel(bL, gL) === 2 && rel(gL, bL) === 2) ? '✅ भकूट दोष है, पर राशि स्वामी एक/मित्र होने से परिहार हो जाता है।' : '⚠️ भकूट दोष (' + d1 + '/' + d2 + ') — परिवार व धन वृद्धि के लिए उपाय आवश्यक।');
+  if (GANA[B.nak] !== GANA[G.nak] && (GANA[B.nak] === 2 || GANA[G.nak] === 2)) notes.push('ℹ️ गण भिन्न (राक्षस गण) — स्वभाव में अंतर रहेगा, धैर्य और समझदारी से रिश्ता मजबूत होगा।');
+  let mang = '';
+  if (B.manglik != null) {
+    const t = m => m === 2 ? 'मांगलिक' : m === 1 ? 'आंशिक मांगलिक (चंद्र से)' : 'मांगलिक नहीं';
+    const ok = (B.manglik > 0) === (G.manglik > 0);
+    mang = `<h4>🔴 मांगलिक मिलान</h4><div class="grid2"><div class="box ${B.manglik ? 'mid' : 'good'}"><small>${esc(B.name || 'वर')}</small><b>${t(B.manglik)}</b></div><div class="box ${G.manglik ? 'mid' : 'good'}"><small>${esc(G.name || 'वधू')}</small><b>${t(G.manglik)}</b></div></div><div class="box ${ok ? 'good' : 'bad'}" style="margin-top:8px"><b>${ok ? (B.manglik ? '✅ दोनों मांगलिक — दोष आपस में कट जाता है' : '✅ मांगलिक दोष नहीं') : '⚠️ एक मांगलिक, एक नहीं — विवाह से पहले मंगल शांति / कुंभ विवाह जैसे उपाय पर विचार करें'}</b></div>`;
+  }
+  $('out').innerHTML = `<div class="av-card res"><h3>${esc(B.name || 'वर')} 💞 ${esc(G.name || 'वधू')}</h3><div class="ring" style="--p:${tot / 36 * 100};--c:${verdict[2]}"><div><span><b>${tot}</b><br><small>36 में से</small></span></div></div><div class="box ${verdict[1]}"><b>${verdict[0]}</b></div></div>
+    <div class="av-card"><h3>अष्टकूट विवरण</h3><div class="tbl-wrap"><table class="tbl kt"><tr><th>कूट</th><th>वर / वधू</th><th>अंक</th></tr>${k.map(x => `<tr><td><b>${x[0]}</b><br><small style="color:var(--mut)">${x[4]}</small></td><td>${x[3]}</td><td class="${x[2] === 0 ? 't-bad' : x[2] === x[1] ? 't-good' : ''}"><b>${x[2]}</b>/${x[1]}</td></tr>`).join('')}<tr><td colspan="2"><b>कुल गुण</b></td><td><b>${tot}</b>/36</td></tr></table></div>
+    ${notes.length ? '<h4>दोष एवं परिहार</h4>' + notes.map(n => `<p style="margin:6px 0">${n}</p>`).join('') : '<p class="t-good" style="margin-top:10px"><b>✅ नाड़ी व भकूट दोष नहीं है।</b></p>'}
+    ${mang}
+    <div class="grid2" style="margin-top:10px"><div class="box"><small>वर — राशि/नक्षत्र</small><b>${N.SIGN[B.sign]} • ${N.NAK[B.nak]} ${B.pada + 1}</b></div><div class="box"><small>वधू — राशि/नक्षत्र</small><b>${N.SIGN[G.sign]} • ${N.NAK[G.nak]} ${G.pada + 1}</b></div></div>
+    <p class="note">18 से अधिक गुण विवाह के लिए स्वीकार्य माने जाते हैं। अंतिम निर्णय से पहले पूरी कुंडली (दशा, सप्तम भाव) का विश्लेषण कराएं — Astro Vikass ☎ 7069492135।</p>
+    <button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button></div>`;
+  $('sh').onclick = () => share(`💍 *कुंडली मिलान*\n👦 ${B.name || 'वर'} (${N.SIGN[B.sign]}, ${N.NAK[B.nak]})\n👧 ${G.name || 'वधू'} (${N.SIGN[G.sign]}, ${N.NAK[G.nak]})\n\n${k.map(x => `${x[0]}: ${x[2]}/${x[1]}`).join('\n')}\n\n✨ कुल गुण: *${tot}/36* — ${verdict[0]}`);
+  $('out').scrollIntoView({ behavior: 'smooth' });
+};
+</script>
+</body>
+</html>

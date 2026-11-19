@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>अंक ज्योतिष | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+<style>.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.nm{text-align:center;background:#fff;border:1px solid var(--line);border-top:4px solid var(--c);border-radius:14px;padding:10px 4px}
+.nm small{display:block;color:var(--mut);font-size:12px}.nm b{font-family:'Poppins',sans-serif;font-size:30px;color:var(--mar);line-height:1.2}.nm span{font-size:12.5px}
+.lo{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:260px;margin:8px auto}
+.lo div{aspect-ratio:1;border-radius:12px;display:grid;place-items:center;font-family:'Poppins',sans-serif;font-weight:700;font-size:20px;background:#fff;border:1.5px solid var(--line);color:var(--mar)}
+.lo div.miss{background:#fdecea;border-color:#f0b8ae;color:#d9a29a;font-size:14px}</style>
+</head>
+<body>
+<header class="av-head"><div class="ic">🔢</div><h1>अंक ज्योतिष</h1><p>मूलांक • भाग्यांक • नामांक • लो-शू ग्रिड • व्यक्तिगत वर्ष • अंक मिलान</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<div class="av-card">
+  <label class="l">पूरा नाम (English में)</label><input class="in" id="nm" placeholder="e.g. Vikas Mishra">
+  <label class="l">जन्म तिथि</label><input class="in" type="date" id="dob">
+  <label class="l">जीवनसाथी / पार्टनर की जन्म तिथि (वैकल्पिक — अंक मिलान)</label><input class="in" type="date" id="dob2">
+  <button class="btn blk" id="go">🔢 अंक ज्योतिष देखें</button>
+</div>
+<div id="out"></div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script>
+const { $, esc, store, share, toast } = AVUI;
+const root = n => { while (n > 9) n = String(n).split('').reduce((a, b) => a + +b, 0); return n; };
+const dsum = s => String(s).replace(/\D/g, '').split('').reduce((a, b) => a + +b, 0);
+const CH = { A: 1, I: 1, J: 1, Q: 1, Y: 1, B: 2, K: 2, R: 2, C: 3, G: 3, L: 3, S: 3, D: 4, M: 4, T: 4, E: 5, H: 5, N: 5, X: 5, U: 6, V: 6, W: 6, O: 7, Z: 7, F: 8, P: 8 };
+const M = [null,
+  ['सूर्य', 'नेतृत्व करने वाले, स्वतंत्र और महत्वाकांक्षी। अपनी पहचान खुद बनाते हैं।', '1, 2, 3, 9', '8', 'सुनहरा, नारंगी', 'रविवार, सोमवार', '#ff8a00'],
+  ['चंद्र', 'संवेदनशील, कल्पनाशील और सहयोगी। कला और भावनाओं की गहरी समझ।', '1, 2, 7', '8, 9', 'सफेद, हल्का हरा', 'सोमवार, शुक्रवार', '#6b8fd6'],
+  ['गुरु', 'ज्ञानी, अनुशासित और सलाहकार। शिक्षा व धर्म में उन्नति।', '3, 6, 9', '5, 8', 'पीला, बैंगनी', 'गुरुवार, मंगलवार', '#d4a017'],
+  ['राहु', 'क्रांतिकारी सोच, मेहनती, अलग राह चलने वाले। संघर्ष के बाद बड़ी सफलता।', '1, 4, 8', '2, 9', 'नीला, धूसर', 'रविवार, शनिवार', '#6b6bd6'],
+  ['बुध', 'चतुर, व्यापारी बुद्धि, संवाद में माहिर और यात्रा प्रेमी।', '1, 5, 6', '2', 'हरा, सफेद', 'बुधवार, शुक्रवार', '#1f9d55'],
+  ['शुक्र', 'आकर्षक, कलाप्रिय, प्रेमपूर्ण और सुख-सुविधा प्रेमी।', '3, 6, 9', '4, 8', 'गुलाबी, सफेद, आसमानी', 'शुक्रवार, मंगलवार', '#d6458f'],
+  ['केतु', 'आध्यात्मिक, विचारशील, रहस्यवादी और शोधप्रिय।', '2, 7', '8, 9', 'हल्का हरा, सफेद', 'सोमवार, रविवार', '#8b6bd6'],
+  ['शनि', 'धैर्यवान, गंभीर, न्यायप्रिय। देर से पर स्थायी सफलता।', '1, 4, 8', '2, 9', 'गहरा नीला, काला', 'शनिवार, रविवार', '#3d4bbf'],
+  ['मंगल', 'साहसी, ऊर्जावान, योद्धा स्वभाव और रक्षक।', '3, 6, 9', '5', 'लाल, गुलाबी', 'मंगलवार, गुरुवार', '#d6303f']];
+const PY = [null, 'नई शुरुआत, नए अवसर और आत्मनिर्भरता', 'साझेदारी, धैर्य और संबंध मजबूत करना', 'रचनात्मकता, यश और सामाजिक विस्तार', 'कड़ी मेहनत और मजबूत नींव', 'बदलाव, यात्रा और नए अनुभव', 'परिवार, विवाह और जिम्मेदारी', 'आत्मचिंतन, अध्ययन और आध्यात्म', 'धन, करियर और अधिकार में वृद्धि', 'पुराने काम पूरे करना, दान और समापन'];
+const MISS = [null, 'आत्मविश्वास व स्वयं को व्यक्त करने में कमी — रोज सूर्य को जल दें', 'भावनात्मक संतुलन व सहयोग में कमी — चांदी पहनें, माता की सेवा करें', 'रचनात्मकता व कल्पना में कमी — गुरुवार को पीली वस्तु दान करें', 'अनुशासन व व्यवस्था में कमी — घर साफ़-सुथरा रखें, समय पालन करें', 'संतुलन व संवाद में कमी — हरी चीजें, पौधे रखें; गाय को चारा दें', 'परिवार व जिम्मेदारी के भाव में कमी — घर में सुगंध, सफेद फूल रखें', 'आत्मचिंतन व आध्यात्म में कमी — ध्यान व मौन का अभ्यास करें', 'धन प्रबंधन व स्थिरता में कमी — शनिवार को दान, बचत की आदत', 'ऊर्जा, साहस व सेवा भाव में कमी — मंगलवार को हनुमान पूजा'];
+const LO = [4, 9, 2, 3, 5, 7, 8, 1, 6];
+const s0 = store.get('av_num', {}); $('nm').value = s0.nm || ''; $('dob').value = s0.dob || ''; $('dob2').value = s0.dob2 || '';
+$('go').onclick = () => {
+  const name = $('nm').value.trim(), dob = $('dob').value, dob2 = $('dob2').value;
+  if (!dob) { toast('जन्म तिथि भरें'); return; }
+  store.set('av_num', { nm: name, dob, dob2 });
+  const [y, m, d] = dob.split('-').map(Number), mul = root(d), bh = root(dsum(dob));
+  const latin = name.toUpperCase().replace(/[^A-Z]/g, ''), comp = latin ? latin.split('').reduce((a, c) => a + (CH[c] || 0), 0) : 0, nn = comp ? root(comp) : null;
+  const now = new Date(), py = root(d + m + dsum(now.getFullYear())), pm = root(py + now.getMonth() + 1), pd = root(pm + now.getDate());
+  const digits = String(d).padStart(2, '0') + String(m).padStart(2, '0') + y + mul + bh, cnt = {}; for (const c of digits) if (c !== '0') cnt[c] = (cnt[c] || 0) + 1;
+  const T = M[mul], luckyName = [...new Set([mul, bh, ...T[2].split(', ').map(Number)])].join(', ');
+  let h = `<div class="av-card"><h3>${esc(name || 'आपका')} अंक ज्योतिष</h3><div class="nums">
+    <div class="nm" style="--c:${T[6]}"><small>मूलांक</small><b>${mul}</b><span>${T[0]}</span></div>
+    <div class="nm" style="--c:${M[bh][6]}"><small>भाग्यांक</small><b>${bh}</b><span>${M[bh][0]}</span></div>
+    <div class="nm" style="--c:${nn ? M[nn][6] : '#ccc'}"><small>नामांक</small><b>${nn ? comp + '/' + nn : '—'}</b><span>${nn ? M[nn][0] : 'नाम लिखें'}</span></div></div>
+    <h4>मूलांक ${mul} — ${T[0]}</h4><p>${T[1]}</p><h4>भाग्यांक ${bh}</h4><p>${M[bh][1]}</p>
+    ${nn ? `<div class="box ${T[2].includes(String(nn)) || nn === bh || nn === mul ? 'good' : T[3].includes(String(nn)) ? 'bad' : 'mid'}" style="margin-top:10px"><small>नामांक ${nn} आपके लिए</small><b>${T[2].includes(String(nn)) || nn === bh || nn === mul ? '✅ शुभ — नाम ठीक है' : T[3].includes(String(nn)) ? '⚠️ प्रतिकूल — स्पेलिंग बदलने पर विचार करें' : 'सामान्य'}</b><div class="note">शुभ नामांक: ${luckyName}</div></div>` : ''}
+    <div class="grid2" style="margin-top:10px"><div class="box"><small>शुभ अंक</small><b>${T[2]}</b></div><div class="box"><small>सावधानी वाले अंक</small><b>${T[3]}</b></div><div class="box"><small>शुभ रंग</small><b>${T[4]}</b></div><div class="box"><small>शुभ दिन</small><b>${T[5]}</b></div></div></div>
+  <div class="av-card"><h3>📅 आपका समय</h3><div class="nums"><div class="nm" style="--c:#ee6f16"><small>वर्ष ${now.getFullYear()}</small><b>${py}</b></div><div class="nm" style="--c:#c99a2e"><small>यह माह</small><b>${pm}</b></div><div class="nm" style="--c:#1d7d4b"><small>आज</small><b>${pd}</b></div></div><p style="margin-top:8px"><b>वर्ष ${now.getFullYear()}:</b> ${PY[py]} का वर्ष।<br><b>यह माह:</b> ${PY[pm]}।<br><b>आज:</b> ${PY[pd]}।</p></div>
+  <div class="av-card"><h3>🔲 लो-शू ग्रिड</h3><div class="lo">${LO.map(n => `<div class="${cnt[n] ? '' : 'miss'}">${cnt[n] ? String(n).repeat(cnt[n]) : n}</div>`).join('')}</div>
+    ${LO.filter(n => !cnt[n]).length ? `<h4>अनुपस्थित अंक व उपाय</h4>${LO.filter(n => !cnt[n]).sort().map(n => `<p style="margin:5px 0"><b>${n}:</b> ${MISS[n]}</p>`).join('')}` : '<p class="t-good"><b>✅ सभी अंक मौजूद — संतुलित ग्रिड</b></p>'}</div>`;
+  if (dob2) {
+    const m2 = root(+dob2.split('-')[2]), ok = T[2].includes(String(m2)) || m2 === mul, bad = T[3].includes(String(m2));
+    h += `<div class="av-card"><h3>💞 अंक मिलान</h3><div class="grid2"><div class="box"><small>आपका मूलांक</small><b>${mul} (${T[0]})</b></div><div class="box"><small>पार्टनर का मूलांक</small><b>${m2} (${M[m2][0]})</b></div></div><div class="box ${ok ? 'good' : bad ? 'bad' : 'mid'}" style="margin-top:8px"><b>${ok ? '✅ उत्तम मेल — विचार व लक्ष्य मिलते हैं' : bad ? '⚠️ विरोधी अंक — आपसी समझ व धैर्य जरूरी' : 'सामान्य मेल — प्रयास से रिश्ता मजबूत'}</b></div></div>`;
+  }
+  h += `<button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button>`;
+  $('out').innerHTML = h;
+  $('sh').onclick = () => share(`🔢 *अंक ज्योतिष — ${name || ''}*\nमूलांक: ${mul} (${T[0]})\nभाग्यांक: ${bh}\n${nn ? 'नामांक: ' + comp + '/' + nn + '\n' : ''}शुभ अंक: ${T[2]} • रंग: ${T[4]}\nवर्ष ${now.getFullYear()}: ${PY[py]}`);
+  $('out').scrollIntoView({ behavior: 'smooth' });
+};
+</script>
+</body>
+</html>

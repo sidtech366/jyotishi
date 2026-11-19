@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>आज का ग्रह गोचर | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+<style>.gp{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--line)}
+.gp:last-child{border:0}.gp .i{font-size:26px;flex:0 0 34px;text-align:center}
+.gp b{color:var(--mar);font-size:16.5px}
+.tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:99px;margin-left:4px;font-weight:700}
+.tag.r{background:#fde2ec;color:#a3245d}.tag.u{background:#e9f6ee;color:#1d7d4b}.tag.n{background:#fdecea;color:#b83227}</style>
+</head>
+<body>
+<header class="av-head"><div class="ic">🌌</div><h1>आज का ग्रह गोचर</h1><p>अभी कौन-सा ग्रह किस राशि-नक्षत्र में है • अगला राशि परिवर्तन कब</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<div class="av-card">
+  <div class="av-row"><div><label class="l">दिनांक</label><input class="in" type="date" id="d"></div><div><label class="l">समय</label><input class="in" type="time" id="t"></div></div>
+  <button class="btn blk" id="go">🌌 गोचर देखें</button>
+</div>
+<div id="out"></div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script>
+const { $, share } = AVUI, A = AVAstro, N = A.N;
+const now = new Date(); $('d').value = AVUI.iso(now); $('t').value = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+const EX = { Sun: 0, Moon: 1, Mars: 9, Mercury: 5, Jupiter: 3, Venus: 11, Saturn: 6 }, OWN = { Sun: [4], Moon: [3], Mars: [0, 7], Mercury: [2, 5], Jupiter: [8, 11], Venus: [1, 6], Saturn: [9, 10] };
+const STEP = { Sun: 1, Moon: 0.1, Mars: 1, Mercury: 0.5, Jupiter: 3, Venus: 0.5, Saturn: 5, Rahu: 5, Ketu: 5 };
+function run() {
+  const [y, m, d] = $('d').value.split('-').map(Number), [hh, mm] = $('t').value.split(':').map(Number), jd = A.jdOf(y, m, d, hh + mm / 60 - 5.5), p = A.planets(jd);
+  let txt = `🌌 *ग्रह गोचर — ${A.fmtDate(y, m, d)}*\n`;
+  const rows = A.PL.map(k => {
+    const lon = p[k], s = Math.floor(lon / 30), deg = lon % 30, nk = Math.floor(lon / (360 / 27)), pada = Math.floor((lon % (360 / 27)) / (360 / 108)) + 1, rt = A.retro(k, jd);
+    const dig = EX[k] === s ? '<span class="tag u">उच्च</span>' : EX[k] != null && (EX[k] + 6) % 12 === s ? '<span class="tag n">नीच</span>' : OWN[k] && OWN[k].includes(s) ? '<span class="tag u">स्वराशि</span>' : '';
+    const nx = A.nextChange(jd, j => Math.floor(A.planets(j)[k] / 30), STEP[k]);
+    const ns = nx ? Math.floor(A.planets(nx + 0.01)[k] / 30) : null;
+    txt += `${N.PIC[k]} ${N.P[k]}: ${N.SIGN[s]} ${Math.floor(deg)}°${rt && k !== 'Rahu' && k !== 'Ketu' ? ' (वक्री)' : ''}\n`;
+    return `<div class="gp"><div class="i">${N.PIC[k]}</div><div><b>${N.P[k]}</b> — ${N.SIGN_IC[s]} ${N.SIGN[s]} ${Math.floor(deg)}°${String(Math.floor((deg % 1) * 60)).padStart(2, '0')}′ ${rt && k !== 'Rahu' && k !== 'Ketu' ? '<span class="tag r">वक्री</span>' : ''}${dig}<br><small class="note">नक्षत्र: ${N.NAK[nk]} (चरण ${pada}) • स्वामी ${N.P[N.NAK_LORD[nk % 9]]}</small>${nx ? `<br><small>➡️ ${N.SIGN[ns]} में प्रवेश: <b style="font-size:13.5px">${A.fmtJd(nx, 5.5)}</b></small>` : ''}</div></div>`;
+  }).join('');
+  $('out').innerHTML = `<div class="av-card"><h3>${A.fmtDate(y, m, d)} — ${$('t').value}</h3><div class="note">निरयण (लाहिरी) गणना • भारतीय समय</div>${rows}<button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button></div>`;
+  $('sh').onclick = () => share(txt);
+}
+$('go').onclick = run; run();
+</script>
+</body>
+</html>

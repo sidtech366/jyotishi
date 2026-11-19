@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>लग्न तालिका | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+</head>
+<body>
+<header class="av-head"><div class="ic">🌅</div><h1>लग्न तालिका</h1><p>आज कौन-सा लग्न कितने बजे से कितने बजे तक • अभी का लग्न</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<!--body-->
+<div class="av-card">
+  <div id="pl"></div>
+  <label class="l">दिनांक</label><input class="in" type="date" id="d">
+  <button class="btn blk" id="go">🌅 लग्न तालिका देखें</button>
+</div>
+<div id="out"></div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script>
+const { $, share } = AVUI, A = AVAstro, N = A.N;
+const STH = ['चर', 'स्थिर', 'द्विस्वभाव'];
+const USE = ['यात्रा, नए काम की शुरुआत, वाहन खरीद', 'गृह प्रवेश, विवाह, नींव, स्थायी काम', 'शिक्षा, लेखन, व्यापार, बातचीत'];
+const pf = AVUI.placeField($('pl'), { onPick: () => run() });
+$('d').value = AVUI.iso(new Date());
+$('go').onclick = run;
+function run() {
+  const L = pf.get(); if (!L) { $('out').innerHTML = '<div class="av-card empty">ऊपर स्थान चुनें</div>'; return; }
+  const [y, m, d] = $('d').value.split('-').map(Number), tz = pf.tz($('d').value);
+  const st = A.sunTimes(y, m, d, L.lat, L.lon, tz), rise = st.rise || 6;
+  const j0 = A.jdOf(y, m, d, rise - tz), j1 = j0 + 1, asc = jd => Math.floor(A.ascendant(jd, L.lat, L.lon) / 30);
+  const rows = []; let jd = j0, s = asc(jd);
+  while (jd < j1) { const nx = A.nextChange(jd, asc, 1 / 96) || j1, e = Math.min(nx, j1); rows.push({ s, a: jd, b: e }); jd = e; s = asc(jd + 1e-6); }
+  const now = A.jdFromDate(new Date());
+  $('out').innerHTML = `<div class="av-card"><h3>${A.fmtDate(y, m, d)} — ${L.name}</h3><div class="note">सूर्योदय ${A.fmtH(rise)} से अगले सूर्योदय तक</div>
+    <div class="tbl-wrap" style="margin-top:10px"><table class="tbl"><tr><th>लग्न</th><th>समय</th><th>प्रकृति</th></tr>${rows.map(r => `<tr class="${now >= r.a && now < r.b ? 'now' : ''}"><td><b>${N.SIGN_IC[r.s]} ${N.SIGN[r.s]}</b>${now >= r.a && now < r.b ? '<br><small class="t-good">← अभी</small>' : ''}</td><td>${A.fmtJd(r.a, tz, false)} – ${A.fmtJd(r.b, tz, false)}</td><td>${STH[r.s % 3]}<br><small class="note">${USE[r.s % 3]}</small></td></tr>`).join('')}</table></div>
+    <p class="note">स्थिर लग्न (वृषभ, सिंह, वृश्चिक, कुंभ) गृह प्रवेश व विवाह जैसे स्थायी कार्यों के लिए श्रेष्ठ माने जाते हैं।</p><button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button></div>`;
+  $('sh').onclick = () => share(`🌅 *लग्न तालिका — ${A.fmtDate(y, m, d)} (${L.name})*\n` + rows.map(r => `${N.SIGN[r.s]}: ${A.fmtJd(r.a, tz, false)} – ${A.fmtJd(r.b, tz, false)}`).join('\n'));
+}
+run();
+</script>
+</body>
+</html>

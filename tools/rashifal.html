@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>राशिफल | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+<style>.rgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.rg{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:8px 2px;text-align:center;cursor:pointer}
+.rg span{display:block;font-size:24px;line-height:1.2;color:var(--saf)}
+.rg b{font-size:13.5px;color:var(--mar)}
+.rg.on{background:var(--mar);border-color:var(--mar)}.rg.on b,.rg.on span{color:#fff}
+.areas{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.ar small{display:flex;justify-content:space-between}
+.day{display:flex;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line)}
+.day:last-child{border:0}
+.day .dd{flex:0 0 76px;font-weight:700;color:var(--mar);font-size:14px}
+.day .dd small{display:block;color:var(--mut);font-weight:400}
+.pl{display:flex;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line)}
+.pl:last-child{border:0}.pl .pi{flex:0 0 28px;font-size:20px}</style>
+</head>
+<body>
+<header class="av-head"><div class="ic">♈</div><h1>राशिफल</h1><p>दैनिक • साप्ताहिक • मासिक • वार्षिक — वास्तविक ग्रह गोचर पर आधारित</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<div class="av-card">
+  <h3>अपनी राशि चुनें</h3>
+  <div class="rgrid" id="rgrid"></div>
+  <label class="l">राशि नहीं पता? नाम का पहला अक्षर / नाम लिखें</label>
+  <div class="locrow"><input class="in" id="nm" placeholder="जैसे: राहुल, सीता"><button class="btn sm" id="nmGo">खोजें</button></div>
+  <div class="note" id="nmRes"></div>
+</div>
+<div id="out"></div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script src="lib/akshar.js"></script>
+<script>
+const { $, esc, store, share } = AVUI, A = AVAstro, N = A.N;
+const GOOD = { Sun: [3, 6, 10, 11], Moon: [1, 3, 6, 7, 10, 11], Mars: [3, 6, 11], Mercury: [2, 4, 6, 8, 10, 11], Jupiter: [2, 5, 7, 9, 11], Venus: [1, 2, 3, 4, 5, 8, 9, 11, 12], Saturn: [3, 6, 11], Rahu: [3, 6, 11], Ketu: [3, 6, 11] };
+const MOON = [null, 'मन प्रसन्न रहेगा, आत्मविश्वास बढ़ेगा। नए काम की शुरुआत के लिए दिन अच्छा है।', 'खर्च और वाणी पर नियंत्रण रखें। परिवार में छोटी बात पर बहस हो सकती है; पैसों का लेन-देन सोच-समझकर करें।', 'साहस और उत्साह भरा दिन। भाई-बहन व मित्रों का सहयोग मिलेगा; छोटी यात्रा व नए संपर्क लाभ देंगे।', 'मन थोड़ा बेचैन रह सकता है। घर-परिवार और माता के स्वास्थ्य पर ध्यान दें; वाहन सावधानी से चलाएं।', 'संतान या पढ़ाई को लेकर चिंता संभव। बड़े निर्णय सोच-समझकर लें; जोखिम व सट्टे से दूर रहें।', 'रुके हुए काम बनेंगे, विरोधी पीछे हटेंगे। स्वास्थ्य सुधरेगा, प्रतियोगिता में सफलता मिलेगी।', 'साझेदारी और दांपत्य में मधुरता। मान-सम्मान बढ़ेगा; नए लोगों से मुलाकात लाभ देगी।', 'चंद्राष्टम — थकान या अचानक बाधा संभव। विवाद, लंबी यात्रा और जोखिम भरे काम टालें; जप-ध्यान करें।', 'भाग्य का साथ कम मिलेगा। बड़ों से मतभेद न करें; पूजा-पाठ और दान से मन को शांति मिलेगी।', 'कार्यक्षेत्र में सफलता, अधिकारी प्रसन्न रहेंगे। नई जिम्मेदारी और प्रतिष्ठा मिल सकती है।', 'लाभ का दिन — इच्छाएं पूरी होंगी। मित्रों से मदद और आय में बढ़ोतरी के योग।', 'खर्च बढ़ेगा, नींद कम हो सकती है। दूर स्थान से समाचार; दान-पुण्य शुभ फल देगा।'];
+const SUN = [null, 'थकान और गुस्सा बढ़ सकता है — स्वास्थ्य और अहंकार पर नियंत्रण रखें, पिता से संबंध मधुर रखें।', 'धन में उतार-चढ़ाव और आँखों का ध्यान रखें; कठोर वाणी से बचें।', 'पराक्रम बढ़ेगा, सरकारी काम बनेंगे; नए पद या अवसर मिल सकते हैं।', 'घर-परिवार में तनाव और मन अशांत; संपत्ति के बड़े सौदे टालें।', 'संतान व पढ़ाई की चिंता, निर्णय में भ्रम; उच्च अधिकारियों से संभलकर रहें।', 'शत्रु परास्त होंगे, रोग दूर; नौकरी व प्रतियोगिता में जीत।', 'दांपत्य/साझेदारी में खटपट और थकाने वाली यात्राएं।', 'स्वास्थ्य और धन पर सावधानी; सरकारी झंझट से बचें।', 'भाग्य में रुकावट, बड़ों से मतभेद; धर्म-कर्म से राहत।', 'पदोन्नति, सम्मान और सरकारी लाभ — कार्य सिद्ध होंगे।', 'आय-लाभ, प्रतिष्ठा और इच्छापूर्ति का समय।', 'खर्च और यात्राएं बढ़ेंगी, नींद में कमी; विदेश से जुड़े काम आगे बढ़ेंगे।'];
+const JUP = [null, 'गुरु प्रथम — मानसिक दबाव और स्थान परिवर्तन के योग; धैर्य से काम लें।', 'गुरु द्वितीय — धन लाभ, परिवार में शुभ कार्य, वाणी प्रभावशाली।', 'गुरु तृतीय — मेहनत अधिक, फल कम; मित्रों से मतभेद से बचें।', 'गुरु चतुर्थ — घर व माता की चिंता; संपत्ति में सोच-समझकर निवेश करें।', 'गुरु पंचम — संतान सुख, विद्या, प्रेम व रचनात्मकता में सफलता — अत्यंत शुभ।', 'गुरु षष्ठ — रोग, ऋण और विरोधियों से परेशानी; खर्च पर नियंत्रण रखें।', 'गुरु सप्तम — विवाह/साझेदारी के योग, सम्मान और व्यापार वृद्धि — शुभ।', 'गुरु अष्टम — अचानक खर्च, स्वास्थ्य पर ध्यान; गूढ़ विद्या में रुचि।', 'गुरु नवम — भाग्योदय, गुरु कृपा, धर्म-कर्म व लंबी यात्रा — अत्यंत शुभ।', 'गुरु दशम — कार्यक्षेत्र में बदलाव या दबाव; पद संभालकर रखें।', 'गुरु एकादश — बड़ा लाभ, इच्छापूर्ति, आय के नए स्रोत — शुभ।', 'गुरु द्वादश — व्यय और दूर यात्रा; आध्यात्मिक उन्नति।'];
+const SAT = [null, 'शनि प्रथम — साढ़ेसाती का मध्य (चरम) चरण: मानसिक दबाव, स्वास्थ्य और धैर्य की परीक्षा।', 'शनि द्वितीय — साढ़ेसाती का अंतिम चरण: धन-परिवार में संघर्ष, वाणी पर संयम रखें।', 'शनि तृतीय — शुभ: पराक्रम, सफलता और शत्रु पर विजय।', 'शनि चतुर्थ — कंटक ढैय्या: घर, माता और वाहन संबंधी चिंता।', 'शनि पंचम — संतान व विद्या में बाधा, निर्णय में भ्रम।', 'शनि षष्ठ — शुभ: नौकरी में स्थिरता, रोग और शत्रु का नाश।', 'शनि सप्तम — दांपत्य/साझेदारी में तनाव, कष्टकारी यात्रा।', 'शनि अष्टम — अष्टम ढैय्या: स्वास्थ्य, दुर्घटना और धन हानि से सावधान।', 'शनि नवम — भाग्य मंद, पिता/गुरु से मतभेद; धर्म-कर्म करें।', 'शनि दशम — भारी जिम्मेदारी; मेहनत से धीमी पर पक्की उन्नति।', 'शनि एकादश — शुभ: स्थायी लाभ, बड़े लक्ष्य पूरे होंगे।', 'शनि द्वादश — साढ़ेसाती का पहला चरण: खर्च, नींद की कमी, यात्रा और चिंता।'];
+const RAHU = [null, 'राहु प्रथम — भ्रम और स्वास्थ्य पर ध्यान, अपनी छवि का ख्याल रखें।', 'राहु द्वितीय — वाणी और धन में उतार-चढ़ाव, परिवार में मतभेद।', 'राहु तृतीय — शुभ: साहस, नई तकनीक/मीडिया से लाभ।', 'राहु चतुर्थ — घर में अशांति, माता की चिंता।', 'राहु पंचम — संतान/निवेश में भ्रम, सट्टे से बचें।', 'राहु षष्ठ — शुभ: शत्रु नाश, प्रतियोगिता में जीत।', 'राहु सप्तम — साझेदारी/विवाह में गलतफहमी।', 'राहु अष्टम — अचानक घटनाएं, स्वास्थ्य सावधानी।', 'राहु नवम — धार्मिक भ्रम, भाग्य में रुकावट।', 'राहु दशम — करियर में अचानक बदलाव या उछाल।', 'राहु एकादश — शुभ: बड़ा लाभ, नए संपर्क।', 'राहु द्वादश — खर्च, विदेश संबंध, नींद में कमी।'];
+const UPAY = { Mars: 'मंगलवार को हनुमान चालीसा पढ़ें, लाल मसूर दान करें।', Venus: 'शुक्रवार को माँ लक्ष्मी की पूजा, सफेद मिठाई दान करें।', Mercury: 'बुधवार को गणेश जी को दूर्वा, गाय को हरा चारा दें।', Moon: 'सोमवार को शिवलिंग पर जल-दूध चढ़ाएं, माता का आशीर्वाद लें।', Sun: 'रोज सूर्य को जल दें, पिता का सम्मान करें।', Jupiter: 'गुरुवार को केसर तिलक, चना दाल दान करें।', Saturn: 'शनिवार को पीपल पर सरसों तेल का दीपक, जरूरतमंद की सहायता करें।' };
+const COLOR = { Sun: 'नारंगी', Moon: 'सफेद', Mars: 'लाल', Mercury: 'हरा', Jupiter: 'पीला', Venus: 'गुलाबी/सफेद', Saturn: 'नीला', Rahu: 'धूसर', Ketu: 'चितकबरा' };
+const NUM = { Sun: 1, Moon: 2, Jupiter: 3, Rahu: 4, Mercury: 5, Venus: 6, Ketu: 7, Saturn: 8, Mars: 9 };
+const DAYLORD = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
+let R = store.get('av_rashi', null), tab = 'day';
+$('rgrid').innerHTML = N.SIGN.map((s, i) => `<div class="rg" data-i="${i}"><span>${N.SIGN_IC[i]}</span><b>${s}</b></div>`).join('');
+$('rgrid').onclick = e => { const el = e.target.closest('.rg'); if (el) pick(+el.dataset.i); };
+$('nmGo').onclick = () => { const r = AVAkshar.fromName($('nm').value); if (!r) { $('nmRes').textContent = 'यह अक्षर नहीं मिला — कृपया राशि चुनें'; return; } $('nmRes').textContent = `“${r.s}” अक्षर — ${N.NAK[r.n]} नक्षत्र, चरण ${r.p + 1} → ${N.SIGN[r.sign]} राशि`; pick(r.sign); };
+function pick(i) { R = i; store.set('av_rashi', i); document.querySelectorAll('.rg').forEach(el => el.classList.toggle('on', +el.dataset.i === i)); render(); setTimeout(() => $('out').scrollIntoView({ behavior: 'smooth' }), 50); }
+const house = (sign) => ((sign - R + 12) % 12) + 1;
+const signOf = lon => Math.floor(lon / 30);
+function stars(n) { n = Math.max(1, Math.min(5, Math.round(n))); return '★'.repeat(n) + '<span style="opacity:.25">' + '★'.repeat(5 - n) + '</span>'; }
+function scoreArea(pos, list) { let s = 0, w = 0; list.forEach(([p, wt]) => { s += (GOOD[p].includes(house(signOf(pos[p]))) ? 1 : -1) * wt; w += wt; }); return 3 + 2 * s / w; }
+function noonJd(dt) { return A.jdOf(dt.getFullYear(), dt.getMonth() + 1, dt.getDate(), 6.5); }
+function render() {
+  if (R == null) { $('out').innerHTML = ''; return; }
+  const now = new Date(), pos = A.planets(noonJd(now)), lord = N.LORD[R];
+  const head = `<div class="tabs" id="tabs">${[['day', 'आज'], ['week', 'साप्ताहिक'], ['month', 'मासिक'], ['year', 'वार्षिक']].map(([k, t]) => `<button data-k="${k}" class="${tab === k ? 'on' : ''}">${t}</button>`).join('')}</div>`;
+  let h = '';
+  if (tab === 'day') {
+    const mh = house(signOf(pos.Moon)), dl = DAYLORD[now.getDay()];
+    const areas = [['💼 करियर', [['Sun', 1], ['Saturn', 1], ['Mercury', 1], ['Moon', 2]]], ['💰 धन', [['Jupiter', 1], ['Venus', 1], ['Mercury', 1], ['Moon', 2]]], ['❤️ प्रेम-परिवार', [['Venus', 2], ['Moon', 2], ['Jupiter', 1]]], ['🌿 स्वास्थ्य', [['Sun', 1], ['Mars', 1], ['Saturn', 1], ['Moon', 2]]]];
+    const sc = areas.map(([t, l]) => [t, scoreArea(pos, l)]), avg = sc.reduce((a, b) => a + b[1], 0) / 4;
+    h = `<div class="av-card"><h3>${N.SIGN_IC[R]} ${N.SIGN[R]} — आज का राशिफल</h3><div class="note">${A.fmtDate(now.getFullYear(), now.getMonth() + 1, now.getDate())}, ${N.VAAR[now.getDay()]} • चंद्रमा ${N.SIGN[signOf(pos.Moon)]} राशि (${mh}वें भाव) में</div>
+      <p style="margin-top:10px;font-size:17px">${MOON[mh]}</p>
+      <div class="areas">${sc.map(([t, v]) => `<div class="box ar"><small><span>${t}</span><span class="stars">${stars(v)}</span></small></div>`).join('')}</div>
+      <div class="grid2" style="margin-top:10px"><div class="box"><small>आज का शुभ रंग</small><b>${COLOR[dl]}</b></div><div class="box"><small>शुभ अंक</small><b>${NUM[dl]}, ${NUM[lord] || ''}</b></div></div>
+      <div class="box ${avg >= 3.4 ? 'good' : avg <= 2.6 ? 'bad' : 'mid'}" style="margin-top:10px"><small>कुल मिलाकर</small><b>${avg >= 3.4 ? 'शुभ दिन ✨' : avg <= 2.6 ? 'संभलकर चलें — धैर्य रखें' : 'सामान्य दिन'}</b></div>
+      <h4>🙏 आज का उपाय</h4><p>${UPAY[lord]}</p>
+      <button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button></div>`;
+    window._share = `${N.SIGN_IC[R]} *${N.SIGN[R]} राशि — आज का राशिफल* (${A.fmtDate(now.getFullYear(), now.getMonth() + 1, now.getDate())})\n${MOON[mh]}\n${sc.map(([t, v]) => t + ' ' + '⭐'.repeat(Math.max(1, Math.min(5, Math.round(v))))).join('\n')}\n🎨 शुभ रंग: ${COLOR[dl]}\n🙏 उपाय: ${UPAY[lord]}`;
+  } else if (tab === 'week') {
+    let rows = '', best = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(now); d.setDate(d.getDate() + i);
+      const p = A.planets(noonJd(d)), mh = house(signOf(p.Moon)), g = GOOD.Moon.includes(mh);
+      if (g) best.push(N.VAAR[d.getDay()]);
+      rows += `<div class="day"><div class="dd">${d.getDate()} ${['जन', 'फर', 'मार्च', 'अप्रै', 'मई', 'जून', 'जुला', 'अग', 'सित', 'अक्टू', 'नव', 'दिस'][d.getMonth()]}<small>${N.VAAR[d.getDay()]}</small></div><div><span class="${g ? 't-good' : mh === 8 ? 't-bad' : 't-mid'}" style="font-weight:700">${g ? 'शुभ' : mh === 8 ? 'सावधान' : 'सामान्य'}</span> — ${MOON[mh]}</div></div>`;
+    }
+    h = `<div class="av-card"><h3>${N.SIGN_IC[R]} ${N.SIGN[R]} — अगले 7 दिन</h3>${rows}<div class="box good" style="margin-top:10px"><small>इस सप्ताह के सबसे शुभ दिन</small><b>${best.join(', ') || '—'}</b></div></div>`;
+  } else if (tab === 'month') {
+    const sh = house(signOf(pos.Sun));
+    const fast = ['Mars', 'Mercury', 'Venus'].map(p => { const hh = house(signOf(pos[p])), g = GOOD[p].includes(hh); return `<div class="pl"><div class="pi">${N.PIC[p]}</div><div><b>${N.P[p]}</b> ${N.SIGN[signOf(pos[p])]} में (${hh}वां भाव) — <span class="${g ? 't-good' : 't-bad'}">${g ? 'शुभ फल' : 'सावधानी'}</span></div></div>`; }).join('');
+    const nxt = A.nextChange(noonJd(now), jd => signOf(A.sunMoon(jd).sun), 1);
+    h = `<div class="av-card"><h3>${N.SIGN_IC[R]} ${N.SIGN[R]} — इस माह</h3><div class="note">सूर्य ${N.SIGN[signOf(pos.Sun)]} राशि (${sh}वें भाव) में${nxt ? ' — ' + A.fmtJd(nxt, 5.5) + ' तक' : ''}</div><p style="margin-top:8px;font-size:17px">${SUN[sh]}</p><h4>अन्य ग्रहों का असर</h4>${fast}<h4>🙏 माह का उपाय</h4><p>${UPAY[lord]}</p></div>`;
+  } else {
+    const jh = house(signOf(pos.Jupiter)), st = house(signOf(pos.Saturn)), rh = house(signOf(pos.Rahu));
+    const item = (p, hh, t) => `<div class="pl"><div class="pi">${N.PIC[p]}</div><div><b>${N.P[p]} — ${N.SIGN[signOf(pos[p])]} राशि</b><br>${t}</div></div>`;
+    const sade = [12, 1, 2].includes(st) ? 'साढ़ेसाती चल रही है' : st === 4 || st === 8 ? 'शनि ढैय्या चल रही है' : 'साढ़ेसाती/ढैय्या नहीं';
+    const good = [JUP[jh], SAT[st], RAHU[rh]].filter(t => t.includes('शुभ')).length;
+    h = `<div class="av-card"><h3>${N.SIGN_IC[R]} ${N.SIGN[R]} — वार्षिक राशिफल ${now.getFullYear()}</h3><div class="note">बड़े ग्रहों (गुरु, शनि, राहु) के गोचर के अनुसार</div>
+      ${item('Jupiter', jh, JUP[jh])}${item('Saturn', st, SAT[st])}${item('Rahu', rh, RAHU[rh])}
+      <div class="grid2" style="margin-top:10px"><div class="box ${[12, 1, 2, 4, 8].includes(st) ? 'bad' : 'good'}"><small>शनि स्थिति</small><b>${sade}</b></div><div class="box ${good >= 2 ? 'good' : good === 0 ? 'bad' : 'mid'}"><small>वर्ष का सार</small><b>${good >= 2 ? 'उन्नति का वर्ष' : good === 0 ? 'धैर्य का वर्ष' : 'मिश्रित वर्ष'}</b></div></div>
+      <h4>🙏 वर्ष भर का उपाय</h4><p>${UPAY[lord]} ${[12, 1, 2, 4, 8].includes(st) ? UPAY.Saturn : ''}</p></div>`;
+  }
+  $('out').innerHTML = head + h;
+  $('tabs').onclick = e => { const b = e.target.closest('button'); if (b) { tab = b.dataset.k; render(); } };
+  if ($('sh')) $('sh').onclick = () => share(window._share);
+}
+if (R != null) pick(R);
+</script>
+</body>
+</html>

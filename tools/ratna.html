@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>रत्न सुझाव | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+<style>.gem{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px;margin-bottom:10px;border-left:5px solid var(--c)}
+.gem .g{flex:0 0 52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--c));box-shadow:0 6px 14px -6px var(--c)}
+.gem b{color:var(--mar);font-size:17px}
+.lsel{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.lsel button{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:7px 2px;font-weight:700;color:var(--mar);cursor:pointer;font-size:14px}
+.lsel button.on{background:var(--mar);color:#fff}</style>
+</head>
+<body>
+<header class="av-head"><div class="ic">💎</div><h1>रत्न सुझाव</h1><p>लग्न के अनुसार जीवन रत्न, भाग्य रत्न और धारण विधि</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<div class="av-card">
+  <div class="tabs" id="mode"><button data-m="b" class="on">जन्म विवरण से</button><button data-m="l">लग्न चुनें</button></div>
+  <div id="fb"><div id="bf"></div><button class="btn blk" id="go">💎 रत्न देखें</button></div>
+  <div id="fl" style="display:none"><div class="lsel" id="lsel"></div></div>
+</div>
+<div id="out"></div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script>
+const { $, share } = AVUI, A = AVAstro, N = A.N;
+const bf = AVUI.birthForm($('bf'), 'av_self', '');
+const GEM = { Sun: ['माणिक्य (Ruby)', '#d1263b', 'अनामिका', 'सोना / तांबा', 'रविवार सूर्योदय', 'ॐ ह्रां ह्रीं ह्रौं सः सूर्याय नमः', '3–5 रत्ती'], Moon: ['मोती (Pearl)', '#cfd6e3', 'कनिष्ठा', 'चांदी', 'सोमवार शाम', 'ॐ श्रां श्रीं श्रौं सः चंद्रमसे नमः', '4–6 रत्ती'], Mars: ['मूंगा (Coral)', '#e4572e', 'अनामिका', 'सोना / तांबा', 'मंगलवार सुबह', 'ॐ क्रां क्रीं क्रौं सः भौमाय नमः', '6–8 रत्ती'], Mercury: ['पन्ना (Emerald)', '#1f9d55', 'कनिष्ठा', 'सोना / पंचधातु', 'बुधवार सुबह', 'ॐ ब्रां ब्रीं ब्रौं सः बुधाय नमः', '3–5 रत्ती'], Jupiter: ['पुखराज (Yellow Sapphire)', '#f2c230', 'तर्जनी', 'सोना', 'गुरुवार सुबह', 'ॐ ग्रां ग्रीं ग्रौं सः गुरवे नमः', '3–5 रत्ती'], Venus: ['हीरा / ओपल', '#e8e3f7', 'मध्यमा / अनामिका', 'चांदी / प्लेटिनम', 'शुक्रवार सुबह', 'ॐ द्रां द्रीं द्रौं सः शुक्राय नमः', 'हीरा 0.5–1 कैरेट / ओपल 3–5 रत्ती'], Saturn: ['नीलम (Blue Sapphire)', '#2747a8', 'मध्यमा', 'पंचधातु / चांदी', 'शनिवार शाम', 'ॐ प्रां प्रीं प्रौं सः शनैश्चराय नमः', '3–5 रत्ती (पहले परीक्षण करें)'] };
+const UP = { Sun: 'गार्नेट', Moon: 'चंद्रकांत मणि', Mars: 'लाल अकीक', Mercury: 'पेरिडॉट', Jupiter: 'सुनहला', Venus: 'जरकन', Saturn: 'नीली (Amethyst)' };
+let mode = 'b';
+$('lsel').innerHTML = N.SIGN.map((s, i) => `<button data-i="${i}">${N.SIGN_IC[i]} ${s}</button>`).join('');
+$('lsel').onclick = e => { const b = e.target.closest('button'); if (!b) return; [...$('lsel').children].forEach(x => x.classList.toggle('on', x === b)); show(+b.dataset.i); };
+$('mode').onclick = e => { const b = e.target.closest('button'); if (!b) return; mode = b.dataset.m; [...$('mode').children].forEach(x => x.classList.toggle('on', x === b)); $('fb').style.display = mode === 'b' ? '' : 'none'; $('fl').style.display = mode === 'l' ? '' : 'none'; };
+$('go').onclick = () => { const f = bf.get(); if (!f) return; show(Math.floor(A.ascendant(f.jd, f.L.lat, f.L.lon) / 30), f); };
+function card(p, title, why) { const g = GEM[p]; return `<div class="gem" style="--c:${g[1]}"><div class="g"></div><div><small class="note" style="margin:0">${title}</small><br><b>${g[0]}</b> — ${N.P[p]} का रत्न<br><small>${why}</small><div class="note">☝️ ${g[2]} उंगली • 🪙 ${g[3]} • 🗓️ ${g[4]} • ⚖️ ${g[6]}<br>🕉️ ${g[5]} (108 बार जप कर धारण करें) • उपरत्न: ${UP[p]}</div></div></div>`; }
+function show(l, f) {
+  const L1 = N.LORD[l], L5 = N.LORD[(l + 4) % 12], L9 = N.LORD[(l + 8) % 12];
+  const avoid = [...new Set([N.LORD[(l + 5) % 12], N.LORD[(l + 7) % 12], N.LORD[(l + 11) % 12]])].filter(p => ![L1, L5, L9].includes(p));
+  let h = `<div class="av-card"><h3>${N.SIGN_IC[l]} ${N.SIGN[l]} लग्न</h3>${f ? `<div class="note">${f.name || ''} — ${f.date} ${f.time}, ${f.L.name}</div>` : ''}<div style="height:8px"></div>`;
+  h += card(L1, '🌟 जीवन रत्न (लग्नेश)', 'स्वास्थ्य, आत्मविश्वास और जीवन शक्ति के लिए — सबसे सुरक्षित रत्न।');
+  if (L5 !== L1) h += card(L5, '📚 विद्या-संतान रत्न (पंचमेश)', 'बुद्धि, शिक्षा, संतान सुख और रचनात्मकता के लिए।');
+  if (L9 !== L1 && L9 !== L5) h += card(L9, '🍀 भाग्य रत्न (नवमेश)', 'भाग्य, धर्म, उन्नति और पिता के सहयोग के लिए।');
+  h += `<div class="box bad" style="margin-top:6px"><small>बिना सलाह न पहनें</small><b>${avoid.map(p => GEM[p] ? GEM[p][0] : N.P[p]).join(', ') || '—'}</b><div class="note" style="margin-top:2px">ये 6, 8, 12 भाव के स्वामी हैं — इनके रत्न नुकसान दे सकते हैं।</div></div>
+    <p class="note">⚠️ रत्न हमेशा असली (लैब प्रमाणित) हों और पहनने से पहले पूरी कुंडली (ग्रह बल, दशा) दिखा लें। सटीक रत्न व वज़न के लिए Astro Vikass से परामर्श लें — ☎ 7069492135</p><button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button></div>`;
+  $('out').innerHTML = h;
+  $('sh').onclick = () => share(`💎 *${N.SIGN[l]} लग्न — रत्न सुझाव*\nजीवन रत्न: ${GEM[L1][0]}\n${L5 !== L1 ? 'पंचमेश रत्न: ' + GEM[L5][0] + '\n' : ''}${L9 !== L1 && L9 !== L5 ? 'भाग्य रत्न: ' + GEM[L9][0] : ''}`);
+  $('out').scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
