@@ -1,6 +1,7 @@
 /* ===== वेबसाइट लॉजिक ===== */
 const CONFIG = {
-  SITE_NAME: 'ज्योतिषी',
+  SITE_NAME: 'Astro Vikass',
+  MOBILE: '7069492135',
   // Supabase (वैकल्पिक): अपना URL और anon key डालें तो हर कुंडली का विवरण आपकी टेबल में सेव होगा
   SUPABASE_URL: '',
   SUPABASE_ANON_KEY: '',
@@ -18,52 +19,91 @@ const AVOID = { Sun: 'अहंकार और पिता का अपमा
 const PY = [null, 'नई शुरुआत, नए अवसर और आत्मनिर्भरता का वर्ष', 'साझेदारी, धैर्य और संबंधों को मजबूत करने का वर्ष', 'रचनात्मकता, यश और सामाजिक विस्तार का वर्ष', 'कड़ी मेहनत और मजबूत नींव बनाने का वर्ष', 'बदलाव, यात्रा और नए अनुभवों का वर्ष', 'परिवार, विवाह और जिम्मेदारियों का वर्ष', 'आत्मचिंतन, अध्ययन और आध्यात्म का वर्ष', 'धन, करियर और अधिकार में वृद्धि का वर्ष', 'पुराने काम पूरे करने, दान और समापन का वर्ष'];
 const CHALDEAN = { A: 1, I: 1, J: 1, Q: 1, Y: 1, B: 2, K: 2, R: 2, C: 3, G: 3, L: 3, S: 3, D: 4, M: 4, T: 4, E: 5, H: 5, N: 5, X: 5, U: 6, V: 6, W: 6, O: 7, Z: 7, F: 8, P: 8 };
 
-/* ---------- फॉर्म ---------- */
+/* ---------- फॉर्म + जन्म स्थान खोज ---------- */
+const norm = s => s.toLowerCase().replace(/[^a-zऀ-ॿ]/g, '');
+let sugItems = [], sugIdx = -1, geoTimer = null, geoSeq = 0;
 function initForm() {
-  const dl = $('#cityList');
-  dl.innerHTML = CITIES.map(c => `<option value="${c[0]}, ${c[1]}">`).join('');
-  $('#place').addEventListener('change', fillCity);
+  const inp = $('#place');
+  inp.addEventListener('input', () => {
+    if (!$('#manualBox').classList.contains('open')) { $('#lat').value = ''; $('#lon').value = ''; }
+    $('#placeHint').textContent = '';
+    showSug(inp.value);
+  });
+  inp.addEventListener('focus', () => inp.value && showSug(inp.value));
+  inp.addEventListener('keydown', e => {
+    if (!sugItems.length) return;
+    if (e.key === 'ArrowDown') { sugIdx = (sugIdx + 1) % sugItems.length; paintSug(); e.preventDefault(); }
+    else if (e.key === 'ArrowUp') { sugIdx = (sugIdx - 1 + sugItems.length) % sugItems.length; paintSug(); e.preventDefault(); }
+    else if (e.key === 'Enter' && sugIdx >= 0) { pickSug(sugIdx); e.preventDefault(); }
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('.place-wrap')) hideSug(); });
   $('#manualToggle').addEventListener('click', () => $('#manualBox').classList.toggle('open'));
   try {
-    const s = JSON.parse(localStorage.getItem('jyotish_last') || 'null');
+    const s = JSON.parse(localStorage.getItem('astrovikass_last') || 'null');
     if (s) for (const k in s) if ($('#' + k)) $('#' + k).value = s[k];
+    if (s && s.lat) $('#placeHint').textContent = `✓ ${s.place}`;
   } catch (e) { }
   $('#kForm').addEventListener('submit', onSubmit);
 }
-function fillCity() {
-  const v = $('#place').value.trim();
-  const c = CITIES.find(c => `${c[0]}, ${c[1]}` === v || c[0] === v);
-  if (c) { $('#lat').value = c[2]; $('#lon').value = c[3]; $('#tz').value = c[4]; $('#placeHint').textContent = `✅ ${c[0]} — ${c[2]}°N, ${c[3]}°E`; return true; }
-  return false;
+function localMatches(q) {
+  const n = norm(q); if (!n) return [];
+  const scored = [];
+  for (const c of CITIES) {
+    const hi = norm(c[0]), en = c[1].toLowerCase().split(' ').map(norm);
+    let s = -1;
+    if (hi.startsWith(n) || en.some(e => e.startsWith(n))) s = 0;
+    else if (hi.includes(n) || en.some(e => e.includes(n))) s = 1;
+    if (s >= 0) scored.push([s, c]);
+  }
+  return scored.sort((a, b) => a[0] - b[0]).slice(0, 8).map(([, c]) => ({ label: c[0], en: c[1].split(' ')[0], st: c[2], lat: c[3], lon: c[4], tz: c[5] }));
 }
-async function geocode(name) {
+function showSug(q) {
+  sugItems = localMatches(q); sugIdx = sugItems.length ? 0 : -1; paintSug();
+  clearTimeout(geoTimer);
+  if (q.trim().length >= 3) geoTimer = setTimeout(() => onlineSug(q.trim()), 450);
+}
+async function onlineSug(q) {
+  const my = ++geoSeq;
   try {
-    const r = await fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&language=hi&name=' + encodeURIComponent(name.split(',')[0]));
-    const j = await r.json(); const g = j.results && j.results[0];
-    if (!g) return false;
-    $('#lat').value = g.latitude.toFixed(2); $('#lon').value = g.longitude.toFixed(2);
-    if (g.country_code === 'IN') $('#tz').value = 5.5;
-    else {
-      const dt = new Date($('#dob').value + 'T12:00:00Z');
-      const loc = new Date(dt.toLocaleString('en-US', { timeZone: g.timezone })), utc = new Date(dt.toLocaleString('en-US', { timeZone: 'UTC' }));
-      $('#tz').value = Math.round((loc - utc) / 900000) / 4;
-    }
-    $('#placeHint').textContent = `✅ ${g.name}, ${g.admin1 || ''} ${g.country || ''}`;
-    return true;
-  } catch (e) { return false; }
+    const r = await fetch('https://geocoding-api.open-meteo.com/v1/search?count=8&language=en&name=' + encodeURIComponent(q));
+    const j = await r.json(); if (my !== geoSeq || !j.results) return;
+    const dt = new Date(($('#dob').value || '2000-01-01') + 'T12:00:00Z');
+    const extra = j.results.filter(g => !sugItems.some(s => Math.abs(s.lat - g.latitude) < 0.08 && Math.abs(s.lon - g.longitude) < 0.08)).map(g => {
+      let tz = 5.5;
+      if (g.country_code !== 'IN') { try { const loc = new Date(dt.toLocaleString('en-US', { timeZone: g.timezone })), utc = new Date(dt.toLocaleString('en-US', { timeZone: 'UTC' })); tz = Math.round((loc - utc) / 900000) / 4; } catch (e) { } }
+      return { label: g.name, en: '', st: [g.admin2, g.admin1, g.country].filter(Boolean).join(', '), lat: +g.latitude.toFixed(2), lon: +g.longitude.toFixed(2), tz, online: true };
+    });
+    sugItems = sugItems.concat(extra).slice(0, 10); if (sugIdx < 0 && sugItems.length) sugIdx = 0; paintSug();
+  } catch (e) { }
 }
+function paintSug() {
+  const box = $('#placeSug');
+  if (!sugItems.length) { box.innerHTML = $('#place').value.trim().length >= 2 ? '<div class="sug-empty">खोज रहे हैं… न मिले तो नीचे "अक्षांश/देशांतर" विकल्प चुनें</div>' : ''; box.classList.toggle('open', !!box.innerHTML); return; }
+  box.innerHTML = sugItems.map((s, i) => `<div class="sug ${i === sugIdx ? 'act' : ''}" data-i="${i}"><span class="sug-ic">${s.online ? '🌐' : '📍'}</span><span><b>${esc(s.label)}</b>${s.en ? ` <i>${esc(s.en)}</i>` : ''}<small>${esc(s.st)}</small></span></div>`).join('');
+  box.classList.add('open');
+  box.querySelectorAll('.sug').forEach(el => el.addEventListener('mousedown', e => { e.preventDefault(); pickSug(+el.dataset.i); }));
+}
+function pickSug(i) {
+  const s = sugItems[i]; if (!s) return;
+  $('#place').value = `${s.label}, ${s.st.split(',').pop().trim()}`;
+  $('#lat').value = s.lat; $('#lon').value = s.lon; $('#tz').value = s.tz;
+  $('#placeHint').textContent = `✓ ${s.label} • ${Math.abs(s.lat)}°${s.lat >= 0 ? 'N' : 'S'}, ${Math.abs(s.lon)}°${s.lon >= 0 ? 'E' : 'W'}`;
+  hideSug();
+}
+function hideSug() { $('#placeSug').classList.remove('open'); sugItems = []; }
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3500); }
 
 async function onSubmit(e) {
   e.preventDefault();
   const name = $('#name').value.trim(), dob = $('#dob').value, tob = $('#tob').value;
   if (!name || !dob || !tob) return toast('कृपया नाम, जन्म तिथि और जन्म समय भरें');
-  if (!$('#lat').value && !fillCity()) {
-    const ok = $('#place').value.trim() && await geocode($('#place').value.trim());
-    if (!ok) { $('#manualBox').classList.add('open'); return toast('यह स्थान सूची में नहीं मिला — कृपया अक्षांश/देशांतर भरें या नजदीकी शहर चुनें'); }
+  if (!$('#lat').value) {
+    const m = localMatches($('#place').value);
+    if (m.length) { sugItems = m; pickSug(0); }
+    else { $('#manualBox').classList.add('open'); $('#place').focus(); return toast('कृपया सूची से जन्म स्थान चुनें, या अक्षांश/देशांतर भरें'); }
   }
   const save = {}; ['name', 'ename', 'dob', 'tob', 'place', 'lat', 'lon', 'tz', 'mobile'].forEach(k => save[k] = $('#' + k).value);
-  try { localStorage.setItem('jyotish_last', JSON.stringify(save)); } catch (e) { }
+  try { localStorage.setItem('astrovikass_last', JSON.stringify(save)); } catch (e) { }
   const [y, m, d] = dob.split('-').map(Number), [hh, mm] = tob.split(':').map(Number);
   const inp = { y, m, d, hh, mm, lat: +$('#lat').value, lon: +$('#lon').value, tz: +$('#tz').value };
   $('#loader').classList.add('show');
@@ -200,7 +240,7 @@ function buildReport(k, u) {
   const hn = u.name + ' जी';
 
   /* हीरो */
-  let h = `<div class="r-hero"><div class="om">ॐ</div><div class="r-kicker">🔮 लाल किताब संपूर्ण विश्लेषण 🔮</div><h1 class="r-name">${esc(u.name)}</h1>
+  let h = `<div class="r-hero"><div class="om">ॐ</div><div class="r-brand"><b>✦ ASTRO VIKASS</b><span>☎ 7069492135</span></div><div class="r-kicker">लाल किताब संपूर्ण विश्लेषण</div><h1 class="r-name">${esc(u.name)}</h1>
   <div class="r-meta">जन्म: ${fmt(new Date(dy, dm - 1, dd))} | समय: ${u.tob} | ${esc(u.place)}</div>
   <div class="chips"><span class="chip c1">${K.SIGN_ICON[ln]} ${K.SIGN[ln]} लग्न</span><span class="chip c2">🌙 ${K.SIGN[ms]} राशि</span><span class="chip c3">✨ ${nak[0]} नक्षत्र</span><span class="chip c4">🪐 ${K.P[curMaha.lord].hi} महादशा</span></div></div>`;
 
@@ -308,8 +348,9 @@ function buildReport(k, u) {
   <p class="dim">रत्न धारण करने से पहले किसी अनुभवी ज्योतिषी से सलाह अवश्य लें।</p>`;
   h += sec(10, 'GUIDANCE & CONCLUSION', 'मार्गदर्शिका एवं अंतिम निष्कर्ष', "Do's & Don'ts, मंत्र, शुभ तत्व", '🎓', s10, 280);
 
-  const share = `${u.name} की कुंडली: ${K.SIGN[ln]} लग्न, ${K.SIGN[ms]} राशि, ${nak[0]} नक्षत्र, ${K.P[curMaha.lord].hi} महादशा। अपनी मुफ्त लाल किताब कुंडली बनाएं: ${location.href.split('#')[0]}`;
+  const share = `${u.name} की कुंडली: ${K.SIGN[ln]} लग्न, ${K.SIGN[ms]} राशि, ${nak[0]} नक्षत्र, ${K.P[curMaha.lord].hi} महादशा। Astro Vikass पर अपनी मुफ्त लाल किताब कुंडली बनाएं: ${location.href.split('#')[0]}`;
   h += `<div class="actions"><button class="btn" onclick="doPrint()">📄 PDF डाउनलोड</button><a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">💬 WhatsApp पर शेयर</a><button class="btn ghost" onclick="document.getElementById('form').scrollIntoView({behavior:'smooth'})">🔄 नई कुंडली</button></div>
+  <div class="r-consult"><b>अपनी कुंडली पर विस्तृत परामर्श चाहिए?</b><p>विवाह मिलान, करियर, व्यापार या किसी समस्या के समाधान के लिए Astro Vikass से संपर्क करें — ☎ 7069492135</p><div class="btns"><a class="cta" href="tel:+917069492135">☎ कॉल करें</a><a class="cta wa" href="https://wa.me/917069492135?text=${encodeURIComponent(`नमस्ते, मेरी कुंडली (${u.name}, ${u.dob}, ${u.tob}, ${u.place}) पर परामर्श चाहिए`)}" target="_blank" rel="noopener">WhatsApp करें</a></div></div>
   <p class="calc">गणना: लाहिरी अयनांश ${k.ayanamsa.toFixed(3)}° • अक्षांश ${u.inp.lat}, देशांतर ${u.inp.lon}, समय क्षेत्र UTC${u.inp.tz >= 0 ? '+' : ''}${u.inp.tz}</p>`;
   return h;
 }

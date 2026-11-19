@@ -1,3 +1,12 @@
+# Astro Vikass — मुफ्त लाल किताब कुंडली वेबसाइट
+
+**लाइव:** https://sidtech366.github.io/jyotishi/ • संपर्क: 7069492135
+
+- होमपेज (`index.html`) = Astro Vikass कुंडली वेबसाइट। इसके स्रोत और बदलाव का तरीका: [`src/README.md`](src/README.md)
+- पुराना Ank Jyotish होमपेज सुरक्षित है: `ank-jyotish-old-home.html` (बाकी पेज — login, admin, numerology — पहले जैसे हैं)
+
+---
+
 # Ank Jyotish: Astrology + Numerology Platform (Phase 1 + 2)
 
 Stack: GitHub Pages (frontend) + Google Apps Script (API) + Google Sheets (database) + Google Drive (files).
