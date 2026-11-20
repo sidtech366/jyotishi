@@ -246,6 +246,14 @@
    "path": "tools/shodash.html",
    "order": 80,
    "replace": "षोडशोपचार पूजनं"
+  },
+  {
+   "id": "puchhe",
+   "title": "पूछें — ज्योतिष सहायक",
+   "icon": "🙏",
+   "desc": "कुंडली, व्रत, मंत्र, वास्तु, उपाय — कोई भी प्रश्न पूछें",
+   "path": "tools/puchhe.html",
+   "order": 5
   }
  ]
 }

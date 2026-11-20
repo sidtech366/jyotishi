@@ -117,6 +117,10 @@ async function onSubmit(e) {
     $('#report').innerHTML = html; $('#report').classList.add('show'); kTab('info', false);
     $('#loader').classList.remove('show');
     hideForm(name, dob, tob, $('#place').value);
+    try {   // "पूछें" (AI सहायक) के लिए — इसी ब्राउज़र में आख़िरी कुंडली
+      const rp = $('#report').cloneNode(true); rp.querySelectorAll('.ktoc,.kpager,.actions,.r-foot,.r-consult,button,script').forEach(e => e.remove());
+      localStorage.setItem('av_kundli_last', JSON.stringify({ n: name, d: dob.split('-').reverse().join('/'), t: tob, p: $('#place').value, x: rp.textContent.replace(/\s+/g, ' ').trim().slice(0, 16000), at: Date.now() }));
+    } catch (e) { }
     $('#editbar').scrollIntoView({ behavior: 'smooth', block: 'start' });
     saveLead(save);
   }, 700);
@@ -358,7 +362,7 @@ function buildReport(k, u) {
 
   const share = `${u.name} की कुंडली: ${K.SIGN[ln]} लग्न, ${K.SIGN[ms]} राशि, ${nak[0]} नक्षत्र, ${K.P[curMaha.lord].hi} महादशा। Astro Vikass पर अपनी लाल किताब कुंडली बनाएं: https://sidtech366.vercel.app/AstroVikas`;
   h += `<div class="kpager" id="kpager"></div>`;
-  h += `<div class="actions"><button class="btn" onclick="doPrint()">📄 PDF डाउनलोड</button><a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">💬 WhatsApp पर शेयर</a><button class="btn ghost" onclick="showForm()">🔄 नई कुंडली</button></div>
+  h += `<div class="actions"><button class="btn" onclick="doPrint()">📄 PDF डाउनलोड</button><a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">💬 WhatsApp पर शेयर</a><a class="btn ask" href="../tools/puchhe.html?k=1">🙏 इस कुंडली के बारे में पूछें</a><button class="btn ghost" onclick="showForm()">🔄 नई कुंडली</button></div>
   <div class="r-consult"><b>अपनी कुंडली पर विस्तृत परामर्श चाहिए?</b><p>विवाह मिलान, करियर, व्यापार या किसी समस्या के समाधान के लिए Astro Vikass से संपर्क करें — ☎ 7069492135</p><div class="btns"><a class="cta" href="tel:+917069492135" target="_blank">☎ कॉल करें</a><a class="cta wa" href="https://wa.me/917069492135?text=${encodeURIComponent(`नमस्ते, मेरी कुंडली (${u.name}, ${u.dob}, ${u.tob}, ${u.place}) पर परामर्श चाहिए`)}" target="_blank" rel="noopener">WhatsApp करें</a></div></div>
   <div class="r-foot"><div class="r-rule"><i></i><span>✦</span><i></i></div><div class="rf-g">
     <div class="rf-b"><div class="r-logo"><div class="mark"><span>✦</span></div><div><b>ASTRO VIKASS</b><small>लाल किताब • वैदिक ज्योतिष</small></div></div><p>ग्रहों की सटीक गणना और लाल किताब के अनुभव पर आधारित व्यक्तिगत रिपोर्ट।</p></div>

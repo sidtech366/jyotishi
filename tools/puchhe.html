@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>पूछें — ज्योतिष सहायक | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+<style>.hide{display:none!important}
+.chat{display:flex;flex-direction:column;gap:10px;min-height:120px}
+.msg{max-width:92%;padding:11px 13px;border-radius:16px;font-size:15px;line-height:1.7;white-space:pre-line;word-wrap:break-word}
+.msg.u{align-self:flex-end;background:linear-gradient(135deg,#7a1c1c,#a8321e);color:#fff;border-bottom-right-radius:4px}
+.msg.b{align-self:flex-start;background:#fff;border:1px solid #f0dcb4;color:#3a2418;border-bottom-left-radius:4px;box-shadow:0 8px 20px -16px #6b141866}
+.msg.b.sys{background:#fffbeb;border-color:#fde68a}
+.msg .src{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.msg .src a{font-size:12px;font-weight:700;color:#a8321e;background:#fff1e0;border-radius:999px;padding:3px 9px;text-decoration:none}
+.msg .meta{display:block;font-size:11.5px;color:#8a6d5a;margin-top:6px}
+.dots{display:inline-flex;gap:4px}.dots i{width:7px;height:7px;border-radius:50%;background:#a8321e;animation:bl 1s infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes bl{0%,100%{opacity:.25}50%{opacity:1}}
+.sug{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}.sug::-webkit-scrollbar{display:none}
+.sug span{flex:0 0 auto;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid #f3c98b;color:var(--mar);font-size:13px;font-weight:600;cursor:pointer}
+.kb{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:#fff7e6;border:1px solid #f3dcae;margin-bottom:10px;font-size:13.5px}
+.kb b{color:var(--mar)}.kb label{margin-left:auto;display:flex;align-items:center;gap:6px;font-weight:700;color:#166534;white-space:nowrap}
+.inp{position:sticky;bottom:0;display:flex;gap:8px;padding:10px 0 4px;background:linear-gradient(#fff8ec00,#fff8ec 30%)}
+.inp textarea{flex:1;resize:none;min-height:48px;max-height:120px;padding:12px 14px;border-radius:16px;border:1.5px solid #efd9ae;font:500 15px 'Noto Sans Devanagari',sans-serif;outline:none;background:#fff}
+.inp textarea:focus{border-color:#ee6f16}
+.inp button{flex:0 0 54px;border:0;border-radius:16px;background:linear-gradient(135deg,#ee6f16,#a8321e);color:#fff;font-size:22px;cursor:pointer}
+.inp button:disabled{opacity:.5}
+.left{text-align:center;font-size:12px;color:var(--mut);margin-top:4px}</style>
+</head>
+<body>
+<header class="av-head"><div class="ic">🙏</div><h1>पूछें — ज्योतिष सहायक</h1><p>कुंडली, व्रत, मंत्र, वास्तु, उपाय — साइट के ज्ञान से उत्तर</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<div class="av-card">
+  <div id="kbx"></div>
+  <div class="sug" id="sug"></div>
+  <div class="chat" id="chat"><div class="msg b">🙏 नमस्ते! मैं Astro Vikass का सहायक हूँ। व्रत-त्योहार, आज का पंचांग, मंत्र, पूजा-हवन, वास्तु, लाल किताब उपाय, स्वप्न फल — या अपनी कुंडली के बारे में पूछें।
+<small class="meta">मैं केवल इस साइट में उपलब्ध जानकारी से उत्तर देता हूँ।</small></div></div>
+  <div class="inp"><textarea id="q" rows="1" placeholder="अपना प्रश्न लिखें…"></textarea><button id="go">➤</button></div>
+  <div class="left" id="left"></div>
+</div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script src="lib/calendar.js"></script>
+<script>
+const { $, esc, store } = AVUI, A = AVAstro;
+const EXEC = 'https://script.google.com/macros/s/AKfycbwTrBGp5lijkmEOn1D81-Pz_k6ijV0Pnp06K9V8cYssdwG7EfTaBjrZcnMzexKM2cgPPQ/exec';
+const NOINFO = '🙏 क्षमा करें, इस प्रश्न की जानकारी अभी मेरे पास उपलब्ध नहीं है। विस्तृत परामर्श के लिए संपर्क करें — ☎ 7069492135';
+let DEV = store.get('ai_dev', ''); if (!DEV) { DEV = 'd' + Math.random().toString(36).slice(2, 12); store.set('ai_dev', DEV); }
+/* ---------- ज्ञान भंडार ---------- */
+let KB = null;
+const kbLoad = () => KB ? Promise.resolve(KB) : fetch('ai/kb.json').then(r => r.json()).then(j => (KB = j.kb.map(k => ({ ...k, l: k.x.toLowerCase() }))));
+kbLoad().catch(() => { });
+const STOP = new Set('क्या है हैं की का के को में से पर और या कब कैसे कौन कितने किस किसी करें करना करे होता होती होते हो था थी थे यह ये वह वे इस उस एक भी तो ही मुझे मेरा मेरी मेरे हम आप बताओ बताइए बताएं बताये बताएँ जी please the a is of in to'.split(' '));
+const SYN = { 'सपने': 'स्वप्न', 'सपना': 'स्वप्न', 'सपनों': 'स्वप्न', 'टोटका': 'उपाय', 'टोटके': 'उपाय', 'उपाए': 'उपाय', 'घर': 'गृह', 'पूजाघर': 'पूजा', 'मंदिर': 'पूजा', 'शादी': 'विवाह', 'नौकरी': 'करियर', 'पैसा': 'धन', 'पैसे': 'धन', 'बीमारी': 'स्वास्थ्य', 'कर्ज': 'कर्ज़', 'मंत्र': 'मंत्र', 'आरती': 'आरती', 'दिवाली': 'दीपावली', 'होली': 'होलिका', 'शिवरात्री': 'शिवरात्रि', 'ग्यारस': 'एकादशी' };
+const tok = s => (s.toLowerCase().match(/[ऀ-ॿ\w]+/g) || []).filter(w => w.length > 1 && !STOP.has(w));
+function retrieve(q, n = 8) {
+  if (!KB) return [];
+  const T = [...new Set(tok(q).flatMap(w => [w, SYN[w]].filter(Boolean)))]; if (!T.length) return [];
+  const df = {}; T.forEach(w => { const st = w.length > 3 ? w.slice(0, -1) : w; df[w] = KB.filter(k => k.l.includes(st)).length || 1; });
+  return KB.map(k => { let s = 0; T.forEach(w => { const st = w.length > 3 ? w.slice(0, -1) : w; if (k.l.includes(st)) s += Math.log(1 + KB.length / df[w]) * (k.l.slice(0, 80).includes(st) ? 2 : 1); }); return { k, s }; })
+    .filter(o => o.s > 0).sort((a, b) => b.s - a.s).filter((o, i, L) => o.s >= L[0].s * 0.35).slice(0, n);
+}
+/* ---------- आज का पंचांग (लाइव गणना) ---------- */
+const MN = ['जनवरी', 'फरवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'], WD = ['रविवार', 'सोमवार', 'मंगलवार', 'बुधवार', 'गुरुवार', 'शुक्रवार', 'शनिवार'];
+const RAHU = [8, 2, 7, 5, 6, 4, 3];   // दिन के 8 भागों में राहु काल का भाग (रवि..शनि)
+function panchangCtx() {
+  try {
+    const L = AVPlaces.load() || { name: 'दिल्ली', lat: 28.61, lon: 77.21, tz: 5.5 }, tz = L.tz || 5.5, n = new Date();
+    const y = n.getFullYear(), m = n.getMonth() + 1, d = n.getDate();
+    const days = AVCal.month(y, m, L).concat(AVCal.month(m === 12 ? y + 1 : y, m === 12 ? 1 : m + 1, L));
+    const I = days.find(x => x.d === d && x.m === m && x.y === y); if (!I) return '';
+    const hr = n.getHours() + n.getMinutes() / 60, jd = A.jdOf(y, m, d, hr - tz), sm = A.sunMoon(jd), N = A.N;
+    const t = A.tithiNo(jd), seg = (I.set - I.rise) / 8, rs = I.rise + (RAHU[I.vaar] - 1) * seg;
+    const tn = x => (x <= 15 ? 'शुक्ल ' : 'कृष्ण ') + (x === 15 ? 'पूर्णिमा' : x === 30 ? 'अमावस्या' : N.TITHI[(x - 1) % 15]);
+    const up = days.filter(x => (x.y * 1e4 + x.m * 100 + x.d) >= (y * 1e4 + m * 100 + d) && x.events.length).slice(0, 25)
+      .map(x => `${x.d} ${MN[x.m - 1]} ${x.y} (${WD[x.vaar]}): ${x.events.map(e => e[1]).join(', ')}`).join('\n');
+    return `आज का पंचांग (${L.name}, ${d} ${MN[m - 1]} ${y}, ${WD[I.vaar]}, समय ${String(n.getHours()).padStart(2, '0')}:${String(n.getMinutes()).padStart(2, '0')}):\n`
+      + `अभी की तिथि: ${tn(t)} (समाप्ति ${A.fmtJd(A.nextChange(jd, A.tithiNo, .02), tz)}); उदया तिथि: ${tn(I.tithi)}; मास: ${(I.adhik ? 'अधिक ' : '') + N.MAAS[I.maas]} (अमांत); नक्षत्र: ${N.NAK[A.nakNo(jd)]}; चंद्र राशि: ${['मेष', 'वृषभ', 'मिथुन', 'कर्क', 'सिंह', 'कन्या', 'तुला', 'वृश्चिक', 'धनु', 'मकर', 'कुंभ', 'मीन'][Math.floor(sm.moon / 30)]}; `
+      + `सूर्योदय ${A.fmtH(I.rise)}, सूर्यास्त ${A.fmtH(I.set)}; राहु काल ${A.fmtH(rs)}–${A.fmtH(rs + seg)}।\nआने वाले व्रत-त्योहार:\n${up}`;
+  } catch (e) { return ''; }
+}
+/* ---------- कुंडली ---------- */
+const KD = (() => { try { return JSON.parse(localStorage.getItem('av_kundli_last') || 'null'); } catch (e) { return null; } })();
+let useK = !!KD;
+if (KD) {
+  $('kbx').innerHTML = `<div class="kb">🪔 <div><b>${esc(KD.n)}</b> की कुंडली<br><small>${esc(KD.d)} • ${esc(KD.t)} • ${esc(KD.p || '')}</small></div><label><input type="checkbox" id="uk" ${useK ? 'checked' : ''}> शामिल करें</label></div>`;
+  $('uk').onchange = () => useK = $('uk').checked;
+} else $('kbx').innerHTML = `<div class="kb">🪔 <div>अपनी कुंडली के बारे में पूछना है? पहले <a href="../kundli/?embed=1" style="color:#a8321e;font-weight:700">कुंडली बनाएं</a> — फिर यहाँ अपने आप जुड़ जाएगी।</div></div>`;
+const SUG = (KD ? ['मेरी कुंडली में कौन से योग हैं?', 'मेरी अभी कौन सी महादशा चल रही है?', 'मेरे लिए कौन सा उपाय करूँ?'] : [])
+  .concat(['आज की तिथि क्या है?', 'अगली एकादशी कब है?', 'आज राहु काल कब है?', 'पूजा घर किस दिशा में हो?', 'सपने में साँप देखना', 'हनुमान जी का ध्यान मंत्र', 'नौकरी के लिए उपाय']);
+$('sug').innerHTML = SUG.map(s => `<span>${s}</span>`).join('');
+$('sug').onclick = e => { const s = e.target.closest('span'); if (s) { $('q').value = s.textContent; ask(); } };
+/* ---------- चैट ---------- */
+const chat = $('chat');
+function add(cls, html) { const d = document.createElement('div'); d.className = 'msg ' + cls; d.innerHTML = html; chat.appendChild(d); d.scrollIntoView({ behavior: 'smooth', block: 'end' }); return d; }
+const srcHtml = R => { const seen = new Set(), L = R.filter(o => !seen.has(o.k.t) && seen.add(o.k.t)).slice(0, 4); return L.length ? `<div class="src">${L.map(o => `<a href="../${o.k.p}">📚 ${esc(o.k.t)}</a>`).join('')}</div>` : ''; };
+let busy = false;
+async function ask() {
+  const q = $('q').value.trim(); if (!q || busy) return;
+  busy = true; $('go').disabled = true; $('q').value = '';
+  add('u', esc(q)); const w = add('b', '<span class="dots"><i></i><i></i><i></i></span>');
+  await kbLoad().catch(() => { });
+  const R = retrieve(q), kq = useK && KD && /मेर|मुझ|कुंडली|दशा|योग|दोष|लग्न|राशि|भाव|ग्रह|शादी|विवाह|नौकरी|करियर|संतान|स्वास्थ्य|उपाय|रत्न/.test(q);
+  let ctx = '';
+  const P = panchangCtx(); if (P) ctx += '### ' + P + '\n\n';
+  if (kq) ctx += `### यजमान की कुंडली (${KD.n}, ${KD.d} ${KD.t}, ${KD.p || ''}):\n${KD.x}\n\n`;
+  if (R.length) ctx += '### साइट का ज्ञान भंडार:\n' + R.map(o => `[${o.k.t}] ${o.k.x}`).join('\n\n');
+  try {
+    const r = await fetch(EXEC, { method: 'POST', body: JSON.stringify({ act: 'ask', q, ctx, dev: DEV }) }).then(x => x.json());
+    if (!r.ok) throw new Error(r.error || 'त्रुटि');
+    w.innerHTML = esc(r.data.a).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/^\s*[\*\-] /gm, '• ') + (r.data.a.includes('उपलब्ध नहीं') ? '' : (kq ? '<div class="src"><a href="../kundli/?embed=1">🪔 आपकी कुंडली</a></div>' : srcHtml(R)));
+    $('left').textContent = r.data.left >= 0 ? `आज ${r.data.left} प्रश्न और पूछ सकते हैं` : '';
+  } catch (e) {
+    const m = String(e.message || e);
+    if (/AI_OFF|Failed to fetch|NetworkError|JSON/.test(m)) {   // AI बंद/नेटवर्क ➜ सीधे ज्ञान भंडार से
+      w.classList.add('sys');
+      w.innerHTML = R.length ? '📚 <b>साइट में मिली जानकारी:</b>\n\n' + R.slice(0, 3).map(o => `<b>${esc(o.k.t)}</b>\n${esc(o.k.x.length > 450 ? o.k.x.slice(0, 450) + '…' : o.k.x)}`).join('\n\n') + srcHtml(R) : esc(NOINFO);
+    } else { w.classList.add('sys'); w.innerHTML = esc(m); }
+  }
+  busy = false; $('go').disabled = false;
+}
+$('go').onclick = ask;
+$('q').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(); } });
+$('q').addEventListener('input', () => { $('q').style.height = 'auto'; $('q').style.height = Math.min(120, $('q').scrollHeight) + 'px'; });
+const pq = new URLSearchParams(location.search).get('q'); if (pq) { $('q').value = pq; setTimeout(ask, 300); }
+</script>
+</body>
+</html>
