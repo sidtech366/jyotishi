@@ -30,7 +30,8 @@ details.av-card summary:after{content:'▾';float:right}details[open].av-card su
 <div class="tg2 hide" id="tg2"><button data-t="bhai" class="on">👦 भाई द्वारा</button><button data-t="var">🤵 वर द्वारा</button></div>
 <div class="av-card"><div id="pl"></div>
   <div class="two"><div><label class="l">दिनांक</label><input class="in" type="date" id="d"></div><div><label class="l">समय</label><input class="in" type="time" id="tm"></div></div>
-  <label class="l">तिथि-नक्षत्र किस समय के अनुसार</label><select class="in" id="md"><option value="udaya">🌅 उदय तिथि (सूर्योदय के अनुसार)</option><option value="time">🕘 ऊपर लिखे समय के अनुसार</option></select>
+  <label class="l">तिथि-नक्षत्र किस समय के अनुसार</label><select class="in" id="md"><option value="time">🕘 अभी / ऊपर लिखे समय पर जो चल रहा है</option><option value="udaya">🌅 उदय तिथि (उस दिन सूर्योदय वाली)</option></select>
+  <label class="l">संवत्सर परंपरा</label><select class="in" id="sv"><option value="n">उत्तर भारत (2083 = रौद्र)</option><option value="s">दक्षिण भारत / नेपाल (2083 = पराभव)</option></select>
   <button class="btn ghost" id="nowb" style="margin-top:8px">🕘 आज / अभी</button>
 </div>
 <details class="av-card" id="yj"><summary>👤 यजमान का विवरण (नाम, गोत्र…)</summary>
@@ -44,7 +45,7 @@ details.av-card summary:after{content:'▾';float:right}details[open].av-card su
   <div class="two"><div><label class="l">मण्डल (जिला)</label><input class="in" id="f_mandal"></div><div><label class="l">ग्राम / नगर</label><input class="in" id="f_gram"></div></div>
   <div class="note">स्थान चुनते ही ये अपने आप भरते हैं — चाहें तो बदल लें, याद रहेगा।</div>
 </details>
-<div class="av-card"><h3 style="margin-top:0">📅 आज का देश-काल</h3><div class="pan" id="pan"></div></div>
+<div class="av-card"><h3 style="margin-top:0">📅 देश-काल <small id="lv" style="font:500 12px 'Noto Sans Devanagari';color:#16a34a"></small></h3><div class="pan" id="pan"></div></div>
 <div class="av-card"><label class="chk hide" id="dkw"><input type="checkbox" id="dk" checked> देश-काल उच्चारण साथ में जोड़ें</label>
   <div class="fsr"><button id="fm">A−</button><button id="fp">A+</button></div>
   <div class="sk" id="sk"></div>
@@ -77,10 +78,15 @@ function fillPlace(L, force) {
 }
 const pf = AVUI.placeField($('pl'), { onPick: L => { fillPlace(L, true); draw(); } });
 function setNow() { const n = new Date(); $('d').value = AVUI.iso(n); $('tm').value = String(n.getHours()).padStart(2, '0') + ':' + String(n.getMinutes()).padStart(2, '0'); }
-setNow(); $('nowb').onclick = () => { setNow(); draw(); }; $('d').onchange = $('tm').onchange = draw;
+let LIVE = true;                                   // जब तक यूज़र खुद तारीख/समय न बदले — हर मिनट अपने आप अभी का
+setNow(); $('nowb').onclick = () => { LIVE = true; setNow(); draw(); };
+$('d').onchange = $('tm').onchange = () => { LIVE = false; draw(); };
+setInterval(() => { if (LIVE && !document.hidden) { setNow(); draw(); } }, 60000);
+document.addEventListener('visibilitychange', () => { if (LIVE && !document.hidden) { setNow(); draw(); } });
 document.querySelectorAll('#tg button').forEach(b => b.onclick = () => { S.k = b.dataset.k; save(); draw(); });
 document.querySelectorAll('#tg2 button').forEach(b => b.onclick = () => { S.t = b.dataset.t; save(); draw(); });
-$('md').value = S.md || 'udaya'; $('md').onchange = () => { S.md = $('md').value; save(); draw(); };
+$('md').value = S.md2 || 'time'; $('md').onchange = () => { S.md2 = $('md').value; save(); draw(); };
+$('sv').value = S.sv || 'n'; $('sv').onchange = () => { S.sv = $('sv').value; save(); draw(); };
 $('dk').checked = S.dk !== false; $('dk').onchange = () => { S.dk = $('dk').checked; save(); draw(); };
 $('fm').onclick = () => { S.fs = Math.max(14, S.fs - 2); save(); draw(); }; $('fp').onclick = () => { S.fs = Math.min(30, S.fs + 2); save(); draw(); };
 if (pf.get() && !S.f.desh) fillPlace(pf.get());
@@ -88,13 +94,13 @@ if (pf.get() && !S.f.desh) fillPlace(pf.get());
 function kaal() {
   const L = pf.get(); if (!L) return null;
   const [y, m, d] = $('d').value.split('-').map(Number), [hh, mm] = ($('tm').value || '12:00').split(':').map(Number), tz = pf.tz($('d').value);
-  const st = A.sunTimes(y, m, d, L.lat, L.lon, tz), ud = (S.md || 'udaya') === 'udaya', hr = ud ? (st.rise == null ? 6 : st.rise) + 1 / 60 : hh + mm / 60;
+  const st = A.sunTimes(y, m, d, L.lat, L.lon, tz), ud = (S.md2 || 'time') === 'udaya', hr = ud ? (st.rise == null ? 6 : st.rise) + 1 / 60 : hh + mm / 60;
   const jd = A.jdOf(y, m, d, hr - tz);
   let w = new Date(Date.UTC(y, m - 1, d)).getUTCDay(); if (!ud && st.rise != null && hr < st.rise) w = (w + 6) % 7;   // सूर्योदय से पहले = पिछला वार
   const sm = A.sunMoon(jd), pl = A.planets(jd), lm = A.lunarMonth(jd), t = A.tithiNo(jd), yo = A.yogaNo(jd), kr = A.karanaNo(jd), nk = A.nakNo(jd);
   const vs = y + 56 + (m >= 10 || lm.maas <= 8 ? 1 : 0), sun = Math.floor(sm.sun / 30);
   const hm = j => { const l = A.localOf(j, tz); let H = Math.floor(l.h), M = Math.round((l.h - H) * 60); if (M === 60) { M = 0; H++; } return (l.d !== d ? l.d + '/' + l.m + ' ' : '') + String(H % 24).padStart(2, '0') + ':' + String(M).padStart(2, '0'); };
-  return { vs, shaka: vs - 135, samv: SAMV[(vs + 56) % 60], ayana: sun >= 9 || sun <= 2 ? 'उत्तरायणे' : 'दक्षिणायने', ritu: RITU[lm.maas], maas: (lm.adhik ? 'अधिक ' : '') + N.MAAS[lm.maas],
+  return { vs, shaka: vs - 135, samv: SAMV[(vs + (S.sv === 's' ? 56 : 10)) % 60], ayana: sun >= 9 || sun <= 2 ? 'उत्तरायणे' : 'दक्षिणायने', ritu: RITU[lm.maas], maas: (lm.adhik ? 'अधिक ' : '') + N.MAAS[lm.maas],
     paksha: t <= 15 ? 'शुक्ल' : 'कृष्ण', tithi: t === 30 ? 'अमावस्या' : N.TITHI[(t - 1) % 15], vaar: N.VAAR[w].replace('वार', ''), rise: A.fmtH(st.rise), ud, nak: N.NAK[nk], nakE: hm(A.nextChange(jd, A.nakNo, 0.02)), tE: hm(A.nextChange(jd, A.tithiNo, 0.02)),
     yoga: YOGA[yo], yE: hm(A.nextChange(jd, A.yogaNo, 0.02)), karana: karName(kr), sunR: RASHI[sun], moonR: RASHI[Math.floor(sm.moon / 30)], guruR: RASHI[Math.floor(pl.Jupiter / 30)], L, y, m, d };
 }
@@ -133,6 +139,7 @@ function draw() {
   if (!K) { $('pan').innerHTML = '<div style="grid-column:1/-1">ऊपर स्थान चुनें</div>'; $('sk').innerHTML = '<div class="empty">📍 ऊपर स्थान चुनें — संकल्प अपने आप बन जाएगा</div>'; return; }
   $('pan').innerHTML = [['संवत्', K.vs + ' (' + K.samv + ')'], ['शक', K.shaka], ['अयन', K.ayana.replace('े', '')], ['ऋतु', K.ritu], ['मास', K.maas], ['पक्ष', K.paksha], ['तिथि', K.tithi + ' (' + K.tE + ' तक)'], ['वार', K.vaar + 'वार'], ['नक्षत्र', K.nak + ' (' + K.nakE + ' तक)'], ['योग', K.yoga + ' (' + K.yE + ' तक)'], ['करण', K.karana], ['सूर्योदय', K.rise + (K.ud ? ' ✓' : '')], ['सूर्य राशि', K.sunR], ['चन्द्र राशि', K.moonR], ['गुरु राशि', K.guruR]]
     .map(r => '<div><span>' + r[0] + '</span><b>' + esc(r[1]) + '</b></div>').join('');
+  $('lv').textContent = LIVE && !K.ud ? '● अभी चल रहा (हर मिनट अपडेट)' : '';
   $('sk').innerHTML = TPL[S.k](K);
   TXT = $('sk').innerText.trim();
 }
