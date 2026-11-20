@@ -45,7 +45,8 @@ function render() {
   } else {
     P = P || calcP();
     $('out').className = ''; $('out').innerHTML = `<div class="tbl-wrap"><table class="tbl"><tr><th>पंचक का समय</th><th>प्रकार</th></tr>${P.map(x => { const w = A.dateFromJd(x.a + TZ / 24).getUTCDay(); return `<tr class="${now >= x.a && now < x.b ? 'now' : ''}"><td>${A.fmtJd(x.a, TZ)}<br>→ ${A.fmtJd(x.b, TZ)}${now >= x.a && now < x.b ? '<br><b class="t-bad">अभी चल रहा है</b>' : ''}</td><td><b>${PTYPE[w]}</b><br><small>${N.VAAR[w]} से आरंभ</small></td></tr>`; }).join('')}</table></div>
-      <p class="note">पंचक (चंद्रमा धनिष्ठा तृतीय चरण से रेवती तक) में दक्षिण दिशा की यात्रा, लकड़ी इकट्ठा करना, छत डालना, चारपाई बनवाना और दाह संस्कार विशेष विधि के बिना वर्जित माने जाते हैं।</p><button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button>`;
+      <p class="note">पंचक (चंद्रमा धनिष्ठा तृतीय चरण से रेवती तक) में दक्षिण दिशा की यात्रा, लकड़ी इकट्ठा करना, छत डालना, चारपाई बनवाना और दाह संस्कार विशेष विधि के बिना वर्जित माने जाते हैं।</p>
+      <p class="note" style="background:#fff7e6;border-left:4px solid #f59e0b;padding:8px 10px;border-radius:10px">ℹ️ यह <b>नक्षत्र पंचक</b> है (चंद्रमा कुंभ-मीन राशि में)। <b>भीष्म पंचक</b> इससे अलग एक व्रत है — कार्तिक शुक्ल एकादशी से कार्तिक पूर्णिमा तक के 5 दिन। दोनों एक साथ भी चल सकते हैं।</p><button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button>`;
     $('sh').onclick = () => share('⚠️ *आने वाले पंचक*\n' + P.map(x => `${A.fmtJd(x.a, TZ)} → ${A.fmtJd(x.b, TZ)} (${PTYPE[A.dateFromJd(x.a + TZ / 24).getUTCDay()]})`).join('\n'));
   }
 }
