@@ -114,7 +114,7 @@ async function onSubmit(e) {
   setTimeout(() => {
     const k = Astro.kundli(inp);
     const html = buildReport(k, { name, ename: $('#ename').value.trim(), dob, tob, place: $('#place').value || `${inp.lat}, ${inp.lon}`, inp });
-    $('#report').innerHTML = html; $('#report').classList.add('show');
+    $('#report').innerHTML = html; $('#report').classList.add('show'); kTab('info', false);
     $('#loader').classList.remove('show');
     $('#report').scrollIntoView({ behavior: 'smooth' });
     saveLead(save);
@@ -221,7 +221,7 @@ function chartSVG(k, mode) {
 
 /* ---------- रिपोर्ट ---------- */
 function sec(no, en, title, sub, icon, body, hue) {
-  return `<section class="sec" style="--h:${hue}"><div class="sec-head"><div><div class="sec-no">SECTION ${String(no).padStart(2, '0')} — ${en}</div><h2>${title}</h2><p class="sub">${sub}</p></div><div class="sec-ic">${icon}</div></div>${body}</section>`;
+  return `<section class="sec" data-k="s${no}" style="--h:${hue}"><div class="sec-head"><div><div class="sec-no">SECTION ${String(no).padStart(2, '0')} — ${en}</div><h2>${title}</h2><p class="sub">${sub}</p></div><div class="sec-ic">${icon}</div></div>${body}</section>`;
 }
 function buildReport(k, u) {
   const q = k.planets, ln = k.lagnaSign, ms = q.Moon.sign, now = new Date();
@@ -244,13 +244,16 @@ function buildReport(k, u) {
   const hn = u.name + ' जी';
 
   /* हीरो */
-  let h = `<div class="r-hero"><div class="om">ॐ</div><div class="r-brand"><b>✦ ASTRO VIKASS</b><span>☎ 7069492135</span></div><div class="r-kicker">लाल किताब संपूर्ण विश्लेषण</div><h1 class="r-name">${esc(u.name)}</h1>
+  const rid = 'AV-' + (Math.abs([...(u.name + u.dob + u.tob)].reduce((a, c) => (a * 31 + c.charCodeAt(0)) | 0, 7)) % 2176782336).toString(36).toUpperCase().padStart(6, '0');
+  const today = fmt(now);
+  let h = `<div class="r-hero"><div class="om">ॐ</div><div class="r-lh"><div class="r-logo"><div class="mark"><span>✦</span></div><div><b>ASTRO VIKASS</b><small>लाल किताब • वैदिक ज्योतिष • अंक ज्योतिष</small></div></div><div class="r-id"><span>रिपोर्ट नं. <b>${rid}</b></span><span>दिनांक: ${today}</span><span>☎ 7069492135</span></div></div><div class="r-rule"><i></i><span>✦ ॐ ✦</span><i></i></div><div class="r-kicker">लाल किताब संपूर्ण विश्लेषण</div><h1 class="r-name">${esc(u.name)}</h1>
   <div class="r-meta">जन्म: ${fmt(new Date(dy, dm - 1, dd))} | समय: ${u.tob} | ${esc(u.place)}</div>
   <div class="chips"><span class="chip c1">${K.SIGN_ICON[ln]} ${K.SIGN[ln]} लग्न</span><span class="chip c2">🌙 ${K.SIGN[ms]} राशि</span><span class="chip c3">✨ ${nak[0]} नक्षत्र</span><span class="chip c4">🪐 ${K.P[curMaha.lord].hi} महादशा</span></div></div>`;
+  h += `<div class="ktoc" id="ktoc"><div class="ktoc-h"><b>📑 रिपोर्ट के खंड</b><small>जो देखना हो उस पर टैप करें</small></div><div class="ktoc-g">${TOC.map(([kk, ic, t], i) => `<button type="button" data-k="${kk}"${i ? '' : ' class="on"'} onclick="kTab('${kk}')"><i>${ic}</i><span>${t}</span></button>`).join('')}</div></div>`;
 
   /* जन्म विवरण */
   const cell = (a, b, c) => `<div class="info" style="--c:${c}"><small>${a}</small><b>${b}</b></div>`;
-  h += `<section class="sec" style="--h:40"><h3 class="ct">📋 जन्म विवरण एवं ग्रह स्थिति</h3><div class="grid-info">
+  h += `<section class="sec" data-k="info" style="--h:40"><h3 class="ct">📋 जन्म विवरण एवं ग्रह स्थिति</h3><div class="grid-info">
   ${cell('लग्न', `${K.SIGN[ln]} (${K.SIGN_EN[ln]}) ${Math.floor(k.lagnaDeg)}°`, '#ff9a3c')}${cell('लग्न स्वामी', K.P[lagnaLord].em + ' ' + K.P[lagnaLord].hi, '#ff6a3c')}
   ${cell('जन्म राशि', `${K.SIGN[ms]} (${K.SIGN_EN[ms]})`, '#4fc3ff')}${cell('राशि स्वामी', K.P[rashiLord].em + ' ' + K.P[rashiLord].hi, '#4f8bff')}
   ${cell('जन्म नक्षत्र', `${nak[0]} – चरण ${q.Moon.pada}`, '#c06bff')}${cell('नक्षत्र स्वामी', K.P[nak[1]].em + ' ' + K.P[nak[1]].hi, '#9b6bff')}
@@ -261,10 +264,10 @@ function buildReport(k, u) {
   </div></section>`;
 
   /* चार्ट */
-  h += `<section class="sec" style="--h:300"><div class="charts"><div><h3 class="ct">🪔 लग्न कुंडली</h3>${chartSVG(k, 'lagna')}</div><div><h3 class="ct">📕 लाल किताब कुंडली</h3>${chartSVG(k, 'lk')}<p class="note">लाल किताब में पहला भाव हमेशा मेष (1) माना जाता है; ग्रह अपने भाव के अनुसार ही रहते हैं।</p></div></div></section>`;
+  h += `<section class="sec" data-k="chart" style="--h:300"><div class="charts"><div><h3 class="ct">🪔 लग्न कुंडली</h3>${chartSVG(k, 'lagna')}</div><div><h3 class="ct">📕 लाल किताब कुंडली</h3>${chartSVG(k, 'lk')}<p class="note">लाल किताब में पहला भाव हमेशा मेष (1) माना जाता है; ग्रह अपने भाव के अनुसार ही रहते हैं।</p></div></div></section>`;
 
   /* ग्रह तालिका */
-  h += `<section class="sec" style="--h:200"><h3 class="ct">🪐 ग्रह स्पष्ट</h3><div class="tbl-wrap"><table class="tbl"><thead><tr><th>ग्रह</th><th>राशि</th><th>अंश</th><th>भाव</th><th>नक्षत्र</th><th>स्थिति</th></tr></thead><tbody>
+  h += `<section class="sec" data-k="graha" style="--h:200"><h3 class="ct">🪐 ग्रह स्पष्ट</h3><div class="tbl-wrap"><table class="tbl"><thead><tr><th>ग्रह</th><th>राशि</th><th>अंश</th><th>भाव</th><th>नक्षत्र</th><th>स्थिति</th></tr></thead><tbody>
   ${P.map(p => { const x = q[p]; const st = (p === 'Rahu' || p === 'Ketu') ? 'छाया ग्रह' : K.DIG[x.dignity] + (['uchch', 'swa'].includes(x.dignity) ? ' ⭐' : ''); return `<tr><td>${pn(p)}${x.retro && p !== 'Rahu' && p !== 'Ketu' ? ' <span class="tag r">वक्री</span>' : ''}${x.combust ? ' <span class="tag a">अस्त</span>' : ''}</td><td>${K.SIGN[x.sign]}</td><td>${Math.floor(x.deg)}°${String(Math.floor((x.deg % 1) * 60)).padStart(2, '0')}'</td><td>${ord(x.house)}</td><td>${K.NAK[x.nak][0]} – ${x.pada}</td><td class="st-${x.dignity}">${st}</td></tr>`; }).join('')}
   </tbody></table></div></section>`;
 
@@ -353,10 +356,26 @@ function buildReport(k, u) {
   h += sec(10, 'GUIDANCE & CONCLUSION', 'मार्गदर्शिका एवं अंतिम निष्कर्ष', "Do's & Don'ts, मंत्र, शुभ तत्व", '🎓', s10, 280);
 
   const share = `${u.name} की कुंडली: ${K.SIGN[ln]} लग्न, ${K.SIGN[ms]} राशि, ${nak[0]} नक्षत्र, ${K.P[curMaha.lord].hi} महादशा। Astro Vikass पर अपनी मुफ्त लाल किताब कुंडली बनाएं: ${location.href.split('#')[0]}`;
+  h += `<div class="kpager" id="kpager"></div>`;
   h += `<div class="actions"><button class="btn" onclick="doPrint()">📄 PDF डाउनलोड</button><a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">💬 WhatsApp पर शेयर</a><button class="btn ghost" onclick="document.getElementById('form').scrollIntoView({behavior:'smooth'})">🔄 नई कुंडली</button></div>
   <div class="r-consult"><b>अपनी कुंडली पर विस्तृत परामर्श चाहिए?</b><p>विवाह मिलान, करियर, व्यापार या किसी समस्या के समाधान के लिए Astro Vikass से संपर्क करें — ☎ 7069492135</p><div class="btns"><a class="cta" href="tel:+917069492135" target="_blank">☎ कॉल करें</a><a class="cta wa" href="https://wa.me/917069492135?text=${encodeURIComponent(`नमस्ते, मेरी कुंडली (${u.name}, ${u.dob}, ${u.tob}, ${u.place}) पर परामर्श चाहिए`)}" target="_blank" rel="noopener">WhatsApp करें</a></div></div>
-  <p class="calc">गणना: लाहिरी अयनांश ${k.ayanamsa.toFixed(3)}° • अक्षांश ${u.inp.lat}, देशांतर ${u.inp.lon}, समय क्षेत्र UTC${u.inp.tz >= 0 ? '+' : ''}${u.inp.tz}</p>`;
+  <div class="r-foot"><div class="r-rule"><i></i><span>✦</span><i></i></div><div class="rf-g">
+    <div class="rf-b"><div class="r-logo"><div class="mark"><span>✦</span></div><div><b>ASTRO VIKASS</b><small>लाल किताब • वैदिक ज्योतिष</small></div></div><p>ग्रहों की सटीक गणना और लाल किताब के अनुभव पर आधारित व्यक्तिगत रिपोर्ट।</p></div>
+    <div class="rf-c"><b>संपर्क</b><span>☎ 7069492135</span><span>💬 WhatsApp: 7069492135</span><span>🌐 sidtech366.github.io/jyotishi</span></div>
+    <div class="rf-s"><b>रिपोर्ट विवरण</b><span>नं. ${rid} • ${today}</span><span>लाहिरी अयनांश ${k.ayanamsa.toFixed(3)}°</span><span>${u.inp.lat}°, ${u.inp.lon}° • UTC${u.inp.tz >= 0 ? '+' : ''}${u.inp.tz}</span></div>
+  </div><p class="rf-d">यह रिपोर्ट ज्योतिषीय गणना पर आधारित मार्गदर्शन है। रत्न, उपाय या महत्वपूर्ण निर्णय से पहले अनुभवी ज्योतिषी से परामर्श अवश्य लें। © ${now.getFullYear()} Astro Vikass</p></div>`;
   return h;
+}
+const TOC = [['info', '📋', 'जन्म विवरण'], ['chart', '🪔', 'कुंडली चार्ट'], ['graha', '🪐', 'ग्रह स्पष्ट'], ['s1', '🔭', 'ग्रह शक्ति'], ['s2', '⚡', 'योग-दोष, भाव'], ['s3', '🧬', 'व्यक्तित्व'], ['s4', '💼', 'करियर-धन'], ['s5', '💞', 'विवाह-संतान'], ['s6', '🌿', 'स्वास्थ्य'], ['s7', '📕', 'लाल किताब उपाय'], ['s8', '⏳', 'दशा-वर्षफल'], ['s9', '🔢', 'अंक ज्योतिष'], ['s10', '🎓', 'मार्गदर्शन']];
+function kTab(key, scroll) {
+  const r = document.getElementById('report'); if (!r) return;
+  r.classList.add('tabbed');
+  r.querySelectorAll('.sec').forEach(s => s.classList.toggle('on', s.dataset.k === key));
+  r.querySelectorAll('#ktoc button').forEach(b => b.classList.toggle('on', b.dataset.k === key));
+  const i = TOC.findIndex(t => t[0] === key), pv = TOC[i - 1], nx = TOC[i + 1];
+  const pg = document.getElementById('kpager');
+  if (pg) pg.innerHTML = `${pv ? `<button type="button" onclick="kTab('${pv[0]}',1)">‹ ${pv[1]} ${pv[2]}</button>` : '<span></span>'}<button type="button" class="mid" onclick="kTab('${key}',1)">${i + 1}/${TOC.length}</button>${nx ? `<button type="button" onclick="kTab('${nx[0]}',1)">${nx[1]} ${nx[2]} ›</button>` : '<span></span>'}`;
+  if (scroll !== false) { const t = document.getElementById('ktoc'); if (t && scroll) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 }
 function doPrint() { try { window.print(); } catch (e) { } setTimeout(() => toast('PDF के लिए: ब्राउज़र मेनू ⋮ → Share/Print → "Save as PDF" चुनें'), 400); }
 document.addEventListener('DOMContentLoaded', initForm);

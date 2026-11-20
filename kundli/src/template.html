@@ -199,6 +199,44 @@ h4{font-size:18px;margin:22px 0 8px;color:hsl(var(--h),90%,76%);font-weight:800}
 @media(max-width:900px){.hero{grid-template-columns:1fr;padding-top:30px;gap:28px}.links{display:none}.svc,.steps{grid-template-columns:1fr 1fr}.consult{grid-template-columns:1fr}.consult .btns{justify-content:flex-start}.grid-info{grid-template-columns:repeat(2,1fr)}.lk{grid-template-columns:1fr}}
 @media(max-width:600px){body{font-size:16.5px}.row,.charts,.two,.svc,.steps,.fgrid{grid-template-columns:1fr}.sec{padding:18px 14px}.sec h2{font-size:22px}#manualBox{grid-template-columns:1fr 1fr}.strip .hide-m{display:none}.nav-call{display:none}.block{padding:40px 0}.hero .lead{font-size:17px}}
 
+
+/* ===== रिपोर्ट: प्रोफेशनल लेटरहेड + खंड बटन ===== */
+.r-lh{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;position:relative}
+.r-logo{display:flex;align-items:center;gap:10px}
+.r-logo .mark{width:44px;height:44px}.r-logo .mark span{width:36px;height:36px}
+.r-logo b{display:block;font-family:'Cinzel',serif;font-size:19px;letter-spacing:1.5px;color:var(--gold2);line-height:1.1}
+.r-logo small{display:block;font-size:11.5px;letter-spacing:.5px;opacity:.85;margin-top:2px}
+.r-id{display:flex;flex-direction:column;align-items:flex-end;font-size:12.5px;line-height:1.55;opacity:.95}
+.r-id b{font-family:'Cinzel',serif;letter-spacing:1px;color:var(--gold2)}
+.r-rule{display:flex;align-items:center;gap:10px;margin:14px 0 12px;color:var(--gold);font-size:12px;letter-spacing:3px;position:relative}
+.r-rule i{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.ktoc{margin:0 0 14px;padding:14px 12px;border-radius:20px;background:var(--card);border:1px solid var(--line);scroll-margin-top:80px}
+.ktoc-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:0 4px 10px;flex-wrap:wrap}
+.ktoc-h b{font-size:17px;color:var(--gold2)}.ktoc-h small{color:var(--mut);font-size:12.5px}
+.ktoc-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(min-width:640px){.ktoc-g{grid-template-columns:repeat(5,1fr)}}
+.ktoc-g button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:14px;border:1px solid var(--line);background:#ffffff0a;color:var(--txt);font:600 13px 'Mukta','Noto Sans Devanagari',sans-serif;cursor:pointer;line-height:1.25;transition:.15s}
+.ktoc-g button i{font-style:normal;font-size:21px}
+.ktoc-g button.on{background:linear-gradient(135deg,var(--gold),var(--sf));color:#1b1030;border-color:transparent;box-shadow:0 8px 18px -8px #f5b942aa}
+#report.tabbed .sec{display:none}
+#report.tabbed .sec.on{display:block;animation:kin .3s ease}
+@keyframes kin{from{opacity:0;transform:translateY(8px)}}
+.kpager{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0 4px}
+.kpager button{flex:1;max-width:44%;padding:11px 10px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font:600 13.5px 'Mukta','Noto Sans Devanagari',sans-serif;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpager button.mid{flex:0 0 auto;max-width:none;color:var(--gold2)}
+.kpager span{flex:1;max-width:44%}
+.r-foot{margin-top:18px;padding:18px 18px 14px;border-radius:20px;background:var(--card);border:1px solid var(--line);font-size:13.5px}
+.r-foot .r-rule{margin:0 0 14px}
+.rf-g{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:16px}
+.rf-g>div{display:flex;flex-direction:column;gap:3px}.rf-g p{color:var(--mut);margin-top:8px;font-size:13px}
+.rf-c b,.rf-s b{color:var(--gold2);font-size:14px;margin-bottom:2px}
+.rf-c span,.rf-s span{color:var(--mut)}
+.rf-d{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);text-align:center;color:var(--mut);font-size:12px}
+@media(max-width:640px){.rf-g{grid-template-columns:1fr 1fr}.rf-b{grid-column:1/-1}.r-id{align-items:flex-start}}
+/* पेज फुटर */
+footer{background:linear-gradient(180deg,transparent,#0000002e);position:relative}
+footer:before{content:'';position:absolute;left:0;right:0;top:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),var(--sf),transparent)}
+footer .fbtn{display:inline-flex!important;align-items:center;gap:6px;margin:6px 6px 0 0!important;padding:8px 14px;border-radius:10px;border:1px solid var(--line);font-weight:600;font-size:14px}
 /* ===== EMBED MODE: मुख्य वेबसाइट (Astro Vikas) के iframe में — वही रंग और फॉन्ट ===== */
 html.embed{--bg:#fdf5e6;--card:#fffaf1;--card2:#fffaf1;--line:#efdcb6;--txt:#2e1a12;--mut:#86664f;--gold:#c99a2e;--gold2:#93301f;--sf:#ee6f16;--mar:#6b1418}
 html.embed body{background:#fdf5e6;color:#2e1a12;font-family:'Noto Sans Devanagari','Mukta',sans-serif}
@@ -257,7 +295,20 @@ html.embed .num b{color:#6b1418}
 html.embed .chart{background:#fffaf1;border:1px solid #efdcb6}html.embed .chart .sn{fill:#b49a80}
 html.embed .r-consult{background:linear-gradient(120deg,#6b1418,#93301f);border:0;color:#fff}html.embed .r-consult p{color:#fde7c8}
 html.embed .calc,html.embed .note,html.embed .sub,html.embed .an-d,html.embed .dim{color:#86664f}
+html.embed .r-logo b,html.embed .r-id b{color:#f3d27a}html.embed .r-logo small,html.embed .r-id{color:#fde7c8}
+html.embed .r-logo .mark span{background:#5a1214}
+html.embed .r-rule{color:#f3d27a}html.embed .r-rule i{background:linear-gradient(90deg,transparent,#f3d27a,transparent)}
+html.embed .ktoc{background:#fffaf1;border-color:#efdcb6;box-shadow:0 12px 30px -18px #6b141855}
+html.embed .ktoc-h b{color:#6b1418}
+html.embed .ktoc-g button{background:#fff;border-color:#efdcb6;color:#5a2a12}
+html.embed .ktoc-g button.on{background:linear-gradient(135deg,#93301f,#6b1418);color:#fff;box-shadow:0 8px 18px -8px #6b1418aa}
+html.embed .kpager button{background:#fff;border-color:#efdcb6;color:#6b1418}html.embed .kpager button.mid{color:#ee6f16}
+html.embed .r-foot{background:#fffaf1;border-color:#efdcb6;border-top:3px solid #93301f}
+html.embed .r-foot .r-rule{color:#c99a2e}html.embed .r-foot .r-rule i{background:linear-gradient(90deg,transparent,#c99a2e,transparent)}
+html.embed .r-foot .r-logo b{color:#6b1418}html.embed .r-foot .r-logo small{color:#86664f}html.embed .r-foot .r-logo .mark span{background:#fffaf1}
+html.embed .rf-c b,html.embed .rf-s b{color:#6b1418}
 @media print{html.embed .r-hero{background:#93301f}}
+@media print{#report.tabbed .sec,#report .sec{display:block!important;animation:none!important}.ktoc,.kpager{display:none!important}.r-foot{break-inside:avoid-page;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 @media print{body{background:#fff;color:#111;font-size:12.5px}body:before,.stars,.strip,nav,.hero,.block,.consult,footer,.actions,#toast,.float-wa,.r-consult .btns{display:none!important}.sec,.r-hero,.r-consult{break-inside:avoid-page;box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
 </head>
@@ -339,7 +390,7 @@ html.embed .calc,html.embed .note,html.embed .sub,html.embed .an-d,html.embed .d
   <div class="fgrid">
     <div><div class="brand"><div class="mark"><span>✦</span></div><div class="bname">ASTRO VIKASS<small>लाल किताब • वैदिक ज्योतिष</small></div></div><p style="margin-top:12px">मुफ्त ऑनलाइन कुंडली, लाल किताब फलादेश और अचूक उपाय — हिंदी में।</p></div>
     <div><h4>लिंक</h4><a href="#form">कुंडली बनाएं</a><a href="#services">सेवाएं</a><a href="#faq">सवाल-जवाब</a></div>
-    <div><h4>संपर्क</h4><a href="tel:+917069492135">☎ 7069492135</a><a href="https://wa.me/917069492135" target="_blank" rel="noopener">WhatsApp: 7069492135</a></div>
+    <div><h4>संपर्क</h4><a href="tel:+917069492135">☎ 7069492135</a><a href="https://wa.me/917069492135" target="_blank" rel="noopener">WhatsApp: 7069492135</a><a class="fbtn" href="tel:+917069492135">☎ कॉल करें</a><a class="fbtn" href="https://wa.me/917069492135" target="_blank" rel="noopener">💬 WhatsApp</a></div>
   </div>
   <div class="copy">© <span id="yr"></span> Astro Vikass • ज्योतिषीय फल मार्गदर्शन हेतु हैं; महत्वपूर्ण निर्णय अपने विवेक से लें।</div>
 </div></footer>
