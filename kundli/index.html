@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Astro Vikass — मुफ्त लाल किताब कुंडली एवं भविष्यफल</title>
-<meta name="description" content="Astro Vikass: जन्म तिथि, समय और स्थान डालकर मुफ्त लाल किताब कुंडली, ग्रह स्थिति, महादशा, योग-दोष, करियर, विवाह और अचूक उपाय जानें। परामर्श: 7069492135">
+<title>Astro Vikass — लाल किताब कुंडली एवं भविष्यफल</title>
+<meta name="description" content="Astro Vikass: जन्म तिथि, समय और स्थान डालकर लाल किताब कुंडली, ग्रह स्थिति, महादशा, योग-दोष, करियर, विवाह और अचूक उपाय जानें। परामर्श: 7069492135">
 <meta name="theme-color" content="#0c0a24">
-<meta property="og:title" content="Astro Vikass — मुफ्त लाल किताब कुंडली">
-<meta property="og:description" content="अपनी संपूर्ण कुंडली और भविष्यफल हिंदी में मुफ्त पाएं।">
+<meta property="og:title" content="Astro Vikass — लाल किताब कुंडली">
+<meta property="og:description" content="अपनी संपूर्ण कुंडली और भविष्यफल हिंदी में पाएं।">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23f5b942'/%3E%3Cpath d='M32 10l5 15h16l-13 9 5 16-13-10-13 10 5-16-13-9h16z' fill='%230c0a24'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Mukta:wght@400;500;600;700;800&family=Tiro+Devanagari+Hindi&family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -73,6 +73,12 @@ input::-webkit-calendar-picker-indicator{filter:invert(.8)}
 #manualBox{display:none;grid-template-columns:1fr 1fr 1fr;gap:10px}#manualBox.open{display:grid}
 .go{margin-top:20px;width:100%;padding:16px;border:0;border-radius:14px;font:inherit;font-size:19px;font-weight:800;color:#1b1030;cursor:pointer;background:linear-gradient(90deg,var(--gold2),var(--gold),var(--sf));box-shadow:0 12px 30px #f5b94240;transition:.2s}
 .go:hover{filter:brightness(1.05)}.go:active{transform:scale(.99)}
+#editbar{display:none}#editbar.show{display:flex;align-items:center;gap:12px;justify-content:space-between;margin:12px 0 4px;padding:12px 14px;border-radius:18px;background:var(--card);border:1px solid var(--line);flex-wrap:wrap;scroll-margin-top:80px}
+#editbar .eb-t{min-width:0;flex:1}#editbar .eb-t b{display:block;font-size:16px;color:var(--gold2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#editbar .eb-t small{color:var(--mut);font-size:13px}
+#editbar button{padding:10px 16px;border-radius:12px;border:0;font:700 15px 'Mukta','Noto Sans Devanagari',sans-serif;cursor:pointer;background:linear-gradient(90deg,var(--gold),var(--sf));color:#1b1030;white-space:nowrap}
+.hero.formhidden{display:none!important}
+html.embed #editbar.show{background:#fffaf1;border-color:#efdcb6;box-shadow:0 12px 30px -18px #6b141855}html.embed #editbar .eb-t b{color:#6b1418}html.embed #editbar button{background:linear-gradient(90deg,#ffa53a,#ee6f16);color:#fff}
+@media print{#editbar{display:none!important}}
 .free{text-align:center;font-size:13px;color:var(--mut);margin-top:10px}
 /* blocks */
 .block{padding:56px 0}
@@ -324,14 +330,14 @@ html.embed .rf-c b,html.embed .rf-s b{color:#6b1418}
 <main class="wrap">
   <header class="hero">
     <div>
-      <span class="eyebrow">✦ 100% मुफ्त कुंडली • हिंदी में</span>
+      <span class="eyebrow">✦ संपूर्ण कुंडली • हिंदी में</span>
       <h1 class="serif">अपने ग्रहों को जानिए,<br><span class="goldtxt">भविष्य को सँवारिए</span></h1>
       <p class="lead">जन्म तिथि, समय और स्थान डालिए — पाइए संपूर्ण लाल किताब कुंडली, ग्रह स्थिति, महादशा, योग-दोष, करियर, विवाह और अचूक उपाय, एक ही रिपोर्ट में।</p>
       <div class="btns"><a class="cta" href="#form">कुंडली बनाएं</a><a class="cta out" href="https://wa.me/917069492135?text=%E0%A4%A8%E0%A4%AE%E0%A4%B8%E0%A5%8D%E0%A4%A4%E0%A5%87%2C%20%E0%A4%AE%E0%A5%81%E0%A4%9D%E0%A5%87%20%E0%A4%9C%E0%A5%8D%E0%A4%AF%E0%A5%8B%E0%A4%A4%E0%A4%BF%E0%A4%B7%20%E0%A4%AA%E0%A4%B0%E0%A4%BE%E0%A4%AE%E0%A4%B0%E0%A5%8D%E0%A4%B6%20%E0%A4%9A%E0%A4%BE%E0%A4%B9%E0%A4%BF%E0%A4%8F" target="_blank" rel="noopener">परामर्श लें</a></div>
       <div class="trust"><span>सटीक खगोलीय गणना</span><span>लाहिरी अयनांश</span><span>108 लाल किताब फल</span><span>कोई लॉगिन नहीं</span></div>
     </div>
     <div class="formcard" id="form">
-      <h2>निःशुल्क कुंडली</h2><p class="s">सही जन्म समय से सबसे सटीक फल मिलता है</p>
+      <h2>कुंडली बनाएं</h2><p class="s">सही जन्म समय से सबसे सटीक फल मिलता है</p>
       <form id="kForm" autocomplete="off">
         <label for="name">पूरा नाम *</label><input id="name" placeholder="जैसे: विकास मिश्र" required>
         <label for="ename">नाम English में <span class="dim">(अंक ज्योतिष हेतु)</span></label><input id="ename" placeholder="e.g. Vikas Mishra">
@@ -343,10 +349,11 @@ html.embed .rf-c b,html.embed .rf-s b{color:#6b1418}
         <div id="manualBox"><div><label for="lat">अक्षांश</label><input id="lat" type="number" step="0.01" placeholder="27.10"></div><div><label for="lon">देशांतर</label><input id="lon" type="number" step="0.01" placeholder="84.09"></div><div><label for="tz">समय क्षेत्र</label><input id="tz" type="number" step="0.25" value="5.5"></div></div>
         <label for="mobile">मोबाइल नंबर <span class="dim">(वैकल्पिक)</span></label><input id="mobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10 अंकों का नंबर">
         <button class="go" type="submit">मेरी कुंडली देखें →</button>
-        <p class="free">निःशुल्क • तुरंत परिणाम • आपकी जानकारी सुरक्षित</p>
+        <p class="free">तुरंत परिणाम • आपकी जानकारी सुरक्षित</p>
       </form>
     </div>
   </header>
+  <div id="editbar"></div>
   <div id="report"></div>
 
   <section class="block" id="services">
@@ -378,7 +385,6 @@ html.embed .rf-c b,html.embed .rf-s b{color:#6b1418}
   <section class="block" id="faq">
     <div class="bh"><div class="kick">सवाल-जवाब</div><h2 class="serif">अक्सर पूछे जाने वाले प्रश्न</h2></div>
     <div class="faq">
-      <details><summary>क्या कुंडली सच में मुफ्त है?</summary><p>हाँ, पूरी रिपोर्ट बिल्कुल निःशुल्क है। कोई लॉगिन या भुगतान नहीं।</p></details>
       <details><summary>जन्म समय नहीं पता हो तो क्या करें?</summary><p>लग्न और भाव जन्म समय पर निर्भर करते हैं, इसलिए जितना सटीक समय होगा उतना सटीक फल। अनुमानित समय से राशि, नक्षत्र और अंक ज्योतिष फिर भी काफी सही रहते हैं।</p></details>
       <details><summary>मेरा जन्म स्थान सूची में नहीं है?</summary><p>स्थान का नाम हिंदी या English में लिखें — वेबसाइट ऑनलाइन भी खोजती है। फिर भी न मिले तो नजदीकी शहर चुनें या अक्षांश/देशांतर खुद भरें।</p></details>
       <details><summary>गणना किस पद्धति से होती है?</summary><p>लाहिरी अयनांश, पूर्ण राशि भाव और विंशोत्तरी दशा। फलादेश लाल किताब और वैदिक ज्योतिष के सिद्धांतों पर आधारित है।</p></details>
@@ -388,7 +394,7 @@ html.embed .rf-c b,html.embed .rf-s b{color:#6b1418}
 </main>
 <footer><div class="wrap">
   <div class="fgrid">
-    <div><div class="brand"><div class="mark"><span>✦</span></div><div class="bname">ASTRO VIKASS<small>लाल किताब • वैदिक ज्योतिष</small></div></div><p style="margin-top:12px">मुफ्त ऑनलाइन कुंडली, लाल किताब फलादेश और अचूक उपाय — हिंदी में।</p></div>
+    <div><div class="brand"><div class="mark"><span>✦</span></div><div class="bname">ASTRO VIKASS<small>लाल किताब • वैदिक ज्योतिष</small></div></div><p style="margin-top:12px">ऑनलाइन कुंडली, लाल किताब फलादेश और अचूक उपाय — हिंदी में।</p></div>
     <div><h4>लिंक</h4><a href="#form">कुंडली बनाएं</a><a href="#services">सेवाएं</a><a href="#faq">सवाल-जवाब</a></div>
     <div><h4>संपर्क</h4><a href="tel:+917069492135">☎ 7069492135</a><a href="https://wa.me/917069492135" target="_blank" rel="noopener">WhatsApp: 7069492135</a><a class="fbtn" href="tel:+917069492135">☎ कॉल करें</a><a class="fbtn" href="https://wa.me/917069492135" target="_blank" rel="noopener">💬 WhatsApp</a></div>
   </div>
@@ -970,7 +976,8 @@ async function onSubmit(e) {
     const html = buildReport(k, { name, ename: $('#ename').value.trim(), dob, tob, place: $('#place').value || `${inp.lat}, ${inp.lon}`, inp });
     $('#report').innerHTML = html; $('#report').classList.add('show'); kTab('info', false);
     $('#loader').classList.remove('show');
-    $('#report').scrollIntoView({ behavior: 'smooth' });
+    hideForm(name, dob, tob, $('#place').value);
+    $('#editbar').scrollIntoView({ behavior: 'smooth', block: 'start' });
     saveLead(save);
   }, 700);
 }
@@ -1209,17 +1216,30 @@ function buildReport(k, u) {
   <p class="dim">रत्न धारण करने से पहले किसी अनुभवी ज्योतिषी से सलाह अवश्य लें।</p>`;
   h += sec(10, 'GUIDANCE & CONCLUSION', 'मार्गदर्शिका एवं अंतिम निष्कर्ष', "Do's & Don'ts, मंत्र, शुभ तत्व", '🎓', s10, 280);
 
-  const share = `${u.name} की कुंडली: ${K.SIGN[ln]} लग्न, ${K.SIGN[ms]} राशि, ${nak[0]} नक्षत्र, ${K.P[curMaha.lord].hi} महादशा। Astro Vikass पर अपनी मुफ्त लाल किताब कुंडली बनाएं: ${location.href.split('#')[0]}`;
+  const share = `${u.name} की कुंडली: ${K.SIGN[ln]} लग्न, ${K.SIGN[ms]} राशि, ${nak[0]} नक्षत्र, ${K.P[curMaha.lord].hi} महादशा। Astro Vikass पर अपनी लाल किताब कुंडली बनाएं: https://sidtech366.vercel.app/AstroVikas`;
   h += `<div class="kpager" id="kpager"></div>`;
-  h += `<div class="actions"><button class="btn" onclick="doPrint()">📄 PDF डाउनलोड</button><a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">💬 WhatsApp पर शेयर</a><button class="btn ghost" onclick="document.getElementById('form').scrollIntoView({behavior:'smooth'})">🔄 नई कुंडली</button></div>
+  h += `<div class="actions"><button class="btn" onclick="doPrint()">📄 PDF डाउनलोड</button><a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">💬 WhatsApp पर शेयर</a><button class="btn ghost" onclick="showForm()">🔄 नई कुंडली</button></div>
   <div class="r-consult"><b>अपनी कुंडली पर विस्तृत परामर्श चाहिए?</b><p>विवाह मिलान, करियर, व्यापार या किसी समस्या के समाधान के लिए Astro Vikass से संपर्क करें — ☎ 7069492135</p><div class="btns"><a class="cta" href="tel:+917069492135" target="_blank">☎ कॉल करें</a><a class="cta wa" href="https://wa.me/917069492135?text=${encodeURIComponent(`नमस्ते, मेरी कुंडली (${u.name}, ${u.dob}, ${u.tob}, ${u.place}) पर परामर्श चाहिए`)}" target="_blank" rel="noopener">WhatsApp करें</a></div></div>
   <div class="r-foot"><div class="r-rule"><i></i><span>✦</span><i></i></div><div class="rf-g">
     <div class="rf-b"><div class="r-logo"><div class="mark"><span>✦</span></div><div><b>ASTRO VIKASS</b><small>लाल किताब • वैदिक ज्योतिष</small></div></div><p>ग्रहों की सटीक गणना और लाल किताब के अनुभव पर आधारित व्यक्तिगत रिपोर्ट।</p></div>
-    <div class="rf-c"><b>संपर्क</b><span>☎ 7069492135</span><span>💬 WhatsApp: 7069492135</span></div>
+    <div class="rf-c"><b>संपर्क</b><span>☎ 7069492135</span><span>💬 WhatsApp: 7069492135</span><span>🌐 sidtech366.vercel.app/AstroVikas</span></div>
     <div class="rf-s"><b>रिपोर्ट विवरण</b><span>नं. ${rid} • ${today}</span><span>लाहिरी अयनांश ${k.ayanamsa.toFixed(3)}°</span><span>${u.inp.lat}°, ${u.inp.lon}° • UTC${u.inp.tz >= 0 ? '+' : ''}${u.inp.tz}</span></div>
   </div><p class="rf-d">यह रिपोर्ट ज्योतिषीय गणना पर आधारित मार्गदर्शन है। रत्न, उपाय या महत्वपूर्ण निर्णय से पहले अनुभवी ज्योतिषी से परामर्श अवश्य लें। © ${now.getFullYear()} Astro Vikass</p></div>`;
   return h;
 }
+/* कुंडली बनने के बाद फॉर्म छिपाएं — सिर्फ़ "एडिट" बटन */
+function hideForm(name, dob, tob, place) {
+  const [y, m, d] = dob.split('-');
+  $('#editbar').innerHTML = `<div class="eb-t"><b>🪔 ${esc(name)}</b><small>${d}/${m}/${y} • ${tob} • ${esc(place || '')}</small></div><button type="button" onclick="showForm()">✏️ कुंडली एडिट करें</button>`;
+  $('#editbar').classList.add('show');
+  document.querySelector('.hero').classList.add('formhidden');
+}
+function showForm() {
+  document.querySelector('.hero').classList.remove('formhidden');
+  $('#editbar').classList.remove('show');
+  $('#form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+document.addEventListener('click', e => { const a = e.target.closest('a[href="#form"]'); if (a && document.querySelector('.hero.formhidden')) { e.preventDefault(); showForm(); } });
 const TOC = [['info', '📋', 'जन्म विवरण'], ['chart', '🪔', 'कुंडली चार्ट'], ['graha', '🪐', 'ग्रह स्पष्ट'], ['s1', '🔭', 'ग्रह शक्ति'], ['s2', '⚡', 'योग-दोष, भाव'], ['s3', '🧬', 'व्यक्तित्व'], ['s4', '💼', 'करियर-धन'], ['s5', '💞', 'विवाह-संतान'], ['s6', '🌿', 'स्वास्थ्य'], ['s7', '📕', 'लाल किताब उपाय'], ['s8', '⏳', 'दशा-वर्षफल'], ['s9', '🔢', 'अंक ज्योतिष'], ['s10', '🎓', 'मार्गदर्शन']];
 function kTab(key, scroll) {
   const r = document.getElementById('report'); if (!r) return;

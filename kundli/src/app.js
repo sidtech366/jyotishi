@@ -116,7 +116,8 @@ async function onSubmit(e) {
     const html = buildReport(k, { name, ename: $('#ename').value.trim(), dob, tob, place: $('#place').value || `${inp.lat}, ${inp.lon}`, inp });
     $('#report').innerHTML = html; $('#report').classList.add('show'); kTab('info', false);
     $('#loader').classList.remove('show');
-    $('#report').scrollIntoView({ behavior: 'smooth' });
+    hideForm(name, dob, tob, $('#place').value);
+    $('#editbar').scrollIntoView({ behavior: 'smooth', block: 'start' });
     saveLead(save);
   }, 700);
 }
@@ -355,17 +356,30 @@ function buildReport(k, u) {
   <p class="dim">रत्न धारण करने से पहले किसी अनुभवी ज्योतिषी से सलाह अवश्य लें।</p>`;
   h += sec(10, 'GUIDANCE & CONCLUSION', 'मार्गदर्शिका एवं अंतिम निष्कर्ष', "Do's & Don'ts, मंत्र, शुभ तत्व", '🎓', s10, 280);
 
-  const share = `${u.name} की कुंडली: ${K.SIGN[ln]} लग्न, ${K.SIGN[ms]} राशि, ${nak[0]} नक्षत्र, ${K.P[curMaha.lord].hi} महादशा। Astro Vikass पर अपनी मुफ्त लाल किताब कुंडली बनाएं: ${location.href.split('#')[0]}`;
+  const share = `${u.name} की कुंडली: ${K.SIGN[ln]} लग्न, ${K.SIGN[ms]} राशि, ${nak[0]} नक्षत्र, ${K.P[curMaha.lord].hi} महादशा। Astro Vikass पर अपनी लाल किताब कुंडली बनाएं: https://sidtech366.vercel.app/AstroVikas`;
   h += `<div class="kpager" id="kpager"></div>`;
-  h += `<div class="actions"><button class="btn" onclick="doPrint()">📄 PDF डाउनलोड</button><a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">💬 WhatsApp पर शेयर</a><button class="btn ghost" onclick="document.getElementById('form').scrollIntoView({behavior:'smooth'})">🔄 नई कुंडली</button></div>
+  h += `<div class="actions"><button class="btn" onclick="doPrint()">📄 PDF डाउनलोड</button><a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">💬 WhatsApp पर शेयर</a><button class="btn ghost" onclick="showForm()">🔄 नई कुंडली</button></div>
   <div class="r-consult"><b>अपनी कुंडली पर विस्तृत परामर्श चाहिए?</b><p>विवाह मिलान, करियर, व्यापार या किसी समस्या के समाधान के लिए Astro Vikass से संपर्क करें — ☎ 7069492135</p><div class="btns"><a class="cta" href="tel:+917069492135" target="_blank">☎ कॉल करें</a><a class="cta wa" href="https://wa.me/917069492135?text=${encodeURIComponent(`नमस्ते, मेरी कुंडली (${u.name}, ${u.dob}, ${u.tob}, ${u.place}) पर परामर्श चाहिए`)}" target="_blank" rel="noopener">WhatsApp करें</a></div></div>
   <div class="r-foot"><div class="r-rule"><i></i><span>✦</span><i></i></div><div class="rf-g">
     <div class="rf-b"><div class="r-logo"><div class="mark"><span>✦</span></div><div><b>ASTRO VIKASS</b><small>लाल किताब • वैदिक ज्योतिष</small></div></div><p>ग्रहों की सटीक गणना और लाल किताब के अनुभव पर आधारित व्यक्तिगत रिपोर्ट।</p></div>
-    <div class="rf-c"><b>संपर्क</b><span>☎ 7069492135</span><span>💬 WhatsApp: 7069492135</span></div>
+    <div class="rf-c"><b>संपर्क</b><span>☎ 7069492135</span><span>💬 WhatsApp: 7069492135</span><span>🌐 sidtech366.vercel.app/AstroVikas</span></div>
     <div class="rf-s"><b>रिपोर्ट विवरण</b><span>नं. ${rid} • ${today}</span><span>लाहिरी अयनांश ${k.ayanamsa.toFixed(3)}°</span><span>${u.inp.lat}°, ${u.inp.lon}° • UTC${u.inp.tz >= 0 ? '+' : ''}${u.inp.tz}</span></div>
   </div><p class="rf-d">यह रिपोर्ट ज्योतिषीय गणना पर आधारित मार्गदर्शन है। रत्न, उपाय या महत्वपूर्ण निर्णय से पहले अनुभवी ज्योतिषी से परामर्श अवश्य लें। © ${now.getFullYear()} Astro Vikass</p></div>`;
   return h;
 }
+/* कुंडली बनने के बाद फॉर्म छिपाएं — सिर्फ़ "एडिट" बटन */
+function hideForm(name, dob, tob, place) {
+  const [y, m, d] = dob.split('-');
+  $('#editbar').innerHTML = `<div class="eb-t"><b>🪔 ${esc(name)}</b><small>${d}/${m}/${y} • ${tob} • ${esc(place || '')}</small></div><button type="button" onclick="showForm()">✏️ कुंडली एडिट करें</button>`;
+  $('#editbar').classList.add('show');
+  document.querySelector('.hero').classList.add('formhidden');
+}
+function showForm() {
+  document.querySelector('.hero').classList.remove('formhidden');
+  $('#editbar').classList.remove('show');
+  $('#form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+document.addEventListener('click', e => { const a = e.target.closest('a[href="#form"]'); if (a && document.querySelector('.hero.formhidden')) { e.preventDefault(); showForm(); } });
 const TOC = [['info', '📋', 'जन्म विवरण'], ['chart', '🪔', 'कुंडली चार्ट'], ['graha', '🪐', 'ग्रह स्पष्ट'], ['s1', '🔭', 'ग्रह शक्ति'], ['s2', '⚡', 'योग-दोष, भाव'], ['s3', '🧬', 'व्यक्तित्व'], ['s4', '💼', 'करियर-धन'], ['s5', '💞', 'विवाह-संतान'], ['s6', '🌿', 'स्वास्थ्य'], ['s7', '📕', 'लाल किताब उपाय'], ['s8', '⏳', 'दशा-वर्षफल'], ['s9', '🔢', 'अंक ज्योतिष'], ['s10', '🎓', 'मार्गदर्शन']];
 function kTab(key, scroll) {
   const r = document.getElementById('report'); if (!r) return;
