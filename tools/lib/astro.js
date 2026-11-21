@@ -46,7 +46,7 @@
   function ayanamsa(jd) { const T = (jd - 2451545) / 36525; return 23.853056 + 1.396971 * T + 0.0003086 * T * T; }
   const PL = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'];
   /* सभी ग्रह — निरयन (sidereal) */
-  function planets(jd) {
+  let planets = function (jd) {
     const d = dOf(jd), sun = sunPos(d), ay = ayanamsa(jd), T = (jd - 2451545) / 36525, mp = moonPos(d, sun);
     const o = { Sun: sun.lon, Moon: mp.lon };
     for (const p of ['Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn']) o[p] = planetLon(p, d, sun);
@@ -56,7 +56,21 @@
     return o;
   }
   /* सिर्फ़ सूर्य-चंद्र (तेज़) */
-  function sunMoon(jd) { const d = dOf(jd), s = sunPos(d), m = moonPos(d, s), ay = ayanamsa(jd); return { sun: n360(s.lon - ay), moon: n360(m.lon - ay), moonLat: m.lat, sunTrop: s.lon, moonTrop: m.lon }; }
+  let sunMoon = function (jd) { const d = dOf(jd), s = sunPos(d), m = moonPos(d, s), ay = ayanamsa(jd); return { sun: n360(s.lon - ay), moon: n360(m.lon - ay), moonLat: m.lat, sunTrop: s.lon, moonTrop: m.lon }; }
+  /* ===== ऋषिकेश (काशी) पंचांग पद्धति — सूर्य सिद्धान्त ===== डिफ़ॉल्ट; "दृक्" चुनने पर आधुनिक गणना */
+  const SSD = 1577917828, KALI = 588465.5 - 75.766 / 360, fr = x => x - Math.floor(x);
+  const SREV = { Sun: 4320000, Moon: 57753336, MoonApo: 488203, Mars: 2296832, Jupiter: 364220 }, SAPO = { Sun: 77.2833, Mars: 130.0333, Jupiter: 171.30 };
+  const SMP = { Sun: [14, 13 + 40 / 60], Moon: [32, 31 + 40 / 60], Mars: [75, 72], Jupiter: [33, 32] }, SSP = { Mars: [235, 232], Jupiter: [70, 72] };
+  const smean = (rev, d) => n360(fr(rev * d / SSD) * 360);
+  const mandaEq = (m, apo, P) => { const s = sin(n360(m - apo)), p = P[1] + (P[0] - P[1]) * Math.abs(s); return Math.asin(p / 360 * s) * D; };
+  const shighraEq = (pl, sh, P) => { const k = n360(sh - pl), r = (P[1] + (P[0] - P[1]) * Math.abs(sin(k))) / 360; return Math.atan2(r * sin(k), 1 + r * cos(k)) * D; };
+  function ssStar(nm, d, ms) { const m = smean(SREV[nm], d), P = SMP[nm], S = SSP[nm], apo = SAPO[nm]; let x = m + shighraEq(m, ms, S) / 2; x = x - mandaEq(x, apo, P) / 2; const mm = m - mandaEq(x, apo, P); return n360(mm + shighraEq(mm, ms, S)); }
+  function ssSunMoon(jd) { const d = jd - KALI, ms = smean(SREV.Sun, d), mm = smean(SREV.Moon, d), ma = n360(90 + smean(SREV.MoonApo, d)); return { sun: n360(ms - mandaEq(ms, SAPO.Sun, SMP.Sun)), moon: n360(mm - mandaEq(mm, ma, SMP.Moon)), d, ms }; }
+  let MODE = 'rk'; try { MODE = JSON.parse(localStorage.getItem('av_mode') || '"rk"') === 'drik' ? 'drik' : 'rk'; } catch (e) { }
+  const sunMoonDrik = sunMoon, planetsDrik = planets;
+  sunMoon = function (jd) { const o = sunMoonDrik(jd); if (MODE !== 'rk') return o; const s = ssSunMoon(jd); o.sun = s.sun; o.moon = s.moon; return o; };
+  planets = function (jd) { const o = planetsDrik(jd); if (MODE !== 'rk') return o; const s = ssSunMoon(jd); o.Sun = s.sun; o.Moon = s.moon; o.Jupiter = ssStar('Jupiter', s.d, s.ms); o.Mars = ssStar('Mars', s.d, s.ms); o.Saturn = n360(o.Saturn - 3); return o; };
+  const mode = () => MODE, setMode = m => { MODE = m === 'drik' ? 'drik' : 'rk'; try { localStorage.setItem('av_mode', JSON.stringify(MODE)); } catch (e) { } };
   function retro(p, jd) { if (p === 'Rahu' || p === 'Ketu') return true; if (p === 'Sun' || p === 'Moon') return false; const a = planets(jd - 0.5)[p], b = planets(jd + 0.5)[p]; return ((b - a + 540) % 360) - 180 < 0; }
   function ascendant(jd, lat, lonE) {
     const T = (jd - 2451545) / 36525, gmst = n360(280.46061837 + 360.98564736629 * (jd - 2451545) + 0.000387933 * T * T), lst = n360(gmst + lonE), eps = 23.439291 - 0.0130042 * T;
@@ -141,5 +155,15 @@
     const sm = sunMoon(jdR);
     return { y, m, d, rise, set, jdRise: jdR, jdSet: jdS, vaar: new Date(Date.UTC(y, m - 1, d)).getUTCDay(), tithi: tithiNo(jdR), tithiSet: tithiNo(jdS), nak: nakNo(jdR), yoga: yogaNo(jdR), karana: karanaNo(jdR), sun: sm.sun, moon: sm.moon };
   }
-  window.AVAstro = { n360, jdOf, jdFromDate, dateFromJd, planets, sunMoon, retro, ascendant, altitude, sunTimes, tithiAng, tithiNo, nakNo, yogaNo, karanaNo, nextChange, fmtH, fmtJd, fmtDate, localOf, N, tithiName, lunarMonth, findNewMoon, dayInfo, ayanamsa, PL };
+  /* पद्धति चयन पट्टी — हर टूल में ऊपर */
+  if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('avModeBar') || /[?&]nomode/.test(location.search)) return;
+    const b = document.createElement('div'); b.id = 'avModeBar';
+    b.style.cssText = 'display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;margin:10px auto 0;max-width:760px;padding:0 14px;font:600 13px "Noto Sans Devanagari",sans-serif';
+    const btn = (m, t) => `<button type="button" data-m="${m}" style="border:1.5px solid ${MODE === m ? '#6b1418' : '#e6cf9f'};background:${MODE === m ? '#6b1418' : '#fff'};color:${MODE === m ? '#fff' : '#6b1418'};border-radius:999px;padding:6px 12px;font:inherit;cursor:pointer">${t}</button>`;
+    b.innerHTML = '<span style="color:#86664f">गणना:</span>' + btn('rk', '📖 ऋषिकेश पंचांग (काशी)') + btn('drik', '🔭 दृक् (आधुनिक)');
+    b.onclick = e => { const x = e.target.closest('button'); if (!x || x.dataset.m === MODE) return; setMode(x.dataset.m); location.reload(); };
+    const h = document.querySelector('.av-head, header'); if (h && h.parentNode) h.parentNode.insertBefore(b, h.nextSibling); else document.body.insertBefore(b, document.body.firstChild);
+  });
+  window.AVAstro = { mode, setMode, sunMoonDrik, planetsDrik, ssSunMoon, n360, jdOf, jdFromDate, dateFromJd, planets, sunMoon, retro, ascendant, altitude, sunTimes, tithiAng, tithiNo, nakNo, yogaNo, karanaNo, nextChange, fmtH, fmtJd, fmtDate, localOf, N, tithiName, lunarMonth, findNewMoon, dayInfo, ayanamsa, PL };
 })();

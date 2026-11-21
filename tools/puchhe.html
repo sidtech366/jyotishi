@@ -78,7 +78,7 @@ const MN = ['जनवरी', 'फरवरी', 'मार्च', 'अप्�
 const RAHU = [8, 2, 7, 5, 6, 4, 3];   // दिन के 8 भागों में राहु काल का भाग (रवि..शनि)
 function panchangCtx() {
   try {
-    const L = AVPlaces.load() || { name: 'दिल्ली', lat: 28.61, lon: 77.21, tz: 5.5 }, tz = L.tz || 5.5, n = new Date();
+    const L = AVPlaces.load() || { name: 'वाराणसी', lat: 25.31, lon: 83.01, tz: 5.5 }, tz = L.tz || 5.5, n = new Date();
     const y = n.getFullYear(), m = n.getMonth() + 1, d = n.getDate();
     const days = AVCal.month(y, m, L).concat(AVCal.month(m === 12 ? y + 1 : y, m === 12 ? 1 : m + 1, L));
     const I = days.find(x => x.d === d && x.m === m && x.y === y); if (!I) return '';

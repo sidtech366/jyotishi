@@ -189,13 +189,13 @@ $('months').innerHTML = MO.map((m, i) => `<details class="mo"${i ? '' : ' open'}
   <div class="kv"><b>👶 विकास</b><span>${m.dev}</span><b>🥛 आहार</b><span>${m.ahar}</span><b>🧘 दिनचर्या</b><span>${m.vihar}</span><b>📖 पाठ</b><span>${m.path}</span><b>🕉️ ग्रह मंत्र</b><span>${m.mantra} <small>(108 जप)</small></span><b>🎁 ग्रह दान</b><span>${m.daan}</span></div></div></details>`).join('')
   + `<details class="mo"><summary><div class="mn">10<small>मास</small></div><div class="mt"><b>दशम मास — प्रसव</b><small>मासाधिपति <span class="gp">☀️ सूर्य</span></small></div></summary><div class="mb"><p>नौवें से बारहवें मास के बीच प्रसव सामान्य कहा गया है (चरक शारीर 4)। जन्म के समय जातकर्म, फिर छठी (षष्ठी पूजन), 11वें-12वें दिन नामकरण।</p></div></details>`;
 /* ===== ऋतु रात्रि गणक ===== */
-const pf = AVUI.placeField($('pl'), { onPick: () => ritu(), hint: 'स्थान (डिफ़ॉल्ट: दिल्ली)' });
+const pf = AVUI.placeField($('pl'), { onPick: () => ritu(), hint: 'स्थान (डिफ़ॉल्ट: वाराणसी)' });
 const GN = ['रोहिणी', 'मृगशिरा', 'हस्त', 'स्वाति', 'अनुराधा', 'श्रवण', 'धनिष्ठा', 'शतभिषा', 'उत्तराफाल्गुनी', 'उत्तराषाढ़ा', 'उत्तराभाद्रपद'].map(x => N.NAK.indexOf(x));
 const MNAME = ['जन', 'फर', 'मार्च', 'अप्रै', 'मई', 'जून', 'जुला', 'अग', 'सित', 'अक्टू', 'नव', 'दिस'];
 $('rd').value = store.get('av_gb_rd', ''); $('rd').onchange = () => { store.set('av_gb_rd', $('rd').value); ritu(); };
 function ritu() {
   const v = $('rd').value; if (!v) { $('rout').innerHTML = '<div class="empty">ऊपर तिथि चुनें</div>'; return; }
-  const L = pf.get(), loc = L ? { lat: L.lat, lon: L.lon, tz: pf.tz() } : { lat: 28.61, lon: 77.21, tz: 5.5 };
+  const L = pf.get(), loc = L ? { lat: L.lat, lon: L.lon, tz: pf.tz() } : { lat: 25.31, lon: 83.01, tz: 5.5 };
   const [y, m, d] = v.split('-').map(Number), base = Date.UTC(y, m - 1, d);
   let rows = '';
   for (let n = 1; n <= 16; n++) {

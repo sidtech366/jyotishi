@@ -61,7 +61,6 @@
   </details>
 </div>
 <div class="av-card">
-  <div class="chips" id="md" style="margin-bottom:8px"><span class="chip" data-m="rk">📖 ऋषिकेश पंचांग पद्धति</span><span class="chip" data-m="drik">🔭 आधुनिक (दृक्) पद्धति</span></div>
   <div class="mnav"><button id="pv">◀</button><b id="mt"></b><button id="nx">▶</button></div>
   <div id="out" class="empty">गणना हो रही है…</div>
   <p class="note" id="foot"></p>
@@ -73,7 +72,6 @@
 <script src="lib/astro.js"></script>
 <script src="lib/ui.js"></script>
 <script src="lib/calendar.js"></script>
-<script src="lib/ss.js"></script>
 <script>
 const { $, share, store } = AVUI, A = AVAstro, N = A.N;
 const MN = ['जनवरी', 'फरवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'];
@@ -256,8 +254,8 @@ $('jr').innerHTML = '<option value="">— चुनें —</option>' + N.SIGN
 $('jn').innerHTML = '<option value="">— चुनें —</option>' + N.NAK.map((s, i) => `<option value="${i}">${s}</option>`).join('');
 $('jr').value = store.get('av_mu_jr', ''); $('jn').value = store.get('av_mu_jn', '');
 $('jr').onchange = () => { store.set('av_mu_jr', $('jr').value); run(); }; $('jn').onchange = () => { store.set('av_mu_jn', $('jn').value); run(); };
-const pf = AVUI.placeField($('pl'), { onPick: () => run(), hint: 'स्थान चुनें (डिफ़ॉल्ट: दिल्ली)' });
-const loc = () => { const L = pf.get(); return L ? { lat: L.lat, lon: L.lon, tz: pf.tz() } : { lat: 28.61, lon: 77.21, tz: 5.5 }; };
+const pf = AVUI.placeField($('pl'), { onPick: () => run(), hint: 'स्थान चुनें (डिफ़ॉल्ट: वाराणसी)' });
+const loc = () => { const L = pf.get(); return L ? { lat: L.lat, lon: L.lon, tz: pf.tz() } : { lat: 25.31, lon: 83.01, tz: 5.5 }; };
 function drawGroups() {
   $('grp').innerHTML = GR.map(([k, t]) => `<span class="chip ${k === G ? 'on' : ''}" data-g="${k}">${t}</span>`).join('');
   drawEvents();
@@ -328,9 +326,9 @@ const NK = 360 / 27, n28 = l => { const k = Math.floor(l / NK); return k <= 20 ?
 /* सप्तशलाका वेध (अभिजित सहित 28 नक्षत्र) */
 function vedha28(i) { if ((i >= 2 && i <= 8) || (i >= 16 && i <= 22)) return 24 - i; if (i >= 9 && i <= 15) return (1 - (i - 9) + 28) % 28; return { 1: 9, 0: 10, 27: 11, 26: 12, 25: 13, 24: 14, 23: 15 }[i]; }
 const PHN = { Sun: 'सूर्य', Mars: 'भौम', Saturn: 'शनि', Rahu: 'राहु', Ketu: 'केतु' };
-let MODE = store.get('av_mu_mode', 'rk');
-const SM = jd => MODE === 'rk' ? AVSS.sunMoon(jd) : A.sunMoon(jd);
-const PLN = jd => MODE === 'rk' ? AVSS.planets(jd) : A.planets(jd);
+let MODE = A.mode();
+const SM = jd => A.sunMoon(jd);
+const PLN = jd => A.planets(jd);
 const ishtOf = (P, sm, lg) => { let n = 0; for (const p in ISHT) { const h = ((Math.floor((p === 'Moon' ? sm.moon : p === 'Sun' ? sm.sun : P[p]) / 30) - lg + 12) % 12) + 1; if (ISHT[p].includes(h)) n++; } return n; };
 function lagnaNotes(P, moon, lg) {
   const hs = x => ((Math.floor(x / 30) - lg + 12) % 12) + 1, ll = ['Mars', 'Venus', 'Mercury', 'Moon', 'Sun', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Saturn', 'Jupiter'][lg], n = [];
@@ -423,7 +421,7 @@ function run() {
     let gemV = null; if (e.sp === 'ratna') { const g = GEMS[+(sv || 0)]; gemV = g[1]; ctx.gemP = g[2]; }
     const B = (r, x) => { blocks[r] = (blocks[r] || 0) + 1; }, rej = [];
     days.forEach((d, i) => {
-      const nextRise = (days[i + 1] || nx).jdRise, sun = Math.floor((MODE === 'rk' ? AVSS.sunMoon(d.jdRise).sun : d.sun) / 30), vr = gemV != null ? [gemV] : e.vrI, RKV = MODE === 'rk' && e.rkv;
+      const nextRise = (days[i + 1] || nx).jdRise, sun = Math.floor(d.sun / 30), vr = gemV != null ? [gemV] : e.vrI, RKV = MODE === 'rk' && e.rkv;
       const pm = MODE === 'rk' && d.tithi > 15 ? (d.maas + 1) % 12 : d.maas;   // ऋषिकेश (उत्तर भारत) — पूर्णिमांत मास
       if (!vr.includes(d.vaar)) return;
       if (e.sp === 'dir' && DSHOOL[ctx.dir].includes(d.vaar)) return B('🧭 दिशाशूल — ' + N.VAAR[d.vaar] + ' को ' + DIRS[ctx.dir] + ' दिशा की यात्रा वर्जित');
@@ -467,9 +465,7 @@ function run() {
   }, 30);
 }
 $('sh').onclick = () => { const e = EV[E], tz = loc().tz; share(`📿 *${e.t} — शुभ मुहूर्त (${MN[M - 1]} ${Y})*\n` + (res.map(({ d, w }) => `\n📅 ${d.d} ${MN[M - 1]} ${N.VAAR[d.vaar]}\n` + w.map(s => `   ⏰ ${tStr(s.a, tz)}–${tStr(s.b, tz)} • ${N.SIGN[s.lg]} लग्न • ${N.NAK[s.nak]}`).join('\n')).join('') || 'इस माह शुद्ध मुहूर्त नहीं') + `\n\n📜 प्रमाण: ${e.pr[0]}`); };
-const drawMode = () => [...$('md').children].forEach(c => c.classList.toggle('on', c.dataset.m === MODE));
-$('md').onclick = ev => { const c = ev.target.closest('.chip'); if (!c) return; MODE = c.dataset.m; store.set('av_mu_mode', MODE); drawMode(); run(); };
-drawMode(); drawGroups(); info(); run();
+drawGroups(); info(); run();
 </script>
 </body>
 </html>

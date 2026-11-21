@@ -250,6 +250,7 @@ body{padding:0}
 
 </div>
 <script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
 <script>
 
 (function(){
@@ -313,8 +314,8 @@ function lahiriAyanamsa(jd){
   return 22.460148 + (year - 1900) * (50.2388475/3600);
 }
 
-function sunSidereal(jd){ return norm360(sunLongitude(jd) - lahiriAyanamsa(jd)); }
-function moonSidereal(jd){ return norm360(moonLongitude(jd) - lahiriAyanamsa(jd)); }
+function sunSidereal(jd){ return window.AVAstro ? AVAstro.sunMoon(jd).sun : norm360(sunLongitude(jd) - lahiriAyanamsa(jd)); }
+function moonSidereal(jd){ return window.AVAstro ? AVAstro.sunMoon(jd).moon : norm360(moonLongitude(jd) - lahiriAyanamsa(jd)); }
 
 // ---- \u0938\u0942\u0930\u094d\u092f\u094b\u0926\u092f / \u0938\u0942\u0930\u094d\u092f\u093e\u0938\u094d\u0924 (classic public algorithm) ----
 function getDayOfYear(y,m,d){

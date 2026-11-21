@@ -44,7 +44,8 @@ const CITIES = [
       return (j.results || []).map(g => ({ name: g.name, en: '', st: [g.admin2, g.admin1, g.country].filter(Boolean).join(', '), lat: +g.latitude.toFixed(4), lon: +g.longitude.toFixed(4), tz: g.country_code === 'IN' ? 5.5 : tzOf(g.timezone), zone: g.timezone, online: true }));
     } catch (e) { return []; }
   }
-  function load() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
+  const KASHI = { name: 'वाराणसी', st: 'Varanasi Banaras, उत्तर प्रदेश', lat: 25.31, lon: 83.01, tz: 5.5 };   // डिफ़ॉल्ट: काशी (ऋषिकेश पंचांग का स्थान)
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || 'null') || KASHI; } catch (e) { return KASHI; } }
   function save(p) { try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { } }
   /* इनपुट पर सुझाव सूची लगाएं: mount(input, onPick) */
   function mount(input, onPick) {

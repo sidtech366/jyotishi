@@ -244,8 +244,8 @@ const BOOKS = [
  ['पुराण', 'पद्म, स्कंद, भविष्य, भविष्योत्तर, विष्णुधर्मोत्तर, नारद, देवी भागवत — व्रतों की कथा व माहात्म्य के मूल स्रोत।'],
 ];
 /* ---------- गणना ---------- */
-const pf = AVUI.placeField($('pl'), { onPick: () => calc(), hint: 'स्थान चुनें (डिफ़ॉल्ट: दिल्ली)' });
-const loc = () => { const L = pf.get(); return L ? { lat: L.lat, lon: L.lon, tz: pf.tz() } : { lat: 28.61, lon: 77.21, tz: 5.5 }; };
+const pf = AVUI.placeField($('pl'), { onPick: () => calc(), hint: 'स्थान चुनें (डिफ़ॉल्ट: वाराणसी)' });
+const loc = () => { const L = pf.get(); return L ? { lat: L.lat, lon: L.lon, tz: pf.tz() } : { lat: 25.31, lon: 83.01, tz: 5.5 }; };
 let DAYS = [], DT = {}, busy = 0;
 const MN = ['जन', 'फर', 'मार्च', 'अप्रै', 'मई', 'जून', 'जुला', 'अग', 'सित', 'अक्टू', 'नव', 'दिस'], WD = ['रवि', 'सोम', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि'];
 const fd = I => `${I.d} ${MN[I.m - 1]} ${I.y} (${WD[I.vaar]})`;

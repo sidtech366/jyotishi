@@ -16,14 +16,14 @@
 <body>
 <header class="av-head"><div class="ic">🌘</div><h1>ग्रहण एवं सूतक</h1><p>आने वाले सूर्य व चंद्र ग्रहण • भारत में दिखेगा या नहीं • सूतक काल</p><span class="brand">ASTRO VIKASS</span></header>
 <main class="av-wrap">
-<div class="av-card"><div class="note">स्थान: दिल्ली (भारत) के अनुसार दृश्यता व समय • अनुमानित (±15 मिनट)</div><div id="out" class="empty">ग्रहण की गणना हो रही है…</div></div>
+<div class="av-card"><div class="note">ग्रहण का समय वास्तविक खगोलीय (दृक्) गणना से — स्थान: वाराणसी / काशी (भारत) के अनुसार दृश्यता व समय • अनुमानित (±15 मिनट)</div><div id="out" class="empty">ग्रहण की गणना हो रही है…</div></div>
 </main>
 <div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
 <script src="lib/places.js"></script>
 <script src="lib/astro.js"></script>
 <script src="lib/ui.js"></script>
 <script>
-const { $, share } = AVUI, A = AVAstro, TZ = 5.5, LAT = 28.61, LON = 77.21, R = Math.PI / 180;
+const { $, share } = AVUI, A = AVAstro, TA = j => { const s = A.sunMoonDrik(j); return A.n360(s.moon - s.sun); }, TZ = 5.5, LAT = 25.31, LON = 83.01, R = Math.PI / 180;
 function horiz(jd, lam, bet) {
   const T = (jd - 2451545) / 36525, e = (23.439291 - 0.0130042 * T) * R, l = lam * R, b = bet * R;
   const ra = Math.atan2(Math.sin(l) * Math.cos(e) - Math.tan(b) * Math.sin(e), Math.cos(l)), dec = Math.asin(Math.sin(b) * Math.cos(e) + Math.cos(b) * Math.sin(e) * Math.sin(l));
@@ -32,18 +32,18 @@ function horiz(jd, lam, bet) {
   return { alt, az };
 }
 function solarSepDelhi(jd) {
-  const s = A.sunMoon(jd), hs = horiz(jd, s.sunTrop, 0), hm = horiz(jd, s.moonTrop, s.moonLat);
+  const s = A.sunMoonDrik(jd), hs = horiz(jd, s.sunTrop, 0), hm = horiz(jd, s.moonTrop, s.moonLat);
   const am = hm.alt - 0.95 * R * Math.cos(hm.alt);
   const c = Math.sin(hs.alt) * Math.sin(am) + Math.cos(hs.alt) * Math.cos(am) * Math.cos(hs.az - hm.az);
   return { sep: Math.acos(Math.min(1, c)) / R, sunAlt: hs.alt / R };
 }
-function geoSep(jd, lunar) { const s = A.sunMoon(jd), dl = ((s.moonTrop - s.sunTrop - (lunar ? 180 : 0) + 540) % 360) - 180; return Math.hypot(dl, s.moonLat); }
+function geoSep(jd, lunar) { const s = A.sunMoonDrik(jd), dl = ((s.moonTrop - s.sunTrop - (lunar ? 180 : 0) + 540) % 360) - 180; return Math.hypot(dl, s.moonLat); }
 function minimize(f, a, b) { for (let k = 0; k < 40; k++) { const m1 = a + (b - a) / 3, m2 = b - (b - a) / 3; if (f(m1) < f(m2)) b = m2; else a = m1; } return (a + b) / 2; }
 function syzygies(j0, j1) {   // अमावस्या/पूर्णिमा
-  const out = []; let prev = A.tithiAng(j0), t = j0;
-  for (let x = j0 + 0.5; x < j1; x += 0.5) { const c = A.tithiAng(x);
-    if (c < prev - 180) out.push({ jd: bis(t, x, j => A.tithiAng(j) > 180), lunar: false });
-    else if (prev < 180 && c >= 180) out.push({ jd: bis(t, x, j => A.tithiAng(j) < 180), lunar: true });
+  const out = []; let prev = TA(j0), t = j0;
+  for (let x = j0 + 0.5; x < j1; x += 0.5) { const c = TA(x);
+    if (c < prev - 180) out.push({ jd: bis(t, x, j => TA(j) > 180), lunar: false });
+    else if (prev < 180 && c >= 180) out.push({ jd: bis(t, x, j => TA(j) < 180), lunar: true });
     prev = c; t = x; }
   return out;
 }
@@ -51,13 +51,13 @@ function bis(lo, hi, f) { for (let k = 0; k < 30; k++) { const m = (lo + hi) / 2
 function calc() {
   const y = new Date().getFullYear(), list = [];
   syzygies(A.jdOf(y, 1, 1, 0), A.jdOf(y + 6, 1, 1, 0)).forEach(z => {
-    const b = Math.abs(A.sunMoon(z.jd).moonLat); if (b > 1.6) return;
+    const b = Math.abs(A.sunMoonDrik(z.jd).moonLat); if (b > 1.6) return;
     const tm = minimize(j => geoSep(j, z.lunar), z.jd - 0.15, z.jd + 0.15), d = geoSep(tm, z.lunar);
     if (z.lunar) {
       if (d > 1.52) return;
       const type = d < 0.44 ? 'पूर्ण चंद्र ग्रहण' : d < 0.96 ? 'आंशिक (खंडग्रास) चंद्र ग्रहण' : 'उपच्छाया चंद्र ग्रहण';
       const Rr = d < 0.96 ? 0.96 : 1.52, half = Math.sqrt(Rr * Rr - d * d) / 0.51 / 24, a = tm - half, e = tm + half;
-      let vis = false; for (let j = a; j <= e; j += 0.01) if (horiz(j, A.sunMoon(j).moonTrop, A.sunMoon(j).moonLat).alt > 0) { vis = true; break; }
+      let vis = false; for (let j = a; j <= e; j += 0.01) if (horiz(j, A.sunMoonDrik(j).moonTrop, A.sunMoonDrik(j).moonLat).alt > 0) { vis = true; break; }
       list.push({ lunar: true, type, a, m: tm, e, vis: vis && d < 0.96, pen: d >= 0.96, sutak: 9 });
     } else {
       if (d > 1.55) return;
@@ -74,7 +74,7 @@ setTimeout(() => {
   const items = L.filter(x => x.e > now - 1).map(x => {
     const c = x.lunar ? '#4b5bd6' : '#ee6f16';
     let body = `<b>${x.lunar ? '🌕' : '☀️'} ${x.type}</b> <span class="v ${x.vis ? 'y' : 'n'}">${x.vis ? 'भारत में दिखेगा' : 'भारत में नहीं दिखेगा'}</span><br>📅 ${A.fmtJd(x.m, TZ).split(',')[0]}`;
-    if (x.vis) body += `<br>⏱️ ${A.fmtJd(x.a, TZ, false)} से ${A.fmtJd(x.e, TZ, false)} तक (मध्य ${A.fmtJd(x.m, TZ, false)})${x.mag ? ` • दिल्ली में लगभग ${x.mag}% ढका` : ''}<br>🚫 सूतक: ${A.fmtJd(x.a - x.sutak / 24, TZ)} से ग्रहण समाप्ति तक`;
+    if (x.vis) body += `<br>⏱️ ${A.fmtJd(x.a, TZ, false)} से ${A.fmtJd(x.e, TZ, false)} तक (मध्य ${A.fmtJd(x.m, TZ, false)})${x.mag ? ` • वाराणसी में लगभग ${x.mag}% ढका` : ''}<br>🚫 सूतक: ${A.fmtJd(x.a - x.sutak / 24, TZ)} से ग्रहण समाप्ति तक`;
     else body += `<br><small class="note">${x.pen ? 'उपच्छाया ग्रहण — धार्मिक मान्यता नहीं, सूतक नहीं।' : 'भारत में दृश्य न होने से सूतक मान्य नहीं।'}</small>`;
     return { x, html: `<div class="ec" style="--c:${c}">${body}</div>` };
   });

@@ -368,6 +368,7 @@ html,body{margin:0;background:#1a0a0f;min-height:100%}
 
 </div>
 <script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
 <script>
 
 (function(){
@@ -531,8 +532,8 @@ function lahiriAyanamsa(jd){
   return 22.460148 + (year - 1900) * (50.2388475/3600);
 }
 
-function sunSidereal(jd){ return norm360(sunLongitude(jd) - lahiriAyanamsa(jd)); }
-function moonSidereal(jd){ return norm360(moonLongitude(jd) - lahiriAyanamsa(jd)); }
+function sunSidereal(jd){ return window.AVAstro ? AVAstro.sunMoon(jd).sun : norm360(sunLongitude(jd) - lahiriAyanamsa(jd)); }
+function moonSidereal(jd){ return window.AVAstro ? AVAstro.sunMoon(jd).moon : norm360(moonLongitude(jd) - lahiriAyanamsa(jd)); }
 
 // ---- \u0938\u0942\u0930\u094d\u092f\u094b\u0926\u092f / \u0938\u0942\u0930\u094d\u092f\u093e\u0938\u094d\u0924 (classic public algorithm) ----
 function getDayOfYear(y,m,d){
@@ -580,12 +581,12 @@ function hoursToHM(h){
 
 
 function savToday(){
-  var L = (window.AVPlaces && AVPlaces.load()) || { name:'दिल्ली', lat:28.6139, lon:77.2090, tz:5.5 };
+  var L = (window.AVPlaces && AVPlaces.load()) || { name:'वाराणसी', lat:25.31, lon:83.01, tz:5.5 };
   var now = new Date(), y=now.getFullYear(), m=now.getMonth()+1, d=now.getDate();
   var tz = L.zone ? AVPlaces.tzOf(L.zone) : L.tz;
   var sr = sunEventTime(y,m,d,L.lat,L.lon,tz,true); if (sr===null) sr = 6;
   var jd = julianDay(y,m,d,sr - tz);
-  var ang = norm360(moonLongitude(jd) - sunLongitude(jd));
+  var ang = norm360(moonSidereal(jd) - sunSidereal(jd));
   var t30 = Math.floor(ang/12) + 1, paksh = t30 <= 15 ? 'shukla' : 'krishna', tIn = t30 <= 15 ? t30 : t30 - 15;
   var vaar = now.getDay() + 1;
   var VAAR = ['रविवार','सोमवार','मंगलवार','बुधवार','बृहस्पतिवार','शुक्रवार','शनिवार'];

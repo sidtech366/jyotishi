@@ -41,8 +41,8 @@
 const { $, share } = AVUI, A = AVAstro, N = A.N;
 const MN = ['जनवरी', 'फरवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'];
 const now = new Date(); let Y = now.getFullYear(), M = now.getMonth() + 1, F = 'all', days = [];
-const pf = AVUI.placeField($('pl'), { onPick: () => run(), hint: 'स्थान चुनें (डिफ़ॉल्ट: दिल्ली)' });
-const loc = () => { const L = pf.get(); return L ? { lat: L.lat, lon: L.lon, tz: pf.tz() } : { lat: 28.61, lon: 77.21, tz: 5.5 }; };
+const pf = AVUI.placeField($('pl'), { onPick: () => run(), hint: 'स्थान चुनें (डिफ़ॉल्ट: वाराणसी)' });
+const loc = () => { const L = pf.get(); return L ? { lat: L.lat, lon: L.lon, tz: pf.tz() } : { lat: 25.31, lon: 83.01, tz: 5.5 }; };
 $('pv').onclick = () => { M--; if (M < 1) { M = 12; Y--; } run(); };
 $('nx').onclick = () => { M++; if (M > 12) { M = 1; Y++; } run(); };
 $('flt').onclick = e => { const c = e.target.closest('.chip'); if (!c) return; F = c.dataset.f; [...$('flt').children].forEach(x => x.classList.toggle('on', x === c)); draw(); };
