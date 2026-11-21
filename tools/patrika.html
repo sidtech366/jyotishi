@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>विवाह लग्न पत्रिका | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+<style>.ev{border:1px solid var(--line);border-radius:14px;padding:10px 11px;margin:8px 0;background:#fff}
+.ev.off{opacity:.5}
+.ev-h{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.ev-h label{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--mar);font-size:15.5px}
+.ev-h input[type=checkbox]{width:20px;height:20px;accent-color:var(--mar)}
+.ev-h button{border:0;background:#fdecea;color:var(--bad);border-radius:10px;width:34px;height:32px;cursor:pointer}
+.ev .g3{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.ev .in{padding:9px 10px;font-size:14.5px}
+.thm{display:flex;gap:8px;flex-wrap:wrap}
+.thm span{flex:1;min-width:90px;text-align:center;padding:10px 6px;border-radius:12px;border:2px solid transparent;cursor:pointer;font-weight:700;font-size:13.5px;color:#fff}
+.thm span.on{border-color:#222;box-shadow:0 0 0 3px #fff inset}
+#cv{width:100%;border-radius:14px;box-shadow:0 10px 30px -12px #0006;display:block;margin:6px auto}
+textarea.in{min-height:220px;font-size:14px;line-height:1.6}
+.wa{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}</style>
+</head>
+<body>
+<header class="av-head"><div class="ic">💌</div><h1>विवाह लग्न पत्रिका</h1><p>शादी का निमंत्रण — तिलक, हल्दी, मेहंदी, विवाह, विदाई — सुंदर कार्ड बनाएं, WhatsApp पर भेजें</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<div class="av-card">
+  <h4>💑 वर-वधू</h4>
+  <div class="av-row"><div><label class="l">वर (दूल्हा) का नाम</label><input class="in" id="vn" placeholder="चि. राहुल"></div><div><label class="l">वधू (दुल्हन) का नाम</label><input class="in" id="bn" placeholder="सौ.कां. प्रिया"></div></div>
+  <div class="av-row"><div><label class="l">वर के पिता-माता</label><input class="in" id="vp" placeholder="श्री रमेश प्रसाद व श्रीमती सुनीता देवी"></div><div><label class="l">वधू के पिता-माता</label><input class="in" id="bp" placeholder="श्री सुरेश कुमार व श्रीमती गीता देवी"></div></div>
+  <label class="l">निमंत्रण किस पक्ष की ओर से?</label>
+  <div class="chips" id="paksh"><span class="chip on" data-v="v">वर पक्ष (पुत्र का विवाह)</span><span class="chip" data-v="b">वधू पक्ष (पुत्री का विवाह)</span></div>
+</div>
+<div class="av-card">
+  <h4>🗓️ कार्यक्रम</h4>
+  <div id="evs"></div>
+  <button class="btn" id="addev" style="margin-top:6px">➕ कार्यक्रम जोड़ें</button>
+  <p class="note">जो कार्यक्रम कार्ड में नहीं चाहिए उसका ✓ हटा दें — केवल हल्दी या केवल विदाई का अलग कार्ड भी बन जाएगा। शुभ तिथि/लग्न के लिए "शुभ मुहूर्त → विवाह" देखें।</p>
+</div>
+<div class="av-card">
+  <h4>✍️ अन्य विवरण</h4>
+  <label class="l">स्थान / पता (विवाह स्थल)</label><input class="in" id="adr" placeholder="ग्राम-पोस्ट बगहा, जिला पश्चिम चंपारण (बिहार)">
+  <label class="l">निवेदक (दर्शनाभिलाषी)</label><input class="in" id="nv" placeholder="समस्त परिवार एवं इष्ट-मित्र">
+  <label class="l">बाल मनुहार (वैकल्पिक)</label><input class="in" id="bm" placeholder="मेरे चाचू की शादी में ज़रूर आना…">
+  <label class="l">कार्ड का रंग</label>
+  <div class="thm" id="thm"><span data-t="0" style="background:linear-gradient(135deg,#6b1418,#b8321e)">मरून-सुनहरा</span><span data-t="1" style="background:linear-gradient(135deg,#c2185b,#f06292)">गुलाबी</span><span data-t="2" style="background:linear-gradient(135deg,#1b5e20,#43a047)">हरा-हल्दी</span><span data-t="3" style="background:linear-gradient(135deg,#0d2a6b,#3949ab)">शाही नीला</span></div>
+  <button class="btn ok" id="mk" style="margin-top:12px">💌 पत्रिका बनाएं</button>
+</div>
+<div class="av-card" id="outc" style="display:none">
+  <h4>🖼️ आपकी पत्रिका</h4>
+  <canvas id="cv" width="1080" height="1920"></canvas>
+  <div class="btns"><button class="btn" id="dl">⬇️ फोटो डाउनलोड</button><button class="btn ok" id="shimg">📤 फोटो भेजें</button></div>
+  <h4 style="margin-top:16px">📝 संदेश (यहीं बदल सकते हैं)</h4>
+  <textarea class="in" id="msg"></textarea>
+  <label class="l">किसे भेजना है — WhatsApp नंबर (खाली छोड़ें तो संपर्क चुनें)</label>
+  <div class="wa"><input class="in" id="ph" type="tel" inputmode="numeric" placeholder="98xxxxxxxx"><button class="btn ok" id="send">💬 WhatsApp</button></div>
+  <p class="note">"📤 फोटो भेजें" से कार्ड की फोटो सीधे WhatsApp में किसी को भी भेज सकते हैं; "💬 WhatsApp" से ऊपर लिखा संदेश उस नंबर पर जाएगा।</p>
+</div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script>
+const { $, esc, store, toast } = AVUI;
+const DEF = [
+  { on: 1, n: 'तिलक / सगाई', d: '', t: '11:00', p: '' },
+  { on: 1, n: 'हल्दी', d: '', t: '10:00', p: '' },
+  { on: 1, n: 'मेहंदी / संगीत', d: '', t: '19:00', p: '' },
+  { on: 1, n: 'बारात प्रस्थान', d: '', t: '16:00', p: '' },
+  { on: 1, n: 'शुभ विवाह (पाणिग्रहण)', d: '', t: '21:00', p: '' },
+  { on: 1, n: 'विदाई', d: '', t: '07:00', p: '' },
+];
+let S = store.get('av_patrika', null) || { vn: '', bn: '', vp: '', bp: '', pk: 'v', adr: '', nv: '', bm: '', th: 0, ev: DEF };
+const F = ['vn', 'bn', 'vp', 'bp', 'adr', 'nv', 'bm'];
+F.forEach(k => { $(k).value = S[k] || ''; $(k).oninput = () => { S[k] = $(k).value; save(); }; });
+const save = () => store.set('av_patrika', S);
+const setChip = () => { [...$('paksh').children].forEach(c => c.classList.toggle('on', c.dataset.v === S.pk)); [...$('thm').children].forEach(c => c.classList.toggle('on', +c.dataset.t === S.th)); };
+$('paksh').onclick = e => { const c = e.target.closest('.chip'); if (c) { S.pk = c.dataset.v; save(); setChip(); } };
+$('thm').onclick = e => { const c = e.target.closest('span'); if (c) { S.th = +c.dataset.t; save(); setChip(); if ($('outc').style.display !== 'none') make(); } };
+function drawEv() {
+  $('evs').innerHTML = S.ev.map((v, i) => `<div class="ev ${v.on ? '' : 'off'}"><div class="ev-h"><label><input type="checkbox" data-i="${i}" data-k="on" ${v.on ? 'checked' : ''}> <input class="in" style="border:0;padding:2px 4px;font-weight:700;color:var(--mar);background:transparent" data-i="${i}" data-k="n" value="${esc(v.n)}"></label><button data-del="${i}">✕</button></div>
+   <div class="g3"><input class="in" type="date" data-i="${i}" data-k="d" value="${esc(v.d)}"><input class="in" type="time" data-i="${i}" data-k="t" value="${esc(v.t)}"></div>
+   <input class="in" style="margin-top:6px" data-i="${i}" data-k="p" placeholder="स्थान (खाली = मुख्य पता)" value="${esc(v.p)}"></div>`).join('');
+}
+$('evs').oninput = $('evs').onchange = e => { const x = e.target, i = x.dataset.i; if (i == null) return; S.ev[i][x.dataset.k] = x.type === 'checkbox' ? (x.checked ? 1 : 0) : x.value; save(); if (x.type === 'checkbox') x.closest('.ev').classList.toggle('off', !x.checked); };
+$('evs').onclick = e => { const b = e.target.closest('[data-del]'); if (b) { S.ev.splice(+b.dataset.del, 1); save(); drawEv(); } };
+$('addev').onclick = () => { S.ev.push({ on: 1, n: 'नया कार्यक्रम', d: '', t: '', p: '' }); save(); drawEv(); };
+const MN = ['जनवरी', 'फरवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'], VR = ['रविवार', 'सोमवार', 'मंगलवार', 'बुधवार', 'गुरुवार', 'शुक्रवार', 'शनिवार'];
+const dTxt = d => { if (!d) return ''; const [y, m, dd] = d.split('-').map(Number); return `${dd} ${MN[m - 1]} ${y}, ${VR[new Date(y, m - 1, dd).getDay()]}`; };
+const tTxt = t => { if (!t) return ''; let [h, m] = t.split(':').map(Number); const p = h < 4 ? 'रात्रि' : h < 12 ? 'प्रातः' : h < 16 ? 'दोपहर' : h < 19 ? 'संध्या' : 'रात्रि'; h = h % 12 || 12; return `${p} ${h}:${String(m).padStart(2, '0')} बजे`; };
+const evs = () => S.ev.filter(v => v.on && v.n.trim());
+function text() {
+  const son = S.pk === 'v', E = evs(), main = son ? (S.vn || 'चि. ____') : (S.bn || 'सौ.कां. ____'), other = son ? (S.bn || 'सौ.कां. ____') : (S.vn || 'चि. ____');
+  return `॥ श्री गणेशाय नमः ॥\nवक्रतुण्ड महाकाय सूर्यकोटि समप्रभ।\nनिर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥\n\n💐 *शुभ विवाह निमंत्रण* 💐\n\nसादर सूचित करते हुए हर्ष हो रहा है कि परमपिता परमेश्वर की असीम कृपा से हमारे ${son ? 'सुपुत्र' : 'सुपुत्री'}\n\n*${main}*\n(${son ? S.vp || '' : S.bp || ''})\n\nका शुभ विवाह\n\n*${other}*\n(${son ? 'सुपुत्री ' + (S.bp || '') : 'सुपुत्र ' + (S.vp || '')})\n\nके साथ होना निश्चित हुआ है। इस मंगल अवसर पर आप सपरिवार सादर आमंत्रित हैं।\n\n🗓️ *मांगलिक कार्यक्रम*\n` + E.map(v => `\n🔸 *${v.n}*\n   ${[dTxt(v.d), tTxt(v.t)].filter(Boolean).join(' • ') || '—'}${v.p ? '\n   📍 ' + v.p : ''}`).join('\n') + `\n\n📍 *स्थान:* ${S.adr || '—'}\n\n🙏 *दर्शनाभिलाषी:* ${S.nv || 'समस्त परिवार'}${S.bm ? `\n\n👧 *बाल मनुहार:* ${S.bm}` : ''}\n\n॥ शुभम् भवतु ॥`;
+}
+/* ===== कार्ड (1080×1920) ===== */
+const TH = [['#5a0f14', '#8e1b1b', '#f3c96b', '#fff3d6'], ['#880e4f', '#c2185b', '#ffd1e3', '#fff0f6'], ['#1b4d1f', '#2e7d32', '#ffe066', '#fffbe0'], ['#0a1f52', '#283593', '#f3c96b', '#eef1ff']];
+function wrap(c, t, x, y, w, lh) { const words = String(t).split(' '); let line = '', yy = y; for (const wd of words) { const tt = line ? line + ' ' + wd : wd; if (c.measureText(tt).width > w && line) { c.fillText(line, x, yy); line = wd; yy += lh; } else line = tt; } if (line) c.fillText(line, x, yy); return yy + lh; }
+async function make() { await draw(1920); const need = LASTY + 230; if (need > 1920) await draw(need); }
+let LASTY = 0;
+async function draw(H) {
+  try { await document.fonts.load('60px "Yatra One"'); await document.fonts.load('40px "Noto Sans Devanagari"'); } catch (e) { }
+  const cv = $('cv'); cv.height = H; const c = cv.getContext('2d'), [d1, d2, gold, cream] = TH[S.th || 0], W = 1080, son = S.pk === 'v', E = evs();
+  const g = c.createLinearGradient(0, 0, W, H); g.addColorStop(0, d1); g.addColorStop(1, d2); c.fillStyle = g; c.fillRect(0, 0, W, H);
+  // मंडल पैटर्न
+  c.globalAlpha = .07; c.strokeStyle = gold; c.lineWidth = 2; for (let r = 60; r < 900; r += 40) { c.beginPath(); c.arc(W / 2, 330, r, 0, Math.PI * 2); c.stroke(); } c.globalAlpha = 1;
+  // बॉर्डर
+  c.strokeStyle = gold; c.lineWidth = 6; c.strokeRect(30, 30, W - 60, H - 60); c.lineWidth = 2; c.strokeRect(48, 48, W - 96, H - 96);
+  [[48, 48], [W - 48, 48], [48, H - 48], [W - 48, H - 48]].forEach(([x, y]) => { c.fillStyle = gold; c.beginPath(); c.arc(x, y, 14, 0, Math.PI * 2); c.fill(); });
+  c.textAlign = 'center'; c.fillStyle = gold;
+  c.font = '90px serif'; c.fillText('🐘', W / 2, 175);
+  c.font = '38px "Noto Sans Devanagari",sans-serif'; c.fillText('॥ श्री गणेशाय नमः ॥', W / 2, 240);
+  c.font = '28px "Noto Sans Devanagari",sans-serif'; c.fillStyle = cream; c.fillText('वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥', W / 2, 290);
+  c.fillStyle = gold; c.font = '96px "Yatra One","Noto Sans Devanagari",serif'; c.fillText('शुभ विवाह', W / 2, 420);
+  c.font = '34px serif'; c.fillText('✦ ❁ ✦', W / 2, 470);
+  c.fillStyle = cream; c.font = '30px "Noto Sans Devanagari",sans-serif';
+  let y = wrap(c, `परमपिता परमेश्वर की असीम कृपा से हमारे ${son ? 'सुपुत्र' : 'सुपुत्री'}`, W / 2, 535, 900, 42);
+  const nm = (t, yy) => { c.fillStyle = gold; c.font = '70px "Yatra One","Noto Sans Devanagari",serif'; c.fillText(t, W / 2, yy); };
+  nm(son ? (S.vn || 'चि. ____') : (S.bn || 'सौ.कां. ____'), y + 40);
+  c.fillStyle = cream; c.font = '27px "Noto Sans Devanagari",sans-serif'; y = wrap(c, son ? S.vp || '' : S.bp || '', W / 2, y + 90, 900, 36);
+  c.font = '34px "Noto Sans Devanagari",sans-serif'; c.fillText('संग', W / 2, y + 18);
+  nm(son ? (S.bn || 'सौ.कां. ____') : (S.vn || 'चि. ____'), y + 95);
+  c.fillStyle = cream; c.font = '27px "Noto Sans Devanagari",sans-serif'; y = wrap(c, (son ? 'सुपुत्री ' + (S.bp || '') : 'सुपुत्र ' + (S.vp || '')), W / 2, y + 145, 900, 36);
+  c.font = '29px "Noto Sans Devanagari",sans-serif'; y = wrap(c, 'के शुभ विवाह के मंगल अवसर पर आप सपरिवार सादर आमंत्रित हैं।', W / 2, y + 12, 900, 40);
+  // कार्यक्रम
+  y += 20; const rowH = 92, n = E.length, boxH = Math.max(120, n * rowH + 70), bx = 110, bw = W - 220;
+  c.fillStyle = 'rgba(255,255,255,.08)'; c.strokeStyle = gold; c.lineWidth = 2; c.beginPath(); c.roundRect ? c.roundRect(bx, y, bw, boxH, 28) : c.rect(bx, y, bw, boxH); c.fill(); c.stroke();
+  c.fillStyle = gold; c.font = '36px "Yatra One","Noto Sans Devanagari",serif'; c.fillText('॥ मांगलिक कार्यक्रम ॥', W / 2, y + 50);
+  let yy = y + 105;
+  E.forEach(v => { c.textAlign = 'left'; c.fillStyle = gold; c.font = '600 32px "Noto Sans Devanagari",sans-serif'; c.fillText('❁ ' + v.n, bx + 34, yy);
+    c.fillStyle = cream; c.font = '25px "Noto Sans Devanagari",sans-serif'; c.fillText([dTxt(v.d), tTxt(v.t)].filter(Boolean).join('  •  ') + (v.p ? '  •  ' + v.p : ''), bx + 74, yy + 38); yy += rowH; });
+  c.textAlign = 'center'; y = y + boxH + 60;
+  c.fillStyle = gold; c.font = '600 30px "Noto Sans Devanagari",sans-serif'; c.fillText('📍 विवाह स्थल', W / 2, y); c.fillStyle = cream; c.font = '28px "Noto Sans Devanagari",sans-serif'; y = wrap(c, S.adr || '—', W / 2, y + 44, 880, 38);
+  c.fillStyle = gold; c.font = '600 30px "Noto Sans Devanagari",sans-serif'; c.fillText('🙏 दर्शनाभिलाषी', W / 2, y + 18); c.fillStyle = cream; c.font = '28px "Noto Sans Devanagari",sans-serif'; y = wrap(c, S.nv || 'समस्त परिवार', W / 2, y + 62, 880, 38);
+  if (S.bm) { c.fillStyle = gold; c.font = 'italic 27px "Noto Sans Devanagari",sans-serif'; y = wrap(c, '👧 ' + S.bm, W / 2, y + 16, 880, 36); }
+  LASTY = y; c.fillStyle = gold; c.font = '34px "Yatra One","Noto Sans Devanagari",serif'; c.fillText('॥ शुभम् भवतु ॥', W / 2, Math.max(y + 60, H - 120));
+  c.globalAlpha = .7; c.font = '20px "Noto Sans Devanagari",sans-serif'; c.fillText('Astro Vikass • ☎ 7069492135', W / 2, H - 78); c.globalAlpha = 1;
+}
+$('mk').onclick = async () => { await make(); $('msg').value = text(); $('outc').style.display = ''; $('outc').scrollIntoView({ behavior: 'smooth' }); };
+const blob = () => new Promise(r => $('cv').toBlob(r, 'image/png'));
+const fname = () => 'vivah-patrika-' + (S.vn || 'card').replace(/\W+/g, '') + '.png';
+$('dl').onclick = async () => { const b = await blob(), a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = fname(); a.click(); };
+$('shimg').onclick = async () => {
+  const b = await blob(), f = new File([b], fname(), { type: 'image/png' });
+  if (navigator.canShare && navigator.canShare({ files: [f] })) { try { await navigator.share({ files: [f], text: $('msg').value }); } catch (e) { } }
+  else { toast('इस ब्राउज़र में सीधे फोटो नहीं भेज सकते — फोटो डाउनलोड करके WhatsApp में लगाएँ'); $('dl').click(); }
+};
+$('ph').value = store.get('av_patrika_ph', '');
+$('send').onclick = () => { let n = $('ph').value.replace(/\D/g, ''); store.set('av_patrika_ph', $('ph').value); if (n.length === 10) n = '91' + n;
+  window.open('https://wa.me/' + (n.length >= 11 ? n : '') + '?text=' + encodeURIComponent($('msg').value), '_blank'); };
+setChip(); drawEv();
+</script>
+</body>
+</html>
