@@ -73,7 +73,7 @@ setTimeout(() => {
   const L = calc(), now = A.jdFromDate(new Date());
   const items = L.filter(x => x.e > now - 1).map(x => {
     const c = x.lunar ? '#4b5bd6' : '#ee6f16';
-    let body = `<b>${x.lunar ? '🌕' : '☀️'} ${x.type}</b> <span class="v ${x.vis ? 'y' : 'n'}">${x.vis ? 'भारत में दिखेगा' : 'भारत में नहीं दिखेगा'}</span><br>🗓️ ${A.fmtJd(x.m, TZ).split(',')[0]}`;
+    let body = `<b>${x.lunar ? '🌕' : '☀️'} ${x.type}</b> <span class="v ${x.vis ? 'y' : 'n'}">${x.vis ? 'भारत में दिखेगा' : 'भारत में नहीं दिखेगा'}</span><br>🔸 ${A.fmtJd(x.m, TZ).split(',')[0]}`;
     if (x.vis) body += `<br>⏱️ ${A.fmtJd(x.a, TZ, false)} से ${A.fmtJd(x.e, TZ, false)} तक (मध्य ${A.fmtJd(x.m, TZ, false)})${x.mag ? ` • वाराणसी में लगभग ${x.mag}% ढका` : ''}<br>🚫 सूतक: ${A.fmtJd(x.a - x.sutak / 24, TZ)} से ग्रहण समाप्ति तक`;
     else body += `<br><small class="note">${x.pen ? 'उपच्छाया ग्रहण — धार्मिक मान्यता नहीं, सूतक नहीं।' : 'भारत में दृश्य न होने से सूतक मान्य नहीं।'}</small>`;
     return { x, html: `<div class="ec" style="--c:${c}">${body}</div>` };

@@ -49,7 +49,10 @@
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const store = { get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } } };
   function toast(m) { let t = $('toast'); if (!t) { t = document.createElement('div'); t.id = 'toast'; document.body.appendChild(t); } t.textContent = m; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2800); }
-  function share(text) { window.open('https://wa.me/?text=' + encodeURIComponent(text + '\n\n— Astro Vikass • ☎ 7069492135\nhttps://sidtech366.github.io/jyotishi/'), '_blank'); }
+  /* WhatsApp: wa.me का redirect इमोजी को ? बना देता है — इसलिए सीधे api.whatsapp.com; टूटे surrogate भी साफ़ */
+  function waText(t) { t = String(t || ''); return t.toWellFormed ? t.toWellFormed() : t.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, ''); }
+  function waUrl(text, phone) { const n = String(phone || '').replace(/\D/g, ''), p = n.length === 10 ? '91' + n : n; return 'https://api.whatsapp.com/send?' + (p ? 'phone=' + p + '&' : '') + 'text=' + encodeURIComponent(waText(text)); }
+  function share(text) { const t = /7069492135/.test(text) ? text : text + '\n\n— Astro Vikass • ☎ 7069492135'; window.open(waUrl(t), '_blank'); }
   const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   /* स्थान फ़ील्ड: el में बनता है; key = कहाँ याद रखें (डिफ़ॉल्ट: सभी टूल्स का साझा स्थान) */
   function placeField(el, opts) {
@@ -86,5 +89,5 @@
     };
   }
   const foot = () => '<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>';
-  window.AVUI = { $, esc, store, toast, share, iso, placeField, birthForm, foot };
+  window.AVUI = { $, esc, store, toast, share, waUrl, iso, placeField, birthForm, foot };
 })();

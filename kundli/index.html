@@ -243,6 +243,7 @@ html.embed .rt-c{background:#fff;border-color:#a9dcbc}html.embed .rt-h b{color:#
 .kpager button{flex:1;max-width:44%;padding:11px 10px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font:600 13.5px 'Mukta','Noto Sans Devanagari',sans-serif;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kpager button.mid{flex:0 0 auto;max-width:none;color:var(--gold2)}
 .kpager span{flex:1;max-width:44%}
+.kpager button.full{background:linear-gradient(135deg,#7a1f12,#b5451b);color:#fff;border:0;font-weight:700}html.embed .kpager button.full{background:linear-gradient(135deg,#7a1f12,#b5451b);color:#fff}
 .r-foot{margin-top:18px;padding:18px 18px 14px;border-radius:20px;background:var(--card);border:1px solid var(--line);font-size:13.5px}
 .r-foot .r-rule{margin:0 0 14px}
 .rf-g{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:16px}
@@ -346,7 +347,7 @@ html.embed .rf-c b,html.embed .rf-s b{color:#6b1418}
       <span class="eyebrow">✦ संपूर्ण कुंडली • हिंदी में</span>
       <h1 class="serif">अपने ग्रहों को जानिए,<br><span class="goldtxt">भविष्य को सँवारिए</span></h1>
       <p class="lead">जन्म तिथि, समय और स्थान डालिए — पाइए संपूर्ण लाल किताब कुंडली, ग्रह स्थिति, महादशा, योग-दोष, करियर, विवाह और अचूक उपाय, एक ही रिपोर्ट में।</p>
-      <div class="btns"><a class="cta" href="#form">कुंडली बनाएं</a><a class="cta out" href="https://wa.me/917069492135?text=%E0%A4%A8%E0%A4%AE%E0%A4%B8%E0%A5%8D%E0%A4%A4%E0%A5%87%2C%20%E0%A4%AE%E0%A5%81%E0%A4%9D%E0%A5%87%20%E0%A4%9C%E0%A5%8D%E0%A4%AF%E0%A5%8B%E0%A4%A4%E0%A4%BF%E0%A4%B7%20%E0%A4%AA%E0%A4%B0%E0%A4%BE%E0%A4%AE%E0%A4%B0%E0%A5%8D%E0%A4%B6%20%E0%A4%9A%E0%A4%BE%E0%A4%B9%E0%A4%BF%E0%A4%8F" target="_blank" rel="noopener">परामर्श लें</a></div>
+      <div class="btns"><a class="cta" href="#form">कुंडली बनाएं</a><a class="cta out" href="https://api.whatsapp.com/send?phone=917069492135&text=%E0%A4%A8%E0%A4%AE%E0%A4%B8%E0%A5%8D%E0%A4%A4%E0%A5%87%2C%20%E0%A4%AE%E0%A5%81%E0%A4%9D%E0%A5%87%20%E0%A4%9C%E0%A5%8D%E0%A4%AF%E0%A5%8B%E0%A4%A4%E0%A4%BF%E0%A4%B7%20%E0%A4%AA%E0%A4%B0%E0%A4%BE%E0%A4%AE%E0%A4%B0%E0%A5%8D%E0%A4%B6%20%E0%A4%9A%E0%A4%BE%E0%A4%B9%E0%A4%BF%E0%A4%8F" target="_blank" rel="noopener">परामर्श लें</a></div>
       <div class="trust"><span>सटीक खगोलीय गणना</span><span>लाहिरी अयनांश</span><span>108 लाल किताब फल</span><span>कोई लॉगिन नहीं</span></div>
     </div>
     <div class="formcard" id="form">
@@ -1029,7 +1030,7 @@ function doshSection(k, inp) {
   const D = doshAll(k, inp), has = l => l.filter(d => d.st === 'yes' || d.st === 'mild');
   const J = has(D.J), G = has(D.G), L = has(D.L), n = J.length + G.length + L.length;
   const badge = st => st === 'yes' ? '<span class="ds-b y">⚠️ दोष है</span>' : '<span class="ds-b m">🟡 आंशिक / शमित</span>';
-  const card = d => `<div class="ds-c ${d.st}"><div class="ds-h"><b>${d.n}</b>${badge(d.st)}</div><p><b>स्थिति:</b> ${d.how}</p>${d.f ? `<p>${d.f}</p>` : ''}${d.u ? `<p class="up"><b>उपाय / शान्ति:</b> ${d.u}</p>` : ''}${d.sh ? `<p class="dim">🗓️ ${d.sh}</p>` : ''}${d.pr ? `<p class="ds-pr">📜 ${d.pr.join(' • ')}</p>` : ''}</div>`;
+  const card = d => `<div class="ds-c ${d.st}"><div class="ds-h"><b>${d.n}</b>${badge(d.st)}</div><p><b>स्थिति:</b> ${d.how}</p>${d.f ? `<p>${d.f}</p>` : ''}${d.u ? `<p class="up"><b>उपाय / शान्ति:</b> ${d.u}</p>` : ''}${d.sh ? `<p class="dim">🔸 ${d.sh}</p>` : ''}${d.pr ? `<p class="ds-pr">📜 ${d.pr.join(' • ')}</p>` : ''}</div>`;
   const grp = (t, list) => list.length ? `<h4>${t}</h4><div class="ds-g">${list.map(card).join('')}</div>` : '';
   if (!n) return `<div class="ds-sum">✅ इस कुंडली में कोई प्रमुख दोष नहीं है।</div>`;
   return `<div class="ds-sum">इस कुंडली में <b>${n}</b> दोष ${G.concat(J, L).some(d => d.st === 'mild') ? '(कुछ आंशिक / शमित)' : ''}</div>`
@@ -1077,7 +1078,7 @@ function ratnaCard(p, tag, plan) {
   <div class="rt-g">
    <span><i>⚖️ वज़न</i>${R.unit === 'रत्ती' ? `${R.min}–${R.max} रत्ती (शरीर के वज़न का 1/10 — जैसे 60 किलो पर 6 रत्ती; न्यूनतम ${R.min} रत्ती)` : `${R.min}–${R.max} ${R.unit}`}</span>
    <span><i>🪙 धातु</i>${R.dh}</span><span><i>☝️ उंगली</i>${R.f} • ${R.hand}</span>
-   <span><i>🗓️ दिन</i>${R.day}, ${R.paksh}</span><span><i>⏰ समय</i>${R.time}</span>
+   <span><i>🔸 दिन</i>${R.day}, ${R.paksh}</span><span><i>⏰ समय</i>${R.time}</span>
    <span><i>⭐ श्रेष्ठ नक्षत्र</i>${R.nak}</span><span><i>🔁 उपरत्न (सस्ता विकल्प)</i>${R.ur}</span>
   </div>
   <p><b>धारण विधि:</b> एक दिन पहले रात को अंगूठी कच्चे दूध + गंगाजल में रखें। धारण के दिन स्नान कर, पूजा स्थान में अंगूठी पर धूप-दीप-पुष्प चढ़ाएँ, <b>"${R.bij}"</b> का 108 बार जाप करके ${R.time.split('(')[0]}धारण करें। उस दिन ${K.P[p].daan} का दान करें। रत्न ऐसा जड़वाएँ कि नीचे से त्वचा को स्पर्श करे; रत्न दोषरहित (दरार, धब्बा न हो) और प्रमाणित (लैब सर्टिफ़िकेट) हो।</p>
@@ -1451,16 +1452,16 @@ function buildReport(k, u) {
   /* SECTION 8 — दशा */
   const antarTxt = a => { const x = q[a.lord], s = stars(a.lord, x); return `${K.P[a.lord].key} — ${ord(x.house)} भाव (${K.HOUSE[x.house]}) के विषय सक्रिय। ${s >= 4 ? '✅ शुभ परिणाम, प्रगति।' : s <= 2 ? '⚠️ सावधानी, उपाय करें।' : 'मिश्रित फल, मेहनत से लाभ।'}`; };
   let s8 = `<div class="finding big"><b>🔮 वर्तमान ${K.P[curMaha.lord].hi} महादशा (${yr(curMaha.start)}–${yr(curMaha.end)})</b><p>${K.P[curMaha.lord].hi} ${K.SIGN[q[curMaha.lord].sign]} राशि, ${ord(q[curMaha.lord].house)} भाव में ${K.DIG[q[curMaha.lord].dignity]}। ${K.DASHA_PHAL[curMaha.lord]}</p></div>
-  <h4>📆 अंतर्दशा फल (${K.P[curMaha.lord].hi} महादशा)</h4><div class="antar">${curMaha.antar.map(a => `<div class="an ${a === curAntar ? 'now' : ''} ${a.end < now ? 'past' : ''}"><div class="an-d">${fmt(a.start)} – ${fmt(a.end)}${a === curAntar ? ' <span class="tag n">अभी</span>' : ''}</div><b>${K.P[a.lord].em} ${K.P[a.lord].hi}</b><p>${antarTxt(a)}</p></div>`).join('')}</div>
-  <h4>🗓️ जीवन की महादशा टाइमलाइन</h4><div class="timeline">${k.dasha.list.filter(d => yr(d.end) > dy && yr(d.start) < dy + 100).map(d => `<div class="tl ${d === curMaha ? 'now' : ''}" style="--c:${K.P[d.lord].c}"><div class="tl-y">${yr(d.start) < dy ? yr(k.birth) : yr(d.start)}–${yr(d.end)}<small>आयु ${Math.max(0, yr(d.start) - dy)}–${yr(d.end) - dy}</small></div><div class="tl-b"><b>${K.P[d.lord].em} ${K.P[d.lord].hi} महादशा ${d === curMaha ? '🌟' : ''}</b><p>${K.DASHA_PHAL[d.lord]}</p></div></div>`).join('')}</div>
-  <h4>🗓️ अगले 5 वर्षों का वर्षफल</h4><div class="tbl-wrap"><table class="tbl vf"><thead><tr><th>वर्ष</th><th>दशा</th><th>व्यक्तिगत वर्ष अंक</th><th>फल</th></tr></thead><tbody>${[0, 1, 2, 3, 4].map(i => { const Yr = yr(now) + i, mid = new Date(Yr, 6, 1); const md = k.dasha.list.find(d => d.start <= mid && d.end > mid) || curMaha; const ad = md.antar.find(a => a.start <= mid && a.end > mid) || md.antar[0]; const py = root(dd + dm + digitSum(Yr)); return `<tr><td><b>${Yr}</b></td><td>${K.P[md.lord].hi}–${K.P[ad.lord].hi}</td><td>${py}</td><td>${PY[py]}। ${stars(ad.lord, q[ad.lord]) >= 4 ? 'उन्नति के प्रबल योग।' : stars(ad.lord, q[ad.lord]) <= 2 ? 'धैर्य रखें।' : 'स्थिर प्रगति।'}</td></tr>`; }).join('')}</tbody></table></div>`;
+  <h4>🔸 अंतर्दशा फल (${K.P[curMaha.lord].hi} महादशा)</h4><div class="antar">${curMaha.antar.map(a => `<div class="an ${a === curAntar ? 'now' : ''} ${a.end < now ? 'past' : ''}"><div class="an-d">${fmt(a.start)} – ${fmt(a.end)}${a === curAntar ? ' <span class="tag n">अभी</span>' : ''}</div><b>${K.P[a.lord].em} ${K.P[a.lord].hi}</b><p>${antarTxt(a)}</p></div>`).join('')}</div>
+  <h4>🔸 जीवन की महादशा टाइमलाइन</h4><div class="timeline">${k.dasha.list.filter(d => yr(d.end) > dy && yr(d.start) < dy + 100).map(d => `<div class="tl ${d === curMaha ? 'now' : ''}" style="--c:${K.P[d.lord].c}"><div class="tl-y">${yr(d.start) < dy ? yr(k.birth) : yr(d.start)}–${yr(d.end)}<small>आयु ${Math.max(0, yr(d.start) - dy)}–${yr(d.end) - dy}</small></div><div class="tl-b"><b>${K.P[d.lord].em} ${K.P[d.lord].hi} महादशा ${d === curMaha ? '🌟' : ''}</b><p>${K.DASHA_PHAL[d.lord]}</p></div></div>`).join('')}</div>
+  <h4>🔸 अगले 5 वर्षों का वर्षफल</h4><div class="tbl-wrap"><table class="tbl vf"><thead><tr><th>वर्ष</th><th>दशा</th><th>व्यक्तिगत वर्ष अंक</th><th>फल</th></tr></thead><tbody>${[0, 1, 2, 3, 4].map(i => { const Yr = yr(now) + i, mid = new Date(Yr, 6, 1); const md = k.dasha.list.find(d => d.start <= mid && d.end > mid) || curMaha; const ad = md.antar.find(a => a.start <= mid && a.end > mid) || md.antar[0]; const py = root(dd + dm + digitSum(Yr)); return `<tr><td><b>${Yr}</b></td><td>${K.P[md.lord].hi}–${K.P[ad.lord].hi}</td><td>${py}</td><td>${PY[py]}। ${stars(ad.lord, q[ad.lord]) >= 4 ? 'उन्नति के प्रबल योग।' : stars(ad.lord, q[ad.lord]) <= 2 ? 'धैर्य रखें।' : 'स्थिर प्रगति।'}</td></tr>`; }).join('')}</tbody></table></div>`;
   h += sec(8, 'TIMELINE & DASHA', 'समय चक्र एवं विंशोत्तरी दशा', 'महादशा, अंतर्दशा और वर्षफल', '⏳', s8, 210);
 
   /* SECTION 9 — अंक ज्योतिष */
   const py = root(dd + dm + digitSum(yr(now)));
   let s9 = `<div class="nums"><div class="num" style="--c:#ff9a3c"><small>मूलांक</small><b>${mulank}</b><span>${ML.g}</span></div><div class="num" style="--c:#ff4fa3"><small>भाग्यांक</small><b>${bhagyank}</b><span>${K.MULANK[bhagyank].g}</span></div>${nameNo ? `<div class="num" style="--c:#7b6cff"><small>नामांक (${latin})</small><b>${nameComp}/${nameNo}</b><span>${K.MULANK[nameNo].g}</span></div>` : ''}<div class="num" style="--c:#1fd17a"><small>व्यक्तिगत वर्ष ${yr(now)}</small><b>${py}</b><span>${K.MULANK[py].g}</span></div></div>
   <p><b>मूलांक ${mulank} (${ML.g}):</b> ${ML.t}</p><p><b>भाग्यांक ${bhagyank}:</b> ${K.MULANK[bhagyank].t}</p>${nameNo ? `<p><b>नामांक ${nameNo}:</b> ${K.MULANK[nameNo].t} ${[mulank, bhagyank].includes(nameNo) || ML.lucky.includes(String(nameNo)) ? '✅ नामांक आपके मूलांक/भाग्यांक से मेल खाता है — शुभ।' : '⚠️ नामांक मूलांक से मेल नहीं खाता; चाहें तो नाम की स्पेलिंग में बदलाव पर विचार करें।'}</p>` : '<p class="dim">नामांक जानने के लिए फॉर्म में नाम अंग्रेज़ी में भी लिखें।</p>'}
-  <p><b>वर्ष ${yr(now)}:</b> ${PY[py]}।</p><div class="pills"><span>🔢 शुभ अंक: ${ML.lucky}</span><span>🎨 शुभ रंग: ${ML.col}</span><span>🗓️ शुभ दिन: ${ML.day}</span></div>`;
+  <p><b>वर्ष ${yr(now)}:</b> ${PY[py]}।</p><div class="pills"><span>🔢 शुभ अंक: ${ML.lucky}</span><span>🎨 शुभ रंग: ${ML.col}</span><span>🔸 शुभ दिन: ${ML.day}</span></div>`;
   h += sec(9, 'NUMEROLOGY', 'अंक ज्योतिष', 'मूलांक, भाग्यांक, नामांक और वर्ष अंक', '🔢', s9, 50);
 
   /* SECTION 10 */
@@ -1470,17 +1471,17 @@ function buildReport(k, u) {
   let s10 = `<blockquote class="quote">"${hn} की कुंडली में ${Y.length ? Y.slice(0, 3).map(y => y.n).join(' + ') : keyLine} — सही दिशा में किया गया परिश्रम आपको असाधारण ऊंचाई तक ले जाएगा।"</blockquote>
   <div class="two"><div class="good"><b>✅ क्या करें (Do's)</b><ol>${dos.map(x => `<li>${x}</li>`).join('')}</ol></div><div class="bad"><b>❌ क्या न करें (Don'ts)</b><ol>${donts.map(x => `<li>${x}</li>`).join('')}</ol></div></div>
   <h4>🕉️ मंत्र जाप (108 बार प्रतिदिन)</h4>${mantras.map(p => `<div class="mantra" style="--c:${K.P[p].c}"><b>${K.P[p].mantra}</b><small>${K.P[p].hi} ${p === curMaha.lord ? '— वर्तमान महादशा में सर्वाधिक प्रभावी' : p === lagnaLord ? '— लग्नेश, आत्मबल के लिए' : '— कमजोर ग्रह को बल देने हेतु'} • 40 दिन नियमित</small></div>`).join('')}
-  <h4>💎 शुभ तत्व</h4><div class="pills"><span>💎 रत्न: ${K.P[lagnaLord].gem} (लग्नेश)</span><span>💠 सहायक रत्न: ${K.P[lordOf(k, 5)].gem}, ${K.P[lordOf(k, 9)].gem}</span><span>🎨 रंग: ${K.P[lagnaLord].color}</span><span>🗓️ दिन: ${days}</span><span>🙏 इष्ट: ${ISHTA[lagnaLord]}</span></div>
+  <h4>💎 शुभ तत्व</h4><div class="pills"><span>💎 रत्न: ${K.P[lagnaLord].gem} (लग्नेश)</span><span>💠 सहायक रत्न: ${K.P[lordOf(k, 5)].gem}, ${K.P[lordOf(k, 9)].gem}</span><span>🎨 रंग: ${K.P[lagnaLord].color}</span><span>🔸 दिन: ${days}</span><span>🙏 इष्ट: ${ISHTA[lagnaLord]}</span></div>
   <p class="dim">रत्न की पूरी विधि (रत्ती, धातु, उंगली, दिन, समय) "💎 रत्न-इष्ट" खंड में देखें।</p>`;
   h += sec(10, 'GUIDANCE & CONCLUSION', 'मार्गदर्शिका एवं अंतिम निष्कर्ष', "Do's & Don'ts, मंत्र, शुभ तत्व", '🎓', s10, 280);
 
-  const share = `${u.name} की कुंडली: ${K.SIGN[ln]} लग्न, ${K.SIGN[ms]} राशि, ${nak[0]} नक्षत्र, ${K.P[curMaha.lord].hi} महादशा। Astro Vikass पर अपनी लाल किताब कुंडली बनाएं: https://sidtech366.vercel.app/AstroVikas`;
+  const share = `${u.name} की कुंडली: ${K.SIGN[ln]} लग्न, ${K.SIGN[ms]} राशि, ${nak[0]} नक्षत्र, ${K.P[curMaha.lord].hi} महादशा। Astro Vikass • ☎ 7069492135`;  /* वेबसाइट URL अभी नहीं दिखाना (डोमेन तय होने पर जोड़ें) */
   h += `<div class="kpager" id="kpager"></div>`;
-  h += `<div class="actions"><button class="btn" onclick="doPrint()">📄 PDF डाउनलोड</button><a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">💬 WhatsApp पर शेयर</a><a class="btn ask" href="../tools/puchhe.html?k=1">🙏 इस कुंडली के बारे में पूछें</a><button class="btn ghost" onclick="showForm()">🔄 नई कुंडली</button></div>
-  <div class="r-consult"><b>अपनी कुंडली पर विस्तृत परामर्श चाहिए?</b><p>विवाह मिलान, करियर, व्यापार या किसी समस्या के समाधान के लिए Astro Vikass से संपर्क करें — ☎ 7069492135</p><div class="btns"><a class="cta" href="tel:+917069492135" target="_blank">☎ कॉल करें</a><a class="cta wa" href="https://wa.me/917069492135?text=${encodeURIComponent(`नमस्ते, मेरी कुंडली (${u.name}, ${u.dob}, ${u.tob}, ${u.place}) पर परामर्श चाहिए`)}" target="_blank" rel="noopener">WhatsApp करें</a></div></div>
+  h += `<div class="actions"><button class="btn" onclick="doPrint()">📄 PDF डाउनलोड</button><a class="btn wa" href="https://api.whatsapp.com/send?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">💬 WhatsApp पर शेयर</a><a class="btn ask" href="../tools/puchhe.html?k=1">🙏 सिद्धांत से पूछें</a><button class="btn ghost" onclick="showForm()">🔄 नई कुंडली</button></div>
+  <div class="r-consult"><b>अपनी कुंडली पर विस्तृत परामर्श चाहिए?</b><p>विवाह मिलान, करियर, व्यापार या किसी समस्या के समाधान के लिए Astro Vikass से संपर्क करें — ☎ 7069492135</p><div class="btns"><a class="cta" href="tel:+917069492135" target="_blank">☎ कॉल करें</a><a class="cta wa" href="https://api.whatsapp.com/send?phone=917069492135&text=${encodeURIComponent(`नमस्ते, मेरी कुंडली (${u.name}, ${u.dob}, ${u.tob}, ${u.place}) पर परामर्श चाहिए`)}" target="_blank" rel="noopener">WhatsApp करें</a></div></div>
   <div class="r-foot"><div class="r-rule"><i></i><span>✦</span><i></i></div><div class="rf-g">
     <div class="rf-b"><div class="r-logo"><div class="mark"><span>✦</span></div><div><b>ASTRO VIKASS</b><small>लाल किताब • वैदिक ज्योतिष</small></div></div><p>ग्रहों की सटीक गणना और लाल किताब के अनुभव पर आधारित व्यक्तिगत रिपोर्ट।</p></div>
-    <div class="rf-c"><b>संपर्क</b><span>☎ 7069492135</span><span>💬 WhatsApp: 7069492135</span><span>🌐 sidtech366.vercel.app/AstroVikas</span></div>
+    <div class="rf-c"><b>संपर्क</b><span>☎ 7069492135</span><span>💬 WhatsApp: 7069492135</span></div>
     <div class="rf-s"><b>रिपोर्ट विवरण</b><span>नं. ${rid} • ${today}</span><span>लाहिरी अयनांश ${k.ayanamsa.toFixed(3)}°</span><span>${u.inp.lat}°, ${u.inp.lon}° • UTC${u.inp.tz >= 0 ? '+' : ''}${u.inp.tz}</span></div>
   </div><p class="rf-d">यह रिपोर्ट शास्त्रीय ज्योतिषीय गणना (पराशर, लाल किताब) पर आधारित Astro Vikass का मार्गदर्शन है। © ${now.getFullYear()} Astro Vikass</p></div>`;
   return h;
@@ -1506,8 +1507,15 @@ function kTab(key, scroll) {
   r.querySelectorAll('#ktoc button').forEach(b => b.classList.toggle('on', b.dataset.k === key));
   const i = TOC.findIndex(t => t[0] === key), pv = TOC[i - 1], nx = TOC[i + 1];
   const pg = document.getElementById('kpager');
-  if (pg) pg.innerHTML = `${pv ? `<button type="button" onclick="kTab('${pv[0]}',1)">‹ ${pv[1]} ${pv[2]}</button>` : '<span></span>'}<button type="button" class="mid" onclick="kTab('${key}',1)">${i + 1}/${TOC.length}</button>${nx ? `<button type="button" onclick="kTab('${nx[0]}',1)">${nx[1]} ${nx[2]} ›</button>` : '<span></span>'}`;
+  if (pg) pg.innerHTML = `${pv ? `<button type="button" onclick="kTab('${pv[0]}',1)">‹ ${pv[1]} ${pv[2]}</button>` : `<button type="button" class="full" onclick="kFull()">📖 पूरी रिपोर्ट</button>`}<button type="button" class="mid" onclick="kTab('${key}',1)">${i + 1}/${TOC.length}</button>${nx ? `<button type="button" onclick="kTab('${nx[0]}',1)">${nx[1]} ${nx[2]} ›</button>` : '<span></span>'}`;
   if (scroll !== false) { const t = document.getElementById('ktoc'); if (t && scroll) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+}
+function kFull() {   // सभी खंड एक साथ — पहले जैसी लगातार रिपोर्ट
+  const r = document.getElementById('report'); if (!r) return;
+  r.classList.remove('tabbed'); r.querySelectorAll('#ktoc button').forEach(b => b.classList.remove('on'));
+  const pg = document.getElementById('kpager');
+  if (pg) { pg.innerHTML = `<button type="button" class="full" onclick="kTab('${TOC[0][0]}',1)">📑 पेज-वार देखें</button><span></span>`; }
+  const t = document.getElementById('ktoc'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 function doPrint() { try { window.print(); } catch (e) { } setTimeout(() => toast('PDF के लिए: ब्राउज़र मेनू ⋮ → Share/Print → "Save as PDF" चुनें'), 400); }
 document.addEventListener('DOMContentLoaded', initForm);

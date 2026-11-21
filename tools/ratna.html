@@ -39,7 +39,7 @@ $('lsel').innerHTML = N.SIGN.map((s, i) => `<button data-i="${i}">${N.SIGN_IC[i]
 $('lsel').onclick = e => { const b = e.target.closest('button'); if (!b) return; [...$('lsel').children].forEach(x => x.classList.toggle('on', x === b)); show(+b.dataset.i); };
 $('mode').onclick = e => { const b = e.target.closest('button'); if (!b) return; mode = b.dataset.m; [...$('mode').children].forEach(x => x.classList.toggle('on', x === b)); $('fb').style.display = mode === 'b' ? '' : 'none'; $('fl').style.display = mode === 'l' ? '' : 'none'; };
 $('go').onclick = () => { const f = bf.get(); if (!f) return; show(Math.floor(A.ascendant(f.jd, f.L.lat, f.L.lon) / 30), f); };
-function card(p, title, why) { const g = GEM[p]; return `<div class="gem" style="--c:${g[1]}"><div class="g"></div><div><small class="note" style="margin:0">${title}</small><br><b>${g[0]}</b> — ${N.P[p]} का रत्न<br><small>${why}</small><div class="note">☝️ ${g[2]} उंगली • 🪙 ${g[3]} • 🗓️ ${g[4]} • ⚖️ ${g[6]}<br>🕉️ ${g[5]} (108 बार जप कर धारण करें) • उपरत्न: ${UP[p]}</div></div></div>`; }
+function card(p, title, why) { const g = GEM[p]; return `<div class="gem" style="--c:${g[1]}"><div class="g"></div><div><small class="note" style="margin:0">${title}</small><br><b>${g[0]}</b> — ${N.P[p]} का रत्न<br><small>${why}</small><div class="note">☝️ ${g[2]} उंगली • 🪙 ${g[3]} • 🔸 ${g[4]} • ⚖️ ${g[6]}<br>🕉️ ${g[5]} (108 बार जप कर धारण करें) • उपरत्न: ${UP[p]}</div></div></div>`; }
 function show(l, f) {
   const L1 = N.LORD[l], L5 = N.LORD[(l + 4) % 12], L9 = N.LORD[(l + 8) % 12];
   const avoid = [...new Set([N.LORD[(l + 5) % 12], N.LORD[(l + 7) % 12], N.LORD[(l + 11) % 12]])].filter(p => ![L1, L5, L9].includes(p));

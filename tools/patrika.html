@@ -35,7 +35,7 @@ textarea.in{min-height:220px;font-size:14px;line-height:1.6}
   <div class="chips" id="paksh"><span class="chip on" data-v="v">वर पक्ष (पुत्र का विवाह)</span><span class="chip" data-v="b">वधू पक्ष (पुत्री का विवाह)</span></div>
 </div>
 <div class="av-card">
-  <h4>🗓️ कार्यक्रम</h4>
+  <h4>🔸 कार्यक्रम</h4>
   <div id="evs"></div>
   <button class="btn" id="addev" style="margin-top:6px">➕ कार्यक्रम जोड़ें</button>
   <p class="note">जो कार्यक्रम कार्ड में नहीं चाहिए उसका ✓ हटा दें — केवल हल्दी या केवल विदाई का अलग कार्ड भी बन जाएगा। शुभ तिथि/लग्न के लिए "शुभ मुहूर्त → विवाह" देखें।</p>
@@ -95,7 +95,7 @@ const tTxt = t => { if (!t) return ''; let [h, m] = t.split(':').map(Number); co
 const evs = () => S.ev.filter(v => v.on && v.n.trim());
 function text() {
   const son = S.pk === 'v', E = evs(), main = son ? (S.vn || 'चि. ____') : (S.bn || 'सौ.कां. ____'), other = son ? (S.bn || 'सौ.कां. ____') : (S.vn || 'चि. ____');
-  return `॥ श्री गणेशाय नमः ॥\nवक्रतुण्ड महाकाय सूर्यकोटि समप्रभ।\nनिर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥\n\n💐 *शुभ विवाह निमंत्रण* 💐\n\nसादर सूचित करते हुए हर्ष हो रहा है कि परमपिता परमेश्वर की असीम कृपा से हमारे ${son ? 'सुपुत्र' : 'सुपुत्री'}\n\n*${main}*\n(${son ? S.vp || '' : S.bp || ''})\n\nका शुभ विवाह\n\n*${other}*\n(${son ? 'सुपुत्री ' + (S.bp || '') : 'सुपुत्र ' + (S.vp || '')})\n\nके साथ होना निश्चित हुआ है। इस मंगल अवसर पर आप सपरिवार सादर आमंत्रित हैं।\n\n🗓️ *मांगलिक कार्यक्रम*\n` + E.map(v => `\n🔸 *${v.n}*\n   ${[dTxt(v.d), tTxt(v.t)].filter(Boolean).join(' • ') || '—'}${v.p ? '\n   📍 ' + v.p : ''}`).join('\n') + `\n\n📍 *स्थान:* ${S.adr || '—'}\n\n🙏 *दर्शनाभिलाषी:* ${S.nv || 'समस्त परिवार'}${S.bm ? `\n\n👧 *बाल मनुहार:* ${S.bm}` : ''}\n\n॥ शुभम् भवतु ॥`;
+  return `॥ श्री गणेशाय नमः ॥\nवक्रतुण्ड महाकाय सूर्यकोटि समप्रभ।\nनिर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥\n\n💐 *शुभ विवाह निमंत्रण* 💐\n\nसादर सूचित करते हुए हर्ष हो रहा है कि परमपिता परमेश्वर की असीम कृपा से हमारे ${son ? 'सुपुत्र' : 'सुपुत्री'}\n\n*${main}*\n(${son ? S.vp || '' : S.bp || ''})\n\nका शुभ विवाह\n\n*${other}*\n(${son ? 'सुपुत्री ' + (S.bp || '') : 'सुपुत्र ' + (S.vp || '')})\n\nके साथ होना निश्चित हुआ है। इस मंगल अवसर पर आप सपरिवार सादर आमंत्रित हैं।\n\n🔸 *मांगलिक कार्यक्रम*\n` + E.map(v => `\n🔸 *${v.n}*\n   ${[dTxt(v.d), tTxt(v.t)].filter(Boolean).join(' • ') || '—'}${v.p ? '\n   📍 ' + v.p : ''}`).join('\n') + `\n\n📍 *स्थान:* ${S.adr || '—'}\n\n🙏 *दर्शनाभिलाषी:* ${S.nv || 'समस्त परिवार'}${S.bm ? `\n\n👧 *बाल मनुहार:* ${S.bm}` : ''}\n\n॥ शुभम् भवतु ॥`;
 }
 /* ===== कार्ड (1080×1920) ===== */
 const TH = [['#5a0f14', '#8e1b1b', '#f3c96b', '#fff3d6'], ['#880e4f', '#c2185b', '#ffd1e3', '#fff0f6'], ['#1b4d1f', '#2e7d32', '#ffe066', '#fffbe0'], ['#0a1f52', '#283593', '#f3c96b', '#eef1ff']];
@@ -151,7 +151,7 @@ $('shimg').onclick = async () => {
 };
 $('ph').value = store.get('av_patrika_ph', '');
 $('send').onclick = () => { let n = $('ph').value.replace(/\D/g, ''); store.set('av_patrika_ph', $('ph').value); if (n.length === 10) n = '91' + n;
-  window.open('https://wa.me/' + (n.length >= 11 ? n : '') + '?text=' + encodeURIComponent($('msg').value), '_blank'); };
+  window.open(AVUI.waUrl($('msg').value, n.length >= 11 ? n : ''), '_blank'); };
 setChip(); drawEv();
 </script>
 </body>

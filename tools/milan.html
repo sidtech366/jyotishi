@@ -46,7 +46,7 @@ $('bk').innerHTML = $('gk').innerHTML = opts;
 [['bn', 'bk'], ['gn', 'gk']].forEach(([n, k]) => {
   const tip = document.createElement('div'); tip.className = 'note'; tip.style.margin = '4px 0 0'; $(n).parentNode.appendChild(tip);
   $(n).addEventListener('input', () => { const v = $(n).value.trim(), r = AVAkshar.fromName(v);
-    if (r) { $(k).value = r.n * 4 + r.p; tip.innerHTML = `✓ ${/^[a-z]/i.test(v) ? AVAkshar.toDev(v) + ' • ' : ''}"${r.s}" अक्षर → <b>${N.NAK[r.n]} चरण ${r.p + 1}</b>, ${N.SIGN[r.sign]} राशि${r.approx ? ' (निकटतम)' : ''} — बदलना हो तो दाईं ओर से चुनें`; } else tip.textContent = ''; });
+    if (r) { $(k).value = r.n * 4 + r.p; tip.innerHTML = `✓ "${r.s}" अक्षर → <b>${N.NAK[r.n]} चरण ${r.p + 1}</b>, ${N.SIGN[r.sign]} राशि${r.approx ? ' (निकटतम)' : ''} — बदलना हो तो दाईं ओर से चुनें`; } else tip.textContent = ''; });
 });
 /* --- अष्टकूट तालिकाएं --- */
 const VARNA = [1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0].map(x => x);           // मेष=क्षत्रिय... (0 ब्राह्मण,1 क्षत्रिय,2 वैश्य,3 शूद्र)

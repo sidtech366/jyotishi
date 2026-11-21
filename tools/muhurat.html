@@ -66,7 +66,7 @@
 </div>
 <div class="av-card">
   <div class="mnav"><button id="pv">◀</button><b id="mt"></b><button id="nx">▶</button></div>
-  <div class="locrow" style="margin:6px 0 4px"><input class="in" type="month" id="ym" min="1900-01" max="2200-12" style="flex:1"><button class="btn sm" id="ymGo">📆 जाएँ</button><button class="btn sm ghost" id="ymT">आज</button></div><p class="note" style="margin:0 0 6px">किसी भी वर्ष (1900–2200) का मुहूर्त — महीना-साल चुनकर “जाएँ” दबाएँ</p>
+  <div class="locrow" style="margin:6px 0 4px"><input class="in" type="month" id="ym" min="1900-01" max="2200-12" style="flex:1"><button class="btn sm" id="ymGo">जाएँ ➜</button><button class="btn sm ghost" id="ymT">आज</button></div><p class="note" style="margin:0 0 6px">किसी भी वर्ष (1900–2200) का मुहूर्त — महीना-साल चुनकर “जाएँ” दबाएँ</p>
   <div id="out" class="empty">गणना हो रही है…</div>
   <p class="note" id="foot"></p>
   <button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button>
@@ -287,8 +287,8 @@ function info() {
     if (e.age) rows.push(['🕰️ समय/आयु', e.age]);
     rows.push(['⭐ नक्षत्र', e.nak === ALL ? 'कोई भी (विशेष नियम नीचे)' : e.nakI.map(i => N.NAK[i]).join(', ')]);
     rows.push(['🌙 तिथि', e.tt.length >= 15 ? 'सभी (अमावस्या छोड़कर)' : e.tt.map(tName).join(', ') + (e.k === 0 ? ' — केवल शुक्ल पक्ष' : e.k < 15 ? ` — कृष्ण पक्ष में ${tName(e.k)} तक` : '')]);
-    rows.push(['🗓️ वार', e.vrI.map(v => N.VAAR[v]).join(', ')]);
-    if (e.maasI) rows.push(['🗓️ मास', e.maasI.map(m => N.MAAS[m]).join(', ')]);
+    rows.push(['🔸 वार', e.vrI.map(v => N.VAAR[v]).join(', ')]);
+    if (e.maasI) rows.push(['🔸 मास', e.maasI.map(m => N.MAAS[m]).join(', ')]);
     if (e.sun) rows.push(['☀️ सूर्य', e.sun.map(s => N.SIGN[s]).join(', ') + ' राशि में']);
     if (e.uttar) rows.push(['🧭 अयन', 'उत्तरायण (सूर्य मकर से मिथुन)' + (e.notSun ? ' — सूर्य कुंभ में न हो' : '')]);
     if (e.lag) rows.push(['🌅 लग्न', e.lag.map(s => N.SIGN[s]).join(', ')]);
@@ -440,7 +440,7 @@ function run() {
       const pm = MODE === 'rk' && d.tithi > 15 ? (d.maas + 1) % 12 : d.maas;   // ऋषिकेश (उत्तर भारत) — पूर्णिमांत मास
       if (!vr.includes(d.vaar)) return;
       if (e.sp === 'dir' && DSHOOL[ctx.dir].includes(d.vaar)) return B('🧭 दिशाशूल — ' + N.VAAR[d.vaar] + ' को ' + DIRS[ctx.dir] + ' दिशा की यात्रा वर्जित');
-      if (e.maasI && !e.maasI.includes(pm)) return B('🗓️ इस कार्य के लिए ' + N.MAAS[pm] + ' मास शास्त्र-सम्मत नहीं');
+      if (e.maasI && !e.maasI.includes(pm)) return B('🔸 इस कार्य के लिए ' + N.MAAS[pm] + ' मास शास्त्र-सम्मत नहीं');
       if (e.sun && !e.sun.includes(sun)) return B('☀️ सूर्य ' + N.SIGN[sun] + ' राशि में — इस कार्य हेतु वर्जित');
       if (e.uttar && ![9, 10, 11, 0, 1, 2].includes(sun)) return B('🧭 दक्षिणायन — यह कार्य उत्तरायण में ही');
       if (e.notSun && e.notSun.includes(sun)) return B('☀️ सूर्य ' + N.SIGN[sun] + ' में — वर्जित');
@@ -479,7 +479,7 @@ function run() {
     $('foot').textContent = '(+1) = अगली तारीख की रात्रि/भोर (सूर्योदय से पहले, हिंदू दिन उसी तिथि का)। ' + (MODE === 'rk' ? 'गणना: ऋषिकेश (काशी) पंचांग पद्धति — सूर्य सिद्धान्त से तिथि-नक्षत्र-योग, पूर्णिमांत मास, ' + (e.rkv ? 'विवाह के दश दोष (युति, सप्तशलाका वेध, मृत्युबाण, सूर्यभोग्य, मासान्त, भद्रा, व्यतीपात-वैधृति) तथा पञ्चेष्ट लग्न (कम से कम 5 ग्रह इष्ट भाव में)। ' : 'लग्न में कम से कम 5 ग्रह इष्ट भाव में (पञ्चेष्ट)। ') : '') + (MODE === 'rk' ? '' : 'हर दिन के प्रत्येक लग्न में नक्षत्र, तिथि, वार, योग, भद्रा' + (e.rk ? ', राहुकाल' : '') + ' तथा लग्न-शुद्धि (अष्टम भाव, चंद्र स्थिति' + (e.h7 ? ', सप्तम भाव, लग्न में पाप ग्रह' : '') + ') की जाँच की गई है। ') + 'समय स्थानीय सूर्योदय-लग्न के अनुसार। विवाह, उपनयन जैसे कार्यों में अपनी जन्म राशि/नक्षत्र ऊपर भरें — चंद्र बल व तारा बल वाले दिन ही दिखेंगे।';
   }, 30);
 }
-$('sh').onclick = () => { const e = EV[E], tz = loc().tz; share(`📿 *${e.t} — शुभ मुहूर्त (${MN[M - 1]} ${Y})*\n` + (res.map(({ d, w }) => `\n🗓️ ${d.d} ${MN[M - 1]} ${N.VAAR[d.vaar]}\n` + w.map(s => `   ⏰ ${tStr(s.a, tz)}–${tStr(s.b, tz)} • ${N.SIGN[s.lg]} लग्न • ${N.NAK[s.nak]}`).join('\n')).join('') || 'इस माह शुद्ध मुहूर्त नहीं') + `\n\n📜 प्रमाण: ${e.pr[0]}`); };
+$('sh').onclick = () => { const e = EV[E], tz = loc().tz; share(`📿 *${e.t} — शुभ मुहूर्त (${MN[M - 1]} ${Y})*\n` + (res.map(({ d, w }) => `\n🔸 ${d.d} ${MN[M - 1]} ${N.VAAR[d.vaar]}\n` + w.map(s => `   ⏰ ${tStr(s.a, tz)}–${tStr(s.b, tz)} • ${N.SIGN[s.lg]} लग्न • ${N.NAK[s.nak]}`).join('\n')).join('') || 'इस माह शुद्ध मुहूर्त नहीं') + `\n\n📜 प्रमाण: ${e.pr[0]}`); };
 drawGroups(); info(); run();
 </script>
 </body>

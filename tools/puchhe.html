@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>पूछें — ज्योतिष सहायक | Astro Vikass</title>
+<title>सिद्धांत — पूछें | Astro Vikass</title>
 <meta name="theme-color" content="#6b1418">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
@@ -31,13 +31,14 @@
 .left{text-align:center;font-size:12px;color:var(--mut);margin-top:4px}</style>
 </head>
 <body>
-<header class="av-head"><div class="ic">🙏</div><h1>पूछें — ज्योतिष सहायक</h1><p>कुंडली, व्रत, मंत्र, वास्तु, उपाय — साइट के ज्ञान से उत्तर</p><span class="brand">ASTRO VIKASS</span></header>
+<header class="av-head"><div class="ic">🙏</div><h1>सिद्धांत — पूछें</h1><p>Astro Vikass के ज्योतिष सहायक — व्रत, मुहूर्त, पंचांग, कुंडली, मंत्र, उपाय — तुरंत उत्तर</p><span class="brand">ASTRO VIKASS</span></header>
 <main class="av-wrap">
 <div class="av-card">
   <div id="kbx"></div>
   <div class="sug" id="sug"></div>
-  <div class="chat" id="chat"><div class="msg b">🙏 नमस्ते! मैं Astro Vikass का सहायक हूँ। व्रत-त्योहार, आज का पंचांग, मंत्र, पूजा-हवन, वास्तु, लाल किताब उपाय, स्वप्न फल — या अपनी कुंडली के बारे में पूछें।
-<small class="meta">मैं केवल इस साइट में उपलब्ध जानकारी से उत्तर देता हूँ।</small></div></div>
+  <div class="chat" id="chat"><div class="msg b">🙏 नमस्ते! मैं <b>सिद्धांत</b> हूँ — Astro Vikass का ज्योतिष सहायक।
+व्रत-त्योहार की तिथि, मुहूर्त, पारण, पूजा विधि, सामग्री, कथा • आज का पंचांग • आपकी कुंडली (दोष, रत्न, दशा) • मंत्र, वास्तु, उपाय — कुछ भी पूछिए, हिंदी या Hinglish में।
+<small class="meta">उदाहरण: “karwa chauth ki puja vidhi”, “अगली एकादशी का पारण कब है?”</small></div></div>
   <div class="inp"><textarea id="q" rows="1" placeholder="अपना प्रश्न लिखें…"></textarea><button id="go">➤</button></div>
   <div class="left" id="left"></div>
 </div>
@@ -47,6 +48,7 @@
 <script src="lib/astro.js"></script>
 <script src="lib/ui.js"></script>
 <script src="lib/calendar.js"></script>
+<script src="lib/vratinfo.js"></script>
 <script>
 const { $, esc, store } = AVUI, A = AVAstro;
 const EXEC = 'https://script.google.com/macros/s/AKfycbwTrBGp5lijkmEOn1D81-Pz_k6ijV0Pnp06K9V8cYssdwG7EfTaBjrZcnMzexKM2cgPPQ/exec';
@@ -66,12 +68,20 @@ const ROM = { kundli: 'कुंडली', kundali: 'कुंडली', kundl
   ekadashi: 'एकादशी', vrat: 'व्रत', tyohar: 'त्योहार', tithi: 'तिथि', nakshatra: 'नक्षत्र', panchang: 'पंचांग', muhurat: 'मुहूर्त', rahukaal: 'राहुकाल', puja: 'पूजा', pooja: 'पूजा', havan: 'हवन', mantra: 'मंत्र', mantr: 'मंत्र',
   vastu: 'वास्तु', sapna: 'स्वप्न', sapne: 'स्वप्न', swapna: 'स्वप्न', sankalp: 'संकल्प', dhyan: 'ध्यान', lal: 'लाल', kitab: 'किताब', ank: 'अंक', gandmool: 'गंडमूल', gandmul: 'गंडमूल', mool: 'मूल', mul: 'मूल', garbh: 'गर्भ', garbhadhan: 'गर्भाधान', sanskar: 'संस्कार', pitra: 'पितृ', pitru: 'पितृ', rin: 'ऋण', janeu: 'जनेऊ', upanayan: 'उपनयन', mundan: 'मुंडन', griha: 'गृह', grah_pravesh: 'गृह', pravesh: 'प्रवेश', namkaran: 'नामकरण', annaprashan: 'अन्नप्राशन', sagai: 'सगाई', vahan: 'वाहन', gaadi: 'वाहन', ratn: 'रत्न', operation: 'ऑपरेशन', yatra: 'यात्रा', dukan: 'दुकान', vyapar: 'व्यापार', bhumi: 'भूमि', grahan: 'ग्रहण', amavasya: 'अमावस्या', isht: 'इष्ट', ishta: 'इष्ट', ist: 'इष्ट', devta: 'देवता', devata: 'देवता', dev: 'देवता', bhagwan: 'देवता', aradhya: 'इष्ट', pahane: 'पहनें', pahanu: 'पहनें', pahne: 'पहनें', pahnu: 'पहनें', angoothi: 'अंगूठी', anguthi: 'अंगूठी', ratti: 'रत्ती', gem: 'रत्न', gemstone: 'रत्न', nakshatr: 'नक्षत्र', mahadasa: 'महादशा', dasa: 'दशा', kaunsa: 'कौन', kaun: 'कौन', mera: 'मेरा', meri: 'मेरी', mere: 'मेरे', mujhe: 'मुझे' };
 const rom = w => ROM[w] || ROM[w.replace(/(on|o|ein|en|e|a|i)$/, '')] || (/^dosh/.test(w) ? 'दोष' : /^upa+y/.test(w) ? 'उपाय' : /^kund/.test(w) ? 'कुंडली' : w);
-const tok = s => (s.toLowerCase().match(/[ऀ-ॿ\w]+/g) || []).map(rom).filter(w => w.length > 1 && !STOP.has(w));
+const RSTOP = new Set('ji ka ke ki ko me mein main se par pe aur ya kab kaise kese kya kyu hai hain he h liye lie kare karen kre karna karne karu batao bataye bataiye btao mujhe mera meri mere hum hamara hota hoti hote the tha thi bhi to hi wala wali vala vali kuch koi please plz bta de do dijiye liya lia liye lena na nahi nhi nahin ho jaye jaaye jae aa gaya gayi gaye to kya kab sakte sakta sakti chahiye kaun kon konsa kaunsa jo wo vo ye is us ek'.split(' '));
+Object.assign(ROM, { nokri: 'नौकरी', naukari: 'नौकरी', nokari: 'नौकरी', job: 'नौकरी', vyapar: 'व्यापार', business: 'व्यापार', karz: 'कर्ज़', karj: 'कर्ज़', shadi: 'विवाह', vivah: 'विवाह', santan: 'संतान', hanumanji: 'हनुमान', bajrang: 'हनुमान', ganeshji: 'गणेश', lakshmi: 'लक्ष्मी', laxmi: 'लक्ष्मी', disha: 'दिशा', ghar: 'गृह', paise: 'धन', paisa: 'धन', paison: 'धन', rupaye: 'धन', chawal: 'चावल', chaval: 'चावल' });
+const tok = s => (s.toLowerCase().match(/[ऀ-ॿ\w]+/g) || []).filter(w => !RSTOP.has(w)).map(rom).filter(w => w.length > 1 && !STOP.has(w));
+const isLat = w => /^[a-z]+$/.test(w), stem = w => w.length > 3 ? w.slice(0, -1) : w;
+function hasW(txt, low, w, kk) {   // हिंदी शब्द: सीधा; रोमन शब्द: ध्वनि-ढाँचा (hanuman = हनुमान)
+  if (!isLat(w)) return low.includes(stem(w));
+  const ws = AVQ.sk(w); if (ws.length < 3) { const n2 = x => x.toLowerCase().replace(/aa/g, 'a').replace(/ee/g, 'i').replace(/oo/g, 'u').replace(/w/g, 'v'); return w.length >= 4 && n2(AVQ.rom(txt)).includes(n2(w)); }
+  const ts = kk ? (kk.sk || (kk.sk = AVQ.sk(txt))) : AVQ.sk(txt); return ts.includes(ws);
+}
 function retrieve(q, n = 8) {
   if (!KB) return [];
   const T = [...new Set(tok(q).flatMap(w => [w, SYN[w]].filter(Boolean)))]; if (!T.length) return [];
-  const df = {}; T.forEach(w => { const st = w.length > 3 ? w.slice(0, -1) : w; df[w] = KB.filter(k => k.l.includes(st)).length || 1; });
-  return KB.map(k => { let s = 0; T.forEach(w => { const st = w.length > 3 ? w.slice(0, -1) : w; if (k.l.includes(st)) s += Math.log(1 + KB.length / df[w]) * (k.l.slice(0, 80).includes(st) ? 2 : 1); }); return { k, s }; })
+  const df = {}; T.forEach(w => { df[w] = KB.filter(k => hasW(k.x, k.l, w, k)).length || 1; });
+  return KB.map(k => { let s = 0; T.forEach(w => { if (hasW(k.x, k.l, w, k)) s += Math.log(1 + KB.length / df[w]) * (hasW(k.x.slice(0, 80), k.l.slice(0, 80), w) ? 2 : 1); }); return { k, s }; })
     .filter(o => o.s > 0).sort((a, b) => b.s - a.s).filter((o, i, L) => o.s >= L[0].s * 0.35).slice(0, n);
 }
 /* ---------- आज का पंचांग (लाइव गणना) ---------- */
@@ -101,9 +111,9 @@ if (KD) {
   $('uk').onchange = () => useK = $('uk').checked;
 } else $('kbx').innerHTML = `<div class="kb">🪔 <div>अपनी कुंडली के बारे में पूछना है? पहले <a href="../kundli/?embed=1" style="color:#a8321e;font-weight:700">कुंडली बनाएं</a> — फिर यहाँ अपने आप जुड़ जाएगी।</div></div>`;
 const SUG = (KD ? ['मेरी कुंडली में कौन से योग हैं?', 'मेरी अभी कौन सी महादशा चल रही है?', 'मेरे लिए कौन सा उपाय करूँ?'] : [])
-  .concat(['आज की तिथि क्या है?', 'अगली एकादशी कब है?', 'आज राहु काल कब है?', 'पूजा घर किस दिशा में हो?', 'सपने में साँप देखना', 'हनुमान जी का ध्यान मंत्र', 'नौकरी के लिए उपाय']);
+  .concat(['आज का पंचांग', 'अगली एकादशी का पारण कब है?', 'करवा चौथ की पूजा विधि', 'दीपावली पूजन सामग्री', 'सत्यनारायण कथा', 'पूजा घर किस दिशा में हो?', 'सपने में साँप देखना', 'हनुमान जी का ध्यान मंत्र', 'नौकरी के लिए उपाय']);
 $('sug').innerHTML = SUG.map(s => `<span>${s}</span>`).join('');
-$('sug').onclick = e => { const s = e.target.closest('span'); if (s) { $('q').value = s.textContent; ask(); } };
+$('sug').onclick = e => { const s = e.target.closest('span'); if (s) ask(s.textContent); };
 /* ---------- चैट ---------- */
 const chat = $('chat');
 function add(cls, html) { const d = document.createElement('div'); d.className = 'msg ' + cls; d.innerHTML = html; chat.appendChild(d); d.scrollIntoView({ behavior: 'smooth', block: 'end' }); return d; }
@@ -136,38 +146,133 @@ function localAns(q) {
   if (has(/लग्न|राशि|नक्षत्र/) && !out.length) out.push(`<b>आपकी कुंडली:</b> ${S.lagna} लग्न • ${S.rashi} राशि • ${S.nak} नक्षत्र • ${S.maha} महादशा`);
   return out.length ? out.join('\n\n━━━━━━\n\n') : null;
 }
+/* ===================== सिद्धांत — तुरंत, सटीक उत्तर (बिना AI) ===================== */
+const VN = [
+  ['sharad', 'शरद पूर्णिमा|कोजागरी|sharad purnima|kojagari'], ['kartikpurnima', 'कार्तिक पूर्णिमा|देव दीपावली|kartik purnima|dev deepawali|dev diwali'], ['gurupurnima', 'गुरु पूर्णिमा|व्यास पूर्णिमा|guru purnima|vyas purnima'],
+  ['mshivratri', 'मासिक शिवरात्रि|masik shivratri|masik shivaratri'], ['mahashivratri', 'महाशिवरात्रि|महा शिवरात्रि|शिवरात्रि|mahashivratri|maha shivratri|shivratri|shivaratri|shiv ratri'],
+  ['devuthani', 'देवउठनी|देवोत्थान|प्रबोधिनी|तुलसी विवाह|dev uthani|devuthani|devutthan|tulsi vivah'], ['ekadashi', 'एकादशी|ग्यारस|ekadashi|ekadasi|gyaras'],
+  ['pradosh', 'प्रदोष|pradosh|pradosha'], ['sankashti', 'संकष्टी|sankashti|sankasthi'], ['sakat', 'सकट|तिलकुटा|sakat|tilkuta'], ['karva', 'करवा चौथ|करवाचौथ|karwa chauth|karva chauth|karwachauth|karwa chouth'],
+  ['ganeshchaturthi', 'गणेश चतुर्थी|गणेशोत्सव|ganesh chaturthi|ganeshotsav|ganesh utsav'], ['vinayak', 'विनायक चतुर्थी|vinayak chaturthi|vinayaki'],
+  ['janmashtami', 'जन्माष्टमी|janmashtami|janamashtami|krishna janmashtami'], ['ramnavami', 'राम नवमी|रामनवमी|ram navami|ramnavami'], ['hanuman', 'हनुमान जयंती|hanuman jayanti'],
+  ['akshaya', 'अक्षय तृतीया|आखा तीज|akshaya tritiya|akshay tritiya|akha teej'], ['vatsavitri', 'वट सावित्री|बरगदाही|vat savitri|bargadahi'], ['gangadashahara', 'गंगा दशहरा|ganga dussehra|ganga dashahara'],
+  ['nagpanchami', 'नाग पंचमी|nag panchami|naag panchami'], ['raksha', 'रक्षाबंधन|रक्षा बंधन|राखी|rakhi|raksha bandhan|rakshabandhan'], ['hariyalitej', 'हरियाली तीज|hariyali teej'], ['hartalika', 'हरतालिका|तीजा|hartalika|teeja'],
+  ['rishipanchami', 'ऋषि पंचमी|rishi panchami'], ['anant', 'अनंत चतुर्दशी|anant chaturdashi|anant chaudas'], ['jitiya', 'जितिया|जीवित्पुत्रिका|jitiya|jivitputrika'],
+  ['durgashtami', 'दुर्गा अष्टमी|दुर्गाष्टमी|महाअष्टमी|महानवमी|कन्या पूजन|durga ashtami|maha ashtami|mahanavami|kanya pujan|kanya puja'], ['navratri', 'नवरात्रि|नवरात्र|घटस्थापना|कलश स्थापना|navratri|navratra|ghatasthapana|kalash sthapana'],
+  ['dussehra', 'दशहरा|विजयादशमी|dussehra|dashahara|dasara|vijayadashami'], ['ahoi', 'अहोई|ahoi'], ['dhanteras', 'धनतेरस|dhanteras|dhantrayodashi'], ['narak', 'नरक चतुर्दशी|छोटी दिवाली|रूप चौदस|narak chaturdashi|choti diwali|roop chaudas'],
+  ['diwali', 'दीपावली|दिवाली|लक्ष्मी पूजा|लक्ष्मी पूजन|diwali|deepawali|dipawali|lakshmi puja|laxmi puja|lakshmi pujan'], ['govardhan', 'गोवर्धन|अन्नकूट|govardhan|annakut'], ['bhaidooj', 'भाई दूज|भैया दूज|भैयादूज|यम द्वितीया|bhai dooj|bhaiya dooj|bhaidooj|bhai dhooj'],
+  ['chhath', 'छठ|chhath|chhat|chath'], ['bhishma', 'भीष्म पंचक|bhishma panchak'], ['makar', 'मकर संक्रांति|खिचड़ी|makar sankranti|sankranti|khichdi'],
+  ['vasant', 'वसंत पंचमी|बसंत पंचमी|सरस्वती पूजा|basant panchami|vasant panchami|saraswati puja'], ['holika', 'होलिका दहन|होलिका|होली|holika dahan|holika|holi'],
+  ['purnima', 'पूर्णिमा|पूनम|सत्यनारायण|purnima|poornima|punam|satyanarayan|satyanarayan katha'], ['amavasya', 'अमावस्या|अमावस|श्राद्ध|तर्पण|पितृ पक्ष|amavasya|amavas|shraddh|shradh|tarpan|pitru paksh']];
+const nrm = s => ' ' + String(s).toLowerCase().replace(/[^ऀ-ॿa-z0-9]+/g, ' ').replace(/w/g, 'v').replace(/aa/g, 'a').replace(/ee/g, 'i').replace(/oo/g, 'u').replace(/([a-z])\1/g, '$1').replace(/z/g, 'j').replace(/ou/g, 'o').replace(/\s+/g, ' ').trim() + ' ';
+const VNS = VN.map(([id, a]) => [id, a.split('|').map(nrm)]);
+function vratOf(q) { const s = nrm(q); for (const [id, al] of VNS) if (al.some(x => s.includes(x))) return id; return null; }
+const ASP = [['faq', /मासिक धर्म|पीरियड|period|\bmc\b|माहवारी|सूतक|sutak|पातक|टूट|toot|tut gaya|गर्भवती|pregnant|प्रेग्नेंट|दवा|dawai|dawa|medicine|बीमार|bimar|दो दिन|2 din|do din/i],
+  ['paran', /पारण|खोल|paran|parana|khol/i], ['sam', /सामग्री|सामान|क्या.{0,12}चाहिए|samagri|saman|samaan|material|chahiye/i], ['katha', /कथा|कहानी|katha|kahani|story/i],
+  ['vidhi', /विधि|कैसे|पूजन|vidhi|kaise|kese|pujan|process|method|tarika|तरीका/i], ['mn', /मंत्र|mantra|mantr|जाप|jaap|jap\b/i], ['dan', /दान|daan|\bdan\b/i], ['ud', /उद्यापन|udyapan|udhyapan/i],
+  ['niyam', /नियम|खा|पी\b|पीना|niyam|rule|kha|khana|khaye|peena|food|bhojan|भोजन|फलाहार|falahar/i], ['m', /महत्व|क्यों|लाभ|फल\b|mahatva|mahatv|kyu|kyon|kyun|benefit|importance|fayda/i],
+  ['time', /मुहूर्त|समय|कब|टाइम|तारीख|तिथि|muhurat|mahurat|muhurt|samay|time|kab|date|tithi|चंद्रोदय|chand|chandrodaya|moon/i]];
+const MC = {};
+function monthC(y, m, L) { const k = y + '-' + m + '-' + L.lat; return MC[k] || (MC[k] = AVCal.month(y, m, L)); }
+function nextVrat(id, q, L) {
+  const n = new Date(); let y = n.getFullYear(), m = n.getMonth() + 1; const yq = (q.match(/\b(19|20|21)\d\d\b/) || [])[0];
+  let from = y * 1e4 + m * 100 + n.getDate(); if (yq && +yq !== y) { y = +yq; m = 1; from = y * 1e4 + 101; }
+  for (let i = 0; i < 14; i++) { const ds = monthC(y, m, L); for (const D0 of ds) { const k = D0.y * 1e4 + D0.m * 100 + D0.d; if (k >= from && (D0.events || []).some(e => AVVrat.idOf(e[1]) === id)) return { I: D0, nm: D0.events.find(e => AVVrat.idOf(e[1]) === id)[1] }; } m++; if (m > 12) { m = 1; y++; } }
+  return null;
+}
+const locP = () => { const L = AVPlaces.load() || { name: 'वाराणसी', lat: 25.31, lon: 83.01, tz: 5.5 }; return { name: L.name, lat: L.lat, lon: L.lon, tz: L.tz || 5.5 }; };
+function vratAns(q) {
+  const id = vratOf(q); if (!id) return null;
+  const L = locP(), hit = nextVrat(id, q, L), V = AVVrat.D[id];
+  const nm = hit ? hit.nm : VN.find(x => x[0] === id)[1].split('|')[0], X = AVVrat.text(id, hit && hit.I, L, nm);
+  const asp = ASP.filter(a => a[1].test(q)).map(a => a[0]);
+  const dt = hit ? `${hit.I.d} ${MN[hit.I.m - 1]} ${hit.I.y}, ${WD[hit.I.vaar]}` : '';
+  const head = `<b>🙏 ${esc(nm)}</b>${dt ? ` — <b>${dt}</b>` : ''}`;
+  const P = [];
+  { const al = VNS.find(x => x[0] === id)[1].join(' '), qt = tok(q).filter(w => !al.includes(nrm(w).trim()) && !/व्रत|पूजा/.test(w)), need = Math.max(1, Math.ceil(qt.length / 2));
+    const hit = X.faq.map(f => [f, qt.filter(w => hasW(f[0], f[0].toLowerCase(), w)).length]).filter(x => x[1] >= need).sort((a, b) => b[1] - a[1]);
+    if (hit.length) { P.push(`❓ <b>${hit[0][0][0]}</b>\n${hit[0][0][1]}`); if (!asp.length) asp.push('faq-done'); } }
+  if (asp.includes('faq')) { const f = X.faq.filter(x => ASP[0][1].test(x[0]) || ASP[0][1].test(x[1])); const qm = f.filter(x => [/मासिक|पीरियड|period|माहवारी|mc/i, /सूतक|sutak|पातक/i, /टूट|toot|tut/i, /गर्भवती|pregnant|बीमार|bimar|बुज़ुर्ग/i, /दवा|dawa|medicine/i, /दो दिन|2 din|do din/i].some(r => r.test(q) && r.test(x[0]))); (qm.length ? qm : f.slice(0, 2)).forEach(x => P.push(`❓ <b>${x[0]}</b>\n${x[1]}`)); }
+  if (asp.includes('time') || asp.includes('paran') || !asp.length) P.push('<b>⏰ समय व मुहूर्त</b> (' + esc(L.name) + ')\n' + (X.tm ? X.tm.split('\n').map(x => '• ' + x).join('\n') : 'अगले 13 महीनों में तिथि नहीं मिली'));
+  if (asp.includes('m') || !asp.length) P.push('<b>🌟 महत्व</b>\n' + X.m);
+  if (asp.includes('sam')) P.push('<b>🧺 पूजन सामग्री</b>\n' + X.sam.split(', ').map(x => '• ' + x).join('\n'));
+  if (asp.includes('vidhi') || !asp.length) P.push('<b>📿 पूजा विधि</b>\n' + X.vidhi);
+  if (asp.includes('katha')) P.push('<b>📖 व्रत कथा</b>\n' + X.katha);
+  if (asp.includes('niyam')) P.push('<b>🍃 नियम व खान-पान</b>\n• ' + X.niyam);
+  if (asp.includes('mn')) P.push('<b>🕉️ मंत्र</b>\n' + X.mn + '\n(कम से कम 108 बार)');
+  if (asp.includes('dan')) P.push('<b>🎁 दान</b>\n' + X.dan);
+  if (asp.includes('ud')) P.push('<b>🏁 उद्यापन</b>\n' + (X.ud === '—' ? 'इस व्रत में अलग उद्यापन की परंपरा नहीं — प्रतिवर्ष श्रद्धा से करें।' : X.ud));
+  const more = ['सामग्री', 'कथा', 'नियम', 'मंत्र', 'पारण', 'दान'].filter(k => !q.includes(k)).map(k => `<a href="#" data-ask="${esc(nm.split(' •')[0] + ' ' + k)}">${k}</a>`).join('');
+  return { h: head + '\n\n' + P.join('\n\n'), src: `<div class="src">${more}<a href="../tools/vratnirnay.html?v=${id}">📜 पूरा विवरण</a></div>` };
+}
+const CHO = ['उद्वेग', 'चल', 'लाभ', 'अमृत', 'काल', 'शुभ', 'रोग'], CGOOD = { 'अमृत': '✅', 'शुभ': '✅', 'लाभ': '✅', 'चल': '🟡', 'उद्वेग': '❌', 'रोग': '❌', 'काल': '❌' };
+function chogTxt(I) { const nd = monthC(I.m === 12 && I.d === 31 ? I.y + 1 : I.y, I.m, locP()); const dl = I.set - I.rise, nl = 24 - dl, sD = [0, 3, 6, 2, 5, 1, 4][I.vaar], sN = [5, 1, 4, 0, 3, 6, 2][I.vaar], hr = new Date().getHours() + new Date().getMinutes() / 60;
+  const row = (st, len, s0) => [...Array(8).keys()].map(i => { const a = st + i * len / 8, b = a + len / 8, n = CHO[(s0 + i) % 7]; return `${CGOOD[n]} ${n}: ${A.fmtH(a)}–${A.fmtH(b)}${hr >= a && hr < b ? ' ⬅ अभी' : ''}`; }).join('\n');
+  return `<b>☀️ दिन का चौघड़िया</b>\n${row(I.rise, dl, sD)}\n\n<b>🌙 रात्रि का चौघड़िया</b>\n${row(I.set, nl, sN)}`; }
+function todayAns(q) {
+  if (!/आज|अभी|कल\b|aaj|aj\b|abhi|today|kal\b|tomorrow/i.test(q)) return null;
+  if (!/तिथि|राहु|सूर्योदय|सूर्यास्त|नक्षत्र|पंचांग|चौघड़िया|योग|करण|चंद्र|राशि|मुहूर्त|अभिजित|भद्रा|पंचक|दिशा|tithi|rahu|sunrise|sunset|nakshatra|panchang|choghadiya|chaughadiya|yog|karan|chandra|rashi|muhurat|abhijit|bhadra|panchak|disha|vrat|व्रत|त्योहार|tyohar|festival/i.test(q)) return null;
+  const L = locP(), n = new Date(); if (/कल\b|kal\b|tomorrow/i.test(q)) n.setDate(n.getDate() + 1);
+  const y = n.getFullYear(), m = n.getMonth() + 1, d = n.getDate(), I = monthC(y, m, L)[d - 1], N = A.N, tz = L.tz;
+  const seg = (I.set - I.rise) / 8, rs = I.rise + (RAHU[I.vaar] - 1) * seg, dm = (I.set - I.rise) / 15, ab = I.rise + 7 * dm;
+  const te = A.nextChange(I.jdRise, A.tithiNo, .02), ne = A.nextChange(I.jdRise, A.nakNo, .02);
+  const ds = ['पश्चिम', 'पूर्व', 'उत्तर', 'उत्तर', 'दक्षिण', 'पश्चिम', 'पूर्व'][I.vaar];
+  const ev = (I.events || []).map(e => e[0] + ' ' + e[1]).join(', ');
+  return { h: `<b>🌞 ${d} ${MN[m - 1]} ${y}, ${WD[I.vaar]}</b> (${esc(L.name)})\n\n• तिथि: <b>${A.tithiName(I.tithi)}</b> — ${A.fmtJd(te, tz)} तक\n• नक्षत्र: <b>${N.NAK[A.nakNo(I.jdRise)]}</b> — ${A.fmtJd(ne, tz)} तक\n• मास: ${(I.adhik ? 'अधिक ' : '') + N.MAAS[I.maas]} (अमांत)\n• चंद्र राशि: ${N.SIGN[Math.floor(A.sunMoon(I.jdRise).moon / 30)]}\n• सूर्योदय ${A.fmtH(I.rise)} • सूर्यास्त ${A.fmtH(I.set)}\n• ✨ अभिजित्: ${I.vaar === 3 ? 'बुधवार — वर्जित' : A.fmtH(ab) + '–' + A.fmtH(ab + dm)}\n• ⛔ राहुकाल: ${A.fmtH(rs)}–${A.fmtH(rs + seg)}\n• 🚫 दिशा शूल: ${ds}` + (ev ? `\n\n🙏 <b>व्रत-त्योहार:</b> ${ev}` : ''),
+    src: '<div class="src"><a href="../tools/panchang.html">🌞 पूरा पंचांग, चौघड़िया, लग्न</a></div>', I, L };
+}
+/* ज्ञान भंडार से — केवल प्रश्न से मेल खाते वाक्य (सही उत्तर, ग़लत नहीं) */
+function kbAns(q) {
+  const R = retrieve(q, 6); if (!R.length) return null;
+  const T = [...new Set(tok(q).flatMap(w => [w, SYN[w]].filter(Boolean)))]; if (!T.length) return null;
+  const cover = o => T.filter(w => hasW(o.k.x, o.k.l, w, o.k)).length / T.length;
+  let G = R.filter(o => cover(o) >= (T.length >= 3 ? 0.6 : 0.99)); if (!G.length) return null;
+  G = G.filter((o, i) => i === 0 || (o.s >= G[0].s * 0.8 && cover(o) >= cover(G[0])));
+  const out = G.slice(0, 2).map(o => { const S = o.k.x.split(/(?<=[।॥?!])\s+|\n+/).filter(Boolean); const hitS = S.filter(s => T.some(w => hasW(s, s.toLowerCase(), w))); const pick = (hitS.length ? hitS : S).slice(0, 5).join(' ');
+    return `<b>📚 ${esc(o.k.t)}</b>\n${esc(pick.length > 700 ? pick.slice(0, 700) + '…' : pick)}`; });
+  return { h: out.join('\n\n'), src: srcHtml(G) };
+}
+
 const fmtA = t => t.replace(/\n/g, '<br>');
 let busy = false;
-async function ask() {
-  const q = $('q').value.trim(); if (!q || busy) return;
-  busy = true; $('go').disabled = true; $('q').value = '';
+const PERS = /मेरी|मेरा|मेरे|मुझे|मैं|हमारी|हमारा|meri|mera|mere|mujhe|main\b|hamari|hamara|my\b|mine|कुंडली|kundli|kundali|लग्न|lagna|दशा|dasha|रत्न|ratna|ratn|इष्ट|isht|दोष|dosh|मांगलिक|manglik/i;
+function done(w, a, cls) { if (cls) w.classList.add(cls); w.innerHTML = fmtA(a.h) + (a.src || ''); busy = false; $('go').disabled = false; }
+async function ask(qq) {
+  const q = (qq || $('q').value).trim(); if (!q || busy) return;
+  busy = true; $('go').disabled = true; $('q').value = ''; $('q').style.height = 'auto';
   add('u', esc(q)); const w = add('b', '<span class="dots"><i></i><i></i><i></i></span>');
-  await kbLoad().catch(() => { });
-  const LA = localAns(q);
-  if (LA) { w.innerHTML = fmtA(LA) + '<div class="src"><a href="../kundli/?embed=1">🪔 ' + esc(KD.n) + ' की कुंडली से गणना</a></div>'; busy = false; $('go').disabled = false; return; }
-  const R = retrieve(q), kq = useK && KD;   // "शामिल करें" ✓ हो तो कुंडली हमेशा साथ जाए (हिंदी/रोमन कोई भी भाषा)
-  let ctx = '';
-  const P = panchangCtx(); if (P) ctx += '### ' + P + '\n\n';
+  await new Promise(r => setTimeout(r, 30));
+  let a = null;
+  try {
+    a = vratAns(q);                                          // 1. व्रत-त्योहार (तिथि, मुहूर्त, विधि, कथा…)
+    if (!a) { a = todayAns(q); if (a && /चौघड़िया|choghadiya|chaughadiya|choghdiya/i.test(q)) a.h = chogTxt(a.I) + '\n\n' + a.h.split('\n').slice(0, 1).join(''); }   // 2. आज/कल का पंचांग
+    if (!a && !KD && /मेरी|मेरा|मेरे|मुझे|meri|mera|mere|mujhe/i.test(q) && /कुंडली|kundli|kundali|लग्न|lagna|दशा|dasha|रत्न|ratna|ratn|इष्ट|isht|दोष|dosh|मांगलिक|manglik/i.test(q)) a = { h: '🪔 आपकी व्यक्तिगत जानकारी (रत्न, दशा, दोष, इष्ट) के लिए पहले अपनी कुंडली बनाएं — फिर मैं उसी से सटीक उत्तर दूँगा।', src: '<div class="src"><a href="../kundli/?embed=1">🪔 कुंडली बनाएं</a></div>' };
+    if (!a && PERS.test(q)) { const LA = localAns(q); if (LA) a = { h: LA, src: '<div class="src"><a href="../kundli/?embed=1">🪔 ' + esc(KD.n) + ' की कुंडली से गणना</a></div>' }; }   // 3. अपनी कुंडली
+    if (!a) { await kbLoad().catch(() => { }); a = kbAns(q); } // 4. साइट का ज्ञान भंडार (सटीक मेल)
+  } catch (e) { a = null; }
+  if (a) return done(w, a);
+  // 5. AI (यदि चालू) — अधिकतम 12 सेकंड
+  w.innerHTML = '<span class="dots"><i></i><i></i><i></i></span> <small>सिद्धांत विचार कर रहे हैं…</small>';
+  const R = retrieve(q), kq = useK && KD && PERS.test(q);
+  let ctx = ''; const P = panchangCtx(); if (P) ctx += '### ' + P + '\n\n';
   if (kq) ctx += `### यजमान की कुंडली (${KD.n}, ${KD.d} ${KD.t}, ${KD.p || ''}):\n${kSel(q)}\n\n`;
   if (R.length) ctx += '### साइट का ज्ञान भंडार:\n' + R.map(o => `[${o.k.t}] ${o.k.x}`).join('\n\n');
   try {
-    const r = await fetch(EXEC, { method: 'POST', body: JSON.stringify({ act: 'ask', q, ctx, dev: DEV }) }).then(x => x.json());
+    const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 12000);
+    const r = await fetch(EXEC, { method: 'POST', body: JSON.stringify({ act: 'ask', q, ctx, dev: DEV }), signal: ac.signal }).then(x => x.json()); clearTimeout(tm);
     if (!r.ok) throw new Error(r.error || 'त्रुटि');
     w.innerHTML = esc(r.data.a).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/^\s*[\*\-] /gm, '• ') + (r.data.a.includes('उपलब्ध नहीं') ? '' : (kq ? '<div class="src"><a href="../kundli/?embed=1">🪔 आपकी कुंडली</a></div>' : srcHtml(R)));
     $('left').textContent = r.data.left >= 0 ? `आज ${r.data.left} प्रश्न और पूछ सकते हैं` : '';
   } catch (e) {
-    const m = String(e.message || e);
-    if (true) {   // AI में कोई भी दिक्कत ➜ बिना error, सीधे ज्ञान भंडार से
-      w.classList.add('sys');
-      w.innerHTML = R.length ? '📚 <b>साइट में मिली जानकारी:</b>\n\n' + R.slice(0, 3).map(o => `<b>${esc(o.k.t)}</b>\n${esc(o.k.x.length > 450 ? o.k.x.slice(0, 450) + '…' : o.k.x)}`).join('\n\n') + srcHtml(R) : esc(NOINFO);
-    } else { w.classList.add('sys'); w.innerHTML = esc(m); }
+    w.classList.add('sys');
+    w.innerHTML = esc(NOINFO) + '\n\n<small>प्रश्न ऐसे पूछें: “करवा चौथ की पूजा विधि”, “अगली एकादशी का पारण कब है”, “आज राहुकाल”, “मेरी कुंडली के दोष”, “पूजा घर किस दिशा में”</small>';
   }
   busy = false; $('go').disabled = false;
 }
-$('go').onclick = ask;
+$('go').onclick = () => ask();
+chat.addEventListener('click', e => { const a = e.target.closest('[data-ask]'); if (!a) return; e.preventDefault(); ask(a.dataset.ask); });
 $('q').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(); } });
 $('q').addEventListener('input', () => { $('q').style.height = 'auto'; $('q').style.height = Math.min(120, $('q').scrollHeight) + 'px'; });
-const pq = new URLSearchParams(location.search).get('q'); if (pq) { $('q').value = pq; setTimeout(ask, 300); }
+const pq = new URLSearchParams(location.search).get('q'); if (pq) { $('q').value = pq; setTimeout(() => ask(), 300); }
 </script>
 </body>
 </html>

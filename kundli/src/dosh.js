@@ -156,7 +156,7 @@ function doshSection(k, inp) {
   const D = doshAll(k, inp), has = l => l.filter(d => d.st === 'yes' || d.st === 'mild');
   const J = has(D.J), G = has(D.G), L = has(D.L), n = J.length + G.length + L.length;
   const badge = st => st === 'yes' ? '<span class="ds-b y">⚠️ दोष है</span>' : '<span class="ds-b m">🟡 आंशिक / शमित</span>';
-  const card = d => `<div class="ds-c ${d.st}"><div class="ds-h"><b>${d.n}</b>${badge(d.st)}</div><p><b>स्थिति:</b> ${d.how}</p>${d.f ? `<p>${d.f}</p>` : ''}${d.u ? `<p class="up"><b>उपाय / शान्ति:</b> ${d.u}</p>` : ''}${d.sh ? `<p class="dim">🗓️ ${d.sh}</p>` : ''}${d.pr ? `<p class="ds-pr">📜 ${d.pr.join(' • ')}</p>` : ''}</div>`;
+  const card = d => `<div class="ds-c ${d.st}"><div class="ds-h"><b>${d.n}</b>${badge(d.st)}</div><p><b>स्थिति:</b> ${d.how}</p>${d.f ? `<p>${d.f}</p>` : ''}${d.u ? `<p class="up"><b>उपाय / शान्ति:</b> ${d.u}</p>` : ''}${d.sh ? `<p class="dim">🔸 ${d.sh}</p>` : ''}${d.pr ? `<p class="ds-pr">📜 ${d.pr.join(' • ')}</p>` : ''}</div>`;
   const grp = (t, list) => list.length ? `<h4>${t}</h4><div class="ds-g">${list.map(card).join('')}</div>` : '';
   if (!n) return `<div class="ds-sum">✅ इस कुंडली में कोई प्रमुख दोष नहीं है।</div>`;
   return `<div class="ds-sum">इस कुंडली में <b>${n}</b> दोष ${G.concat(J, L).some(d => d.st === 'mild') ? '(कुछ आंशिक / शमित)' : ''}</div>`

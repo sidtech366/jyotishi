@@ -52,6 +52,7 @@
 .mnav2{display:flex;align-items:center;justify-content:space-between;gap:8px}.mnav2 b{color:var(--mar);font-size:16px}
 .tara{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}.tara span{background:#effaf3;border:1px solid #b5e3c6;color:#14532d;border-radius:999px;padding:2px 9px;font-size:12.5px}
 .tara span.x{background:#fff1ee;border-color:#f4c4b7;color:#7f1d1d}
+.pvr{border:1.5px solid #efd59a;border-radius:14px;margin:8px 0;padding:0 8px;background:#fffaf0}.pvr>summary{list-style:none;cursor:pointer;padding:10px 4px;font-size:16px;color:var(--mar);display:flex;justify-content:space-between}.pvr>summary::-webkit-details-marker{display:none}.pvr>summary:after{content:'▾';color:var(--saf)}.pvr[open]>summary:after{content:'▴'}
 .shbar{display:flex;gap:8px;margin:4px 0 14px}.shbar .btn{flex:1}</style>
 </head>
 <body>
@@ -59,11 +60,11 @@
 <main class="av-wrap">
 <div class="av-card pc-ctl">
   <div id="pl"></div>
-  <label class="l">📆 तारीख (किसी भी वर्ष की)</label>
+  <label class="l">🔸 तारीख (किसी भी वर्ष की)</label>
   <div class="dr"><button class="btn sm ghost" id="dP" aria-label="पिछला दिन">◀</button><input class="in" type="date" id="dt" min="1900-01-01" max="2200-12-31"><button class="btn sm ghost" id="dN" aria-label="अगला दिन">▶</button><button class="btn sm" id="dT">आज</button></div>
 </div>
 <nav class="pc-nav" id="nav">
-  <a href="#s-pan">पंचांग</a><a href="#s-mas">मास-संवत</a><a href="#s-shubh">शुभ समय</a><a href="#s-ashubh">अशुभ समय</a><a href="#s-vas">वास-शूल</a><a href="#s-bal">चंद्र-तारा बल</a><a href="#s-chog">चौघड़िया</a><a href="#s-hora">होरा</a><a href="#s-lagna">लग्न तालिका</a><a href="#s-graha">ग्रह-कुंडली</a><a href="#s-cal">मासिक</a>
+  <a href="#s-pan">पंचांग</a><a href="#s-vrat">व्रत-त्योहार</a><a href="#s-mas">मास-संवत</a><a href="#s-shubh">शुभ समय</a><a href="#s-ashubh">अशुभ समय</a><a href="#s-vas">वास-शूल</a><a href="#s-bal">चंद्र-तारा बल</a><a href="#s-chog">चौघड़िया</a><a href="#s-hora">होरा</a><a href="#s-lagna">लग्न तालिका</a><a href="#s-graha">ग्रह-कुंडली</a><a href="#s-cal">मासिक</a>
 </nav>
 <div id="out"><div class="av-card">गणना हो रही है…</div></div>
 </main>
@@ -72,6 +73,7 @@
 <script src="lib/astro.js"></script>
 <script src="lib/ui.js"></script>
 <script src="lib/calendar.js"></script>
+<script src="lib/vratinfo.js"></script>
 <script>
 const { $, esc, share } = AVUI, A = AVAstro, N = A.N;
 const MON = ['जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'];
@@ -253,6 +255,7 @@ function run() {
   /* ---- मासिक कैलेंडर ---- */
   if (!CM || CM.y !== y || CM.m !== m || CM.lat !== L.lat || CM.lon !== L.lon || CM.mode !== A.mode()) CM = { y, m, lat: L.lat, lon: L.lon, mode: A.mode(), days: AVCal.month(y, m, L) };
   const DD = CM.days[d - 1] || { events: [] }, ev = DD.events || [];
+  const vids = []; ev.forEach(x => { const id = AVVrat.idOf(x[1]); if (id && !vids.some(o => o.id === id)) vids.push({ id, n: x[1], ic: x[0] }); });
   const fd = new Date(y, m - 1, 1).getDay();
   let cal = ['रवि', 'सोम', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि'].map(x => `<div class="h">${x}</div>`).join('') + '<div class="c e"></div>'.repeat(fd);
   const today = new Date();
@@ -263,7 +266,7 @@ function run() {
   /* ---- रेंडर ---- */
   const kv = (k, v, c) => `<div class="kv${c ? ' ' + c : ''}"><span>${k}</span><div>${v}</div></div>`;
   const pmN = (pm === am ? adh : '') + N.MAAS[pm], amN = adh + N.MAAS[am];
-  const evs = ev.map(e => `<span>${e[0]} ${esc(e[1])}</span>`).join('');
+  const evs = ev.map(e => `<a href="#s-vrat" style="color:#fff;text-decoration:none"><span>${e[0]} ${esc(e[1])}</span></a>`).join('');
   $('out').innerHTML = `
   <div class="pc-hero">
     <div class="d1">${d} ${MON[m - 1]} ${y} • ${N.VAAR[V]}</div>
@@ -283,6 +286,10 @@ function run() {
     ${kv('पक्ष', `<b>${krish ? 'कृष्ण पक्ष' : 'शुक्ल पक्ष'}</b>`)}
     ${kv('चंद्र राशि', mSign.map((x, i) => `${i ? '<span class="nx">फिर </span>' : ''}<b>${N.SIGN_IC[x.v]} ${N.SIGN[x.v]}</b> ${x.e && x.e < jN ? '<small style="display:inline">— ' + T(x.e) + ' तक</small>' : ''}`).join('<br>'))}
     ${kv('सूर्य राशि', `<b>${N.SIGN_IC[ss]} ${N.SIGN[ss]}</b><small>सूर्य नक्षत्र: ${N.NAK[sunNak]} (चरण ${sunPada})</small>`)}
+  </div></section>
+
+  <section class="pc-sec" id="s-vrat"><h3>🙏 आज के व्रत-त्योहार <small>समय, पारण, विधि, कथा</small></h3><div class="pc-in" data-acc>
+    ${vids.length ? vids.map(x => `<details class="pvr"${vids.length === 1 ? ' open' : ''}><summary><b>${x.ic} ${esc(x.n)}</b></summary>${AVVrat.body(x.id, DD, { ...L, name: P.name }, x.n)}</details>`).join('') : '<div class="note" style="padding:8px 0">आज कोई प्रमुख व्रत-त्योहार नहीं। नीचे मासिक कैलेंडर से आने वाले व्रत देखें या <a href="vratnirnay.html">📜 व्रत निर्णय</a> खोलें।</div>'}
   </div></section>
 
   <section class="pc-sec" id="s-mas"><h3>🪔 मास • संवत • ऋतु</h3><div class="pc-in">
@@ -342,7 +349,7 @@ function run() {
     <div class="note">(व) / * = वक्री • भाव = लग्न से • ${A.mode() === 'rk' ? 'ऋषिकेश (सूर्य सिद्धान्त) पद्धति' : 'दृक् (आधुनिक) पद्धति'}</div>
   </div></section>
 
-  <section class="pc-sec" id="s-cal"><h3>📅 मासिक पंचांग</h3><div class="pc-in">
+  <section class="pc-sec" id="s-cal"><h3>🔸 मासिक पंचांग</h3><div class="pc-in">
     <div class="mnav2" style="margin-top:8px"><button class="btn sm ghost" id="mP">◀</button><b>${MON[m - 1]} ${y}</b><button class="btn sm ghost" id="mN">▶</button></div>
     <div class="cal" id="cal">${cal}</div>
     <div class="note">किसी तारीख पर दबाएँ — उस दिन का पूरा पंचांग खुलेगा • पीला = पूर्णिमा, बैंगनी = अमावस्या</div>
