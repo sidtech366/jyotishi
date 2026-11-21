@@ -38,7 +38,7 @@ const K = [
 let tab = 's', F = '';
 const T = { g: ['शुभ', 'g'], b: ['अशुभ', 'b'], m: ['मिश्रित', 'm'] };
 function draw() {
-  const q = $('q').value.trim(), L = (tab === 's' ? S : K).filter(x => (!F || x[1] === F) && (!q || x[0].includes(q) || x[2].includes(q)));
+  const q = $('q').value.trim(), L = (tab === 's' ? S : K).filter(x => (!F || x[1] === F) && (!q || AVQ(x[0] + ' ' + x[2], q)));
   $('out').innerHTML = (L.length ? L.map(x => `<div class="sw"><div class="t ${x[1]}">${T[x[1]][0]}</div><div><b>${x[0]}</b><br>${x[2]}</div></div>`).join('') : '<div class="empty">कुछ नहीं मिला — दूसरा शब्द लिखें</div>') + `<button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button>`;
   $('sh').onclick = () => share((tab === 's' ? '🌙 *स्वप्न फल*\n' : '🔮 *शकुन*\n') + L.slice(0, 12).map(x => `• ${x[0]} — ${T[x[1]][0]}: ${x[2]}`).join('\n'));
 }

@@ -349,7 +349,7 @@ $('q').oninput = () => drawList();
 const prHtml = p => p.q ? `<div class="pr"><q>${esc(p.q)}</q><small>— <b>${esc(p.s)}</b></small></div>` : `<div class="pr"><p>${esc(p.t)}</p><small>— <b>${esc(p.s)}</b></small></div>`;
 function drawList(openId) {
   const q = $('q').value.trim();
-  const L = V.filter(v => (F === 'all' || v.c === F) && (!q || (v.n + v.tithi + v.ni.join('')).includes(q)));
+  const L = V.filter(v => (F === 'all' || v.c === F) && (!q || AVQ(v.n + ' ' + v.tithi + ' ' + v.ni.join(' '), q)));
   $('list').innerHTML = L.length ? L.map(v => `<details class="vr" id="v_${v.id}"${openId === v.id ? ' open' : ''}><summary><span class="ic">${v.ic}</span><span class="t"><b>${v.n}</b><small>${v.tithi}</small></span>${DT[v.id] && DT[v.id][0] ? `<span class="d">${DT[v.id][0].I.d} ${MN[DT[v.id][0].I.m - 1]}</span>` : ''}</summary><div class="vb">
     <div class="kv"><span>तिथि</span><b>${v.tithi}</b><span>कर्मकाल</span><b>${v.kaal}</b></div>
     <div class="vh">🗓️ ${v.rep ? 'आने वाली तिथियाँ' : 'इस वर्ष की तिथि'}</div>${dateHtml(v)}

@@ -114,6 +114,10 @@ select.pnc-select:focus, input.pnc-input:focus { outline: 2px solid var(--pnc-go
 .pnc-card-time { font-size: 11px; color: var(--pnc-muted); margin-top: 4px; }
 .pnc-card.wide { grid-column: 1 / -1; }
 
+.pnc-month{background:linear-gradient(135deg,#7a1f12,#b5451b);color:#fff;border-radius:16px;padding:12px 14px;margin:10px 0;box-shadow:0 3px 10px #0002}
+.pnc-month .mm{font-size:20px;font-weight:800;line-height:1.3}.pnc-month .ms{font-size:13.5px;opacity:.92;margin-top:3px;line-height:1.5}
+.pnc-month .mg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:9px}.pnc-month .mg div{background:#ffffff22;border-radius:10px;padding:6px 7px;font-size:12px}.pnc-month .mg b{display:block;font-size:14px}
+.pnc-spec{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.pnc-spec>div{background:#fff;border:1.5px solid #ecd9b0;border-radius:12px;padding:8px 10px;font-size:13px}.pnc-spec b{display:block;color:#7a1f12;font-size:14.5px}.pnc-spec .g{border-color:#9bd5ae;background:#f0fbf3}.pnc-spec .x{border-color:#f2b8aa;background:#fff5f2}
 .pnc-section-title {
   font-size: 15px;
   color: var(--pnc-gold-soft);
@@ -206,6 +210,8 @@ body{padding:0}
       <div class="pnc-date-sub" id="pnc-r-place">—</div>
     </div>
 
+    <div class="pnc-month" id="pnc-month"></div>
+
     <div class="pnc-grid">
       <div class="pnc-card"><div class="pnc-card-label">सूर्योदय</div><div class="pnc-card-val" id="pnc-r-sunrise">—</div></div>
       <div class="pnc-card"><div class="pnc-card-label">सूर्यास्त</div><div class="pnc-card-val" id="pnc-r-sunset">—</div></div>
@@ -222,6 +228,9 @@ body{padding:0}
       <div class="pnc-card"><div class="pnc-card-label">सूर्य राशि</div><div class="pnc-card-val" id="pnc-r-sunsign">—</div></div>
       <div class="pnc-card"><div class="pnc-card-label">चंद्र राशि</div><div class="pnc-card-val" id="pnc-r-moonsign">—</div></div>
     </div>
+
+    <div class="pnc-section-title">विशेष योग • दिशा • वास</div>
+    <div class="pnc-spec" id="pnc-spec"></div>
 
     <div class="pnc-section-title">शुभ-अशुभ मुहूर्त</div>
     <div class="pnc-kaal-row">
@@ -552,6 +561,46 @@ window.pncCalculate = function(){
   document.getElementById('pnc-r-yama').textContent = yamaTxt;
   document.getElementById('pnc-r-gulika').textContent = gulikaTxt;
   document.getElementById('pnc-r-abhijit').textContent = abhijitTxt;
+
+  // ================= माह • संवत • ऋतु • विशेष योग =================
+  (function(){
+    var MAAS=['चैत्र','वैशाख','ज्येष्ठ','आषाढ़','श्रावण','भाद्रपद','आश्विन','कार्तिक','मार्गशीर्ष','पौष','माघ','फाल्गुन'];
+    var EN=['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
+    var RITU=['वसंत','ग्रीष्म','ग्रीष्म','वर्षा','वर्षा','शरद','शरद','हेमंत','हेमंत','शिशिर','शिशिर','वसंत'];
+    var lm = window.AVAstro && AVAstro.lunarMonth ? AVAstro.lunarMonth(jdSunrise) : null;
+    var am = lm ? lm.maas : (Math.floor(sunSid/30)+1)%12, krish = tithiNum>15;
+    var pm = krish ? (am+1)%12 : am;   // पूर्णिमांत (काशी/उत्तर भारत)
+    var adh = lm && lm.adhik ? 'अधिक ' : '';
+    // विक्रम संवत: चैत्र शुक्ल प्रतिपदा से बदलता है
+    var vs = (month <= 4 && am >= 9) ? year + 56 : year + 57;
+    var shaka = vs - 135;
+    var ss = Math.floor(sunSid/30), ritu = RITU[ss], ayana = [9,10,11,0,1,2].indexOf(ss)>=0 ? 'उत्तरायण' : 'दक्षिणायन';
+    var gola = (ss>=0 && ss<=5) ? 'उत्तर गोल' : 'दक्षिण गोल';
+    var mp = pm, mpN = (mp===am?adh:'') + MAAS[mp], amN = adh + MAAS[am];
+    document.getElementById('pnc-month').innerHTML = '<div class="mm">🪔 '+mpN+' मास • '+(krish?'कृष्ण':'शुक्ल')+' पक्ष • '+tithiName+'</div>'
+      + '<div class="ms">'+day+' '+EN[month-1]+' '+year+' ('+vaarName+') • अमांत गणना से: '+amN+' मास'+(mp!==am?' (पूर्णिमांत में '+MAAS[mp]+')':'')+'</div>'
+      + '<div class="mg"><div>विक्रम संवत<b>'+vs+'</b></div><div>शक संवत<b>'+shaka+'</b></div><div>सौर मास<b>'+RASHI_NAMES[ss]+'</b></div><div>ऋतु<b>'+ritu+'</b></div><div>अयन<b>'+ayana+'</b></div><div>गोल<b>'+gola+'</b></div></div>';
+    var n1 = nakNum+1, V = vaarIdx;
+    var SS = [[13,19,12,21,26,8,1],[22,4,5,8,17],[1,26,3,9],[4,17,13,3,5],[27,17,1,7,8],[27,17,1,7,22],[22,4,15]];
+    var AS = [13,5,1,17,8,27,4];
+    var yog = [];
+    if (SS[V].indexOf(n1)>=0) yog.push('✅ सर्वार्थसिद्धि योग');
+    if (AS[V]===n1) yog.push('🌟 अमृतसिद्धि योग');
+    if (n1===8 && V===4) yog.push('🌟 गुरु-पुष्य योग'); if (n1===8 && V===0) yog.push('🌟 रवि-पुष्य योग');
+    var disha = ['पश्चिम','पूर्व','उत्तर','उत्तर','दक्षिण','पश्चिम','पूर्व'][V];
+    var ms = Math.floor(moonSid/30), cvas = ['पूर्व','दक्षिण','पश्चिम','उत्तर'][ms%4];
+    var panchak = moonSid >= 296.6667 ; // धनिष्ठा उत्तरार्ध (कुंभ) से रेवती तक
+    var gand = [1,9,10,18,19,27].indexOf(n1)>=0;
+    var bhadra = /विष्टि|भद्रा/.test(karanaName);
+    var C = function(cls,t,v){ return '<div class="'+cls+'"><b>'+t+'</b>'+v+'</div>'; };
+    document.getElementById('pnc-spec').innerHTML =
+      C(yog.length?'g':'', 'शुभ योग', yog.length?yog.join('<br>'):'आज कोई विशेष योग नहीं')
+      + C('x', '🚫 दिशा शूल', disha+' दिशा की यात्रा टालें')
+      + C('', '🌙 चंद्र वास', cvas+' दिशा')
+      + C(panchak?'x':'g', '⭐ पंचक', panchak?'पंचक चल रहा है — लकड़ी/छत/दक्षिण यात्रा टालें':'पंचक नहीं')
+      + C(gand?'x':'g', '🔁 गंडमूल', gand?NAKSHATRA_NAMES[nakNum]+' — आज जन्मे बालक की मूल शांति करवाएँ':'गंडमूल नक्षत्र नहीं')
+      + C(bhadra?'x':'g', '⚠️ भद्रा', bhadra?'सूर्योदय पर भद्रा (विष्टि करण) — शुभ कार्य टालें':'सूर्योदय पर भद्रा नहीं');
+  })();
 
   document.getElementById('pnc-results').classList.add('show');
   pncMsg('');

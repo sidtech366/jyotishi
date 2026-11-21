@@ -66,6 +66,7 @@
 </div>
 <div class="av-card">
   <div class="mnav"><button id="pv">◀</button><b id="mt"></b><button id="nx">▶</button></div>
+  <div class="locrow" style="margin:6px 0 4px"><input class="in" type="month" id="ym" min="1900-01" max="2200-12" style="flex:1"><button class="btn sm" id="ymGo">📆 जाएँ</button><button class="btn sm ghost" id="ymT">आज</button></div><p class="note" style="margin:0 0 6px">किसी भी वर्ष (1900–2200) का मुहूर्त — महीना-साल चुनकर “जाएँ” दबाएँ</p>
   <div id="out" class="empty">गणना हो रही है…</div>
   <p class="note" id="foot"></p>
   <button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button>
@@ -275,7 +276,7 @@ function drawEvents(list) {
 }
 $('grp').onclick = e => { const c = e.target.closest('.chip'); if (!c) return; G = c.dataset.g; $('q').value = ''; drawGroups(); };
 $('ev').onclick = e => { const c = e.target.closest('.chip'); if (!c) return; E = c.dataset.k; G = EV[E].g; store.set('av_mu_ev', E); [...$('ev').children].forEach(x => x.classList.toggle('on', x === c)); [...$('grp').children].forEach(x => x.classList.toggle('on', x.dataset.g === G)); info(); run(); };
-$('q').oninput = () => { const q = $('q').value.trim(); if (!q) return drawGroups(); drawEvents(Object.keys(EV).filter(k => (EV[k].t + ' ' + EV[k].al).includes(q))); };
+$('q').oninput = () => { const q = $('q').value.trim(); if (!q) return drawGroups(); drawEvents(Object.keys(EV).filter(k => AVQ(EV[k].t + ' ' + EV[k].al + ' ' + k, q))); };
 const tName = t => (t <= 15 ? (t === 15 ? 'पूर्णिमा' : N.TITHI[t - 1]) : '');
 function info() {
   const e = EV[E];
@@ -314,6 +315,9 @@ function info() {
 }
 $('pv').onclick = () => { M--; if (M < 1) { M = 12; Y--; } run(); };
 $('nx').onclick = () => { M++; if (M > 12) { M = 1; Y++; } run(); };
+$('ymGo').onclick = () => { const v = $('ym').value; if (!/^\d{4}-\d{2}$/.test(v)) return; Y = +v.slice(0, 4); M = +v.slice(5); run(); };
+$('ym').onchange = () => $('ymGo').onclick();
+$('ymT').onclick = () => { const t = new Date(); Y = t.getFullYear(); M = t.getMonth() + 1; run(); };
 /* ===== गणना ===== */
 const isV = k => k >= 2 && k <= 57 && (k - 2) % 7 === 6;                     // विष्टि (भद्रा) करण
 const sep = (a, b) => Math.abs(((a - b + 540) % 360) - 180);
@@ -422,7 +426,7 @@ function scanDay(d, nextRise, e, L, ctx) {
 }
 function chaturmas(d) { return (d.maas === 3 && d.tithi > 11) || [4, 5, 6].includes(d.maas) || (d.maas === 7 && d.tithi < 11); }
 function run() {
-  $('mt').textContent = MN[M - 1] + ' ' + Y; const e = EV[E];
+  $('mt').textContent = MN[M - 1] + ' ' + Y; if ($('ym')) $('ym').value = Y + '-' + String(M).padStart(2, '0'); const e = EV[E];
   if (e.info) { $('out').className = ''; $('out').innerHTML = `<div class="info">${e.info}</div>`; res = []; return; }
   $('out').className = 'empty'; $('out').textContent = 'गणना हो रही है… (हर दिन का लग्न-दर-लग्न विचार)';
   setTimeout(() => {

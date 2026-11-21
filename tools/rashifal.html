@@ -20,10 +20,13 @@
 .day .dd{flex:0 0 76px;font-weight:700;color:var(--mar);font-size:14px}
 .day .dd small{display:block;color:var(--mut);font-weight:400}
 .pl{display:flex;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line)}
-.pl:last-child{border:0}.pl .pi{flex:0 0 28px;font-size:20px}</style>
+.pl:last-child{border:0}.pl .pi{flex:0 0 28px;font-size:20px}
+.rsec{border-top:1px dashed var(--line);padding:9px 0 4px}.rsec .rh{display:flex;justify-content:space-between;align-items:center;color:var(--mar)}.rsec p{margin:4px 0 0}
+.pn{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.pn>div{border-radius:12px;padding:8px 10px}.pn ul{margin:4px 0 0;padding-left:18px;font-size:14px}.pn li{margin:2px 0}
+.pn-g{background:#ecfdf3;border:1px solid #a7e3bf}.pn-b{background:#fff4f2;border:1px solid #f5c2b8}@media(max-width:480px){.pn{grid-template-columns:1fr}}</style>
 </head>
 <body>
-<header class="av-head"><div class="ic">♈</div><h1>राशिफल</h1><p>दैनिक • साप्ताहिक • मासिक • वार्षिक — वास्तविक ग्रह गोचर पर आधारित</p><span class="brand">ASTRO VIKASS</span></header>
+<header class="av-head"><div class="ic">♈</div><h1>राशिफल</h1><p>किसी भी तारीख का दैनिक • साप्ताहिक • मासिक • वार्षिक — प्रेम, करियर, धन, स्वास्थ्य सहित विस्तृत</p><span class="brand">ASTRO VIKASS</span></header>
 <main class="av-wrap">
 <div class="av-card">
   <h3>अपनी राशि चुनें</h3>
@@ -31,6 +34,8 @@
   <label class="l">राशि नहीं पता? नाम का पहला अक्षर / नाम लिखें</label>
   <div class="locrow"><input class="in" id="nm" placeholder="जैसे: राहुल, सीता"><button class="btn sm" id="nmGo">खोजें</button></div>
   <div class="note" id="nmRes"></div>
+  <label class="l">📆 तारीख चुनें (किसी भी दिन/साल का राशिफल)</label>
+  <div class="locrow"><button class="btn sm ghost" id="dPrev">◀</button><input class="in" type="date" id="dt" style="flex:1"><button class="btn sm ghost" id="dNext">▶</button><button class="btn sm" id="dToday">आज</button></div>
 </div>
 <div id="out"></div>
 </main>
@@ -51,7 +56,74 @@ const UPAY = { Mars: 'मंगलवार को हनुमान चाल�
 const COLOR = { Sun: 'नारंगी', Moon: 'सफेद', Mars: 'लाल', Mercury: 'हरा', Jupiter: 'पीला', Venus: 'गुलाबी/सफेद', Saturn: 'नीला', Rahu: 'धूसर', Ketu: 'चितकबरा' };
 const NUM = { Sun: 1, Moon: 2, Jupiter: 3, Rahu: 4, Mercury: 5, Venus: 6, Ketu: 7, Saturn: 8, Mars: 9 };
 const DAYLORD = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
-let R = store.get('av_rashi', null), tab = 'day';
+let R = store.get('av_rashi', null), tab = 'day', SEL = new Date();
+/* ===== विस्तृत दैनिक फल — चंद्र गोचर (राशि से भाव) के अनुसार ===== */
+const MX = [null,
+ { pos: ['आत्मविश्वास और ऊर्जा ऊँची रहेगी — रुके काम खुद आगे बढ़कर निपटाएँ', 'नई शुरुआत, इंटरव्यू या मुलाक़ात के लिए अच्छा दिन', 'लोग आपकी बात ध्यान से सुनेंगे'], neg: ['भावनाओं में बहकर तुरंत फैसला न लें', 'खुद को ज़्यादा थकाएँ नहीं'], love: 'जीवनसाथी/प्रिय से खुलकर बात होगी, रिश्ते में गर्माहट आएगी। अविवाहितों को अच्छा प्रस्ताव मिल सकता है।', career: 'काम में आपकी पहल सराही जाएगी। जो प्रोजेक्ट टल रहा था उसे आज शुरू करें।', money: 'आय सामान्य से बेहतर; खुद पर ख़र्च (कपड़े, सौंदर्य) होगा।', health: 'शरीर में स्फूर्ति रहेगी। पानी पर्याप्त पिएँ, सिर-दर्द से बचें।', family: 'घर में आपकी राय को महत्व मिलेगा, माहौल प्रसन्न।', travel: 'छोटी यात्रा सफल रहेगी।' },
+ { pos: ['परिवार और बचत पर ध्यान देने का अच्छा समय', 'मीठी वाणी से बिगड़ा काम बनेगा', 'पुराना पैसा या उधार वापस मिल सकता है'], neg: ['कड़वी बात से परिवार में मनमुटाव संभव', 'अनावश्यक ख़रीदारी से बचें, आँखों का ध्यान रखें'], love: 'प्रिय की भावनाएँ समझें; छोटी बात को तूल न दें। साथ भोजन करने से नज़दीकी बढ़ेगी।', career: 'काम धीमा पर स्थिर रहेगा। हिसाब-किताब, फ़ाइल और बैंक के काम निपटाएँ।', money: 'धन आएगा पर ख़र्च भी साथ में; बजट बनाकर चलें। निवेश सोच-समझकर।', health: 'गला, दाँत और आँखों का ध्यान रखें; तला-भुना कम खाएँ।', family: 'घर में मेहमान या परिवार के काम पर ख़र्च हो सकता है।', travel: 'आज यात्रा टालें तो बेहतर, ज़रूरी हो तो सामान सँभालकर रखें।' },
+ { pos: ['साहस और पराक्रम बढ़ेगा — कठिन काम आसानी से होंगे', 'भाई-बहन, मित्रों और पड़ोसियों से सहयोग', 'लेखन, मीडिया, मार्केटिंग और फ़ोन-संपर्क से लाभ'], neg: ['जल्दबाज़ी में काग़ज़ बिना पढ़े साइन न करें'], love: 'प्रेम संबंध में रोमांच और हँसी-मज़ाक रहेगा; छोटी सैर का प्लान बनाएँ।', career: 'मेहनत का पूरा फल मिलेगा; सेल्स, प्रतियोगिता और नई बातचीत के लिए बढ़िया।', money: 'छोटे-छोटे लाभ कई स्रोतों से; कमीशन या साइड-इनकम का योग।', health: 'ऊर्जा भरपूर; व्यायाम या योग शुरू करने का अच्छा दिन।', family: 'भाई-बहनों के साथ अच्छा समय, किसी शुभ समाचार की संभावना।', travel: 'छोटी यात्रा लाभदायक और मनोरंजक।' },
+ { pos: ['घर, माता और वाहन से जुड़े काम सफल', 'घर में सजावट या सुधार का मन बनेगा'], neg: ['मन थोड़ा बेचैन या भावुक रह सकता है', 'कार्यस्थल पर कुछ असहजता — धैर्य रखें', 'माता के स्वास्थ्य का ध्यान रखें'], love: 'घर का माहौल रिश्ते पर असर डालेगा; साथी को समय दें, शिकायतें नहीं।', career: 'ऑफ़िस में ज़्यादा जोखिम न लें; घर से जुड़े या प्रॉपर्टी के काम ठीक रहेंगे।', money: 'घर/वाहन पर ख़र्च का योग; उधार देने से बचें।', health: 'छाती, कफ़ और नींद का ध्यान रखें; रात को देर तक न जागें।', family: 'माता से आशीर्वाद लें, परिवार के साथ भोजन करें।', travel: 'लंबी यात्रा टालें; घर के आस-पास के काम करें।' },
+ { pos: ['बुद्धि तेज़ — पढ़ाई, परीक्षा और योजना बनाने के लिए उत्तम', 'संतान से सुख या शुभ समाचार', 'रचनात्मक काम, कला और मनोरंजन में सफलता'], neg: ['सट्टा, लॉटरी या जोखिम भरे निवेश से दूर रहें'], love: 'प्रेम संबंधों के लिए बहुत अच्छा दिन — प्रस्ताव, डेट या मनपसंद मुलाक़ात।', career: 'नई योजनाएँ और प्रस्ताव पसंद किए जाएँगे; सलाहकार और शिक्षक वर्ग को लाभ।', money: 'सोची-समझी योजना से लाभ; पुराने निवेश से अच्छे संकेत।', health: 'मन प्रसन्न, स्वास्थ्य अच्छा; पेट का ध्यान रखें।', family: 'बच्चों के साथ समय बिताएँ, उनकी किसी उपलब्धि से गर्व होगा।', travel: 'मनोरंजन या धार्मिक यात्रा सुखद।' },
+ { pos: ['शत्रु और प्रतिस्पर्धी पीछे हटेंगे', 'रुके हुए काम और कर्ज़ चुकाने में सफलता', 'मेहनत और सेवा-भाव से सम्मान'], neg: ['काम का बोझ ज़्यादा रहेगा, दिनचर्या बिगड़ने न दें'], love: 'रिश्ते में व्यावहारिकता रहेगी; छोटी मदद करके प्रेम जताएँ।', career: 'प्रतियोगी परीक्षा, कोर्ट-केस और नौकरी के लिए अच्छा दिन; विरोधी शांत रहेंगे।', money: 'लोन, उधार या पुराने भुगतान सुलझेंगे; ख़र्च पर नियंत्रण से बचत।', health: 'पुरानी बीमारी में सुधार; खान-पान नियमित रखें।', family: 'मामा पक्ष से सहयोग; घर के सहायकों से काम बनेगा।', travel: 'काम से जुड़ी यात्रा सफल।' },
+ { pos: ['साझेदारी, सौदे और मीटिंग में सफलता', 'जीवनसाथी से सहयोग और सुख', 'सामाजिक मेल-जोल से नए अवसर'], neg: ['दूसरों पर ज़रूरत से ज़्यादा निर्भर न रहें'], love: 'दांपत्य के लिए बहुत शुभ — साथ घूमने या भोजन का प्लान बनाएँ; विवाह-वार्ता आगे बढ़ेगी।', career: 'पार्टनरशिप, क्लाइंट डील और एग्रीमेंट के लिए उत्तम दिन।', money: 'व्यापार और साझेदारी से लाभ; जीवनसाथी के माध्यम से धन।', health: 'स्वास्थ्य ठीक; कमर और मूत्र संबंधी सावधानी।', family: 'रिश्तेदारों से मेल-मिलाप, शुभ आयोजन की बातचीत।', travel: 'साथी के साथ यात्रा आनंददायक।' },
+ { pos: ['गुप्त विद्या, शोध और आध्यात्मिक साधना में मन लगेगा', 'बीमा, पैतृक संपत्ति के काम में प्रगति'], neg: ['अचानक रुकावट या चिंता — बड़ा फैसला आज न लें', 'वाहन सावधानी से चलाएँ, विवादों से दूर रहें', 'भावनात्मक रूप से थकान महसूस हो सकती है'], love: 'ग़लतफ़हमी हो सकती है; शक न करें, शांति से बात करें।', career: 'काम में अड़चन — योजना गुप्त रखें, नया काम आज शुरू न करें।', money: 'अचानक ख़र्च का योग; उधार लेन-देन टालें।', health: 'संक्रमण, चोट और पेट से सावधान; आराम ज़रूरी।', family: 'ससुराल पक्ष की चिंता संभव; धैर्य रखें।', travel: 'अनावश्यक यात्रा टालें।' },
+ { pos: ['भाग्य साथ देगा — अटके काम बनेंगे', 'पूजा-पाठ, गुरु-दर्शन और धर्म-कर्म के लिए शुभ', 'उच्च शिक्षा, विदेश और पिता से लाभ'], neg: ['अति-आत्मविश्वास में वादे न करें'], love: 'रिश्ते में विश्वास और सम्मान बढ़ेगा; साथ में मंदिर जाना शुभ।', career: 'बड़े अधिकारियों और गुरुजनों से सहयोग; करियर में नई दिशा मिलेगी।', money: 'भाग्य से धन लाभ; दान-पुण्य से और वृद्धि।', health: 'स्वास्थ्य अच्छा; जाँघ और लिवर का ध्यान।', family: 'पिता और बड़ों का आशीर्वाद मिलेगा।', travel: 'तीर्थ या लंबी यात्रा सफल।' },
+ { pos: ['कर्मक्षेत्र में मान-सम्मान और पद-प्रतिष्ठा', 'सरकारी काम और अधिकारी वर्ग से लाभ', 'नेतृत्व क्षमता निखरेगी'], neg: ['काम के दबाव में परिवार को अनदेखा न करें'], love: 'व्यस्तता रहेगी, फिर भी साथी के लिए थोड़ा समय निकालें।', career: 'प्रमोशन, नई ज़िम्मेदारी या बड़ी डील का योग — पूरा ध्यान काम पर।', money: 'कर्म से धन; व्यापार में विस्तार की योजना सफल।', health: 'घुटनों और कमर का ध्यान; काम के बीच आराम लें।', family: 'पिता/बड़ों की सलाह उपयोगी रहेगी।', travel: 'काम से जुड़ी यात्रा फलदायी।' },
+ { pos: ['सर्वत्र लाभ — इच्छाएँ पूरी होंगी', 'मित्रों और बड़े भाई-बहनों से सहयोग', 'नए संपर्क और सामाजिक दायरा बढ़ेगा'], neg: ['लालच में आकर ग़लत सौदा न करें'], love: 'प्रेम में ख़ुशी और मनचाही बात पूरी होने का दिन; मित्र के ज़रिए नया रिश्ता।', career: 'टारगेट पूरे होंगे, बोनस/इंसेंटिव का योग; नेटवर्किंग से लाभ।', money: 'आय में वृद्धि, कई स्रोतों से लाभ — बचत भी करें।', health: 'स्वास्थ्य उत्तम; कान और पिंडलियों का ध्यान।', family: 'घर में ख़ुशख़बरी, मित्रों के साथ उत्सव।', travel: 'यात्रा से लाभ और नए संपर्क।' },
+ { pos: ['ध्यान, दान और सेवा से मन को शांति', 'विदेश या दूर स्थान से जुड़े काम में प्रगति'], neg: ['ख़र्च बढ़ेंगे — बजट से बाहर न जाएँ', 'नींद पूरी न होने से थकान', 'गुप्त शत्रुओं से सावधान रहें'], love: 'भावनाएँ गहरी रहेंगी पर अनकही; साथी को मन की बात बताएँ।', career: 'पर्दे के पीछे का काम करें; बड़ा निर्णय कल तक टालें।', money: 'अनचाहे ख़र्च, अस्पताल या यात्रा पर पैसा जा सकता है।', health: 'पैर, आँख और नींद का ध्यान; जल्दी सोएँ।', family: 'परिवार में किसी की सेवा करनी पड़ सकती है।', travel: 'दूर की यात्रा थकाऊ पर ज़रूरी हो तो सफल।' }];
+const PAREA = {   // ग्रह-गोचर से क्षेत्र-विशेष टिप्पणी
+  love: ['Venus', 'शुक्र', 'प्रेम-आकर्षण बढ़ाएगा', 'रिश्ते में ठंडापन ला सकता है — उपहार/तारीफ़ से माहौल सुधारें'],
+  career: ['Saturn', 'शनि', 'मेहनत का स्थायी फल दे रहा है', 'काम में देरी और दबाव दे रहा है — अनुशासन से चलें'],
+  money: ['Jupiter', 'गुरु', 'धन-वृद्धि में सहायक है', 'धन में सावधानी चाहता है — बड़े निवेश टालें'],
+  health: ['Mars', 'मंगल', 'ऊर्जा और रोग-प्रतिरोध बढ़ा रहा है', 'चोट, बुख़ार या गुस्से की ओर ले जा सकता है — संयम रखें'],
+  biz: ['Mercury', 'बुध', 'व्यापार, गणना और बातचीत में लाभ दे रहा है', 'काग़ज़ी काम में ग़लती करा सकता है — दो बार जाँचें']
+};
+const MANTRA = { Sun: 'ॐ घृणि सूर्याय नमः', Moon: 'ॐ सों सोमाय नमः', Mars: 'ॐ अं अंगारकाय नमः', Mercury: 'ॐ बुं बुधाय नमः', Jupiter: 'ॐ बृं बृहस्पतये नमः', Venus: 'ॐ शुं शुक्राय नमः', Saturn: 'ॐ शं शनैश्चराय नमः' };
+const DIR = ['पूर्व', 'दक्षिण', 'पश्चिम', 'उत्तर'];
+const KASHI = { lat: 25.3176, lon: 82.9739, tz: 5.5 };
+const RAHUK = [8, 2, 7, 5, 6, 4, 3];  // रवि..शनि — दिन के 8 भागों में राहुकाल का भाग
+const HSEQ = ['Sun', 'Venus', 'Mercury', 'Moon', 'Saturn', 'Jupiter', 'Mars'];
+const fmt = h => A.fmtH ? A.fmtH(h) : (Math.floor(h) + ':' + String(Math.round((h % 1) * 60)).padStart(2, '0'));
+function richDay(now, pos, R, lord) {
+  const y = now.getFullYear(), m = now.getMonth() + 1, d = now.getDate();
+  const I = A.dayInfo(y, m, d, KASHI), mh = house(signOf(pos.Moon)), X = MX[mh], dl = DAYLORD[now.getDay()];
+  const L = I.set - I.rise, part = L / 8, rk = I.rise + (RAHUK[now.getDay()] - 1) * part;
+  // राशि-स्वामी की होरा (दिन में)
+  let hs = HSEQ.indexOf(dl); const hl = [];
+  for (let i = 0; i < 12; i++) { const p = HSEQ[(hs + i) % 7]; if (p === lord) hl.push(fmt(I.rise + i * L / 12) + '–' + fmt(I.rise + (i + 1) * L / 12)); }
+  const mid = (I.rise + I.set) / 2, abh = fmt(mid - L / 30) + '–' + fmt(mid + L / 30);
+  const ar = k => { const [p, n, g, b] = PAREA[k], hh = house(signOf(pos[p])), ok = GOOD[p].includes(hh); return `<div class="note" style="margin-top:4px">${ok ? '✅' : '⚠️'} ${n} आपकी राशि से ${hh}वें भाव में — ${ok ? g : b}।</div>`; };
+  const sec = (ic, t, body, k, sc) => `<div class="rsec"><div class="rh"><b>${ic} ${t}</b>${sc != null ? `<span class="stars">${stars(sc)}</span>` : ''}</div><p>${body}</p>${k ? ar(k) : ''}</div>`;
+  const sc = k => scoreArea(pos, { love: [['Venus', 2], ['Moon', 2], ['Jupiter', 1]], career: [['Sun', 1], ['Saturn', 1], ['Mercury', 1], ['Moon', 2]], money: [['Jupiter', 1], ['Venus', 1], ['Mercury', 1], ['Moon', 2]], health: [['Sun', 1], ['Mars', 1], ['Saturn', 1], ['Moon', 2]] }[k]);
+  const tn = A.tithiName(I.tithi);
+  const vrat = [11, 26].includes(I.tithi) ? '🙏 आज एकादशी — व्रत/विष्णु पूजा से विशेष पुण्य। ' : I.tithi === 30 ? '🌑 आज अमावस्या — पितरों को जल, दीपदान करें। ' : I.tithi === 15 ? '🌕 आज पूर्णिमा — सत्यनारायण कथा/चंद्र अर्घ्य शुभ। ' : [4, 19].includes(I.tithi) ? '🐘 आज चतुर्थी — गणेश पूजा शुभ। ' : I.tithi === 13 || I.tithi === 28 ? '🔱 आज प्रदोष (त्रयोदशी) — संध्या में शिव पूजा शुभ। ' : '';
+  const avg = ['love', 'career', 'money', 'health'].reduce((a, k) => a + sc(k), 0) / 4;
+  const html = `<div class="note">${A.fmtDate(y, m, d)}, ${N.VAAR[now.getDay()]} • ${tn} • ${N.NAK[I.nak]} नक्षत्र • चंद्रमा ${N.SIGN[signOf(pos.Moon)]} राशि (आपसे ${mh}वें भाव) में</div>
+    <div class="box ${avg >= 3.4 ? 'good' : avg <= 2.6 ? 'bad' : 'mid'}" style="margin-top:10px"><small>दिन का सार</small><b>${avg >= 3.4 ? 'शुभ दिन ✨' : avg <= 2.6 ? 'संभलकर चलें — धैर्य रखें' : 'मिला-जुला दिन'}</b></div>
+    <p style="margin-top:10px;font-size:17px">${MOON[mh]}</p>
+    <div class="pn"><div class="pn-g"><b>👍 सकारात्मक पक्ष</b><ul>${X.pos.map(t => `<li>${t}</li>`).join('')}</ul></div><div class="pn-b"><b>👎 सावधानी (नकारात्मक)</b><ul>${X.neg.map(t => `<li>${t}</li>`).join('')}</ul></div></div>
+    ${sec('❤️', 'प्रेम व दांपत्य', X.love, 'love', sc('love'))}
+    ${sec('💼', 'करियर व नौकरी', X.career, 'career', sc('career'))}
+    ${sec('📈', 'व्यापार', X.career.split('।')[0] + '।', 'biz')}
+    ${sec('💰', 'धन', X.money, 'money', sc('money'))}
+    ${sec('🌿', 'स्वास्थ्य', X.health, 'health', sc('health'))}
+    ${sec('🏠', 'परिवार', X.family)}
+    ${sec('🚗', 'यात्रा', X.travel)}
+    <div class="grid2" style="margin-top:10px"><div class="box"><small>🎨 शुभ रंग</small><b>${COLOR[dl]}, ${COLOR[lord]}</b></div><div class="box"><small>🔢 शुभ अंक</small><b>${NUM[dl]}, ${NUM[lord] || ''}</b></div><div class="box"><small>🧭 शुभ दिशा</small><b>${DIR[R % 4]}</b></div><div class="box"><small>⏰ शुभ समय (अभिजित्)</small><b>${abh}</b></div></div>
+    <div class="grid2" style="margin-top:8px"><div class="box good"><small>✨ आपकी राशि-स्वामी (${N.P[lord]}) की होरा</small><b style="font-size:13.5px">${hl.join(', ') || '—'}</b></div><div class="box bad"><small>⛔ राहुकाल — नया काम न करें</small><b>${fmt(rk)}–${fmt(rk + part)}</b></div></div>
+    <div class="note" style="margin-top:4px">समय काशी (वाराणसी) सूर्योदय ${fmt(I.rise)} के अनुसार।</div>
+    <h4>🙏 आज का उपाय</h4><p>${vrat}${UPAY[lord]} ${mh === 8 || mh === 12 || mh === 4 ? 'चंद्रमा कमज़ोर है — शिवलिंग पर दूध-जल चढ़ाएँ, सफेद वस्तु दान करें।' : ''}</p>
+    <h4>📿 आज का मंत्र</h4><p><b>${MANTRA[lord] || ''}</b> — 108 बार जाप करें। दिन-स्वामी ${N.P[dl]}: <b>${MANTRA[dl]}</b></p>`;
+  const shareTxt = `${N.SIGN_IC[R]} *${N.SIGN[R]} राशि — राशिफल* (${A.fmtDate(y, m, d)}, ${N.VAAR[now.getDay()]})\n${MOON[mh]}\n\n👍 ${X.pos.join('; ')}\n👎 ${X.neg.join('; ')}\n❤️ प्रेम: ${X.love}\n💼 करियर: ${X.career}\n💰 धन: ${X.money}\n🌿 स्वास्थ्य: ${X.health}\n🎨 शुभ रंग: ${COLOR[dl]} • 🔢 अंक: ${NUM[dl]} • ⛔ राहुकाल: ${fmt(rk)}–${fmt(rk + part)}\n🙏 उपाय: ${UPAY[lord]}\n📿 मंत्र: ${MANTRA[lord] || ''}\n— Astro Vikass`;
+  return { html, shareTxt };
+}
+
+const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+$('dt').value = ymd(SEL);
+$('dt').onchange = () => { const v = $('dt').value; if (!v) return; const [y, m, d] = v.split('-').map(Number); SEL = new Date(y, m - 1, d, 12); render(); };
+$('dPrev').onclick = () => { SEL.setDate(SEL.getDate() - 1); $('dt').value = ymd(SEL); render(); };
+$('dNext').onclick = () => { SEL.setDate(SEL.getDate() + 1); $('dt').value = ymd(SEL); render(); };
+$('dToday').onclick = () => { SEL = new Date(); $('dt').value = ymd(SEL); render(); };
 $('rgrid').innerHTML = N.SIGN.map((s, i) => `<div class="rg" data-i="${i}"><span>${N.SIGN_IC[i]}</span><b>${s}</b></div>`).join('');
 $('rgrid').onclick = e => { const el = e.target.closest('.rg'); if (el) pick(+el.dataset.i); };
 $('nmGo').onclick = () => { const r = AVAkshar.fromName($('nm').value); if (!r) { $('nmRes').textContent = 'यह अक्षर नहीं मिला — कृपया राशि चुनें'; return; } $('nmRes').textContent = `“${r.s}” अक्षर — ${N.NAK[r.n]} नक्षत्र, चरण ${r.p + 1} → ${N.SIGN[r.sign]} राशि`; pick(r.sign); };
@@ -63,21 +135,13 @@ function scoreArea(pos, list) { let s = 0, w = 0; list.forEach(([p, wt]) => { s 
 function noonJd(dt) { return A.jdOf(dt.getFullYear(), dt.getMonth() + 1, dt.getDate(), 6.5); }
 function render() {
   if (R == null) { $('out').innerHTML = ''; return; }
-  const now = new Date(), pos = A.planets(noonJd(now)), lord = N.LORD[R];
-  const head = `<div class="tabs" id="tabs">${[['day', 'आज'], ['week', 'साप्ताहिक'], ['month', 'मासिक'], ['year', 'वार्षिक']].map(([k, t]) => `<button data-k="${k}" class="${tab === k ? 'on' : ''}">${t}</button>`).join('')}</div>`;
+  const now = SEL, isToday = now.toDateString() === new Date().toDateString(), pos = A.planets(noonJd(now)), lord = N.LORD[R];
+  const head = `<div class="tabs" id="tabs">${[['day', isToday ? 'आज' : 'दिन'], ['week', 'साप्ताहिक'], ['month', 'मासिक'], ['year', 'वार्षिक']].map(([k, t]) => `<button data-k="${k}" class="${tab === k ? 'on' : ''}">${t}</button>`).join('')}</div>`;
   let h = '';
   if (tab === 'day') {
-    const mh = house(signOf(pos.Moon)), dl = DAYLORD[now.getDay()];
-    const areas = [['💼 करियर', [['Sun', 1], ['Saturn', 1], ['Mercury', 1], ['Moon', 2]]], ['💰 धन', [['Jupiter', 1], ['Venus', 1], ['Mercury', 1], ['Moon', 2]]], ['❤️ प्रेम-परिवार', [['Venus', 2], ['Moon', 2], ['Jupiter', 1]]], ['🌿 स्वास्थ्य', [['Sun', 1], ['Mars', 1], ['Saturn', 1], ['Moon', 2]]]];
-    const sc = areas.map(([t, l]) => [t, scoreArea(pos, l)]), avg = sc.reduce((a, b) => a + b[1], 0) / 4;
-    h = `<div class="av-card"><h3>${N.SIGN_IC[R]} ${N.SIGN[R]} — आज का राशिफल</h3><div class="note">${A.fmtDate(now.getFullYear(), now.getMonth() + 1, now.getDate())}, ${N.VAAR[now.getDay()]} • चंद्रमा ${N.SIGN[signOf(pos.Moon)]} राशि (${mh}वें भाव) में</div>
-      <p style="margin-top:10px;font-size:17px">${MOON[mh]}</p>
-      <div class="areas">${sc.map(([t, v]) => `<div class="box ar"><small><span>${t}</span><span class="stars">${stars(v)}</span></small></div>`).join('')}</div>
-      <div class="grid2" style="margin-top:10px"><div class="box"><small>आज का शुभ रंग</small><b>${COLOR[dl]}</b></div><div class="box"><small>शुभ अंक</small><b>${NUM[dl]}, ${NUM[lord] || ''}</b></div></div>
-      <div class="box ${avg >= 3.4 ? 'good' : avg <= 2.6 ? 'bad' : 'mid'}" style="margin-top:10px"><small>कुल मिलाकर</small><b>${avg >= 3.4 ? 'शुभ दिन ✨' : avg <= 2.6 ? 'संभलकर चलें — धैर्य रखें' : 'सामान्य दिन'}</b></div>
-      <h4>🙏 आज का उपाय</h4><p>${UPAY[lord]}</p>
-      <button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button></div>`;
-    window._share = `${N.SIGN_IC[R]} *${N.SIGN[R]} राशि — आज का राशिफल* (${A.fmtDate(now.getFullYear(), now.getMonth() + 1, now.getDate())})\n${MOON[mh]}\n${sc.map(([t, v]) => t + ' ' + '⭐'.repeat(Math.max(1, Math.min(5, Math.round(v))))).join('\n')}\n🎨 शुभ रंग: ${COLOR[dl]}\n🙏 उपाय: ${UPAY[lord]}`;
+    const r = richDay(now, pos, R, lord);
+    h = `<div class="av-card"><h3>${N.SIGN_IC[R]} ${N.SIGN[R]} — ${isToday ? 'आज का' : 'दैनिक'} राशिफल</h3>${r.html}<button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button></div>`;
+    window._share = r.shareTxt;
   } else if (tab === 'week') {
     let rows = '', best = [];
     for (let i = 0; i < 7; i++) {

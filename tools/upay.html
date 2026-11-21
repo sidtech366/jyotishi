@@ -52,7 +52,7 @@ function block(u) { return `<div class="av-card"><h3>${u[0]} ${u[1]}</h3>${u[2].
 function draw() {
   const q = $('q').value.trim();
   [...$('cats').children].forEach((b, i) => b.classList.toggle('on', !q && i === C));
-  const list = q ? U.filter(u => u[1].includes(q) || u[2].some(t => t.includes(q))) : [U[C]];
+  const list = q ? U.filter(u => AVQ(u[1] + ' ' + u[2].join(' '), q)) : [U[C]];
   $('out').innerHTML = list.map(block).join('') || '<div class="av-card empty">कुछ नहीं मिला</div>';
 }
 $('out').onclick = e => { const b = e.target.closest('[data-s]'); if (b) { const u = U[+b.dataset.s]; share(`📕 *लाल किताब उपाय — ${u[1]}*\n` + u[2].map((t, k) => `${k + 1}. ${t}`).join('\n')); } };

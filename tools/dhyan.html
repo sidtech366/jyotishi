@@ -68,7 +68,7 @@ function list() {
   const q = $('q').value.trim();
   let no = 0, h = '';
   D.forEach(s => {
-    const items = s[2].map(d => ({ d, no: ++no })).filter(({ d }) => !q || (d[1] + d[3].map(m => m.l + m.t).join(' ')).includes(q));
+    const items = s[2].map(d => ({ d, no: ++no })).filter(({ d }) => !q || AVQ(d[1] + ' ' + d[3].map(m => m.l + ' ' + m.t).join(' '), q));
     if (!items.length) return;
     h += `<div class="sech">${s[1]}</div><div class="grid">` + items.map(({ d, no }) => `<div class="dc" data-id="${d[0]}"><span class="no">${no}</span><i>${d[2]}</i><b>${esc(d[1])}</b><small>${cnt({ m: d[3] }) ? cnt({ m: d[3] }) + ' मंत्र' : 'पाठ भेजें'}</small></div>`).join('') + '</div>';
   });

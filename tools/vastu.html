@@ -254,7 +254,7 @@ const Z = [
 ];
 function dlist() {
   const q = $('dq').value.trim();
-  const L = Z.filter(z => !q || (z[0] + z[1] + z[2]).includes(q));
+  const L = Z.filter(z => !q || AVQ(z[0] + ' ' + z[1] + ' ' + z[2], q));
   $('dlist').innerHTML = L.length ? L.map((z, i) => `<details class="dz"${!q && i === 0 ? ' open' : ''}><summary>${Z.indexOf(z) + 1}. ${z[0]}</summary><div class="in2"><p><span class="pill p-bad">प्रभाव</span>${z[1]}</p><p><span class="pill p-good">उपाय</span>${z[2]}</p></div></details>`).join('') : '<div class="empty">कुछ नहीं मिला</div>';
 }
 $('dq').oninput = dlist; dlist();

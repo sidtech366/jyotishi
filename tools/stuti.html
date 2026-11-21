@@ -326,7 +326,7 @@ const setFs = v => { fs = Math.max(.8, Math.min(1.8, Math.round(v * 10) / 10)); 
 setFs(fs); $('fm').onclick = () => setFs(fs - .1); $('fp').onclick = () => setFs(fs + .1);
 function render() {
   const q = $('q').value.trim();
-  const list = D[tab].filter(x => !q || x[0].includes(q) || x[1].includes(q));
+  const list = D[tab].filter(x => !q || AVQ(x[0] + ' ' + x[1], q));
   $('out').innerHTML = list.map((x, i) => `<details class="acc" ${list.length === 1 || i === 0 ? 'open' : ''}><summary>${x[0]} <small style="color:var(--mut);font-weight:500">• ${x[1]}</small></summary><div class="ab">${tab === 'naam' ? `<div class="nam">${x[2].split(',').map((n, k) => `<span>${k + 1}. ${n}</span>`).join('')}</div>` : `<div class="verse">${x[2]}</div>`}<button class="btn sm ln cp" data-i="${D[tab].indexOf(x)}">📋 कॉपी करें</button></div></details>`).join('') || '<div class="empty">कुछ नहीं मिला</div>';
 }
 $('out').onclick = e => { const b = e.target.closest('.cp'); if (!b) return; const x = D[tab][+b.dataset.i], t = x[0] + '\n\n' + (tab === 'naam' ? x[2].split(',').join('\n') : x[2]); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast('✓ कॉपी हो गया')).catch(() => toast('कॉपी नहीं हो सका')); };
