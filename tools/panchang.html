@@ -3,631 +3,358 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>पूर्ण पंचांग गणक | Astro Vikass</title>
+<title>पंचांग एवं चौघड़िया | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-#pnc-root {
-  --pnc-bg: #1a0a0f;
-  --pnc-bg2: #240d13;
-  --pnc-gold: #d4af37;
-  --pnc-gold-soft: #e8c766;
-  --pnc-cream: #f3e6c8;
-  --pnc-muted: #b89a7a;
-  --pnc-crimson: #7a1128;
-  --pnc-crimson-br: #9e1b34;
-  --pnc-good: #2f7d4f;
-  --pnc-good-bg: #12291d;
-  --pnc-bad: #a63a3a;
-  --pnc-bad-bg: #2c1414;
-  --pnc-neutral: #b8860b;
-  --pnc-neutral-bg: #2a2011;
-  font-family: 'Tiro Devanagari Hindi', 'Noto Sans Devanagari', serif;
-  max-width: 760px;
-  margin: 0 auto;
-  color: var(--pnc-cream);
-  background: radial-gradient(ellipse at top, var(--pnc-bg2) 0%, var(--pnc-bg) 65%);
-  border: 1px solid #4a2530;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 0 40px rgba(0,0,0,0.5), inset 0 0 60px rgba(122,17,40,0.08);
-}
-#pnc-root * { box-sizing: border-box; }
-
-.pnc-head {
-  padding: 26px 22px 20px;
-  text-align: center;
-  background: radial-gradient(circle at 50% -20%, rgba(212,175,55,0.18), transparent 60%), linear-gradient(180deg, #350c15, #1a0a0f);
-  border-bottom: 1px solid #4a2530;
-}
-.pnc-om { font-size: 24px; color: var(--pnc-gold); opacity: 0.85; letter-spacing: 5px; margin-bottom: 6px; }
-.pnc-title { font-size: 25px; color: var(--pnc-gold-soft); font-weight: 700; text-shadow: 0 0 18px rgba(212,175,55,0.35); margin: 0; }
-.pnc-sub { font-size: 13px; color: var(--pnc-muted); margin-top: 6px; }
-.pnc-brand { font-size: 11px; color: var(--pnc-muted); margin-top: 10px; opacity: 0.75; letter-spacing: 1px; }
-
-.pnc-body { padding: 20px 20px 24px; }
-
-.pnc-field { margin-bottom: 15px; }
-.pnc-label { display: block; font-size: 14px; color: var(--pnc-gold-soft); margin-bottom: 7px; }
-.pnc-row { display: flex; gap: 10px; }
-.pnc-row > div { flex: 1; }
-
-select.pnc-select, input.pnc-input {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #5a2a35;
-  background: #260d14;
-  color: var(--pnc-cream);
-  font-size: 15px;
-  font-family: inherit;
-}
-select.pnc-select {
-  background: #260d14 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>") no-repeat right 12px center;
-  appearance: none; -webkit-appearance: none;
-}
-select.pnc-select:focus, input.pnc-input:focus { outline: 2px solid var(--pnc-gold); outline-offset: 1px; }
-
-.pnc-custom-loc { display: none; margin-top: 10px; }
-.pnc-custom-loc.show { display: block; }
-
-.pnc-btn {
-  width: 100%;
-  padding: 13px;
-  margin-top: 8px;
-  border: none;
-  border-radius: 9px;
-  background: linear-gradient(135deg, var(--pnc-crimson-br), var(--pnc-crimson));
-  color: var(--pnc-gold-soft);
-  font-size: 16.5px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(122,17,40,0.5);
-}
-.pnc-btn:active { transform: translateY(1px); }
-
-.pnc-results { display: none; margin-top: 22px; }
-.pnc-results.show { display: block; animation: pnc-fade 0.4s ease; }
-@keyframes pnc-fade { from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
-
-.pnc-date-strip {
-  text-align: center;
-  padding: 12px;
-  border-radius: 10px;
-  background: linear-gradient(180deg, rgba(212,175,55,0.1), transparent);
-  border: 1px solid #4a2530;
-  margin-bottom: 16px;
-}
-.pnc-date-main { font-size: 18px; color: var(--pnc-gold-soft); font-weight: 700; }
-.pnc-date-sub { font-size: 12.5px; color: var(--pnc-muted); margin-top: 3px; }
-
-.pnc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-.pnc-card {
-  border: 1px solid #5a2a35;
-  border-radius: 10px;
-  padding: 12px 13px;
-  background: #200a10;
-}
-.pnc-card-label { font-size: 11.5px; color: var(--pnc-muted); margin-bottom: 4px; letter-spacing: 0.3px; }
-.pnc-card-val { font-size: 15.5px; color: var(--pnc-gold-soft); font-weight: 700; }
-.pnc-card-extra { font-size: 12px; color: var(--pnc-cream); margin-top: 3px; opacity: 0.85; }
-.pnc-card-time { font-size: 11px; color: var(--pnc-muted); margin-top: 4px; }
-.pnc-card.wide { grid-column: 1 / -1; }
-
-.pnc-month{background:linear-gradient(135deg,#7a1f12,#b5451b);color:#fff;border-radius:16px;padding:12px 14px;margin:10px 0;box-shadow:0 3px 10px #0002}
-.pnc-month .mm{font-size:20px;font-weight:800;line-height:1.3}.pnc-month .ms{font-size:13.5px;opacity:.92;margin-top:3px;line-height:1.5}
-.pnc-month .mg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:9px}.pnc-month .mg div{background:#ffffff22;border-radius:10px;padding:6px 7px;font-size:12px}.pnc-month .mg b{display:block;font-size:14px}
-.pnc-spec{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.pnc-spec>div{background:#fff;border:1.5px solid #ecd9b0;border-radius:12px;padding:8px 10px;font-size:13px}.pnc-spec b{display:block;color:#7a1f12;font-size:14.5px}.pnc-spec .g{border-color:#9bd5ae;background:#f0fbf3}.pnc-spec .x{border-color:#f2b8aa;background:#fff5f2}
-.pnc-section-title {
-  font-size: 15px;
-  color: var(--pnc-gold-soft);
-  margin: 18px 0 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px dashed #4a2530;
-}
-
-.pnc-kaal-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-.pnc-kaal-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 13px; border-radius: 8px; border: 1px solid #5a2a35; background: #200a10;
-}
-.pnc-kaal-name { font-size: 14px; color: var(--pnc-cream); }
-.pnc-kaal-time { font-size: 14px; color: var(--pnc-gold-soft); font-weight: 700; }
-.pnc-kaal-item.good { border-color: var(--pnc-good); }
-.pnc-kaal-item.good .pnc-kaal-time { color: #6fd696; }
-
-.pnc-chog-wrap { margin-bottom: 10px; }
-.pnc-chog-label { font-size: 13px; color: var(--pnc-muted); margin: 10px 0 6px; }
-.pnc-chog-table { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-.pnc-chog-slot {
-  padding: 7px 5px; border-radius: 6px; text-align: center; font-size: 11.5px;
-  border: 1px solid #5a2a35;
-}
-.pnc-chog-slot .nm { font-weight: 700; font-size: 12px; }
-.pnc-chog-slot .tm { color: var(--pnc-muted); font-size: 10px; margin-top: 2px; }
-.pnc-chog-good { background: var(--pnc-good-bg); border-color: var(--pnc-good); color: #6fd696; }
-.pnc-chog-bad { background: var(--pnc-bad-bg); border-color: var(--pnc-bad); color: #ef8b8b; }
-.pnc-chog-neutral { background: var(--pnc-neutral-bg); border-color: var(--pnc-neutral); color: #e8c766; }
-
-.pnc-note { margin-top: 14px; font-size: 11.5px; color: var(--pnc-muted); line-height: 1.6; text-align: center; }
-
-.pnc-foot { text-align: center; padding: 14px; font-size: 11.5px; color: var(--pnc-muted); border-top: 1px solid #4a2530; background: #1a0a0f; }
-
-@media (max-width: 480px) {
-  .pnc-title { font-size: 20px; }
-  .pnc-grid { grid-template-columns: 1fr 1fr; }
-  .pnc-chog-table { grid-template-columns: repeat(2, 1fr); }
-}
-
-html,body{margin:0;background:#1a0a0f;min-height:100%}
-body{padding:0}
-#pnc-root{border-radius:0;border:0;max-width:760px;min-height:100vh;box-shadow:none}
-.pnc-locrow,.pnc-daterow{display:flex;gap:8px;align-items:stretch}
-.pnc-locrow .avp-wrap{flex:1}
-.pnc-gps,.pnc-nav{flex:0 0 46px;border-radius:8px;border:1px solid #5a2a35;background:#2a1015;color:#e8c766;font-size:18px;cursor:pointer}
-.pnc-today{margin-top:8px;padding:6px 16px;border-radius:999px;border:1px solid #d4af37;background:transparent;color:#e8c766;font-family:inherit;font-size:13.5px;cursor:pointer}
-.pnc-loc-note{font-size:12.5px;color:#6fd696;margin-top:6px;min-height:16px}
-.pnc-msg{display:none;margin:4px 0 10px;padding:9px 12px;border-radius:8px;background:#2a2011;border:1px solid #b8860b;color:#e8c766;font-size:14px}
-.pnc-share{width:100%;margin-top:14px;padding:12px;border:0;border-radius:9px;background:#1f8f50;color:#fff;font-family:inherit;font-size:15.5px;font-weight:700;cursor:pointer}
-.pnc-chog-slot.pnc-now{outline:2px solid #6fd696;outline-offset:1px;box-shadow:0 0 12px rgba(111,214,150,.5)}
-.avp-wrap{position:relative}
-.avp-sug{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;background:#2a1015;border:1px solid #d4af37;border-radius:10px;max-height:300px;overflow:auto;box-shadow:0 14px 34px rgba(0,0,0,.6)}
-.avp-sug.open{display:block}
-.avp-it{display:flex;gap:9px;padding:10px 12px;cursor:pointer;border-bottom:1px solid #4a2530;color:#f3e6c8}
-.avp-it.act,.avp-it:hover{background:#3a1520}
-.avp-it i{font-style:normal;color:#e8c766;font-size:13px;margin-left:4px}.avp-it small{display:block;color:#b89a7a;font-size:12px}
-.avp-empty{padding:10px 12px;color:#b89a7a;font-size:13px}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+<style>.pc-ctl .dr{display:flex;gap:6px;margin-top:8px}.pc-ctl .dr .in{flex:1;min-width:0}
+.pc-nav{position:sticky;top:0;z-index:20;display:flex;gap:6px;overflow-x:auto;padding:8px 2px;margin:0 -2px 10px;background:var(--cream);scrollbar-width:none}.pc-nav::-webkit-scrollbar{display:none}
+.pc-nav a{flex:0 0 auto;text-decoration:none;font-size:13px;font-weight:700;color:var(--mar);background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:6px 12px}
+.pc-nav a:active{background:var(--mar);color:#fff}
+.pc-hero{position:relative;overflow:hidden;border-radius:22px;color:#fff;padding:16px 16px 14px;margin-bottom:12px;background:radial-gradient(140% 120% at 0 0,#ffb347 0,#e8590c 30%,#8f1d14 70%,#4a0b0e 100%);box-shadow:0 14px 30px -18px #6b1418}
+.pc-hero:after{content:'ॐ';position:absolute;right:-6px;bottom:-34px;font-size:150px;opacity:.09;font-family:serif}
+.pc-hero .d1{font:700 13px Poppins,sans-serif;letter-spacing:.5px;opacity:.9}
+.pc-hero .d2{font-family:'Yatra One',serif;font-size:27px;line-height:1.25;margin:4px 0 2px;text-shadow:0 2px 10px #0004}
+.pc-hero .d3{font-size:14px;opacity:.95}
+.pc-hero .ev{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.pc-hero .ev span{background:#ffffff26;border:1px solid #ffffff40;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:600}
+.pc-sun{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px;position:relative;z-index:1}
+.pc-sun div{background:#ffffff1f;border:1px solid #ffffff33;border-radius:12px;padding:6px 4px;text-align:center}
+.pc-sun i{font-style:normal;font-size:18px;display:block;line-height:1.2}.pc-sun small{display:block;font-size:11px;opacity:.85}.pc-sun b{font-size:13px;font-family:Poppins,sans-serif}
+.pc-sec{background:#fff;border:1px solid var(--line);border-radius:18px;margin-bottom:12px;overflow:hidden;box-shadow:0 10px 24px -20px #6b141888;scroll-margin-top:56px}
+.pc-sec>h3{margin:0;padding:10px 14px;font-family:'Yatra One',serif;font-weight:400;font-size:19px;color:#fff;background:linear-gradient(90deg,#7a1f12,#b5451b);display:flex;justify-content:space-between;align-items:center}
+.pc-sec>h3 small{font:600 11.5px 'Noto Sans Devanagari';opacity:.85}
+.pc-in{padding:4px 14px 12px}
+.kv{display:grid;grid-template-columns:118px 1fr;gap:2px 10px;padding:8px 0;border-bottom:1px dashed #efdcb6;align-items:start}.kv:last-child{border:0}
+.kv>span{color:var(--mut);font-size:13.5px;padding-top:1px}.kv>div{font-size:15px;color:#2e1a12}.kv>div b{color:var(--mar)}.kv>div small{display:block;color:var(--mut);font-size:12.5px;line-height:1.45}
+.kv .nx{color:#9a6b00;font-size:13px}
+.kv.g>div b{color:var(--ok)}.kv.x>div b{color:var(--bad)}
+.pc-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 0}
+.pc-2>div{border-radius:12px;padding:8px 10px;background:#fffaf1;border:1px solid var(--line);font-size:13px;line-height:1.45}.pc-2>div b{display:block;color:var(--mar);font-size:14px}
+.pc-2>div.g{background:#effaf3;border-color:#a9dcbb}.pc-2>div.x{background:#fff4f1;border-color:#f3c0b3}
+.tl{width:100%;border-collapse:collapse;font-size:13.5px;margin:6px 0}.tl th{background:#fbefd9;color:var(--mar);font-weight:700;padding:7px 6px;text-align:left;font-size:12.5px}.tl td{padding:7px 6px;border-bottom:1px solid #f3e4c6}.tl tr:last-child td{border:0}
+.tl tr.now td{background:#fff3c4;font-weight:700}.tl .r{color:var(--bad);font-weight:700}
+.tlw{overflow-x:auto}
+.chg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0 4px}
+.chg div{display:flex;justify-content:space-between;align-items:center;border-radius:10px;padding:7px 9px;font-size:13.5px;border:1px solid}
+.chg .good{background:#ecfbf1;border-color:#a7e0bd;color:#14532d}.chg .bad{background:#fff1ee;border-color:#f4bfb2;color:#7f1d1d}.chg .neutral{background:#fff8e6;border-color:#efd59a;color:#6b4b00}
+.chg div.now{outline:3px solid #ee6f16;outline-offset:-1px}.chg b{font-size:14.5px}
+.sub-t{display:flex;gap:6px;margin:8px 0 2px}.sub-t button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:7px;font-weight:700;color:var(--mar);font-size:13.5px;cursor:pointer}.sub-t button.on{background:var(--mar);color:#fff;border-color:var(--mar)}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}.charts figure{margin:0;text-align:center}.charts figcaption{font-weight:700;color:var(--mar);font-size:14px;margin-bottom:4px}
+.charts svg{width:100%;height:auto;background:#fffaf1;border-radius:12px}.charts .sn{font:600 13px Poppins,sans-serif;fill:#b5451b;text-anchor:middle}.charts .pl{font:700 15px 'Noto Sans Devanagari';text-anchor:middle}.charts .pl.sm{font-size:12.5px}
+@media(max-width:520px){.charts{grid-template-columns:1fr}}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
+.cal .h{text-align:center;font-size:12px;font-weight:700;color:var(--mar);padding:4px 0}
+.cal .c{min-height:62px;border:1px solid #f0dfbd;border-radius:10px;padding:3px 4px;background:#fffdf8;cursor:pointer;position:relative;overflow:hidden}
+.cal .c b{font:700 15px Poppins,sans-serif;color:#3a2418}.cal .c small{display:block;font-size:10.5px;line-height:1.25;color:var(--mut)}.cal .c i{font-style:normal;font-size:10.5px;display:block;line-height:1.25;color:#9a3412;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal .c.su b{color:var(--bad)}.cal .c.pn{background:#fff7d6}.cal .c.am{background:#efeaf6}.cal .c.sel{outline:2.5px solid var(--saf);background:#fff1e3}.cal .c.td:before{content:'';position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--saf)}
+.cal .c.e{border:0;background:none;cursor:default}
+.mnav2{display:flex;align-items:center;justify-content:space-between;gap:8px}.mnav2 b{color:var(--mar);font-size:16px}
+.tara{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}.tara span{background:#effaf3;border:1px solid #b5e3c6;color:#14532d;border-radius:999px;padding:2px 9px;font-size:12.5px}
+.tara span.x{background:#fff1ee;border-color:#f4c4b7;color:#7f1d1d}
+.shbar{display:flex;gap:8px;margin:4px 0 14px}.shbar .btn{flex:1}</style>
 </head>
 <body>
-<div id="pnc-root">
-<div class="pnc-head">
-  <div class="pnc-om">卐 ॐ नमः शिवाय 卐</div>
-  <div class="pnc-title">पूर्ण पंचांग गणक</div>
-  <div class="pnc-sub">तिथि, नक्षत्र, योग, करण, मुहूर्त एवं चौघड़िया</div>
-  <div class="pnc-brand">Astro Vikass Mishra</div>
+<header class="av-head"><div class="ic">🌞</div><h1>पंचांग एवं चौघड़िया</h1><p>ऋषिकेश (काशी) पद्धति • तिथि-नक्षत्र • लग्न तालिका • ग्रह स्थिति • शुभ-अशुभ समय • मासिक कैलेंडर</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<div class="av-card pc-ctl">
+  <div id="pl"></div>
+  <label class="l">📆 तारीख (किसी भी वर्ष की)</label>
+  <div class="dr"><button class="btn sm ghost" id="dP" aria-label="पिछला दिन">◀</button><input class="in" type="date" id="dt" min="1900-01-01" max="2200-12-31"><button class="btn sm ghost" id="dN" aria-label="अगला दिन">▶</button><button class="btn sm" id="dT">आज</button></div>
 </div>
-
-<div class="pnc-body">
-
-  <div class="pnc-field">
-    <label class="pnc-label">स्थान</label>
-    <div class="pnc-locrow"><input type="text" class="pnc-input" id="pnc-place" placeholder="शहर लिखें — Bagaha या बगहा" autocomplete="off" spellcheck="false"><button type="button" class="pnc-gps" onclick="pncGps()" title="मेरा वर्तमान स्थान">📍</button></div>
-    <div class="pnc-loc-note" id="pnc-loc-note"></div>
-  </div>
-  <div class="pnc-field">
-    <label class="pnc-label">दिनांक</label>
-    <div class="pnc-daterow"><button type="button" class="pnc-nav" onclick="pncShift(-1)">◀</button><input type="date" class="pnc-input" id="pnc-date"><button type="button" class="pnc-nav" onclick="pncShift(1)">▶</button></div>
-    <button type="button" class="pnc-today" onclick="pncShift(0)">आज</button>
-  </div>
-  <div class="pnc-msg" id="pnc-msg"></div>
-  <button class="pnc-btn" onclick="pncCalculate()">पंचांग देखें</button>
-
-  <div class="pnc-results" id="pnc-results">
-
-    <div class="pnc-date-strip">
-      <div class="pnc-date-main" id="pnc-r-date">—</div>
-      <div class="pnc-date-sub" id="pnc-r-place">—</div>
-    </div>
-
-    <div class="pnc-month" id="pnc-month"></div>
-
-    <div class="pnc-grid">
-      <div class="pnc-card"><div class="pnc-card-label">सूर्योदय</div><div class="pnc-card-val" id="pnc-r-sunrise">—</div></div>
-      <div class="pnc-card"><div class="pnc-card-label">सूर्यास्त</div><div class="pnc-card-val" id="pnc-r-sunset">—</div></div>
-
-      <div class="pnc-card"><div class="pnc-card-label">तिथि</div><div class="pnc-card-val" id="pnc-r-tithi">—</div><div class="pnc-card-time" id="pnc-r-tithi-time"></div></div>
-      <div class="pnc-card"><div class="pnc-card-label">पक्ष</div><div class="pnc-card-val" id="pnc-r-paksha">—</div></div>
-
-      <div class="pnc-card"><div class="pnc-card-label">नक्षत्र</div><div class="pnc-card-val" id="pnc-r-nakshatra">—</div><div class="pnc-card-extra" id="pnc-r-pada"></div><div class="pnc-card-time" id="pnc-r-nakshatra-time"></div></div>
-      <div class="pnc-card"><div class="pnc-card-label">योग</div><div class="pnc-card-val" id="pnc-r-yoga">—</div><div class="pnc-card-time" id="pnc-r-yoga-time"></div></div>
-
-      <div class="pnc-card"><div class="pnc-card-label">करण</div><div class="pnc-card-val" id="pnc-r-karana">—</div><div class="pnc-card-time" id="pnc-r-karana-time"></div></div>
-      <div class="pnc-card"><div class="pnc-card-label">वार</div><div class="pnc-card-val" id="pnc-r-vaar">—</div></div>
-
-      <div class="pnc-card"><div class="pnc-card-label">सूर्य राशि</div><div class="pnc-card-val" id="pnc-r-sunsign">—</div></div>
-      <div class="pnc-card"><div class="pnc-card-label">चंद्र राशि</div><div class="pnc-card-val" id="pnc-r-moonsign">—</div></div>
-    </div>
-
-    <div class="pnc-section-title">विशेष योग • दिशा • वास</div>
-    <div class="pnc-spec" id="pnc-spec"></div>
-
-    <div class="pnc-section-title">शुभ-अशुभ मुहूर्त</div>
-    <div class="pnc-kaal-row">
-      <div class="pnc-kaal-item"><span class="pnc-kaal-name">राहु काल</span><span class="pnc-kaal-time" id="pnc-r-rahu">—</span></div>
-      <div class="pnc-kaal-item"><span class="pnc-kaal-name">यमगण्ड काल</span><span class="pnc-kaal-time" id="pnc-r-yama">—</span></div>
-      <div class="pnc-kaal-item"><span class="pnc-kaal-name">गुलिक काल</span><span class="pnc-kaal-time" id="pnc-r-gulika">—</span></div>
-      <div class="pnc-kaal-item good"><span class="pnc-kaal-name">अभिजित मुहूर्त</span><span class="pnc-kaal-time" id="pnc-r-abhijit">—</span></div>
-    </div>
-
-    <div class="pnc-section-title">चौघड़िया</div>
-    <div class="pnc-chog-wrap">
-      <div class="pnc-chog-label">दिन चौघड़िया</div>
-      <div class="pnc-chog-table" id="pnc-chog-day"></div>
-      <div class="pnc-chog-label">रात्रि चौघड़िया</div>
-      <div class="pnc-chog-table" id="pnc-chog-night"></div>
-    </div>
-
-    <button type="button" class="pnc-share" onclick="pncShare()">💬 WhatsApp पर पंचांग भेजें</button>
-    <div class="pnc-note">गणना सूर्योदयकालिक पंचांग पर आधारित है। समय स्थानीय (Local) घड़ी अनुसार है। हरे घेरे वाली चौघड़िया अभी चल रही है।</div>
-  </div>
-
-</div>
-
-<div class="pnc-foot">॥ हर हर महादेव ॥ &nbsp;•&nbsp; Astro Vikass • ☎ 7069492135</div>
-</div>
-
-</div>
+<nav class="pc-nav" id="nav">
+  <a href="#s-pan">पंचांग</a><a href="#s-mas">मास-संवत</a><a href="#s-shubh">शुभ समय</a><a href="#s-ashubh">अशुभ समय</a><a href="#s-vas">वास-शूल</a><a href="#s-bal">चंद्र-तारा बल</a><a href="#s-chog">चौघड़िया</a><a href="#s-hora">होरा</a><a href="#s-lagna">लग्न तालिका</a><a href="#s-graha">ग्रह-कुंडली</a><a href="#s-cal">मासिक</a>
+</nav>
+<div id="out"><div class="av-card">गणना हो रही है…</div></div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
 <script src="lib/places.js"></script>
 <script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script src="lib/calendar.js"></script>
 <script>
+const { $, esc, share } = AVUI, A = AVAstro, N = A.N;
+const MON = ['जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'];
+const YOGA = ['विष्कुम्भ', 'प्रीति', 'आयुष्मान', 'सौभाग्य', 'शोभन', 'अतिगण्ड', 'सुकर्मा', 'धृति', 'शूल', 'गण्ड', 'वृद्धि', 'ध्रुव', 'व्याघात', 'हर्षण', 'वज्र', 'सिद्धि', 'व्यतीपात', 'वरीयान', 'परिघ', 'शिव', 'सिद्ध', 'साध्य', 'शुभ', 'शुक्ल', 'ब्रह्म', 'इन्द्र', 'वैधृति'];
+const BADYOGA = [0, 5, 8, 9, 12, 14, 16, 18, 26];
+const KMOV = ['बव', 'बालव', 'कौलव', 'तैतिल', 'गर', 'वणिज', 'विष्टि (भद्रा)'], KFIX = { 1: 'किंस्तुघ्न', 58: 'शकुनि', 59: 'चतुष्पद', 60: 'नाग' };
+const kName = k => KFIX[k] || KMOV[(k - 2) % 7];
+const SAMV = ['प्रभव', 'विभव', 'शुक्ल', 'प्रमोद', 'प्रजापति', 'अंगिरा', 'श्रीमुख', 'भाव', 'युवा', 'धाता', 'ईश्वर', 'बहुधान्य', 'प्रमाथी', 'विक्रम', 'वृष', 'चित्रभानु', 'सुभानु', 'तारण', 'पार्थिव', 'व्यय', 'सर्वजित्', 'सर्वधारी', 'विरोधी', 'विकृति', 'खर', 'नन्दन', 'विजय', 'जय', 'मन्मथ', 'दुर्मुख', 'हेमलम्ब', 'विलम्ब', 'विकारी', 'शार्वरी', 'प्लव', 'शुभकृत्', 'शोभकृत्', 'क्रोधी', 'विश्वावसु', 'पराभव', 'प्लवंग', 'कीलक', 'सौम्य', 'साधारण', 'विरोधकृत्', 'परिधावी', 'प्रमादी', 'आनन्द', 'राक्षस', 'नल', 'पिंगल', 'कालयुक्त', 'सिद्धार्थी', 'रौद्र', 'दुर्मति', 'दुन्दुभि', 'रुधिरोद्गारी', 'रक्ताक्षी', 'क्रोधन', 'अक्षय'];
+const RITU = ['वसंत', 'ग्रीष्म', 'ग्रीष्म', 'वर्षा', 'वर्षा', 'शरद', 'शरद', 'हेमंत', 'हेमंत', 'शिशिर', 'शिशिर', 'वसंत'];
+const PS = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
+const HSEQ = ['Sun', 'Venus', 'Mercury', 'Moon', 'Saturn', 'Jupiter', 'Mars'];
+const HORA_F = { Sun: 'सरकारी काम, अधिकारी से मिलना', Moon: 'यात्रा, जल-दूध, मेल-मिलाप', Mars: 'साहस, भूमि, मुकदमा — विवाद से बचें', Mercury: 'व्यापार, लेखन, पढ़ाई', Jupiter: 'पूजा, शिक्षा, शुभ कार्य, विवाह-वार्ता', Venus: 'वस्त्र-आभूषण, कला, प्रेम', Saturn: 'मेहनत, लोहा, पुराने काम — शुभ आरंभ टालें' };
+const CHO = ['उद्वेग', 'चल', 'लाभ', 'अमृत', 'काल', 'शुभ', 'रोग'], CHOT = { 'अमृत': 'good', 'शुभ': 'good', 'लाभ': 'good', 'चल': 'neutral', 'उद्वेग': 'bad', 'रोग': 'bad', 'काल': 'bad' };
+const CDAY = [0, 3, 6, 2, 5, 1, 4], CNIGHT = [5, 1, 4, 0, 3, 6, 2];
+const RAHU = [8, 2, 7, 5, 6, 4, 3], YAMA = [5, 4, 3, 2, 1, 7, 6], GULI = [7, 6, 5, 4, 3, 2, 1];
+const DURM = [[14], [9, 12], [4, 'n7'], [8], [6, 12], [4, 9], [1, 2]];
+const VARJ = [50, 24, 30, 40, 14, 21, 30, 20, 32, 30, 20, 18, 22, 20, 14, 14, 10, 14, 20, 24, 20, 10, 10, 18, 16, 24, 30];
+const AMRT = [42, 48, 54, 52, 38, 35, 54, 44, 56, 54, 44, 42, 45, 44, 38, 38, 34, 38, 44, 48, 44, 34, 34, 42, 40, 48, 54];
+const SSY = [[13, 19, 12, 21, 26, 8, 1], [22, 4, 5, 8, 17], [1, 26, 3, 9], [4, 17, 13, 3, 5], [27, 17, 1, 7, 8], [27, 17, 1, 7, 22], [22, 4, 15]];
+const ASY = [13, 5, 1, 17, 8, 27, 4];
+const SHIV = { 1: ['कैलाश पर', 1], 2: ['गौरी के पास', 1], 3: ['वृषभ (नंदी) पर', 1], 4: ['सभा में', 0], 5: ['भोजन में', 0], 6: ['क्रीड़ा में', 0], 0: ['श्मशान में', 0] };
+const AGNI = { 0: ['पृथ्वी पर', 1], 1: ['आकाश (स्वर्ग) में', 0], 2: ['पाताल में', 0], 3: ['पृथ्वी पर', 1] };
+const TARA = ['जन्म', 'सम्पत्', 'विपत्', 'क्षेम', 'प्रत्यरि', 'साधक', 'वध', 'मित्र', 'अति-मित्र'];
+const HOMA = ['सूर्य', 'बुध', 'शुक्र', 'शनि', 'चंद्र', 'मंगल', 'गुरु', 'राहु', 'केतु'];
+const SH = { Sun: 'सू', Moon: 'चं', Mars: 'मं', Mercury: 'बु', Jupiter: 'गु', Venus: 'शु', Saturn: 'श', Rahu: 'रा', Ketu: 'के' };
+const PC = { Sun: '#c2410c', Moon: '#1d4ed8', Mars: '#b91c1c', Mercury: '#15803d', Jupiter: '#a16207', Venus: '#be185d', Saturn: '#334155', Rahu: '#4b5563', Ketu: '#6b21a8' };
 
-(function(){
+const pf = AVUI.placeField($('pl'), { onPick: () => run(), hint: 'स्थान चुनें (डिफ़ॉल्ट: वाराणसी)' });
+let SEL = new Date(), CM = null, SUBK = 'lagna';
+const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+$('dt').value = ymd(SEL);
+$('dt').onchange = () => { const v = $('dt').value; if (!/^\d{4}-\d\d-\d\d$/.test(v)) return; const [y, m, d] = v.split('-').map(Number); SEL = new Date(y, m - 1, d, 12); run(); };
+$('dP').onclick = () => { SEL.setDate(SEL.getDate() - 1); $('dt').value = ymd(SEL); run(); };
+$('dN').onclick = () => { SEL.setDate(SEL.getDate() + 1); $('dt').value = ymd(SEL); run(); };
+$('dT').onclick = () => { SEL = new Date(); $('dt').value = ymd(SEL); run(); };
 
-// ================= \u0936\u0939\u0930 \u0938\u0942\u091a\u0940 (lat, lon, tz) =================
-// ================= \u0916\u0917\u094b\u0932\u0940\u092f \u0917\u0923\u0928\u093e \u0907\u0902\u091c\u0928 =================
-function rad(d){ return d*Math.PI/180; }
-function norm360(d){ d = d % 360; if(d<0) d+=360; return d; }
-
-function julianDay(y,m,d,hourUT){
-  if(m<=2){ y-=1; m+=12; }
-  var A = Math.floor(y/100);
-  var B = 2 - A + Math.floor(A/4);
-  return Math.floor(365.25*(y+4716)) + Math.floor(30.6001*(m+1)) + d + hourUT/24 + B - 1524.5;
-}
-
-function sunLongitude(jd){
-  var T = (jd - 2451545.0)/36525;
-  var L0 = 280.46646 + 36000.76983*T + 0.0003032*T*T;
-  var M = 357.52911 + 35999.05029*T - 0.0001537*T*T;
-  var Mrad = rad(M);
-  var C = (1.914602 - 0.004817*T - 0.000014*T*T)*Math.sin(Mrad)
-         + (0.019993 - 0.000101*T)*Math.sin(2*Mrad)
-         + 0.000289*Math.sin(3*Mrad);
-  var trueLong = L0 + C;
-  var omega = 125.04 - 1934.136*T;
-  var lambda = trueLong - 0.00569 - 0.00478*Math.sin(rad(omega));
-  return norm360(lambda);
-}
-
-var MOON_TERMS = [
-[0,0,1,0,6288774],[2,0,-1,0,1274027],[2,0,0,0,658314],[0,0,2,0,213618],
-[0,1,0,0,-185116],[0,0,0,2,-114332],[2,0,-2,0,58793],[2,-1,-1,0,57066],
-[2,0,1,0,53322],[2,-1,0,0,45758],[0,1,-1,0,-40923],[1,0,0,0,-34720],
-[0,1,1,0,-30383],[0,0,1,2,-12528],[0,0,1,-2,10980],[4,0,-1,0,10675],
-[0,0,3,0,10034],[4,0,-2,0,8548],[2,1,-1,0,-7888],[2,1,0,0,-6766],
-[1,0,-1,0,-5163],[1,1,0,0,4987],[2,-1,1,0,4036],[2,0,2,0,3994],
-[4,0,0,0,3861],[2,0,-3,0,3665]
-];
-
-function moonLongitude(jd){
-  var T = (jd - 2451545.0)/36525;
-  var Lp = 218.3164477 + 481267.88123421*T - 0.0015786*T*T + T*T*T/538841;
-  var D = 297.8501921 + 445267.1114034*T - 0.0018819*T*T;
-  var M = 357.5291092 + 35999.0502909*T - 0.0001536*T*T;
-  var Mp = 134.9633964 + 477198.8675055*T + 0.0087414*T*T;
-  var F = 93.2720950 + 483202.0175233*T - 0.0036539*T*T;
-  var E = 1 - 0.002516*T - 0.0000074*T*T;
-  var sumL = 0;
-  for(var i=0;i<MOON_TERMS.length;i++){
-    var t = MOON_TERMS[i];
-    var arg = t[0]*D + t[1]*M + t[2]*Mp + t[3]*F;
-    var eFactor = Math.abs(t[1])===1 ? E : (Math.abs(t[1])===2 ? E*E : 1);
-    sumL += t[4] * eFactor * Math.sin(rad(arg));
-  }
-  return norm360(Lp + sumL/1000000);
-}
-
-function lahiriAyanamsa(jd){
-  var year = 2000 + (jd - 2451545.0)/365.25;
-  return 22.460148 + (year - 1900) * (50.2388475/3600);
-}
-
-function sunSidereal(jd){ return window.AVAstro ? AVAstro.sunMoon(jd).sun : norm360(sunLongitude(jd) - lahiriAyanamsa(jd)); }
-function moonSidereal(jd){ return window.AVAstro ? AVAstro.sunMoon(jd).moon : norm360(moonLongitude(jd) - lahiriAyanamsa(jd)); }
-
-// ---- \u0938\u0942\u0930\u094d\u092f\u094b\u0926\u092f / \u0938\u0942\u0930\u094d\u092f\u093e\u0938\u094d\u0924 (classic public algorithm) ----
-function getDayOfYear(y,m,d){
-  var days=[31,28,31,30,31,30,31,31,30,31,30,31];
-  var leap = (y%4===0 && (y%100!==0||y%400===0));
-  if(leap) days[1]=29;
-  var n=d;
-  for(var i=0;i<m-1;i++) n+=days[i];
-  return n;
-}
-function sunEventTime(year,month,day,lat,lon,tzOffset,rising){
-  var N = getDayOfYear(year,month,day);
-  var lngHour = lon/15;
-  var t = rising ? N + ((6-lngHour)/24) : N + ((18-lngHour)/24);
-  var M = 0.9856*t - 3.289;
-  var Mrad = rad(M);
-  var L = norm360(M + 1.916*Math.sin(Mrad) + 0.020*Math.sin(2*Mrad) + 282.634);
-  var Lrad = rad(L);
-  var RA = norm360(Math.atan2(0.91764*Math.tan(Lrad),1) * 180/Math.PI);
-  var Lquadrant = Math.floor(L/90)*90;
-  var RAquadrant = Math.floor(RA/90)*90;
-  RA = (RA + (Lquadrant - RAquadrant))/15;
-  var sinDec = 0.39782*Math.sin(Lrad);
-  var cosDec = Math.cos(Math.asin(sinDec));
-  var zenith = 90.833;
-  var cosH = (Math.cos(rad(zenith)) - sinDec*Math.sin(rad(lat))) / (cosDec*Math.cos(rad(lat)));
-  if(cosH>1||cosH<-1) return null;
-  var H = rising ? 360 - Math.acos(cosH)*180/Math.PI : Math.acos(cosH)*180/Math.PI;
-  H = H/15;
-  var T = H + RA - 0.06571*t - 6.622;
-  var UT = ((T - lngHour)%24+24)%24;
-  return ((UT + tzOffset)%24+24)%24;
-}
-
-function hoursToHM(h){
-  if(h===null || isNaN(h)) return "\u2014";
-  var hh = Math.floor(h);
-  var mm = Math.round((h-hh)*60);
-  if(mm===60){mm=0;hh+=1;}
-  hh = ((hh%24)+24)%24;
-  var period = hh<12 ? "AM" : "PM";
-  var hh12 = hh%12; if(hh12===0) hh12=12;
-  return hh12+":"+(mm<10?"0":"")+mm+" "+period;
-}
-
-// ---- \u0938\u0940\u092e\u093e-\u092a\u093e\u0930 \u0916\u094b\u091c (bisection for end-times) ----
-// angleFn(jdUT) => degree value; find next time angle crosses a multiple of segSize
-function nextBoundary(jdStart, angleFn, segSize){
-  var a0 = angleFn(jdStart);
-  var seg0 = Math.floor(a0/segSize);
-  var prevJD = jdStart, prevSeg = seg0;
-  var step = segSize <= 6 ? 0.05 : 0.15; // days
-  for(var i=1;i<=400;i++){
-    var jd = jdStart + i*step;
-    var a = angleFn(jd);
-    var seg = Math.floor(a/segSize);
-    if(seg !== prevSeg){
-      var lo = prevJD, hi = jd;
-      var loSeg = prevSeg;
-      for(var k=0;k<40;k++){
-        var mid = (lo+hi)/2;
-        var segMid = Math.floor(angleFn(mid)/segSize);
-        if(segMid === loSeg) lo = mid; else hi = mid;
-      }
-      return hi;
-    }
-    prevJD = jd; prevSeg = seg;
-  }
+/* ---------- सहायक ---------- */
+function prevChange(jd, fn, step) {
+  const v = fn(jd); let b = jd;
+  for (let i = 1; i < 600; i++) { const a = jd - i * step; if (fn(a) !== v) { let lo = a, hi = b; for (let k = 0; k < 30; k++) { const md = (lo + hi) / 2; if (fn(md) === v) hi = md; else lo = md; } return hi; } b = a; }
   return null;
 }
-
-function jdToLocalHM(jdUT, tzOffset, refYear, refMonth, refDay){
-  // returns {dayOffset, text} local time string relative to reference date
-  var diffDays = jdUT - julianDay(refYear, refMonth, refDay, 0);
-  var localHour = (diffDays*24) + tzOffset;
-  var dayOffset = Math.floor(localHour/24);
-  var hourOfDay = ((localHour%24)+24)%24;
-  return { dayOffset: dayOffset, text: hoursToHM(hourOfDay) + (dayOffset>0 ? " (+1 \u0926\u093f\u0928)" : "") };
+function spans(fn, a0, b0, step) {
+  const out = []; let s = prevChange(a0, fn, step), t = a0;
+  for (let i = 0; i < 40; i++) { const v = fn(t + 1e-7), e = A.nextChange(t + 1e-7, fn, step); out.push({ v, s, e }); if (!e || e >= b0) break; s = e; t = e; }
+  return out;
 }
+const clip = (s, e, a, b) => { const x = Math.max(s, a), y = Math.min(e, b); return y > x ? [x, y] : null; };
+function inter(L1, L2) { const o = []; L1.forEach(a => L2.forEach(b => { const c = clip(a[0], a[1], b[0], b[1]); if (c) o.push(c); })); return o; }
 
-// ================= \u092a\u0902\u091a\u093e\u0902\u0917 \u0924\u0924\u094d\u0935 \u0928\u093e\u092e =================
-var TITHI_NAMES = ["\u092a\u094d\u0930\u0924\u093f\u092a\u0926\u093e","\u0926\u094d\u0935\u093f\u0924\u0940\u092f\u093e","\u0924\u0943\u0924\u0940\u092f\u093e","\u091a\u0924\u0941\u0930\u094d\u0925\u0940","\u092a\u0902\u091a\u092e\u0940","\u0937\u0937\u094d\u0920\u0940","\u0938\u092a\u094d\u0924\u092e\u0940","\u0905\u0937\u094d\u091f\u092e\u0940","\u0928\u0935\u092e\u0940","\u0926\u0936\u092e\u0940","\u090f\u0915\u093e\u0926\u0936\u0940","\u0926\u094d\u0935\u093e\u0926\u0936\u0940","\u0924\u094d\u0930\u092f\u094b\u0926\u0936\u0940","\u091a\u0924\u0941\u0930\u094d\u0926\u0936\u0940","\u092a\u0942\u0930\u094d\u0923\u093f\u092e\u093e"];
-var TITHI_NAMES_K = ["\u092a\u094d\u0930\u0924\u093f\u092a\u0926\u093e","\u0926\u094d\u0935\u093f\u0924\u0940\u092f\u093e","\u0924\u0943\u0924\u0940\u092f\u093e","\u091a\u0924\u0941\u0930\u094d\u0925\u0940","\u092a\u0902\u091a\u092e\u0940","\u0937\u0937\u094d\u0920\u0940","\u0938\u092a\u094d\u0924\u092e\u0940","\u0905\u0937\u094d\u091f\u092e\u0940","\u0928\u0935\u092e\u0940","\u0926\u0936\u092e\u0940","\u090f\u0915\u093e\u0926\u0936\u0940","\u0926\u094d\u0935\u093e\u0926\u0936\u0940","\u0924\u094d\u0930\u092f\u094b\u0926\u0936\u0940","\u091a\u0924\u0941\u0930\u094d\u0926\u0936\u0940","\u0905\u092e\u093e\u0935\u0938\u094d\u092f\u093e"];
+function run() {
+  const P = pf.get() || { name: 'वाराणसी', lat: 25.31, lon: 83.01, tz: 5.5 };
+  const y = SEL.getFullYear(), m = SEL.getMonth() + 1, d = SEL.getDate(), tz = pf.tz(ymd(SEL)), L = { lat: P.lat, lon: P.lon, tz };
+  const I = A.dayInfo(y, m, d, L), nd = new Date(y, m - 1, d + 1), I2 = A.dayInfo(nd.getFullYear(), nd.getMonth() + 1, nd.getDate(), L);
+  const jR = I.jdRise, jN = I2.jdRise, jS = I.jdSet, rise = I.rise, set = I.set, nrise = I2.rise + 24, V = I.vaar;
+  const dayL = set - rise, nightL = nrise - set, dm = dayL / 15, nm = nightL / 15;
+  const jOfH = h => A.jdOf(y, m, d, h - tz);
+  const lk = jd => A.localOf(jd, tz);
+  const T = jd => { if (jd == null) return '—'; const l = lk(jd), dd = Math.round((Date.UTC(l.y, l.m - 1, l.d) - Date.UTC(y, m - 1, d)) / 864e5); return A.fmtH(l.h) + (dd === 0 ? '' : dd === 1 ? ' (+1)' : dd === -1 ? ' (−1)' : ', ' + l.d + ' ' + MON[l.m - 1].slice(0, 3)); };
+  const TH = h => T(jOfH(h));
+  const rng = (a, b) => T(a) + ' – ' + T(b);
+  const rngH = (a, b) => TH(a) + ' – ' + TH(b);
+  const sm = j => A.sunMoon(j);
+  const tFn = A.tithiNo, nFn = A.nakNo, yFn = A.yogaNo, kFn = A.karanaNo;
+  const padaFn = j => Math.floor(sm(j).moon / (360 / 108));
 
-var NAKSHATRA_NAMES = ["\u0905\u0936\u094d\u0935\u093f\u0928\u0940","\u092d\u0930\u0923\u0940","\u0915\u0943\u0924\u094d\u0924\u093f\u0915\u093e","\u0930\u094b\u0939\u093f\u0923\u0940","\u092e\u0943\u0917\u0936\u093f\u0930\u093e","\u0906\u0930\u094d\u0926\u094d\u0930\u093e","\u092a\u0941\u0928\u0930\u094d\u0935\u0938\u0941","\u092a\u0941\u0937\u094d\u092f","\u0906\u0936\u094d\u0932\u0947\u0937\u093e","\u092e\u0918\u093e","\u092a\u0942\u0930\u094d\u0935\u093e\u092b\u093e\u0932\u094d\u0917\u0941\u0928\u0940","\u0909\u0924\u094d\u0924\u0930\u093e\u092b\u093e\u0932\u094d\u0917\u0941\u0928\u0940","\u0939\u0938\u094d\u0924","\u091a\u093f\u0924\u094d\u0930\u093e","\u0938\u094d\u0935\u093e\u0924\u0940","\u0935\u093f\u0936\u093e\u0916\u093e","\u0905\u0928\u0941\u0930\u093e\u0927\u093e","\u091c\u094d\u092f\u0947\u0937\u094d\u0920\u093e","\u092e\u0942\u0932","\u092a\u0942\u0930\u094d\u0935\u093e\u0937\u093e\u0922\u093c\u093e","\u0909\u0924\u094d\u0924\u0930\u093e\u0937\u093e\u0922\u093c\u093e","\u0936\u094d\u0930\u0935\u0923","\u0927\u0928\u093f\u0937\u094d\u0920\u093e","\u0936\u0924\u092d\u093f\u0937\u093e","\u092a\u0942\u0930\u094d\u0935\u093e\u092d\u093e\u0926\u094d\u0930\u092a\u0926","\u0909\u0924\u094d\u0924\u0930\u093e\u092d\u093e\u0926\u094d\u0930\u092a\u0926","\u0930\u0947\u0935\u0924\u0940"];
+  /* ---- पंचांग के अंग (सूर्योदय से अगले सूर्योदय तक) ---- */
+  const tS = spans(tFn, jR, jN, 0.02), nS = spans(nFn, jR, jN, 0.02), yS = spans(yFn, jR, jN, 0.02), kS = spans(kFn, jR, jN, 0.01);
+  const tName = t => A.tithiName(t);
+  const listSp = (S, nm) => S.map((x, i) => `${i ? '<span class="nx">फिर </span>' : ''}<b>${nm(x.v)}</b> ${x.e ? '<small style="display:inline">— ' + T(x.e) + ' तक</small>' : ''}`).join('<br>');
+  const pada0 = padaFn(jR) % 4 + 1, nk0 = nS[0].v;
 
-var YOGA_NAMES = ["\u0935\u093f\u0937\u094d\u0915\u0941\u092e\u094d\u092d","\u092a\u094d\u0930\u0940\u0924\u093f","\u0906\u092f\u0941\u0937\u094d\u092e\u093e\u0928","\u0938\u094c\u092d\u093e\u0917\u094d\u092f","\u0936\u094b\u092d\u0928","\u0905\u0924\u093f\u0917\u0923\u094d\u0921","\u0938\u0941\u0915\u0930\u094d\u092e\u093e","\u0927\u0943\u0924\u093f","\u0936\u0942\u0932","\u0917\u0923\u094d\u0921","\u0935\u0943\u0926\u094d\u0927\u093f","\u0927\u094d\u0930\u0941\u0935","\u0935\u094d\u092f\u093e\u0918\u093e\u0924","\u0939\u0930\u094d\u0937\u0923","\u0935\u091c\u094d\u0930","\u0938\u093f\u0926\u094d\u0927\u093f","\u0935\u094d\u092f\u0924\u0940\u092a\u093e\u0924","\u0935\u0930\u0940\u092f\u093e\u0928","\u092a\u0930\u093f\u0918","\u0936\u093f\u0935","\u0938\u093f\u0926\u094d\u0927","\u0938\u093e\u0927\u094d\u092f","\u0936\u0941\u092d","\u0936\u0941\u0915\u094d\u0932","\u092c\u094d\u0930\u0939\u094d\u092e","\u0907\u0928\u094d\u0926\u094d\u0930","\u0935\u0948\u0927\u0943\u0924\u093f"];
+  /* ---- मास, संवत ---- */
+  const lm = A.lunarMonth(jR), am = lm.maas, krish = I.tithi > 15, pm = krish ? (am + 1) % 12 : am, adh = lm.adhik ? 'अधिक ' : '';
+  const vs = (m <= 4 && am >= 9) ? y + 56 : y + 57, shaka = vs - 135;
+  const sv = SAMV[((shaka - 1909 + 14) % 60 + 60) % 60], svS = SAMV[((shaka - 1909) % 60 + 60) % 60];
+  const s0 = I.sun, ss = Math.floor(s0 / 30), mS = Math.floor(I.moon / 30);
+  let gate = 1; for (let k = 1; k < 33; k++) { if (Math.floor(sm(jR - k).sun / 30) !== ss) { gate = k; break; } }
+  const sunNak = Math.floor(s0 / (360 / 27)), sunPada = Math.floor(s0 / (360 / 108)) % 4 + 1;
+  const mSign = spans(j => Math.floor(sm(j).moon / 30), jR, jN, 0.05);
 
-var KARANA_MOVABLE = ["\u092c\u0935","\u092c\u093e\u0932\u0935","\u0915\u094c\u0932\u0935","\u0924\u0948\u0924\u093f\u0932","\u0917\u0930","\u0935\u0923\u093f\u091c","\u0935\u093f\u0937\u094d\u091f\u093f"];
-var KARANA_FIXED = { 1:"\u0915\u093f\u0902\u0938\u094d\u0924\u0941\u0918\u094d\u0928", 58:"\u0936\u0915\u0941\u0928\u093f", 59:"\u091a\u0924\u0941\u0937\u094d\u092a\u093e\u0926", 60:"\u0928\u093e\u0917" };
+  /* ---- सूर्य-चंद्र उदय-अस्त ---- */
+  const moonAlt = j => { const o = A.sunMoonDrik(j); return A.altitude(j, o.moonTrop, o.moonLat, L.lat, L.lon) - 0.125; };
+  let mr = null, ms = null; { const j0 = A.jdOf(y, m, d, -tz); let pa = moonAlt(j0);
+    for (let i = 1; i <= 96; i++) { const j = j0 + i / 96, c = moonAlt(j); if ((pa < 0) !== (c < 0)) { let lo = j - 1 / 96, hi = j; for (let k = 0; k < 25; k++) { const md = (lo + hi) / 2; if ((moonAlt(md) < 0) === (pa < 0)) lo = md; else hi = md; } if (pa < 0 && mr == null) mr = hi; else if (pa >= 0 && ms == null) ms = hi; } pa = c; } }
 
-var RASHI_NAMES = ["\u092e\u0947\u0937","\u0935\u0943\u0937\u092d","\u092e\u093f\u0925\u0941\u0928","\u0915\u0930\u094d\u0915","\u0938\u093f\u0902\u0939","\u0915\u0928\u094d\u092f\u093e","\u0924\u0941\u0932\u093e","\u0935\u0943\u0936\u094d\u091a\u093f\u0915","\u0927\u0928\u0941","\u092e\u0915\u0930","\u0915\u0941\u092e\u094d\u092d","\u092e\u0940\u0928"];
-
-var VAAR_NAMES = ["\u0930\u0935\u093f\u0935\u093e\u0930","\u0938\u094b\u092e\u0935\u093e\u0930","\u092e\u0902\u0917\u0932\u0935\u093e\u0930","\u092c\u0941\u0927\u0935\u093e\u0930","\u0917\u0941\u0930\u0941\u0935\u093e\u0930","\u0936\u0941\u0915\u094d\u0930\u0935\u093e\u0930","\u0936\u0928\u093f\u0935\u093e\u0930"];
-
-var CHOGHADIYA_ORDER = ["\u0909\u0926\u094d\u0935\u0947\u0917","\u091a\u0932","\u0932\u093e\u092d","\u0905\u092e\u0943\u0924","\u0915\u093e\u0932","\u0936\u0941\u092d","\u0930\u094b\u0917"];
-var CHOGHADIYA_TAG = { "\u0905\u092e\u0943\u0924":"good","\u0936\u0941\u092d":"good","\u0932\u093e\u092d":"good","\u091a\u0932":"neutral","\u0909\u0926\u094d\u0935\u0947\u0917":"bad","\u0930\u094b\u0917":"bad","\u0915\u093e\u0932":"bad" };
-var DAY_START_IDX = [0,3,6,2,5,1,4];   // \u0930\u0935\u093f,\u0938\u094b\u092e,\u092e\u0902\u0917\u0932,\u092c\u0941\u0927,\u0917\u0941\u0930\u0941,\u0936\u0941\u0915\u094d\u0930,\u0936\u0928\u093f -> index into CHOGHADIYA_ORDER
-var NIGHT_START_IDX = [5,1,4,0,3,6,2];
-
-var RAHU_SEGMENT = [8,2,7,5,6,4,3];      // sunday..saturday (1-indexed of 8 segments)
-var YAMA_SEGMENT = [5,4,3,2,1,7,6];
-var GULIKA_SEGMENT = [7,6,5,4,3,2,1];
-
-// ================= \u092e\u0941\u0916\u094d\u092f \u0917\u0923\u0928\u093e =================
-window.pncCalculate = function(){
-  var dateInput = document.getElementById('pnc-date').value;
-  if(!dateInput){ pncMsg("\u0915\u0943\u092a\u092f\u093e \u0926\u093f\u0928\u093e\u0902\u0915 \u091a\u0941\u0928\u0947\u0902"); return; }
-  var parts = dateInput.split('-');
-  var year = parseInt(parts[0],10), month = parseInt(parts[1],10), day = parseInt(parts[2],10);
-
-  var L = window.pncLoc;
-  if(!L){ pncMsg("\u0915\u0943\u092a\u092f\u093e \u0938\u094d\u0925\u093e\u0928 \u091a\u0941\u0928\u0947\u0902"); document.getElementById('pnc-place').focus(); return; }
-  var lat = L.lat, lon = L.lon, tz = (L.zone ? AVPlaces.tzOf(L.zone, dateInput) : L.tz);
-  var city = { name: L.name };
-  var sunriseH = sunEventTime(year,month,day,lat,lon,tz,true);
-  var sunsetH = sunEventTime(year,month,day,lat,lon,tz,false);
-  if(sunriseH === null || sunsetH === null){
-    pncMsg("\u0907\u0938 \u0938\u094d\u0925\u093e\u0928/\u0926\u093f\u0928\u093e\u0902\u0915 \u0939\u0947\u0924\u0941 \u0938\u0942\u0930\u094d\u092f\u094b\u0926\u092f-\u0938\u0942\u0930\u094d\u092f\u093e\u0938\u094d\u0924 \u0917\u0923\u0928\u093e \u0938\u0902\u092d\u0935 \u0928\u0939\u0940\u0902 (\u0927\u094d\u0930\u0941\u0935\u0940\u092f \u0915\u094d\u0937\u0947\u0924\u094d\u0930)\u0964");
-    return;
+  /* ---- शुभ समय ---- */
+  const abh = V === 3 ? null : [rise + 7 * dm, rise + 8 * dm];
+  const shubh = [
+    ['ब्रह्म मुहूर्त', rngH(rise - 2 * nm, rise - nm), 'ध्यान, जप, अध्ययन के लिए श्रेष्ठ'],
+    ['प्रातः संध्या', rngH(rise - 1.5 * nm, rise), 'संध्या-वंदन, सूर्य अर्घ्य'],
+    ['अभिजित् मुहूर्त', abh ? rngH(abh[0], abh[1]) : 'बुधवार को अभिजित् शुभ नहीं', 'सर्वदोष नाशक मध्याह्न मुहूर्त'],
+    ['विजय मुहूर्त', rngH(rise + 10 * dm, rise + 11 * dm), 'यात्रा, मुकदमा, प्रतियोगिता में विजय'],
+    ['गोधूलि मुहूर्त', rngH(set - 0.05, set + 0.4), 'विवाह आदि में मान्य'],
+    ['सायाह्न संध्या', rngH(set, set + 1.5 * nm), 'संध्या पूजा, दीपदान'],
+    ['निशीथ काल', rngH(set + 7 * nm, set + 8 * nm), 'तंत्र, शिव-काली साधना']];
+  // अमृत काल, वर्ज्य
+  const nAll = spans(nFn, jR - 1.2, jN, 0.02), amr = [], vrj = [];
+  nAll.forEach(x => { if (!x.s || !x.e) return; const D = x.e - x.s; const a = x.s + D * AMRT[x.v] / 60, v = x.s + D * VARJ[x.v] / 60, w = D * 4 / 60;
+    const c1 = clip(a, a + w, jR, jN), c2 = clip(v, v + w, jR, jN); if (c1) amr.push(c1); if (c2) vrj.push(c2); });
+  amr.forEach(c => shubh.push(['अमृत काल', rng(c[0], c[1]), 'नक्षत्र का अमृत भाग']));
+  // विशेष योग
+  const nakSp = nS.map(x => ({ v: x.v, iv: [Math.max(x.s || jR, jR), Math.min(x.e || jN, jN)] }));
+  const yogs = [];
+  nakSp.forEach(x => { const n1 = x.v + 1;
+    if (SSY[V].includes(n1)) yogs.push(['✅ सर्वार्थसिद्धि योग', rng(...x.iv)]);
+    if (ASY[V] === n1) yogs.push(['🌟 अमृतसिद्धि योग', rng(...x.iv)]);
+    if (n1 === 8 && V === 4) yogs.push(['🌟 गुरु-पुष्य योग', rng(...x.iv)]);
+    if (n1 === 8 && V === 0) yogs.push(['🌟 रवि-पुष्य योग', rng(...x.iv)]);
+    const c = ((x.v - sunNak + 27) % 27) + 1; if ([4, 6, 9, 10, 13, 20].includes(c)) yogs.push(['☀️ रवि योग', rng(...x.iv)]);
+  });
+  if ([0, 2, 6].includes(V)) {
+    const bt = tS.filter(x => [2, 7, 12, 17, 22, 27].includes(x.v)).map(x => [Math.max(x.s || jR, jR), Math.min(x.e || jN, jN)]);
+    const dwi = inter(bt, nakSp.filter(x => [5, 14, 23].includes(x.v + 1)).map(x => x.iv)), tri = inter(bt, nakSp.filter(x => [3, 7, 12, 16, 21, 25].includes(x.v + 1)).map(x => x.iv));
+    dwi.forEach(c => yogs.push(['✌️ द्विपुष्कर योग (लाभ-हानि दो गुना)', rng(c[0], c[1])])); tri.forEach(c => yogs.push(['🔱 त्रिपुष्कर योग (तीन गुना फल)', rng(c[0], c[1])]));
   }
 
-  // \u0938\u0942\u0930\u094d\u092f\u094b\u0926\u092f \u0915\u0947 \u0915\u094d\u0937\u0923 \u0915\u0940 Julian Day (UT)
-  var sunriseUT = sunriseH - tz;
-  var jdSunrise = julianDay(year, month, day, sunriseUT);
-  var jdMidnight = julianDay(year, month, day, -tz); // local midnight in UT terms (reference)
+  /* ---- अशुभ समय ---- */
+  const seg = k => [rise + (k - 1) * dayL / 8, rise + k * dayL / 8];
+  const dur = DURM[V].map(k => typeof k === 'string' ? [set + (+k.slice(1) - 1) * nm, set + +k.slice(1) * nm] : [rise + (k - 1) * dm, rise + k * dm]);
+  for (let i = dur.length - 1; i > 0; i--) if (Math.abs(dur[i][0] - dur[i - 1][1]) < 1e-6) { dur[i - 1][1] = dur[i][1]; dur.splice(i, 1); }
+  const bh = kS.filter(x => x.v >= 2 && x.v <= 57 && (x.v - 2) % 7 === 6).map(x => [Math.max(x.s || jR, jR), Math.min(x.e || jN, jN)]);
+  const bhVas = s => [0, 1, 2, 7].includes(s) ? 'स्वर्ग लोक (शुभ फल)' : [5, 6, 8, 9].includes(s) ? 'पाताल लोक (धन लाभ)' : 'मृत्यु लोक (पृथ्वी) — अशुभ';
+  const pan = spans(j => sm(j).moon >= 296.6667 ? 1 : 0, jR, jN, 0.03).filter(x => x.v).map(x => [x.s, x.e]);
+  const gan = nS.filter(x => [0, 8, 9, 17, 18, 26].includes(x.v));
+  const ashubh = [['राहु काल', rngH(...seg(RAHU[V])), 'नया काम, यात्रा आरंभ न करें'], ['यमगण्ड', rngH(...seg(YAMA[V])), 'शुभ कार्य वर्जित'], ['गुलिक काल', rngH(...seg(GULI[V])), 'जो काम करें वह दोहराया जाता है'],
+    ['दुर्मुहूर्त', dur.map(x => rngH(...x)).join('<br>'), 'शुभ कार्य टालें']];
+  vrj.forEach(c => ashubh.push(['वर्ज्य', rng(c[0], c[1]), 'नक्षत्र का विष-भाग']));
+  bh.forEach(c => ashubh.push(['भद्रा', rng(c[0], c[1]), 'भद्रा वास: ' + bhVas(Math.floor(sm((c[0] + c[1]) / 2).moon / 30))]));
+  pan.forEach(c => ashubh.push(['पंचक', (c[0] ? T(c[0]) : 'पहले से') + ' – ' + (c[1] ? T(c[1]) : 'आगे तक'), 'दक्षिण यात्रा, छत डालना, लकड़ी संग्रह, चारपाई बुनना वर्जित']));
+  gan.forEach(x => ashubh.push(['गंडमूल', N.NAK[x.v] + ': ' + (x.s ? T(Math.max(x.s, jR - 2)) : '') + ' – ' + T(x.e), 'इस समय जन्मे बालक की मूल शांति']));
+  if (BADYOGA.includes(yS[0].v)) ashubh.push(['अशुभ योग', YOGA[yS[0].v] + ' — ' + T(yS[0].e) + ' तक', 'शुभ कार्य में त्याज्य']);
 
-  var sunSid = sunSidereal(jdSunrise);
-  var moonSid = moonSidereal(jdSunrise);
+  /* ---- वास, शूल ---- */
+  const t30 = I.tithi, sv1 = SHIV[(t30 * 2 + 5) % 7], ag = AGNI[(t30 + 1 + V + 1) % 4];
+  const disha = ['पश्चिम', 'पूर्व', 'उत्तर', 'उत्तर', 'दक्षिण', 'पश्चिम', 'पूर्व'][V], dUp = ['घी/दलिया खाकर', 'दर्पण देखकर/दूध पीकर', 'गुड़ खाकर', 'तिल/धनिया खाकर', 'दही खाकर', 'जौ खाकर', 'उड़द/अदरक खाकर'][V];
+  const cv = ['पूर्व', 'दक्षिण', 'पश्चिम', 'उत्तर'][mS % 4], homa = HOMA[Math.floor(((nk0 - sunNak + 27) % 27) / 3)];
 
-  // ---- \u0924\u093f\u0925\u093f ----
-  var tithiAngle = norm360(moonSid - sunSid);
-  var tithiNum = Math.floor(tithiAngle/12) + 1; // 1-30
-  var paksha, tithiName;
-  if(tithiNum <= 15){ paksha = "\u0936\u0941\u0915\u094d\u0932 \u092a\u0915\u094d\u0937"; tithiName = TITHI_NAMES[tithiNum-1]; }
-  else { paksha = "\u0915\u0943\u0937\u094d\u0923 \u092a\u0915\u094d\u0937"; tithiName = TITHI_NAMES_K[tithiNum-16]; }
-  var tithiEndJD = nextBoundary(jdSunrise, function(jd){ return norm360(moonSidereal(jd)-sunSidereal(jd)); }, 12);
+  /* ---- चंद्र बल, तारा बल ---- */
+  const cbGood = [...Array(12).keys()].filter(r => [1, 3, 6, 7, 10, 11].includes(((mS - r + 12) % 12) + 1));
+  const tara = [...Array(27).keys()].map(n => { const t = ((nk0 - n + 27) % 27) % 9; return { n, t, ok: [1, 3, 5, 7, 8].includes(t) }; });
 
-  // ---- \u0928\u0915\u094d\u0937\u0924\u094d\u0930 ----
-  var nakStep = 360/27;
-  var nakNum = Math.floor(moonSid/nakStep);
-  var nakName = NAKSHATRA_NAMES[nakNum];
-  var pada = Math.floor((moonSid % nakStep)/(nakStep/4)) + 1;
-  var nakEndJD = nextBoundary(jdSunrise, function(jd){ return moonSidereal(jd); }, nakStep);
+  /* ---- चौघड़िया, होरा ---- */
+  const nowJ = A.jdFromDate ? A.jdFromDate(new Date()) : null;
+  const chog = (st, len, s0) => [...Array(8).keys()].map(i => { const nmc = CHO[(s0 + i) % 7], a = st + i * len / 8, b = a + len / 8, ja = jOfH(a), jb = jOfH(b); return `<div class="${CHOT[nmc]}${nowJ && nowJ >= ja && nowJ < jb ? ' now' : ''}"><b>${nmc}</b><span>${TH(a)} – ${TH(b)}</span></div>`; }).join('');
+  const hs = HSEQ.indexOf(PS[V]);
+  const hora = [...Array(24).keys()].map(i => { const p = HSEQ[(hs + i) % 7], a = i < 12 ? rise + i * dayL / 12 : set + (i - 12) * nightL / 12, b = i < 12 ? a + dayL / 12 : a + nightL / 12, ja = jOfH(a), jb = jOfH(b);
+    return `<tr class="${nowJ && nowJ >= ja && nowJ < jb ? 'now' : ''}"><td>${i < 12 ? '☀️' : '🌙'} ${TH(a)} – ${TH(b)}</td><td><b style="color:${PC[p]}">${N.P[p]}</b></td><td style="font-size:12.5px;color:var(--mut)">${HORA_F[p]}</td></tr>`; }).join('');
 
-  // ---- \u092f\u094b\u0917 ----
-  var yogaStep = 360/27;
-  var yogaAngle = norm360(sunSid + moonSid);
-  var yogaNum = Math.floor(yogaAngle/yogaStep);
-  var yogaName = YOGA_NAMES[yogaNum];
-  var yogaEndJD = nextBoundary(jdSunrise, function(jd){ return norm360(sunSidereal(jd)+moonSidereal(jd)); }, yogaStep);
+  /* ---- लग्न तालिका ---- */
+  const ascS = j => Math.floor(A.ascendant(j, L.lat, L.lon) / 30);
+  const lg = spans(ascS, jR, jN, 0.006);
+  const CHARA = [0, 3, 6, 9], STHIRA = [1, 4, 7, 10];
+  const lagnaRows = lg.map(x => { const ty = CHARA.includes(x.v) ? 'चर' : STHIRA.includes(x.v) ? 'स्थिर' : 'द्विस्वभाव', now = nowJ && nowJ >= (x.s || 0) && nowJ < (x.e || 1e9);
+    return `<tr class="${now ? 'now' : ''}"><td>${N.SIGN_IC[x.v]} <b>${N.SIGN[x.v]}</b></td><td>${x.s ? T(x.s) : '—'}</td><td>${x.e ? T(x.e) : '—'}</td><td style="font-size:12.5px">${ty}${STHIRA.includes(x.v) ? ' ✨' : ''}</td></tr>`; }).join('');
 
-  // ---- \u0915\u0930\u0923 ----
-  var karanaNum = Math.floor(tithiAngle/6) + 1; // 1-60
-  var karanaName;
-  if(KARANA_FIXED[karanaNum]) karanaName = KARANA_FIXED[karanaNum];
-  else karanaName = KARANA_MOVABLE[(karanaNum-2) % 7];
-  var karanaEndJD = nextBoundary(jdSunrise, function(jd){ return norm360(moonSidereal(jd)-sunSidereal(jd)); }, 6);
-
-  // ---- \u0930\u093e\u0936\u093f ----
-  var sunRashi = RASHI_NAMES[Math.floor(sunSid/30)];
-  var moonRashi = RASHI_NAMES[Math.floor(moonSid/30)];
-
-  // ---- \u0935\u093e\u0930 ----
-  var jsDate = new Date(year, month-1, day);
-  var vaarIdx = jsDate.getDay();
-  var vaarName = VAAR_NAMES[vaarIdx];
-
-  // ================= \u0930\u093e\u0939\u0941 \u0915\u093e\u0932, \u092f\u092e\u0917\u0923\u094d\u0921, \u0917\u0941\u0932\u093f\u0915 =================
-  var dayLen = sunsetH - sunriseH;
-  var segLen = dayLen/8;
-  function segTime(segNum){
-    var start = sunriseH + (segNum-1)*segLen;
-    var end = start + segLen;
-    return hoursToHM(start) + " \u2013 " + hoursToHM(end);
-  }
-  var rahuTxt = segTime(RAHU_SEGMENT[vaarIdx]);
-  var yamaTxt = segTime(YAMA_SEGMENT[vaarIdx]);
-  var gulikaTxt = segTime(GULIKA_SEGMENT[vaarIdx]);
-
-  // ---- \u0905\u092d\u093f\u091c\u093f\u0924 \u092e\u0941\u0939\u0942\u0930\u094d\u0924 ----
-  var noon = (sunriseH + sunsetH)/2;
-  var muhurtaLen = dayLen/15;
-  var abhijitStartT = noon - muhurtaLen/2;
-  var abhijitEndT = noon + muhurtaLen/2;
-  var abhijitTxt = hoursToHM(abhijitStartT) + " \u2013 " + hoursToHM(abhijitEndT);
-
-  // ================= \u091a\u094c\u0918\u0921\u093c\u093f\u092f\u093e =================
-  function buildChoghadiya(startH, endH, startIdx, containerId){
-    var len = (endH - startH)/8;
-    var container = document.getElementById(containerId);
-    container.innerHTML = "";
-    for(var i=0;i<8;i++){
-      var name = CHOGHADIYA_ORDER[(startIdx + i) % 7];
-      var tag = CHOGHADIYA_TAG[name];
-      var st = startH + i*len;
-      var en = st + len;
-      var div = document.createElement('div');
-      div.className = 'pnc-chog-slot pnc-chog-' + tag;
-      div.innerHTML = '<div class="nm">'+name+'</div><div class="tm">'+hoursToHM(st)+'</div>';
-      container.appendChild(div);
+  /* ---- ग्रह स्थिति (सूर्योदय पर) ---- */
+  const pos = A.planets(jR), asc = A.ascendant(jR, L.lat, L.lon), lagS = Math.floor(asc / 30);
+  const dms = x => { const dd = x % 30, D0 = Math.floor(dd), M0 = Math.floor((dd - D0) * 60); return D0 + '°' + String(M0).padStart(2, '0') + '′'; };
+  const nakP = x => N.NAK[Math.floor(x / (360 / 27))] + '-' + (Math.floor(x / (360 / 108)) % 4 + 1);
+  const PLS = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'];
+  const gRows = `<tr><td><b>लग्न</b></td><td>${N.SIGN[lagS]}</td><td>${dms(asc)}</td><td>${nakP(asc)}</td><td>1</td></tr>` + PLS.map(p => { const x = pos[p], sg = Math.floor(x / 30), rt = p !== 'Rahu' && p !== 'Ketu' && A.retro(p, jR);
+    return `<tr><td><b style="color:${PC[p]}">${N.PIC[p]} ${N.P[p]}</b>${rt ? ' <span class="r">(व)</span>' : ''}</td><td>${N.SIGN[sg]}</td><td>${dms(x)}</td><td>${nakP(x)}</td><td>${((sg - lagS + 12) % 12) + 1}</td></tr>`; }).join('');
+  const chart = (base, title) => {
+    const HP = [null, [200, 100], [100, 36], [36, 100], [100, 200], [36, 300], [100, 364], [200, 300], [300, 364], [364, 300], [300, 200], [364, 100], [300, 36]];
+    const SP = [null, [200, 182], [100, 90], [88, 104], [182, 204], [88, 304], [100, 322], [200, 230], [300, 322], [314, 304], [220, 204], [314, 104], [300, 90]];
+    let t = '';
+    for (let h = 1; h <= 12; h++) {
+      const sg = (base + h - 1) % 12, [x, yy] = HP[h], [sx, sy] = SP[h];
+      t += `<text x="${sx}" y="${sy + 4}" class="sn">${sg + 1}</text>`;
+      const L1 = PLS.filter(p => Math.floor(pos[p] / 30) === sg).map(p => ({ s: SH[p] + (p !== 'Rahu' && p !== 'Ketu' && A.retro(p, jR) ? '*' : '') + ' ' + Math.floor(pos[p] % 30) + '°', c: PC[p] }));
+      if (h === 1 && title === 'लग्न') L1.unshift({ s: 'ल ' + Math.floor(asc % 30) + '°', c: '#7a1f12' });
+      const big = [1, 4, 7, 10].includes(h), lh = big ? 17 : 14, y0 = yy - (L1.length - 1) * lh / 2 - (big ? 8 : 0);
+      L1.forEach((l, i) => t += `<text x="${x}" y="${y0 + i * lh + 5}" class="pl${big ? '' : ' sm'}" style="fill:${l.c}">${l.s}</text>`);
     }
-  }
-  buildChoghadiya(sunriseH, sunsetH, DAY_START_IDX[vaarIdx], 'pnc-chog-day');
-  buildChoghadiya(sunsetH, sunsetH + (24-dayLen), NIGHT_START_IDX[vaarIdx], 'pnc-chog-night');
+    return `<figure><figcaption>${title} कुंडली</figcaption><svg viewBox="0 0 400 400"><rect x="2" y="2" width="396" height="396" rx="14" fill="#fffaf1" stroke="#b5451b" stroke-width="3"/><path d="M2 2L398 398M398 2L2 398M200 2L398 200L200 398L2 200Z" fill="none" stroke="#d98a4a" stroke-width="2"/>${t}</svg></figure>`;
+  };
 
-  // ================= \u092a\u0930\u093f\u0923\u093e\u092e \u092a\u094d\u0930\u0926\u0930\u094d\u0936\u0928 =================
-  var placeLabel = (L.gps) ? ("\u0905\u0915\u094d\u0937\u093e\u0902\u0936 "+lat.toFixed(2)+", \u0926\u0947\u0936\u093e\u0902\u0924\u0930 "+lon.toFixed(2)) : city.name;
-  document.getElementById('pnc-r-date').textContent = day+"/"+month+"/"+year+" \u2014 "+vaarName;
-  document.getElementById('pnc-r-place').textContent = placeLabel;
+  /* ---- मासिक कैलेंडर ---- */
+  if (!CM || CM.y !== y || CM.m !== m || CM.lat !== L.lat || CM.lon !== L.lon || CM.mode !== A.mode()) CM = { y, m, lat: L.lat, lon: L.lon, mode: A.mode(), days: AVCal.month(y, m, L) };
+  const DD = CM.days[d - 1] || { events: [] }, ev = DD.events || [];
+  const fd = new Date(y, m - 1, 1).getDay();
+  let cal = ['रवि', 'सोम', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि'].map(x => `<div class="h">${x}</div>`).join('') + '<div class="c e"></div>'.repeat(fd);
+  const today = new Date();
+  CM.days.forEach((x, i) => { const t = x.tithi, tn = (t === 15 ? 'पूर्णिमा' : t === 30 ? 'अमावस्या' : N.TITHI[(t - 1) % 15]) + (t <= 15 ? ' शु' : ' कृ');
+    const isT = today.getFullYear() === y && today.getMonth() + 1 === m && today.getDate() === i + 1;
+    cal += `<div class="c${(fd + i) % 7 === 0 ? ' su' : ''}${t === 15 ? ' pn' : t === 30 ? ' am' : ''}${i + 1 === d ? ' sel' : ''}${isT ? ' td' : ''}" data-d="${i + 1}"><b>${i + 1}</b><small>${tn}</small>${(x.events || []).slice(0, 2).map(e => `<i>${e[0]} ${esc(e[1]).slice(0, 14)}</i>`).join('')}</div>`; });
 
-  document.getElementById('pnc-r-sunrise').textContent = hoursToHM(sunriseH);
-  document.getElementById('pnc-r-sunset').textContent = hoursToHM(sunsetH);
+  /* ---- रेंडर ---- */
+  const kv = (k, v, c) => `<div class="kv${c ? ' ' + c : ''}"><span>${k}</span><div>${v}</div></div>`;
+  const pmN = (pm === am ? adh : '') + N.MAAS[pm], amN = adh + N.MAAS[am];
+  const evs = ev.map(e => `<span>${e[0]} ${esc(e[1])}</span>`).join('');
+  $('out').innerHTML = `
+  <div class="pc-hero">
+    <div class="d1">${d} ${MON[m - 1]} ${y} • ${N.VAAR[V]}</div>
+    <div class="d2">${pmN} ${krish ? 'कृष्ण' : 'शुक्ल'} ${tName(I.tithi).replace(/^(शुक्ल|कृष्ण) /, '')}</div>
+    <div class="d3">विक्रम संवत ${vs} (${sv}) • शक ${shaka} • 📍 ${esc(P.name)}</div>
+    ${evs ? `<div class="ev">${evs}</div>` : ''}
+    <div class="pc-sun"><div><i>🌅</i><small>सूर्योदय</small><b>${A.fmtH(rise)}</b></div><div><i>🌇</i><small>सूर्यास्त</small><b>${A.fmtH(set)}</b></div><div><i>🌙</i><small>चंद्रोदय</small><b>${mr ? T(mr) : '—'}</b></div><div><i>🌑</i><small>चंद्रास्त</small><b>${ms ? T(ms) : '—'}</b></div></div>
+  </div>
+  <div class="shbar"><button class="btn ok" id="sh">💬 WhatsApp पर भेजें</button><button class="btn ln" id="pr">🖨️ प्रिंट</button></div>
 
-  document.getElementById('pnc-r-tithi').textContent = tithiName;
-  document.getElementById('pnc-r-paksha').textContent = paksha;
-  document.getElementById('pnc-r-tithi-time').textContent = tithiEndJD ? ("\u0938\u092e\u093e\u092a\u094d\u0924\u093f: " + jdToLocalHM(tithiEndJD, tz, year, month, day).text) : "";
+  <section class="pc-sec" id="s-pan"><h3>📜 पंचांग <small>सूर्योदय से अगले सूर्योदय तक</small></h3><div class="pc-in">
+    ${kv('तिथि', listSp(tS, tName))}
+    ${kv('नक्षत्र', listSp(nS, v => N.NAK[v]) + `<small>चरण ${pada0} • स्वामी ${N.P[N.NAK_LORD[nk0 % 9]]}</small>`)}
+    ${kv('योग', listSp(yS, v => YOGA[v] + (BADYOGA.includes(v) ? ' ⚠️' : '')))}
+    ${kv('करण', listSp(kS, kName))}
+    ${kv('वार', `<b>${N.VAAR[V]}</b><small>स्वामी ${N.P[PS[V]]}</small>`)}
+    ${kv('पक्ष', `<b>${krish ? 'कृष्ण पक्ष' : 'शुक्ल पक्ष'}</b>`)}
+    ${kv('चंद्र राशि', mSign.map((x, i) => `${i ? '<span class="nx">फिर </span>' : ''}<b>${N.SIGN_IC[x.v]} ${N.SIGN[x.v]}</b> ${x.e && x.e < jN ? '<small style="display:inline">— ' + T(x.e) + ' तक</small>' : ''}`).join('<br>'))}
+    ${kv('सूर्य राशि', `<b>${N.SIGN_IC[ss]} ${N.SIGN[ss]}</b><small>सूर्य नक्षत्र: ${N.NAK[sunNak]} (चरण ${sunPada})</small>`)}
+  </div></section>
 
-  document.getElementById('pnc-r-nakshatra').textContent = nakName;
-  document.getElementById('pnc-r-pada').textContent = "\u091a\u0930\u0923 " + pada;
-  document.getElementById('pnc-r-nakshatra-time').textContent = nakEndJD ? ("\u0938\u092e\u093e\u092a\u094d\u0924\u093f: " + jdToLocalHM(nakEndJD, tz, year, month, day).text) : "";
+  <section class="pc-sec" id="s-mas"><h3>🪔 मास • संवत • ऋतु</h3><div class="pc-in">
+    ${kv('पूर्णिमांत मास', `<b>${pmN}</b><small>काशी / उत्तर भारत की परंपरा</small>`)}
+    ${kv('अमांत मास', `<b>${amN}</b><small>गुजरात, महाराष्ट्र, दक्षिण भारत</small>`)}
+    ${kv('विक्रम संवत', `<b>${vs}</b> — ${sv} संवत्सर`)}
+    ${kv('शक संवत', `<b>${shaka}</b> — ${svS} संवत्सर`)}
+    ${kv('कलियुग वर्ष', `<b>${vs + 3044}</b>`)}
+    ${kv('सौर मास', `<b>${N.SIGN[ss]}</b><small>संक्रांति से ${gate}वाँ दिन (प्रविष्टे/गते ${gate})</small>`)}
+    ${kv('ऋतु', `<b>${RITU[ss]}</b>`)}
+    ${kv('अयन', `<b>${[9, 10, 11, 0, 1, 2].includes(ss) ? 'उत्तरायण' : 'दक्षिणायन'}</b>`)}
+    ${kv('गोल', `<b>${ss <= 5 ? 'उत्तर गोल' : 'दक्षिण गोल'}</b>`)}
+    ${kv('दिनमान / रात्रिमान', `<b>${Math.floor(dayL)} घं ${Math.round(dayL % 1 * 60)} मि</b> / ${Math.floor(nightL)} घं ${Math.round(nightL % 1 * 60)} मि<small>दिनमान ${(dayL * 2.5).toFixed(1)} घटी</small>`)}
+    ${kv('मध्याह्न', `<b>${A.fmtH((rise + set) / 2)}</b>`)}
+  </div></section>
 
-  document.getElementById('pnc-r-yoga').textContent = yogaName;
-  document.getElementById('pnc-r-yoga-time').textContent = yogaEndJD ? ("\u0938\u092e\u093e\u092a\u094d\u0924\u093f: " + jdToLocalHM(yogaEndJD, tz, year, month, day).text) : "";
+  <section class="pc-sec" id="s-shubh"><h3>✨ शुभ समय</h3><div class="pc-in">
+    ${shubh.map(x => kv(x[0], `<b>${x[1]}</b><small>${x[2]}</small>`, 'g')).join('')}
+    ${yogs.length ? yogs.map(x => kv('विशेष योग', `<b>${x[0]}</b><small>${x[1]}</small>`, 'g')).join('') : kv('विशेष योग', '<b style="color:var(--mut)">आज कोई विशेष योग नहीं</b>')}
+  </div></section>
 
-  document.getElementById('pnc-r-karana').textContent = karanaName;
-  document.getElementById('pnc-r-karana-time').textContent = karanaEndJD ? ("\u0938\u092e\u093e\u092a\u094d\u0924\u093f: " + jdToLocalHM(karanaEndJD, tz, year, month, day).text) : "";
+  <section class="pc-sec" id="s-ashubh"><h3>⛔ अशुभ समय</h3><div class="pc-in">
+    ${ashubh.map(x => kv(x[0], `<b>${x[1]}</b><small>${x[2]}</small>`, 'x')).join('')}
+  </div></section>
 
-  document.getElementById('pnc-r-vaar').textContent = vaarName;
-  document.getElementById('pnc-r-sunsign').textContent = sunRashi;
-  document.getElementById('pnc-r-moonsign').textContent = moonRashi;
+  <section class="pc-sec" id="s-vas"><h3>🧭 निवास • शूल • आहुति</h3><div class="pc-in"><div class="pc-2">
+    <div class="x"><b>🚫 दिशा शूल</b>${disha} — यात्रा टालें<br><small>ज़रूरी हो तो ${dUp} निकलें</small></div>
+    <div><b>🌙 चंद्र वास</b>${cv} दिशा<br><small>सम्मुख/दाहिने चंद्र में यात्रा शुभ</small></div>
+    <div class="${sv1[1] ? 'g' : 'x'}"><b>🔱 शिव वास</b>${sv1[0]}<br><small>${sv1[1] ? 'रुद्राभिषेक शुभ' : 'रुद्राभिषेक (सकाम) टालें'}</small></div>
+    <div class="${ag[1] ? 'g' : 'x'}"><b>🔥 अग्नि वास</b>${ag[0]}<br><small>${ag[1] ? 'हवन-यज्ञ शुभ' : 'सकाम हवन टालें'}</small></div>
+    <div><b>🪔 होमाहुति</b>${homa} के मुख में आहुति</div>
+    ${bh.length ? `<div class="x"><b>⚠️ भद्रा वास</b>${bhVas(Math.floor(sm((bh[0][0] + bh[0][1]) / 2).moon / 30))}</div>` : '<div class="g"><b>✅ भद्रा</b>आज भद्रा नहीं</div>'}
+    <div class="${pan.length ? 'x' : 'g'}"><b>⭐ पंचक</b>${pan.length ? 'पंचक है (ऊपर समय देखें)' : 'पंचक नहीं'}</div>
+  </div></div></section>
 
-  document.getElementById('pnc-r-rahu').textContent = rahuTxt;
-  document.getElementById('pnc-r-yama').textContent = yamaTxt;
-  document.getElementById('pnc-r-gulika').textContent = gulikaTxt;
-  document.getElementById('pnc-r-abhijit').textContent = abhijitTxt;
+  <section class="pc-sec" id="s-bal"><h3>💪 चंद्र बल • तारा बल</h3><div class="pc-in">
+    <div class="kv"><span>चंद्र बल<br><small>(${N.SIGN[mS]} के चंद्र से)</small></span><div><div class="tara">${[...Array(12).keys()].map(r => `<span class="${cbGood.includes(r) ? '' : 'x'}">${N.SIGN[r]}</span>`).join('')}</div><small>हरे = चंद्र बल प्राप्त (चंद्र 1,3,6,7,10,11 भाव में)${mSign.length > 1 ? ' • ' + T(mSign[0].e) + ' तक' : ''}</small></div></div>
+    <div class="kv"><span>तारा बल<br><small>(${N.NAK[nk0]} से)</small></span><div><div class="tara">${tara.map(x => `<span class="${x.ok ? '' : 'x'}" title="${TARA[x.t]}">${N.NAK[x.n]}</span>`).join('')}</div><small>अपना जन्म नक्षत्र देखें — हरा = शुभ तारा (सम्पत्, क्षेम, साधक, मित्र, अति-मित्र)${nS.length > 1 ? ' • ' + T(nS[0].e) + ' तक' : ''}</small></div></div>
+  </div></section>
 
-  // ================= माह • संवत • ऋतु • विशेष योग =================
-  (function(){
-    var MAAS=['चैत्र','वैशाख','ज्येष्ठ','आषाढ़','श्रावण','भाद्रपद','आश्विन','कार्तिक','मार्गशीर्ष','पौष','माघ','फाल्गुन'];
-    var EN=['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
-    var RITU=['वसंत','ग्रीष्म','ग्रीष्म','वर्षा','वर्षा','शरद','शरद','हेमंत','हेमंत','शिशिर','शिशिर','वसंत'];
-    var lm = window.AVAstro && AVAstro.lunarMonth ? AVAstro.lunarMonth(jdSunrise) : null;
-    var am = lm ? lm.maas : (Math.floor(sunSid/30)+1)%12, krish = tithiNum>15;
-    var pm = krish ? (am+1)%12 : am;   // पूर्णिमांत (काशी/उत्तर भारत)
-    var adh = lm && lm.adhik ? 'अधिक ' : '';
-    // विक्रम संवत: चैत्र शुक्ल प्रतिपदा से बदलता है
-    var vs = (month <= 4 && am >= 9) ? year + 56 : year + 57;
-    var shaka = vs - 135;
-    var ss = Math.floor(sunSid/30), ritu = RITU[ss], ayana = [9,10,11,0,1,2].indexOf(ss)>=0 ? 'उत्तरायण' : 'दक्षिणायन';
-    var gola = (ss>=0 && ss<=5) ? 'उत्तर गोल' : 'दक्षिण गोल';
-    var mp = pm, mpN = (mp===am?adh:'') + MAAS[mp], amN = adh + MAAS[am];
-    document.getElementById('pnc-month').innerHTML = '<div class="mm">🪔 '+mpN+' मास • '+(krish?'कृष्ण':'शुक्ल')+' पक्ष • '+tithiName+'</div>'
-      + '<div class="ms">'+day+' '+EN[month-1]+' '+year+' ('+vaarName+') • अमांत गणना से: '+amN+' मास'+(mp!==am?' (पूर्णिमांत में '+MAAS[mp]+')':'')+'</div>'
-      + '<div class="mg"><div>विक्रम संवत<b>'+vs+'</b></div><div>शक संवत<b>'+shaka+'</b></div><div>सौर मास<b>'+RASHI_NAMES[ss]+'</b></div><div>ऋतु<b>'+ritu+'</b></div><div>अयन<b>'+ayana+'</b></div><div>गोल<b>'+gola+'</b></div></div>';
-    var n1 = nakNum+1, V = vaarIdx;
-    var SS = [[13,19,12,21,26,8,1],[22,4,5,8,17],[1,26,3,9],[4,17,13,3,5],[27,17,1,7,8],[27,17,1,7,22],[22,4,15]];
-    var AS = [13,5,1,17,8,27,4];
-    var yog = [];
-    if (SS[V].indexOf(n1)>=0) yog.push('✅ सर्वार्थसिद्धि योग');
-    if (AS[V]===n1) yog.push('🌟 अमृतसिद्धि योग');
-    if (n1===8 && V===4) yog.push('🌟 गुरु-पुष्य योग'); if (n1===8 && V===0) yog.push('🌟 रवि-पुष्य योग');
-    var disha = ['पश्चिम','पूर्व','उत्तर','उत्तर','दक्षिण','पश्चिम','पूर्व'][V];
-    var ms = Math.floor(moonSid/30), cvas = ['पूर्व','दक्षिण','पश्चिम','उत्तर'][ms%4];
-    var panchak = moonSid >= 296.6667 ; // धनिष्ठा उत्तरार्ध (कुंभ) से रेवती तक
-    var gand = [1,9,10,18,19,27].indexOf(n1)>=0;
-    var bhadra = /विष्टि|भद्रा/.test(karanaName);
-    var C = function(cls,t,v){ return '<div class="'+cls+'"><b>'+t+'</b>'+v+'</div>'; };
-    document.getElementById('pnc-spec').innerHTML =
-      C(yog.length?'g':'', 'शुभ योग', yog.length?yog.join('<br>'):'आज कोई विशेष योग नहीं')
-      + C('x', '🚫 दिशा शूल', disha+' दिशा की यात्रा टालें')
-      + C('', '🌙 चंद्र वास', cvas+' दिशा')
-      + C(panchak?'x':'g', '⭐ पंचक', panchak?'पंचक चल रहा है — लकड़ी/छत/दक्षिण यात्रा टालें':'पंचक नहीं')
-      + C(gand?'x':'g', '🔁 गंडमूल', gand?NAKSHATRA_NAMES[nakNum]+' — आज जन्मे बालक की मूल शांति करवाएँ':'गंडमूल नक्षत्र नहीं')
-      + C(bhadra?'x':'g', '⚠️ भद्रा', bhadra?'सूर्योदय पर भद्रा (विष्टि करण) — शुभ कार्य टालें':'सूर्योदय पर भद्रा नहीं');
-  })();
+  <section class="pc-sec" id="s-chog"><h3>🕐 चौघड़िया</h3><div class="pc-in">
+    <h4 style="margin:8px 0 2px">☀️ दिन</h4><div class="chg">${chog(rise, dayL, CDAY[V])}</div>
+    <h4 style="margin:10px 0 2px">🌙 रात्रि</h4><div class="chg">${chog(set, nightL, CNIGHT[V])}</div>
+    <div class="note">हरा = अमृत, शुभ, लाभ • पीला = चल • लाल = उद्वेग, रोग, काल${nowJ ? ' • नारंगी घेरा = अभी' : ''}</div>
+  </div></section>
 
-  document.getElementById('pnc-results').classList.add('show');
-  pncMsg('');
-  window.pncLast = { date: day+"/"+month+"/"+year, vaar: vaarName, place: placeLabel, sunrise: hoursToHM(sunriseH), sunset: hoursToHM(sunsetH), tithi: paksha+' '+tithiName, nak: nakName, yoga: yogaName, karana: karanaName, rahu: rahuTxt, abhijit: abhijitTxt, moon: moonRashi };
-  // आज है तो अभी चल रही चौघड़िया चिह्नित करें
-  var now = new Date(), iso = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
-  if (iso === dateInput) {
-    var nh = now.getHours() + now.getMinutes()/60, slots = [], lenD = (sunsetH - sunriseH)/8, lenN = (24 - (sunsetH - sunriseH))/8;
-    document.querySelectorAll('#pnc-chog-day .pnc-chog-slot').forEach(function(el,i){ var st=sunriseH+i*lenD; if(nh>=st && nh<st+lenD) el.classList.add('pnc-now'); });
-    document.querySelectorAll('#pnc-chog-night .pnc-chog-slot').forEach(function(el,i){ var st=sunsetH+i*lenN, h2=nh<sunriseH?nh+24:nh; if(h2>=st && h2<st+lenN) el.classList.add('pnc-now'); });
-  }
-};
+  <section class="pc-sec" id="s-hora"><h3>⏳ होरा <small>दिन व रात्रि</small></h3><div class="pc-in tlw"><table class="tl"><thead><tr><th>समय</th><th>होरा</th><th>किस काम के लिए</th></tr></thead><tbody>${hora}</tbody></table></div></section>
 
-// ================= \u092a\u094d\u0930\u093e\u0930\u0902\u092d\u093f\u0915 \u0938\u0947\u091f\u0905\u092a =================
-function iso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-window.pncMsg = function(t){ var m=document.getElementById('pnc-msg'); m.textContent=t||''; m.style.display=t?'block':'none'; };
-window.pncShift = function(n){ var el=document.getElementById('pnc-date'); var d=n===0?new Date():new Date(el.value+'T12:00:00'); if(n) d.setDate(d.getDate()+n); el.value=iso(d); pncCalculate(); };
-window.pncSetLoc = function(L){ window.pncLoc = L; AVPlaces.save(L); document.getElementById('pnc-place').value = L.name + (L.st ? ', ' + L.st.split(',').pop().trim() : ''); document.getElementById('pnc-loc-note').textContent = '✓ ' + Math.abs(L.lat).toFixed(2) + '°' + (L.lat>=0?'N':'S') + ', ' + Math.abs(L.lon).toFixed(2) + '°' + (L.lon>=0?'E':'W') + ' — यह स्थान याद रखा गया है'; pncCalculate(); };
-window.pncGps = function(){ pncMsg('📍 स्थान ढूंढ रहे हैं…'); AVPlaces.gps().then(pncSetLoc).catch(function(e){ pncMsg(e.message + ' — शहर का नाम लिखकर चुनें'); }); };
-window.pncShare = function(){ var p=window.pncLast; if(!p) return; var t='🕉️ *पंचांग — '+p.date+' ('+p.vaar+')*\n📍 '+p.place+'\n🌅 सूर्योदय: '+p.sunrise+'  🌇 सूर्यास्त: '+p.sunset+'\n🌙 तिथि: '+p.tithi+'\n✨ नक्षत्र: '+p.nak+'\n☯️ योग: '+p.yoga+' • करण: '+p.karana+'\n🌕 चंद्र राशि: '+p.moon+'\n⚠️ राहु काल: '+p.rahu+'\n✅ अभिजित मुहूर्त: '+p.abhijit+'\n\n— Astro Vikass • ☎ 7069492135'; window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank'); };
-document.getElementById('pnc-date').value = iso(new Date());
-document.getElementById('pnc-date').addEventListener('change', function(){ if(window.pncLoc) pncCalculate(); });
-AVPlaces.mount(document.getElementById('pnc-place'), pncSetLoc);
-var saved = AVPlaces.load();
-if (saved) pncSetLoc(saved); else { document.getElementById('pnc-loc-note').textContent = 'पहली बार: अपना शहर चुनें या 📍 दबाएं — अगली बार अपने आप खुलेगा'; }
+  <section class="pc-sec" id="s-lagna"><h3>🪐 लग्न तालिका <small>सूर्योदय से अगले सूर्योदय</small></h3><div class="pc-in tlw">
+    <table class="tl"><thead><tr><th>लग्न</th><th>आरंभ</th><th>समाप्ति</th><th>प्रकार</th></tr></thead><tbody>${lagnaRows}</tbody></table>
+    <div class="note">✨ स्थिर लग्न (वृषभ, सिंह, वृश्चिक, कुंभ) — गृह प्रवेश, स्थापना, स्थायी काम के लिए श्रेष्ठ • चर लग्न — यात्रा, वाहन</div>
+  </div></section>
 
-})();
+  <section class="pc-sec" id="s-graha"><h3>🌌 ग्रह स्थिति व कुंडली <small>सूर्योदय ${A.fmtH(rise)} पर</small></h3><div class="pc-in">
+    <div class="tlw"><table class="tl"><thead><tr><th>ग्रह</th><th>राशि</th><th>अंश</th><th>नक्षत्र-चरण</th><th>भाव</th></tr></thead><tbody>${gRows}</tbody></table></div>
+    <div class="charts">${chart(lagS, 'लग्न')}${chart(mS, 'चंद्र')}</div>
+    <div class="note">(व) / * = वक्री • भाव = लग्न से • ${A.mode() === 'rk' ? 'ऋषिकेश (सूर्य सिद्धान्त) पद्धति' : 'दृक् (आधुनिक) पद्धति'}</div>
+  </div></section>
+
+  <section class="pc-sec" id="s-cal"><h3>📅 मासिक पंचांग</h3><div class="pc-in">
+    <div class="mnav2" style="margin-top:8px"><button class="btn sm ghost" id="mP">◀</button><b>${MON[m - 1]} ${y}</b><button class="btn sm ghost" id="mN">▶</button></div>
+    <div class="cal" id="cal">${cal}</div>
+    <div class="note">किसी तारीख पर दबाएँ — उस दिन का पूरा पंचांग खुलेगा • पीला = पूर्णिमा, बैंगनी = अमावस्या</div>
+  </div></section>`;
+
+  $('cal').onclick = e => { const c = e.target.closest('.c[data-d]'); if (!c) return; SEL = new Date(y, m - 1, +c.dataset.d, 12); $('dt').value = ymd(SEL); run(); scrollTo({ top: 0, behavior: 'smooth' }); };
+  $('mP').onclick = () => { SEL = new Date(y, m - 2, 1, 12); $('dt').value = ymd(SEL); run(); setTimeout(() => $('s-cal').scrollIntoView(), 30); };
+  $('mN').onclick = () => { SEL = new Date(y, m, 1, 12); $('dt').value = ymd(SEL); run(); setTimeout(() => $('s-cal').scrollIntoView(), 30); };
+  $('pr').onclick = () => print();
+  $('sh').onclick = () => share(`🌞 *पंचांग — ${d} ${MON[m - 1]} ${y}, ${N.VAAR[V]}*\n📍 ${P.name}\n🪔 ${pmN} ${krish ? 'कृष्ण' : 'शुक्ल'} पक्ष • विक्रम संवत ${vs}\n\n📜 तिथि: ${tS.map(x => tName(x.v) + (x.e && x.e < jN ? ' (' + T(x.e) + ' तक)' : '')).join(' → ')}\n⭐ नक्षत्र: ${nS.map(x => N.NAK[x.v] + (x.e && x.e < jN ? ' (' + T(x.e) + ' तक)' : '')).join(' → ')}\n🔗 योग: ${YOGA[yS[0].v]} • करण: ${kName(kS[0].v)}\n🌅 सूर्योदय ${A.fmtH(rise)} • 🌇 सूर्यास्त ${A.fmtH(set)}\n🌙 चंद्र राशि: ${N.SIGN[mS]}\n✨ अभिजित्: ${abh ? rngH(abh[0], abh[1]) : '—'}\n⛔ राहुकाल: ${rngH(...seg(RAHU[V]))}\n🚫 दिशा शूल: ${disha}${ev.length ? '\n🙏 ' + ev.map(e => e[1]).join(', ') : ''}${yogs.length ? '\n🌟 ' + yogs.map(x => x[0].replace(/^\S+ /, '')).join(', ') : ''}\n— Astro Vikass • ☎ 7069492135`);
+}
+run();
 </script>
 </body>
 </html>
