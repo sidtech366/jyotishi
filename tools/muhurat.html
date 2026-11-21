@@ -61,6 +61,7 @@
   </details>
 </div>
 <div class="av-card">
+  <div class="chips" id="md" style="margin-bottom:8px"><span class="chip" data-m="rk">📖 ऋषिकेश पंचांग पद्धति</span><span class="chip" data-m="drik">🔭 आधुनिक (दृक्) पद्धति</span></div>
   <div class="mnav"><button id="pv">◀</button><b id="mt"></b><button id="nx">▶</button></div>
   <div id="out" class="empty">गणना हो रही है…</div>
   <p class="note" id="foot"></p>
@@ -72,6 +73,7 @@
 <script src="lib/astro.js"></script>
 <script src="lib/ui.js"></script>
 <script src="lib/calendar.js"></script>
+<script src="lib/ss.js"></script>
 <script>
 const { $, share, store } = AVUI, A = AVAstro, N = A.N;
 const MN = ['जनवरी', 'फरवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'];
@@ -119,33 +121,33 @@ const EV = {
     age: 'बालक: 6वें, 8वें, 10वें या 12वें मास में (सम मास) • बालिका: 5वें, 7वें या 9वें मास में (विषम मास)',
     nt: ['भद्रा, वैधृति, व्यतीपात, गंडांत, वज्र, शूल, परिघ योग वर्जित।', 'शिशु का जन्म नक्षत्र भी अन्नप्राशन में शुभ माना गया है।', 'आवश्यकता होने पर मलमास में भी किया जा सकता है।'],
     pr: [DS + ' — अन्नप्राशन', 'मनुस्मृति 2.34 — "षष्ठेऽन्नप्राशनं मासि"', MCS + ' — संस्कार प्रकरण'] },
-  karna: { g: 'sans', t: '💎 कर्णवेध', al: 'कर्णछेदन / कान छिदवाना', nak: 'पुष्य,पुनर्वसु,मृग,उफा,उषा,उभा,हस्त,चित्रा,अश्विनी,श्रवण,रेवती,धनिष्ठा', tt: [2, 3, 5, 6, 7, 10, 12, 13], vr: 's,b,g,sk', maas: 'kartik,magh,chaitra,phalgun', time: 'day', mal: 1,
+  karna: { g: 'sans', t: '💎 कर्णवेध', al: 'कर्णछेदन / कान छिदवाना', nak: 'पुष्य,पुनर्वसु,मृग,उफा,उषा,उभा,हस्त,चित्रा,अश्विनी,श्रवण,रेवती,धनिष्ठा', tt: [2, 3, 5, 6, 7, 10, 12, 13], vr: 's,b,g,sk', maas: 'kartik,magh,chaitra,phalgun', time: 'day', mal: 1, kh: 1, hol: 1,
     age: 'जन्म के 10वें, 12वें या 16वें दिन; अथवा 6वें, 7वें, 8वें या 12वें मास में; अथवा पहले या तीसरे वर्ष में (इसके बाद सम वर्ष वर्जित)',
     nt: ['बालक का पहले दायाँ फिर बायाँ कान; बालिका का पहले बायाँ।', 'कार्तिक, माघ, चैत्र, फाल्गुन मास श्रेष्ठ।'],
     pr: [DS + ' — कर्णवेध', MCS + ' — संस्कार प्रकरण'] },
-  mundan: { g: 'sans', t: '✂️ मुंडन', al: 'चूड़ाकर्म / चौल / पहली बार बाल उतारना', nak: 'अश्विनी,मृग,पुनर्वसु,पुष्य,हस्त,चित्रा,स्वाति,ज्येष्ठा,श्रवण,धनिष्ठा,शतभिषा,रेवती', tt: [2, 3, 5, 7, 10, 11], vr: 's,b,g,sk', maas: 'magh,phalgun,vaishakh,jyeshtha', k: 12, sg: 1, mal: 1, asta: 1, sk: 1, time: 'day',
+  mundan: { g: 'sans', t: '✂️ मुंडन', al: 'चूड़ाकर्म / चौल / पहली बार बाल उतारना', nak: 'अश्विनी,मृग,पुनर्वसु,पुष्य,हस्त,चित्रा,स्वाति,ज्येष्ठा,श्रवण,धनिष्ठा,शतभिषा,रेवती', tt: [2, 3, 5, 7, 9, 10, 11, 12, 13], vr: 's,b,g,sk', maas: 'magh,phalgun,vaishakh,jyeshtha,ashadh', k: 12, sg: 1, mal: 1, asta: 1, sk: 1, kh: 1, hol: 1, time: 'day',
     age: 'पहले से पाँचवें वर्ष के बीच (कुल परंपरा अनुसार; विषम वर्ष — 1, 3, 5 — श्रेष्ठ) अथवा उपनयन के साथ',
     nt: ['ज्येष्ठ मास में ज्येष्ठ (पहली) संतान का मुंडन वर्जित।', 'माता 5 मास से अधिक गर्भवती हो तो वर्जित (उपनयन के साथ हो तो दोष नहीं)।', 'गुरु सिंह राशि में हो तो वर्जित।', 'शिशु के जन्म नक्षत्र में तथा अनुराधा, कृत्तिका, तीनों उत्तरा, रोहिणी, मघा में बाल कटवाना वर्जित।', 'बुध, गुरु, शुक्र शुक्ल पक्ष में; सोमवार दोनों पक्षों में।'],
     pr: [DS + ' — चूड़ाकर्म', 'मनुस्मृति 2.35 — "चूडाकर्म द्विजातीनां सर्वेषामेव धर्मतः। प्रथमेऽब्दे तृतीये वा"', MCS + ' — संस्कार प्रकरण'] },
-  vidya: { g: 'sans', t: '📚 विद्यारंभ', al: 'अक्षरारंभ / पट्टी पूजन / अक्षराभ्यास', nak: 'अश्विनी,मृग,आर्द्रा,पुनर्वसु,पुष्य,हस्त,चित्रा,स्वाति,अनुराधा,श्रवण,धनिष्ठा,शतभिषा,रेवती', tt: [2, 3, 5, 10, 11, 13], vr: 'r,s,b,g,sk', uttar: 1, k: 12, time: 'day', notSun: [10],
+  vidya: { g: 'sans', t: '📚 विद्यारंभ', al: 'अक्षरारंभ / पट्टी पूजन / अक्षराभ्यास', nak: 'अश्विनी,मृग,आर्द्रा,पुनर्वसु,पुष्य,आश्लेषा,हस्त,चित्रा,स्वाति,अनुराधा,मूल,श्रवण,धनिष्ठा,शतभिषा,रेवती', tt: [2, 3, 5, 6, 10, 11, 12, 13], vr: 'r,s,b,g,sk', uttar: 1, k: 12, kh: 1, hol: 1, mal: 1, time: 'day',
     age: 'पाँचवें वर्ष में; उत्तरायण में (सूर्य कुंभ राशि में न हो)',
     nt: ['मंगल व शनि वार वर्जित।', 'वसंत पंचमी (सरस्वती पूजा) का दिन स्वयंसिद्ध मुहूर्त।', 'गणेश, सरस्वती और कुलदेवता का पूजन करके "ॐ नमः सिद्धम्" लिखवाएँ।'],
     pr: [DS + ' — विद्यारम्भ', MCS + ' — संस्कार प्रकरण'] },
-  upanayan: { g: 'sans', t: '🧵 उपनयन', al: 'यज्ञोपवीत / जनेऊ / व्रतबंध / मौंजीबंधन', nak: cl('kship', 'dhruv', 'char', 'mridu') + ',आश्लेषा,मूल,पूफा,पूषा,पूभा,आर्द्रा', tt: [2, 3, 5, 10, 11, 12], vr: 'r,s,b,g,sk', maas: 'magh,phalgun,chaitra,vaishakh,jyeshtha', k: 5, asta: 1, sg: 1, mal: 1, sk: 1, time: 'day', yb: 1,
+  upanayan: { g: 'sans', t: '🧵 उपनयन', al: 'यज्ञोपवीत / जनेऊ / व्रतबंध / मौंजीबंधन', nak: cl('kship', 'dhruv', 'char', 'mridu') + ',आश्लेषा,मूल,पूफा,पूषा,पूभा,आर्द्रा', tt: [1, 2, 3, 5, 9, 10, 11, 12], vr: 'r,s,b,g,sk', maas: 'magh,phalgun,chaitra,vaishakh,jyeshtha,ashadh', k: 5, asta: 1, sg: 1, mal: 1, sk: 1, hol: 1, time: 'day', yb: 1,
     age: 'ब्राह्मण: गर्भ से 8वें वर्ष • क्षत्रिय: 11वें • वैश्य: 12वें वर्ष (मनु)',
     nt: ['माघ से ज्येष्ठ तक पाँच मास (उत्तरायण) श्रेष्ठ।', 'बटुक के लिए गुरु का बल (गोचर में 2, 5, 7, 9, 11) देखें।', 'पूर्वाह्न का समय श्रेष्ठ।'],
     pr: [MCS + ' — संस्कार प्रकरण: "क्षिप्रध्रुवाहिचरमूलमृदुत्रिपूर्वारौद्रेऽर्कविद्गुरुसितेन्दुदिने व्रतं सत्"', 'मनुस्मृति 2.36 — "गर्भाष्टमेऽब्दे कुर्वीत ब्राह्मणस्योपनायनम्। गर्भादेकादशे राज्ञो गर्भात्तु द्वादशे विशः॥"', DS + ' — उपनयन'] },
-  vedarambh: { g: 'sans', t: '📜 वेदारंभ', al: 'वेदाध्ययन आरंभ / गुरुकुल प्रवेश', nak: 'अश्विनी,मृग,आर्द्रा,पुनर्वसु,पुष्य,हस्त,चित्रा,स्वाति,अनुराधा,श्रवण,धनिष्ठा,शतभिषा,रेवती,मूल,पूफा,पूषा,पूभा', tt: [2, 3, 5, 10, 11, 12, 13], vr: 'r,s,b,g,sk', uttar: 1, asta: 1, k: 5, time: 'day',
+  vedarambh: { g: 'sans', t: '📜 वेदारंभ', al: 'वेदाध्ययन आरंभ / गुरुकुल प्रवेश', nak: 'अश्विनी,मृग,आर्द्रा,पुनर्वसु,पुष्य,हस्त,चित्रा,स्वाति,अनुराधा,श्रवण,धनिष्ठा,शतभिषा,रेवती,मूल,पूफा,पूषा,पूभा', tt: [2, 3, 5, 10, 11, 12, 13], vr: 'r,s,b,g,sk', uttar: 1, asta: 1, k: 5, kh: 1, time: 'day',
     age: 'उपनयन के बाद (प्रायः उसी दिन या उत्तरायण के शुभ दिन)', nt: ['गुरु-शुक्र अस्त न हों; श्रावणी उपाकर्म भी वेदारंभ का पारंपरिक दिन।'],
     pr: [MCS + ' — संस्कार प्रकरण', DS + ' — वेदारम्भ / उपाकर्म'] },
   samavartan: { g: 'sans', t: '🎓 समावर्तन', al: 'दीक्षांत / गुरुकुल से गृह वापसी', nak: 'रोहिणी,मृग,मघा,उफा,हस्त,स्वाति,अनुराधा,मूल,उषा,उभा,रेवती,श्रवण,धनिष्ठा,पुष्य,अश्विनी', tt: [2, 3, 5, 7, 10, 11, 12, 13], vr: 's,b,g,sk', uttar: 1, asta: 1, time: 'day',
     age: 'वेदाध्ययन पूर्ण होने पर, विवाह से पूर्व', nt: ['स्नातक बनने का संस्कार — इसके बाद गृहस्थ आश्रम।'],
     pr: ['मनुस्मृति 3.4 — "गुरुणानुमतः स्नात्वा समावृत्तो यथाविधि"', MCS + ' — संस्कार प्रकरण'] },
-  vagdan: { g: 'viv', t: '💐 वाग्दान', al: 'सगाई / रोका / तिलक / फलदान / सगुन / मँगनी', nak: 'रोहिणी,मृग,मघा,उफा,हस्त,स्वाति,अनुराधा,मूल,उषा,उभा,रेवती,श्रवण,धनिष्ठा', tt: [2, 3, 5, 7, 10, 11, 12, 13, 15], vr: 'r,s,b,g,sk', asta: 1, kh: 1, ch: 1, mal: 1, sk: 1, time: 'any',
+  vagdan: { g: 'viv', rkv: 1, t: '💐 वाग्दान', al: 'सगाई / रोका / तिलक / फलदान / सगुन / मँगनी', nak: 'रोहिणी,मृग,मघा,उफा,हस्त,स्वाति,अनुराधा,मूल,उषा,उभा,रेवती,श्रवण,धनिष्ठा', tt: [2, 3, 5, 7, 10, 11, 12, 13, 15], vr: 'r,s,b,g,sk', asta: 1, kh: 1, ch: 1, mal: 1, sk: 1, time: 'any',
     nt: ['वर-कन्या का गुण मिलान पहले कर लें — "कुंडली मिलान" कार्ड।', 'विवाह के नक्षत्र ही वाग्दान में भी प्रशस्त।'],
     pr: [MCS + ' — विवाह प्रकरण', DS + ' — विवाह प्रकरण (वाग्दान)'] },
-  vivah: { g: 'viv', t: '💍 विवाह', al: 'पाणिग्रहण / शादी / लग्न / फेरे', nak: 'रोहिणी,मृग,मघा,उफा,हस्त,स्वाति,अनुराधा,मूल,उषा,उभा,रेवती', tt: [2, 3, 5, 7, 10, 11, 12, 13, 15], vr: 'r,s,m,b,g,sk,sh', sun: [0, 1, 2, 7, 9, 10], ch: 1, asta: 1, sg: 1, mal: 1, hol: 1, sk: 1, h7: 1, pl: 1, yb: 1, time: 'any',
-    nt: ['सूर्य मेष, वृषभ, मिथुन, वृश्चिक, मकर, कुंभ राशि में हो — धनु-मीन (खरमास) और देवशयन (चातुर्मास) वर्जित।', 'विवाह में वार का विशेष विचार नहीं — नक्षत्र, तिथि व लग्न-शुद्धि प्रधान।', 'लग्न-शुद्धि: लग्न में पाप ग्रह न हो, सप्तम और अष्टम भाव खाली हों, चंद्र 6-8-12 में न हो।', 'वर-कन्या दोनों का चंद्र बल, कन्या का गुरु बल और वर का सूर्य बल अवश्य देखें।', 'गोधूलि लग्न (सूर्यास्त के समय) आपात स्थिति में सर्वदोषनाशक माना गया है।'],
+  vivah: { g: 'viv', rkv: 1, t: '💍 विवाह', al: 'पाणिग्रहण / शादी / लग्न / फेरे', nak: 'रोहिणी,मृग,मघा,उफा,हस्त,स्वाति,अनुराधा,मूल,उषा,उभा,रेवती', tt: [2, 3, 5, 7, 10, 11, 12, 13, 15], vr: 'r,s,m,b,g,sk,sh', sun: [0, 1, 2, 7, 9, 10], ch: 1, asta: 1, sg: 1, mal: 1, hol: 1, sk: 1, h7: 1, pl: 1, yb: 1, time: 'any',
+    nt: ['सूर्य मेष, वृषभ, मिथुन, वृश्चिक, मकर, कुंभ राशि में हो — धनु-मीन (खरमास) और देवशयन (चातुर्मास) वर्जित।', 'विवाह में वार का विशेष विचार नहीं — नक्षत्र, तिथि व लग्न-शुद्धि प्रधान।', 'ऋषिकेश पद्धति में विवाह के दश दोष — लत्ता, पात, युति, वेध, जामित्र, बाण, एकार्गल, उपग्रह, क्रान्तिसाम्य, दग्धा तिथि — में से युति (पाप ग्रह उसी नक्षत्र में), सप्तशलाका वेध, मृत्युबाण, सूर्यभोग्य नक्षत्र, मासान्त, भद्रा, व्यतीपात-वैधृति देखकर दिन चुना जाता है; फिर वही लग्न दिया जाता है जिसमें कम से कम 5 ग्रह इष्ट भाव में हों (पञ्चेष्ट लग्न) — लग्नेश/चंद्र/शुक्र/मंगल/शनि की अशुभ स्थिति टिप्पणी में बताई जाती है।', 'आधुनिक (दृक्) पद्धति चुनने पर कठोर लग्न-शुद्धि: लग्न में पाप ग्रह न हो, सप्तम और अष्टम भाव खाली हों, चंद्र 6-8-12 में न हो।', 'वर-कन्या दोनों का चंद्र बल, कन्या का गुरु बल और वर का सूर्य बल अवश्य देखें।', 'गोधूलि लग्न (सूर्यास्त के समय) आपात स्थिति में सर्वदोषनाशक माना गया है।'],
     pr: [MCS + ' — विवाह प्रकरण (रोहिणी, मृगशिरा, मघा, उत्तराफाल्गुनी, हस्त, स्वाति, अनुराधा, मूल, उत्तराषाढ़ा, उत्तराभाद्रपद, रेवती)', DS + ' — विवाह प्रकरण', 'मनुस्मृति 3.4 — समावर्तन के बाद विवाह'] },
   dwiragaman: { g: 'viv', t: '🛺 द्विरागमन', al: 'गौना / मुकलावा / बहू की दूसरी विदाई', nak: 'अश्विनी,रोहिणी,मृग,पुष्य,हस्त,चित्रा,स्वाति,अनुराधा,मूल,उफा,उषा,उभा,श्रवण,धनिष्ठा,रेवती,पुनर्वसु', tt: [1, 2, 3, 5, 7, 10, 11, 13, 15], vr: 's,b,g,sk', sun: [0, 1, 7, 10], asta: 1, mal: 1, sk: 1, time: 'day',
     age: 'विवाह के बाद विषम वर्ष (1, 3, 5) में', nt: ['सूर्य मेष, वृषभ, वृश्चिक या कुंभ में।', 'शुक्र सम्मुख या दाहिने हो तो यात्रा वर्जित (शुक्र-दोष) — स्थानीय विद्वान से दिशा अवश्य देखें।'],
@@ -158,7 +160,7 @@ const EV = {
     pr: ['मुहूर्त ग्रंथों का "भूमिक्रय" विचार — ' + MCS + ' (वास्तु प्रकरण) एवं मुहूर्त मार्तण्ड'] },
   registry: { g: 'ghar', t: '📝 रजिस्ट्री / दस्तावेज़', al: 'बैनामा / एग्रीमेंट साइन / लेखपत्र', nak: cl('dhruv', 'kship', 'mridu', 'char'), tt: GOOD_T, vr: 's,b,g,sk', rk: 1, time: 'day',
     nt: ['स्थिर (ध्रुव) नक्षत्र में किया कार्य टिकाऊ रहता है।', 'राहुकाल और भद्रा अवश्य टालें।'], pr: [MCN] },
-  shilanyas: { g: 'ghar', t: '🧱 भूमि पूजन / नींव', al: 'शिलान्यास / खात मुहूर्त / गृहारंभ / नींव पूजन', nak: cl('dhruv', 'mridu') + ',पुष्य,हस्त,धनिष्ठा,शतभिषा,स्वाति,श्रवण', tt: [2, 3, 5, 6, 7, 10, 11, 12, 13, 15], vr: 's,b,g,sk', maas: 'vaishakh,shravan,marg,paush,phalgun', lag: STHIR.concat(DWI), asta: 1, mal: 1, sk: 1, time: 'day',
+  shilanyas: { g: 'ghar', t: '🧱 भूमि पूजन / नींव', al: 'शिलान्यास / खात मुहूर्त / गृहारंभ / नींव पूजन', nak: cl('dhruv', 'mridu') + ',पुष्य,हस्त,धनिष्ठा,शतभिषा,स्वाति,श्रवण', tt: [2, 3, 5, 6, 7, 9, 10, 11, 12, 13, 15], vr: 's,b,g,sk,sh', maas: 'vaishakh,shravan,kartik,marg,paush,magh,phalgun', lag: STHIR.concat(DWI), asta: 1, mal: 1, sk: 1, time: 'day',
     nt: ['वैशाख, श्रावण, मार्गशीर्ष, पौष, फाल्गुन में गृहारंभ शुभ; चैत्र, ज्येष्ठ, आषाढ़, भाद्रपद, आश्विन, माघ वर्जित (कार्तिक मध्यम)।', 'खुदाई वास्तु-नाग (राहु) के मुख के विपरीत दिशा से करें — "वास्तु" कार्ड देखें।', 'स्थिर/द्विस्वभाव लग्न में नींव रखें।'],
     pr: [MCS + ' — वास्तु प्रकरण (गृहारम्भ मास, नक्षत्र)', 'मत्स्य पुराण — वास्तु अध्याय (गृह निर्माण के मास)'] },
   dwar: { g: 'ghar', t: '🚪 द्वार / चौखट स्थापना', al: 'मुख्य दरवाज़ा / चौखट लगाना', nak: cl('dhruv', 'mridu') + ',पुष्य,हस्त,धनिष्ठा,श्रवण', tt: [2, 3, 5, 6, 7, 10, 11, 12, 13, 15], vr: 's,b,g,sk', lag: STHIR.concat(DWI), time: 'day',
@@ -167,14 +169,14 @@ const EV = {
     nt: ['पंचक (धनिष्ठा के उत्तरार्ध से रेवती तक) में छत डालना सर्वथा वर्जित।', 'स्थिर लग्न में छत डालें।'], pr: [MCN, 'पंचक विचार — मुहूर्त ग्रंथों में "पञ्चके... गृहाच्छादन" निषिद्ध'] },
   kup: { g: 'ghar', t: '💧 कुआँ / बोरिंग', al: 'ट्यूबवेल / जलाशय / हैंडपंप / जल स्रोत', nak: 'हस्त,अनुराधा,मघा,उफा,उषा,उभा,धनिष्ठा,शतभिषा,रोहिणी,पुष्य,मृग,पूषा,श्रवण,रेवती', tt: GOOD_T, vr: 's,b,g,sk', time: 'day',
     nt: ['ईशान कोण (उत्तर-पूर्व) में जल स्रोत श्रेष्ठ।', 'जलीय राशि (कर्क, वृश्चिक, मीन) में चंद्र हो तो उत्तम।'], pr: [MCS + ' — वास्तु प्रकरण (जलाशयारम्भ)', 'बृहत् संहिता — दकार्गल अध्याय (भूगर्भ जल)'] },
-  griha: { g: 'ghar', t: '🏠 गृह प्रवेश (नया घर)', al: 'अपूर्व गृह प्रवेश / नए मकान में प्रवेश / वास्तु शान्ति', nak: cl('dhruv', 'mridu'), tt: [2, 3, 5, 6, 7, 10, 11, 12, 13], vr: 's,b,g,sk', maas: 'magh,phalgun,vaishakh,jyeshtha', k: 10, lag: STHIR.concat(DWI), asta: 1, mal: 1, hol: 1, sk: 1, yb: 1, time: 'any',
+  griha: { g: 'ghar', t: '🏠 गृह प्रवेश (नया घर)', al: 'अपूर्व गृह प्रवेश / नए मकान में प्रवेश / वास्तु शान्ति', nak: cl('dhruv', 'mridu'), tt: [2, 3, 5, 6, 7, 10, 11, 12, 13], vr: 's,b,g,sk,sh', maas: 'magh,phalgun,vaishakh,jyeshtha', k: 11, kh: 1, lag: STHIR.concat(DWI), asta: 1, mal: 1, hol: 1, sk: 1, yb: 1, time: 'any',
     nt: ['माघ, फाल्गुन, वैशाख, ज्येष्ठ में नवीन गृह प्रवेश; कार्तिक-मार्गशीर्ष मध्यम।', 'स्थिर या द्विस्वभाव लग्न; अष्टम भाव शुद्ध।', 'गृह प्रवेश से पहले वास्तु शान्ति व पूजन; पहले कलश लेकर गृहिणी प्रवेश करे।', 'रिक्ता तिथि, अमावस्या, मंगल व शनि वार वर्जित।'],
     pr: [MCS + ' — गृहप्रवेश प्रकरण: "सौम्यायने ज्येष्ठतपोऽन्त्यमाधवे… मृदुध्रुवोडुभिः" (माघ, फाल्गुन, वैशाख, ज्येष्ठ; मृदु-ध्रुव नक्षत्र)', DS + ' — गृहप्रवेश'] },
-  sapurva: { g: 'ghar', t: '🔁 पुराने घर में पुनः प्रवेश', al: 'सपूर्व / द्वन्द्व गृह प्रवेश / जीर्णोद्धार के बाद प्रवेश', nak: cl('dhruv', 'mridu') + ',पुष्य,स्वाति,धनिष्ठा,शतभिषा', tt: [2, 3, 5, 6, 7, 10, 11, 12, 13], vr: 's,b,g,sk', maas: 'magh,phalgun,vaishakh,jyeshtha,shravan,kartik,marg', lag: STHIR.concat(DWI), time: 'any',
+  sapurva: { g: 'ghar', t: '🔁 पुराने घर में पुनः प्रवेश', al: 'सपूर्व / द्वन्द्व गृह प्रवेश / जीर्णोद्धार के बाद प्रवेश', nak: cl('dhruv', 'mridu') + ',पुष्य,स्वाति,धनिष्ठा,शतभिषा', tt: [2, 3, 5, 6, 7, 9, 10, 11, 12, 13], vr: 's,b,g,sk,sh', maas: 'magh,phalgun,vaishakh,jyeshtha,shravan,kartik,marg', lag: STHIR.concat(DWI), time: 'any',
     nt: ['मरम्मत, यात्रा से लौटने या पुनर्निर्माण के बाद — श्रावण, कार्तिक, मार्गशीर्ष भी मान्य।'], pr: [MCS + ' — गृहप्रवेश प्रकरण (सपूर्व व द्वन्द्व प्रवेश)'] },
   kiraya: { g: 'ghar', t: '📦 किराये के घर में शिफ्टिंग', al: 'फ्लैट / किराये का मकान / ट्रांसफर पर नया घर', nak: cl('dhruv', 'mridu', 'kship', 'char'), tt: GOOD_T, vr: 's,b,g,sk', rk: 1, time: 'day',
     nt: ['स्वयं के घर का नियम लागू नहीं; सामान्य शुभ दिन पर्याप्त।', 'दूध उबालना और गणेश पूजन करके प्रवेश करें।'], pr: [MCN] },
-  vyapar: { g: 'dhan', t: '🏪 व्यापार / दुकान उद्घाटन', al: 'ऑफिस / शोरूम / फर्म / स्टार्टअप आरंभ', nak: 'अश्विनी,रोहिणी,मृग,पुष्य,उफा,हस्त,चित्रा,अनुराधा,उषा,श्रवण,धनिष्ठा,उभा,रेवती', tt: [2, 3, 5, 6, 7, 10, 11, 12, 13, 15], vr: 's,b,g,sk', lag: STHIR.concat(DWI), rk: 1, time: 'day',
+  vyapar: { g: 'dhan', t: '🏪 व्यापार / दुकान उद्घाटन', al: 'ऑफिस / शोरूम / फर्म / स्टार्टअप आरंभ / विपणि', nak: 'अश्विनी,रोहिणी,मृग,पुष्य,उफा,हस्त,चित्रा,अनुराधा,उषा,श्रवण,धनिष्ठा,उभा,रेवती', tt: [1, 2, 3, 5, 6, 7, 8, 10, 11, 12, 13, 15], vr: 'r,s,b,g,sk,sh', lag: STHIR.concat(DWI), rk: 1, time: 'day',
     nt: ['क्षिप्र, मृदु व ध्रुव नक्षत्र — व्यापार में स्थिरता व वृद्धि।', 'स्थिर लग्न में उद्घाटन; द्वितीय-एकादश भाव बली।', 'राहुकाल व भद्रा अवश्य टालें।'], pr: [MCN] },
   naukri: { g: 'dhan', t: '💼 नौकरी जॉइन', al: 'पदभार ग्रहण / सेवा आरंभ / नई पोस्टिंग', nak: cl('kship', 'mridu', 'dhruv') + ',श्रवण,पुनर्वसु', tt: GOOD_T, vr: 'r,s,b,g,sk', rk: 1, time: 'day',
     nt: ['सरकारी सेवा में रविवार भी शुभ (सूर्य राजकारक)।'], pr: [MCN] },
@@ -318,16 +320,56 @@ function horaOf(d, nextRise, jd) {
   const day = jd < d.jdSet, len = day ? (d.jdSet - d.jdRise) / 12 : (nextRise - d.jdSet) / 12, k = Math.floor((jd - (day ? d.jdRise : d.jdSet)) / len) + (day ? 0 : 12);
   return HORD[(HORD.indexOf(DL[d.vaar]) + k) % 7];
 }
+/* ===== ऋषिकेश पंचांग पद्धति (सूर्य सिद्धान्त) — विवाह लग्न "पञ्चेष्ट" विचार =====
+   रेखाप्रद भाव (विवाह लग्न से): सूर्य-शनि-राहु-केतु 3,6,8,11 • चंद्र 2,3,11 • मंगल 3,6,11 • बुध-गुरु 1-6,9,10,11 • शुक्र 1,2,4,5,9,10,11
+   जिस लग्न में कम से कम 5 ग्रह इष्ट (शुभ) भाव में हों वही "पञ्चेष्ट लग्न" — ऋषिकेश पंचांग इसी से लग्न देता है। */
+const ISHT = { Sun: [3, 6, 8, 11], Moon: [2, 3, 11], Mars: [3, 6, 11], Mercury: [1, 2, 3, 4, 5, 6, 9, 10, 11], Jupiter: [1, 2, 3, 4, 5, 6, 9, 10, 11], Venus: [1, 2, 4, 5, 9, 10, 11], Saturn: [3, 6, 8, 11], Rahu: [3, 6, 8, 11], Ketu: [3, 6, 8, 11] };
+const NK = 360 / 27, n28 = l => { const k = Math.floor(l / NK); return k <= 20 ? k : k + 1; };
+/* सप्तशलाका वेध (अभिजित सहित 28 नक्षत्र) */
+function vedha28(i) { if ((i >= 2 && i <= 8) || (i >= 16 && i <= 22)) return 24 - i; if (i >= 9 && i <= 15) return (1 - (i - 9) + 28) % 28; return { 1: 9, 0: 10, 27: 11, 26: 12, 25: 13, 24: 14, 23: 15 }[i]; }
+const PHN = { Sun: 'सूर्य', Mars: 'भौम', Saturn: 'शनि', Rahu: 'राहु', Ketu: 'केतु' };
+let MODE = store.get('av_mu_mode', 'rk');
+const SM = jd => MODE === 'rk' ? AVSS.sunMoon(jd) : A.sunMoon(jd);
+const PLN = jd => MODE === 'rk' ? AVSS.planets(jd) : A.planets(jd);
+const ishtOf = (P, sm, lg) => { let n = 0; for (const p in ISHT) { const h = ((Math.floor((p === 'Moon' ? sm.moon : p === 'Sun' ? sm.sun : P[p]) / 30) - lg + 12) % 12) + 1; if (ISHT[p].includes(h)) n++; } return n; };
+function lagnaNotes(P, moon, lg) {
+  const hs = x => ((Math.floor(x / 30) - lg + 12) % 12) + 1, ll = ['Mars', 'Venus', 'Mercury', 'Moon', 'Sun', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Saturn', 'Jupiter'][lg], n = [];
+  const lh = ll === 'Moon' ? hs(moon) : hs(P[ll]);
+  if (lh === 8) n.push('अष्टमस्थ लग्नेश'); if (lh === 6) n.push('षष्ठस्थ लग्नेश');
+  if (hs(moon) === 6) n.push('षष्ठस्थ चंद्र'); if (hs(moon) === 8) n.push('अष्टमस्थ चंद्र'); if (hs(moon) === 1) n.push('लग्नस्थ चंद्र');
+  if (hs(P.Mars) === 8) n.push('अष्टमस्थ मंगल'); if (hs(P.Mars) === 10) n.push('दशमस्थ मंगल');
+  if (hs(P.Saturn) === 12) n.push('द्वादशस्थ शनि');
+  if ([3, 6, 8].includes(hs(P.Venus))) n.push(['', '', '', 'तृतीयस्थ', '', '', 'षष्ठस्थ', '', 'अष्टमस्थ'][hs(P.Venus)] + ' शुक्र');
+  return n;
+}
 function scanDay(d, nextRise, e, L, ctx) {
   const t0 = e.time === 'night' ? d.jdSet : d.jdRise, t1 = e.time === 'day' ? d.jdSet : nextRise;
-  const rk = e.rk ? rahuK(d) : null, jr = ctx.jr, jn = ctx.jn;
-  const key = jd => {           // 0 = अशुभ, अन्यथा खंड-कुंजी
-    const sm = A.sunMoon(jd), ta = A.n360(sm.moon - sm.sun), t = Math.floor(ta / 12) + 1, kar = Math.floor(ta / 6) + 1, nak = Math.floor(sm.moon / (360 / 27)), yg = Math.floor(A.n360(sm.sun + sm.moon) / (360 / 27));
-    if (t === 30) return 0;
-    const pt = t > 15 ? t - 15 : t; if (t > 15 && (pt > e.k || pt === 15)) return 0;
-    if (!e.tt.includes(pt)) return 0;
-    if (!e.nakI.includes(nak) || isV(kar)) return 0;
-    if (!e.noYb && (BADY.includes(yg) || (e.yb && BADY2.includes(yg)))) return 0;
+  const rk = e.rk ? rahuK(d) : null, jr = ctx.jr, jn = ctx.jn, RKV = MODE === 'rk' && e.rkv, RKL = MODE === 'rk' && !e.noYb;
+  const DP = RKV || RKL ? PLN((t0 + t1) / 2) : null, why = ctx.why = {};
+  const W = r => { why[r] = 1; return 0; };
+  const key = (jd, noLag) => {           // 0 = अशुभ, अन्यथा खंड-कुंजी
+    const sm = SM(jd), ta = A.n360(sm.moon - sm.sun), t = Math.floor(ta / 12) + 1, kar = Math.floor(ta / 6) + 1, nak = Math.floor(sm.moon / NK), yg = Math.floor(A.n360(sm.sun + sm.moon) / NK);
+    if (!e.nakI.includes(nak)) return 0;
+    const pt = t > 15 ? t - 15 : t;
+    if (RKV) {          // ऋषिकेश: मासान्त (कृष्ण 13 से अमावस्या) के अतिरिक्त सभी तिथि; चातुर्मास देवउठनी एकादशी लगते ही समाप्त
+      if (t >= 28) return W('मासान्त दोष (कृष्ण त्रयोदशी–अमावस्या)');
+      if (d.maas === 7 && t < 11) return W('चातुर्मास (देवउठनी एकादशी से पूर्व)');
+    } else {
+      if (t === 30) return 0;
+      if (t > 15 && (pt > e.k || pt === 15)) return 0;
+      if (!e.tt.includes(pt)) return 0;
+    }
+    if (isV(kar)) return W('भद्रा');
+    if (!e.noYb && (BADY.includes(yg) || (e.yb && MODE !== 'rk' && BADY2.includes(yg)))) return W(yg === 16 ? 'व्यतीपात' : yg === 26 ? 'वैधृति' : 'अशुभ योग');
+    if (RKL && !RKV && t >= 28) return W('मासान्त दोष');
+    if (RKL && !RKV && e.kh && [8, 11].includes(Math.floor(sm.sun / 30))) return W('खरमास (संक्रांति के बाद)');
+    if (RKV || RKL) {
+      if (RKV && e.sun && !e.sun.includes(Math.floor(sm.sun / 30))) return W('सूर्य संक्रांति दोष');
+      if (RKV && Math.floor(sm.sun % 30) % 9 === 1) return W('मृत्युबाण');
+      for (const p of ['Sun', 'Mars', 'Saturn', 'Rahu', 'Ketu']) if (Math.floor((p === 'Sun' ? sm.sun : DP[p]) / NK) === nak) return W(PHN[p] + ' युति');
+      const vp = vedha28(n28(sm.moon)); for (const p of ['Sun', 'Mars', 'Saturn', 'Rahu']) if (n28(p === 'Sun' ? sm.sun : DP[p]) === vp) return W(PHN[p] + ' वेध');
+      if (nak === (Math.floor(sm.sun / NK) + 1) % 27) return W('सूर्यभोग्य नक्षत्र');
+    }
     if (rk && jd >= rk[0] && jd < rk[1]) return 0;
     const ms = Math.floor(sm.moon / 30);
     if (jr != null) { const h = ((ms - jr + 12) % 12) + 1; if (![1, 3, 6, 7, 10, 11].includes(h)) return 0; }
@@ -338,8 +380,10 @@ function scanDay(d, nextRise, e, L, ctx) {
     if (e.sp === 'agni' && ![0, 3].includes((t + 1 + d.vaar + 1) % 4)) return 0;
     if (e.sp === 'shiv' && ![1, 2, 3].includes((t * 2 + 5) % 7)) return 0;
     if (e.sp === 'ratna' && horaOf(d, nextRise, jd) !== ctx.gemP) return 0;
+    if (noLag) return 1;
     const lg = Math.floor(A.ascendant(jd, L.lat, L.lon) / 30);
     if (e.lag && !e.lag.includes(lg)) return 0;
+    if (RKV || RKL) { const is = ishtOf(DP, sm, lg); if (RKV && is < 5) return W('पञ्चेष्ट लग्न नहीं'); return 1 + lg + 12 * nak + 400 * t + 20000 * is; }
     return 1 + lg + 12 * nak + 400 * t;
   };
   const step = 4 / 1440, segs = []; let cur = null, prevK = 0, prevT = t0;
@@ -353,10 +397,12 @@ function scanDay(d, nextRise, e, L, ctx) {
     }
     prevK = k; prevT = jd; if (last) break;
   }
-  // लग्न-शुद्धि (8वाँ खाली, चंद्र 6-8-12 में नहीं, विवाह में 7वाँ खाली व लग्न में पाप नहीं)
-  return segs.filter(s => s.b - s.a >= 14 / 1440).map(s => {
-    const r = (s.k - 1) % 400; s.lg = r % 12; s.nak = Math.floor(r / 12); s.t = Math.floor((s.k - 1) / 400);
+  if (RKV) ctx.godh = d.jdSet > t0 && d.jdSet < t1 && key(d.jdSet, 1) && key(d.jdSet - 12 / 1440, 1) && key(d.jdSet + 12 / 1440, 1) ? 1 : 0;
+  return segs.filter(s => s.b - s.a >= (RKV ? 8 : 14) / 1440).map(s => {
+    const r = (s.k - 1) % 20000; s.is = Math.floor((s.k - 1) / 20000); const r2 = r % 400; s.lg = r2 % 12; s.nak = Math.floor(r2 / 12); s.t = Math.floor(r / 400);
     if (e.noYb) return s;
+    if (RKV || RKL) { s.notes = lagnaNotes(DP, SM((s.a + s.b) / 2).moon, s.lg); return s; }
+    // दृक् पद्धति: लग्न-शुद्धि (8वाँ खाली, चंद्र 6-8-12 में नहीं, विवाह में 7वाँ खाली व लग्न में पाप नहीं)
     const p = A.planets((s.a + s.b) / 2), hs = P => ((Math.floor(p[P] / 30) - s.lg + 12) % 12) + 1;
     if (PL9.some(P => hs(P) === 8)) return null;
     if ([6, 8, 12].includes(hs('Moon'))) return null;
@@ -375,25 +421,27 @@ function run() {
     const sv = SPV[e.sp], ctx = { jr: $('jr').value === '' ? null : +$('jr').value, jn: $('jn').value === '' ? null : +$('jn').value, dir: e.sp === 'dir' ? +(sv || 0) : 0, ang: e.sp === 'ang' && sv !== '' && sv != null ? ANG[+sv][1] : null };
     let ritu = null; if (e.sp === 'garbh' && sv) { const [ry, rm, rd] = sv.split('-').map(Number); ritu = Date.UTC(ry, rm - 1, rd); }
     let gemV = null; if (e.sp === 'ratna') { const g = GEMS[+(sv || 0)]; gemV = g[1]; ctx.gemP = g[2]; }
-    const B = (r, x) => { blocks[r] = (blocks[r] || 0) + 1; };
+    const B = (r, x) => { blocks[r] = (blocks[r] || 0) + 1; }, rej = [];
     days.forEach((d, i) => {
-      const nextRise = (days[i + 1] || nx).jdRise, sun = Math.floor(d.sun / 30), vr = gemV != null ? [gemV] : e.vrI;
+      const nextRise = (days[i + 1] || nx).jdRise, sun = Math.floor((MODE === 'rk' ? AVSS.sunMoon(d.jdRise).sun : d.sun) / 30), vr = gemV != null ? [gemV] : e.vrI, RKV = MODE === 'rk' && e.rkv;
+      const pm = MODE === 'rk' && d.tithi > 15 ? (d.maas + 1) % 12 : d.maas;   // ऋषिकेश (उत्तर भारत) — पूर्णिमांत मास
       if (!vr.includes(d.vaar)) return;
       if (e.sp === 'dir' && DSHOOL[ctx.dir].includes(d.vaar)) return B('🧭 दिशाशूल — ' + N.VAAR[d.vaar] + ' को ' + DIRS[ctx.dir] + ' दिशा की यात्रा वर्जित');
-      if (e.maasI && !e.maasI.includes(d.maas)) return B('🗓️ इस कार्य के लिए ' + N.MAAS[d.maas] + ' मास शास्त्र-सम्मत नहीं');
+      if (e.maasI && !e.maasI.includes(pm)) return B('🗓️ इस कार्य के लिए ' + N.MAAS[pm] + ' मास शास्त्र-सम्मत नहीं');
       if (e.sun && !e.sun.includes(sun)) return B('☀️ सूर्य ' + N.SIGN[sun] + ' राशि में — इस कार्य हेतु वर्जित');
       if (e.uttar && ![9, 10, 11, 0, 1, 2].includes(sun)) return B('🧭 दक्षिणायन — यह कार्य उत्तरायण में ही');
       if (e.notSun && e.notSun.includes(sun)) return B('☀️ सूर्य ' + N.SIGN[sun] + ' में — वर्जित');
       if (e.kh && (sun === 8 || sun === 11)) return B('☀️ खरमास (सूर्य ' + N.SIGN[sun] + ' में)');
-      if (e.ch && chaturmas(d)) return B('🛌 चातुर्मास (देवशयनी से देवउठनी एकादशी तक)');
+      if (e.ch && !RKV && chaturmas(d)) return B('🛌 चातुर्मास (देवशयनी से देवउठनी एकादशी तक)');
       if (e.mal && d.adhik) return B('🌀 अधिक (मल / पुरुषोत्तम) मास');
       if (e.hol && d.maas === 11 && d.tithi >= 8 && d.tithi <= 15) return B('🎨 होलाष्टक (फाल्गुन शुक्ल अष्टमी से पूर्णिमा)');
       if (e.pitr && d.maas === 5 && d.tithi >= 16) return B('🕯️ पितृपक्ष');
-      if (e.sk && d.sank != null) return B('☀️ संक्रांति का दिन');
+      if (e.sk && MODE !== 'rk' && d.sank != null) return B('☀️ संक्रांति का दिन');
       if (ritu != null) { const n = Math.round((Date.UTC(d.y, d.m - 1, d.d) - ritu) / 864e5) + 1; if (n < 5 || n > 16 || n === 11 || n === 13) return; d.ritu = n; }
       if (e.asta || e.sg) { const a = asta(d.jdRise); if (e.asta && a.guru) return B('🟡 गुरु अस्त (तारा डूबा)'); if (e.asta && a.shukra) return B('💎 शुक्र अस्त (तारा डूबा)'); if (e.sg && Math.floor(a.p.Jupiter / 30) === 4) d.sgW = 1; }
       const w = scanDay(d, nextRise, e, L, ctx);
-      if (w.length) res.push({ d, w });
+      if (w.length) res.push({ d, w, godh: ctx.godh, pm });
+      else if (RKV && Object.keys(ctx.why).length) rej.push({ d, why: Object.keys(ctx.why) });
     });
     const tz = L.tz; TZ = tz;
     $('out').className = '';
@@ -401,22 +449,27 @@ function run() {
     let h = bl.length && !res.length ? bl.map(b => `<div class="blk">${b}<small>इस माह ${blocks[b]} दिन इस कारण से छूटे</small></div>`).join('') : '';
     if (res.length) {
       h += `<div class="note" style="margin:0 0 6px">${e.t} — ${MN[M - 1]} में <b>${res.length} शुभ दिन</b>${bl.length ? ' • कुछ दिन ' + [...new Set(bl.map(b => b.split(' ')[0]))].join(' ') + ' के कारण छूटे' : ''}</div>`;
-      h += res.map(({ d, w }) => {
+      h += res.map(({ d, w, godh, pm }) => {
         const bd = []; if (SSY[d.vaar].includes(d.nak)) bd.push('<span class="bdg g">सर्वार्थ सिद्धि</span>'); if (AMR[d.vaar] === d.nak) bd.push('<span class="bdg g">अमृत सिद्धि</span>');
         if (d.nak === 7 && (d.vaar === 0 || d.vaar === 4)) bd.push(`<span class="bdg">${d.vaar ? 'गुरु' : 'रवि'}-पुष्य</span>`);
-        if (d.sgW) bd.push('<span class="bdg">⚠️ सिंहस्थ गुरु — गंगा-गोदावरी के मध्य क्षेत्र में वर्जित</span>');
+        if (d.sgW && MODE !== 'rk') bd.push('<span class="bdg">⚠️ सिंहस्थ गुरु — गंगा-गोदावरी के मध्य क्षेत्र में वर्जित</span>');
         if (d.ritu) bd.push(`<span class="bdg">ऋतु रात्रि ${d.ritu} — ${d.ritu % 2 ? 'अयुग्म (कन्या योग)' : 'युग्म (पुत्र योग)'}</span>`);
-        return `<div class="md"><div class="dn"><b>${d.d}</b><small>${N.VAAR[d.vaar].replace('वार', '')}</small></div><div class="x"><div class="pn">${N.MAAS[d.maas]}${d.adhik ? ' (अधिक)' : ''} • सूर्योदय ${A.fmtH(d.rise)}</div>${bd.join('')}`
-          + w.map(s => `<div class="win"><b>${tS(s.a, d)} – ${tS(s.b, d)}</b><span>${N.SIGN[s.lg]} लग्न${e.lp && e.lp.includes(s.lg) ? ' ⭐' : ''}</span><small>${A.tithiName(s.t)} • ${N.NAK[s.nak]}</small></div>`).join('') + '</div></div>';
+        const pmN = MODE === 'rk' ? N.MAAS[pm] + (d.tithi > 15 ? ' कृष्ण' : ' शुक्ल') : N.MAAS[d.maas];
+        return `<div class="md"><div class="dn"><b>${d.d}</b><small>${N.VAAR[d.vaar].replace('वार', '')}</small></div><div class="x"><div class="pn">${pmN}${d.adhik ? ' (अधिक)' : ''} • सूर्योदय ${A.fmtH(d.rise)}</div>${bd.join('')}`
+          + w.map(s => `<div class="win"><b>${tS(s.a, d)} – ${tS(s.b, d)}</b><span>${N.SIGN[s.lg]} लग्न${e.lp && e.lp.includes(s.lg) ? ' ⭐' : ''}${s.is ? ` <small>(इष्ट ${s.is})</small>` : ''}</span><small>${A.tithiName(s.t)} • ${N.NAK[s.nak]}${s.notes && s.notes.length ? ' • ⚠️ ' + s.notes.join(', ') + ' शुभ नहीं' : ''}</small></div>`).join('')
+          + (godh ? `<div class="win"><b>गोधूलि</b><span>सूर्यास्त ${A.fmtH(d.set)} के आसपास</span><small>सर्वदोषनाशक मानी गई</small></div>` : '') + '</div></div>';
       }).join('');
     } else if (!bl.length) h += '<div class="empty">इस माह कोई शुद्ध मुहूर्त नहीं बना — अगला माह देखें ▶</div>';
     else h += '<div class="empty">इस माह शुद्ध मुहूर्त नहीं — अगला माह देखें ▶</div>';
+    if (rej.length) h += `<details class="det"><summary>❌ जिन दिनों विवाह-नक्षत्र था पर मुहूर्त नहीं बना (${rej.length}) — कारण</summary><ul>${rej.map(r => `<li><b>${r.d.d} ${MN[M - 1].slice(0, 3)} ${N.VAAR[r.d.vaar]}</b> — ${r.why.join(', ')}</li>`).join('')}</ul></details>`;
     $('out').innerHTML = h;
-    $('foot').textContent = '⁺ = अगली तारीख की रात्रि/भोर (सूर्योदय से पहले, हिंदू दिन उसी तिथि का)। हर दिन के प्रत्येक लग्न में नक्षत्र, तिथि, वार, योग, भद्रा' + (e.rk ? ', राहुकाल' : '') + ' तथा लग्न-शुद्धि (अष्टम भाव, चंद्र स्थिति' + (e.h7 ? ', सप्तम भाव, लग्न में पाप ग्रह' : '') + ') की जाँच की गई है। समय स्थानीय सूर्योदय-लग्न के अनुसार। विवाह, उपनयन, प्रतिष्ठा जैसे बड़े कार्यों में वर-कन्या/यजमान की कुंडली से अंतिम पुष्टि विद्वान से कराएँ।';
+    $('foot').textContent = '⁺ = अगली तारीख की रात्रि/भोर (सूर्योदय से पहले, हिंदू दिन उसी तिथि का)। ' + (MODE === 'rk' ? 'गणना: ऋषिकेश (काशी) पंचांग पद्धति — सूर्य सिद्धान्त से तिथि-नक्षत्र-योग, पूर्णिमांत मास, ' + (e.rkv ? 'विवाह के दश दोष (युति, सप्तशलाका वेध, मृत्युबाण, सूर्यभोग्य, मासान्त, भद्रा, व्यतीपात-वैधृति) तथा पञ्चेष्ट लग्न (कम से कम 5 ग्रह इष्ट भाव में)। ' : 'लग्न में कम से कम 5 ग्रह इष्ट भाव में (पञ्चेष्ट)। ') : '') + (MODE === 'rk' ? '' : 'हर दिन के प्रत्येक लग्न में नक्षत्र, तिथि, वार, योग, भद्रा' + (e.rk ? ', राहुकाल' : '') + ' तथा लग्न-शुद्धि (अष्टम भाव, चंद्र स्थिति' + (e.h7 ? ', सप्तम भाव, लग्न में पाप ग्रह' : '') + ') की जाँच की गई है। ') + 'समय स्थानीय सूर्योदय-लग्न के अनुसार। विवाह, उपनयन, प्रतिष्ठा जैसे बड़े कार्यों में वर-कन्या/यजमान की कुंडली से अंतिम पुष्टि विद्वान से कराएँ।';
   }, 30);
 }
 $('sh').onclick = () => { const e = EV[E], tz = loc().tz; share(`📿 *${e.t} — शुभ मुहूर्त (${MN[M - 1]} ${Y})*\n` + (res.map(({ d, w }) => `\n📅 ${d.d} ${MN[M - 1]} ${N.VAAR[d.vaar]}\n` + w.map(s => `   ⏰ ${tStr(s.a, tz)}–${tStr(s.b, tz)} • ${N.SIGN[s.lg]} लग्न • ${N.NAK[s.nak]}`).join('\n')).join('') || 'इस माह शुद्ध मुहूर्त नहीं') + `\n\n📜 प्रमाण: ${e.pr[0]}`); };
-drawGroups(); info(); run();
+const drawMode = () => [...$('md').children].forEach(c => c.classList.toggle('on', c.dataset.m === MODE));
+$('md').onclick = ev => { const c = ev.target.closest('.chip'); if (!c) return; MODE = c.dataset.m; store.set('av_mu_mode', MODE); drawMode(); run(); };
+drawMode(); drawGroups(); info(); run();
 </script>
 </body>
 </html>
