@@ -119,7 +119,7 @@ async function onSubmit(e) {
     hideForm(name, dob, tob, $('#place').value);
     try {   // "पूछें" (AI सहायक) के लिए — इसी ब्राउज़र में आख़िरी कुंडली
       const rp = $('#report').cloneNode(true); rp.querySelectorAll('.ktoc,.kpager,.actions,.r-foot,.r-consult,button,script').forEach(e => e.remove());
-      localStorage.setItem('av_kundli_last', JSON.stringify({ n: name, d: dob.split('-').reverse().join('/'), t: tob, p: $('#place').value, x: rp.textContent.replace(/\s+/g, ' ').trim().slice(0, 16000), at: Date.now() }));
+      localStorage.setItem('av_kundli_last', JSON.stringify({ n: name, d: dob.split('-').reverse().join('/'), t: tob, p: $('#place').value, x: rp.textContent.replace(/\s+/g, ' ').trim().slice(0, 30000), at: Date.now() }));
     } catch (e) { }
     $('#editbar').scrollIntoView({ behavior: 'smooth', block: 'start' });
     saveLead(save);
@@ -292,6 +292,7 @@ function buildReport(k, u) {
   s2 += `<div class="dc ss"><div class="dc-h">🪐 साढ़े साती — वर्तमान स्थिति</div><p>${ss.ph ? `इस समय शनि ${K.SIGN[ss.cur]} राशि में हैं — साढ़े साती का <b>${['', 'पहला (उदय)', 'दूसरा (चरम)', 'तीसरा (अस्त)'][ss.ph]} चरण</b> चल रहा है${ss.start ? ` (${fmt(ss.start)} से` : ''}${ss.end ? ` ${fmt(ss.end)} तक)` : ')'}। प्रभाव: व्यय वृद्धि, मानसिक दबाव, संबंधों में धैर्य की परीक्षा।` : `इस समय साढ़े साती नहीं चल रही (शनि ${K.SIGN[ss.cur]} में)। ${ss.dhaiya ? '⚠️ ' + ss.dhaiya + '। ' : ''}${ss.start ? `अगली साढ़े साती लगभग ${fmt(ss.start)} से ${ss.end ? fmt(ss.end) : ''} तक रहेगी।` : ''}`}</p><p class="up"><b>उपाय:</b> शनिवार को पीपल पर सरसों तेल का दीपक • हनुमान चालीसा • काले तिल दान</p></div>`;
   s2 += `<h4>🏠 भाव-वार फलादेश</h4><div class="houses">${[...Array(12)].map((_, i) => i + 1).filter(hh => inHouse(k, hh).length).map(hh => `<div class="hc"><b>${ord(hh)} भाव — ${inHouse(k, hh).map(p => K.P[p].hi).join(' + ')}</b><small>${K.HOUSE[hh]}</small><p>${inHouse(k, hh).map(p => K.LK[p][hh - 1][0]).join(' ')}</p></div>`).join('')}</div>`;
   h += sec(2, 'YOGA & BHAVA', 'योग एवं भाव विश्लेषण', 'राजयोग, दोष और भाव फलादेश', '⚡', s2, 330);
+  try { h += sec('D', 'DOSHA VICHAR', 'सम्पूर्ण दोष विचार', 'जनन दोष (गंडमूल आदि), ग्रह दोष, लाल किताब ऋण — उपाय व शास्त्र प्रमाण सहित', '🛡️', doshSection(k, u.inp), 0).replace('data-k="sD"', 'data-k="dosh"').replace('SECTION 0D', 'SECTION ✦'); } catch (e) { console.error(e); }
 
   /* SECTION 3 */
   const L = K.LAGNA[ln];
@@ -384,7 +385,7 @@ function showForm() {
   $('#form').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 document.addEventListener('click', e => { const a = e.target.closest('a[href="#form"]'); if (a && document.querySelector('.hero.formhidden')) { e.preventDefault(); showForm(); } });
-const TOC = [['info', '📋', 'जन्म विवरण'], ['chart', '🪔', 'कुंडली चार्ट'], ['graha', '🪐', 'ग्रह स्पष्ट'], ['s1', '🔭', 'ग्रह शक्ति'], ['s2', '⚡', 'योग-दोष, भाव'], ['s3', '🧬', 'व्यक्तित्व'], ['s4', '💼', 'करियर-धन'], ['s5', '💞', 'विवाह-संतान'], ['s6', '🌿', 'स्वास्थ्य'], ['s7', '📕', 'लाल किताब उपाय'], ['s8', '⏳', 'दशा-वर्षफल'], ['s9', '🔢', 'अंक ज्योतिष'], ['s10', '🎓', 'मार्गदर्शन']];
+const TOC = [['info', '📋', 'जन्म विवरण'], ['chart', '🪔', 'कुंडली चार्ट'], ['graha', '🪐', 'ग्रह स्पष्ट'], ['s1', '🔭', 'ग्रह शक्ति'], ['s2', '⚡', 'योग-दोष, भाव'], ['dosh', '🛡️', 'सम्पूर्ण दोष'], ['s3', '🧬', 'व्यक्तित्व'], ['s4', '💼', 'करियर-धन'], ['s5', '💞', 'विवाह-संतान'], ['s6', '🌿', 'स्वास्थ्य'], ['s7', '📕', 'लाल किताब उपाय'], ['s8', '⏳', 'दशा-वर्षफल'], ['s9', '🔢', 'अंक ज्योतिष'], ['s10', '🎓', 'मार्गदर्शन']];
 function kTab(key, scroll) {
   const r = document.getElementById('report'); if (!r) return;
   r.classList.add('tabbed');

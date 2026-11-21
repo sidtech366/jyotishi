@@ -177,6 +177,6 @@ const Astro = (() => {
     return o;
   }
 
-  return { kundli, transit, transitSaturnSign, PLANETS, SIGN_LORD, DASHA, EXALT, OWN };
+  return { kundli, transit, transitSaturnSign, tropical, ascendant, PLANETS, SIGN_LORD, DASHA, EXALT, OWN };
 })();
 if (typeof module !== 'undefined') module.exports = Astro;
