@@ -58,7 +58,14 @@ const kbLoad = () => KB ? Promise.resolve(KB) : fetch('ai/kb.json').then(r => r.
 kbLoad().catch(() => { });
 const STOP = new Set('क्या है हैं की का के को में से पर और या कब कैसे कौन कितने किस किसी करें करना करे होता होती होते हो था थी थे यह ये वह वे इस उस एक भी तो ही मुझे मेरा मेरी मेरे हम आप बताओ बताइए बताएं बताये बताएँ जी please the a is of in to'.split(' '));
 const SYN = { 'सपने': 'स्वप्न', 'सपना': 'स्वप्न', 'सपनों': 'स्वप्न', 'टोटका': 'उपाय', 'टोटके': 'उपाय', 'उपाए': 'उपाय', 'घर': 'गृह', 'पूजाघर': 'पूजा', 'मंदिर': 'पूजा', 'शादी': 'विवाह', 'नौकरी': 'करियर', 'पैसा': 'धन', 'पैसे': 'धन', 'बीमारी': 'स्वास्थ्य', 'कर्ज': 'कर्ज़', 'मंत्र': 'मंत्र', 'आरती': 'आरती', 'दिवाली': 'दीपावली', 'होली': 'होलिका', 'शिवरात्री': 'शिवरात्रि', 'ग्यारस': 'एकादशी' };
-const tok = s => (s.toLowerCase().match(/[ऀ-ॿ\w]+/g) || []).filter(w => w.length > 1 && !STOP.has(w));
+// रोमन/हिंग्लिश में लिखे शब्द → हिंदी (Is kundli ke dosh aur upay batao)
+const ROM = { kundli: 'कुंडली', kundali: 'कुंडली', kundly: 'कुंडली', janmkundli: 'कुंडली', dosh: 'दोष', dosha: 'दोष', dosho: 'दोष', upay: 'उपाय', upaay: 'उपाय', upaya: 'उपाय', upayon: 'उपाय', totka: 'उपाय', totke: 'उपाय',
+  yog: 'योग', yoga: 'योग', dasha: 'दशा', mahadasha: 'महादशा', antardasha: 'अंतर्दशा', grah: 'ग्रह', graha: 'ग्रह', lagna: 'लग्न', lagn: 'लग्न', rashi: 'राशि', bhav: 'भाव', bhaav: 'भाव',
+  manglik: 'मांगलिक', mangal: 'मंगल', kalsarp: 'कालसर्प', kaalsarp: 'कालसर्प', sadesati: 'साढ़े', sadhesati: 'साढ़े', shani: 'शनि', rahu: 'राहु', ketu: 'केतु', guru: 'गुरु', shukra: 'शुक्र', budh: 'बुध', surya: 'सूर्य', chandra: 'चंद्र',
+  shadi: 'विवाह', shaadi: 'विवाह', vivah: 'विवाह', naukri: 'नौकरी', career: 'करियर', santan: 'संतान', bachche: 'संतान', swasthya: 'स्वास्थ्य', sehat: 'स्वास्थ्य', dhan: 'धन', paisa: 'धन', ratna: 'रत्न', ratn: 'रत्न', stone: 'रत्न',
+  ekadashi: 'एकादशी', vrat: 'व्रत', tyohar: 'त्योहार', tithi: 'तिथि', nakshatra: 'नक्षत्र', panchang: 'पंचांग', muhurat: 'मुहूर्त', rahukaal: 'राहुकाल', puja: 'पूजा', pooja: 'पूजा', havan: 'हवन', mantra: 'मंत्र', mantr: 'मंत्र',
+  vastu: 'वास्तु', sapna: 'स्वप्न', sapne: 'स्वप्न', swapna: 'स्वप्न', sankalp: 'संकल्प', dhyan: 'ध्यान', lal: 'लाल', kitab: 'किताब', ank: 'अंक', mera: 'मेरा', meri: 'मेरी', mere: 'मेरे', mujhe: 'मुझे' };
+const tok = s => (s.toLowerCase().match(/[ऀ-ॿ\w]+/g) || []).map(w => ROM[w] || w).filter(w => w.length > 1 && !STOP.has(w));
 function retrieve(q, n = 8) {
   if (!KB) return [];
   const T = [...new Set(tok(q).flatMap(w => [w, SYN[w]].filter(Boolean)))]; if (!T.length) return [];
@@ -106,7 +113,7 @@ async function ask() {
   busy = true; $('go').disabled = true; $('q').value = '';
   add('u', esc(q)); const w = add('b', '<span class="dots"><i></i><i></i><i></i></span>');
   await kbLoad().catch(() => { });
-  const R = retrieve(q), kq = useK && KD && /मेर|मुझ|कुंडली|दशा|योग|दोष|लग्न|राशि|भाव|ग्रह|शादी|विवाह|नौकरी|करियर|संतान|स्वास्थ्य|उपाय|रत्न/.test(q);
+  const R = retrieve(q), kq = useK && KD;   // "शामिल करें" ✓ हो तो कुंडली हमेशा साथ जाए (हिंदी/रोमन कोई भी भाषा)
   let ctx = '';
   const P = panchangCtx(); if (P) ctx += '### ' + P + '\n\n';
   if (kq) ctx += `### यजमान की कुंडली (${KD.n}, ${KD.d} ${KD.t}, ${KD.p || ''}):\n${KD.x}\n\n`;
