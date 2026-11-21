@@ -65,7 +65,8 @@ const ROM = { kundli: 'कुंडली', kundali: 'कुंडली', kundl
   shadi: 'विवाह', shaadi: 'विवाह', vivah: 'विवाह', naukri: 'नौकरी', career: 'करियर', santan: 'संतान', bachche: 'संतान', swasthya: 'स्वास्थ्य', sehat: 'स्वास्थ्य', dhan: 'धन', paisa: 'धन', ratna: 'रत्न', ratn: 'रत्न', stone: 'रत्न',
   ekadashi: 'एकादशी', vrat: 'व्रत', tyohar: 'त्योहार', tithi: 'तिथि', nakshatra: 'नक्षत्र', panchang: 'पंचांग', muhurat: 'मुहूर्त', rahukaal: 'राहुकाल', puja: 'पूजा', pooja: 'पूजा', havan: 'हवन', mantra: 'मंत्र', mantr: 'मंत्र',
   vastu: 'वास्तु', sapna: 'स्वप्न', sapne: 'स्वप्न', swapna: 'स्वप्न', sankalp: 'संकल्प', dhyan: 'ध्यान', lal: 'लाल', kitab: 'किताब', ank: 'अंक', gandmool: 'गंडमूल', gandmul: 'गंडमूल', mool: 'मूल', mul: 'मूल', garbh: 'गर्भ', garbhadhan: 'गर्भाधान', sanskar: 'संस्कार', pitra: 'पितृ', pitru: 'पितृ', rin: 'ऋण', janeu: 'जनेऊ', upanayan: 'उपनयन', mundan: 'मुंडन', griha: 'गृह', grah_pravesh: 'गृह', pravesh: 'प्रवेश', namkaran: 'नामकरण', annaprashan: 'अन्नप्राशन', sagai: 'सगाई', vahan: 'वाहन', gaadi: 'वाहन', ratn: 'रत्न', operation: 'ऑपरेशन', yatra: 'यात्रा', dukan: 'दुकान', vyapar: 'व्यापार', bhumi: 'भूमि', grahan: 'ग्रहण', amavasya: 'अमावस्या', mera: 'मेरा', meri: 'मेरी', mere: 'मेरे', mujhe: 'मुझे' };
-const tok = s => (s.toLowerCase().match(/[ऀ-ॿ\w]+/g) || []).map(w => ROM[w] || w).filter(w => w.length > 1 && !STOP.has(w));
+const rom = w => ROM[w] || ROM[w.replace(/(on|o|ein|en|e|a|i)$/, '')] || (/^dosh/.test(w) ? 'दोष' : /^upa+y/.test(w) ? 'उपाय' : /^kund/.test(w) ? 'कुंडली' : w);
+const tok = s => (s.toLowerCase().match(/[ऀ-ॿ\w]+/g) || []).map(rom).filter(w => w.length > 1 && !STOP.has(w));
 function retrieve(q, n = 8) {
   if (!KB) return [];
   const T = [...new Set(tok(q).flatMap(w => [w, SYN[w]].filter(Boolean)))]; if (!T.length) return [];
@@ -107,6 +108,15 @@ $('sug').onclick = e => { const s = e.target.closest('span'); if (s) { $('q').va
 const chat = $('chat');
 function add(cls, html) { const d = document.createElement('div'); d.className = 'msg ' + cls; d.innerHTML = html; chat.appendChild(d); d.scrollIntoView({ behavior: 'smooth', block: 'end' }); return d; }
 const srcHtml = R => { const seen = new Set(), L = R.filter(o => !seen.has(o.k.t) && seen.add(o.k.t)).slice(0, 4); return L.length ? `<div class="src">${L.map(o => `<a href="../${o.k.p}">📚 ${esc(o.k.t)}</a>`).join('')}</div>` : ''; };
+/* कुंडली का केवल प्रश्न से जुड़ा भाग भेजें — उत्तर तेज़ */
+function kSel(q) {
+  const x = KD.x, qt = new Set(tok(q)); if (x.length <= 9000) return x;
+  const head = x.slice(0, 1500), parts = []; for (let i = 1500; i < x.length; i += 700) parts.push([i, x.slice(i, i + 800)]);
+  const sc = parts.map(([i, t]) => [i, t, tok(t).reduce((a, w) => a + (qt.has(w) ? 1 : 0), 0)]).filter(p => p[2] > 0).sort((a, b) => b[2] - a[2]);
+  if (!sc.length) return x.slice(0, 9000);
+  let out = [], n = 1500; for (const p of sc) { if (n + p[1].length > 9000) break; out.push(p); n += p[1].length; }
+  return head + ' … ' + out.sort((a, b) => a[0] - b[0]).map(p => p[1]).join(' … ');
+}
 let busy = false;
 async function ask() {
   const q = $('q').value.trim(); if (!q || busy) return;
@@ -116,7 +126,7 @@ async function ask() {
   const R = retrieve(q), kq = useK && KD;   // "शामिल करें" ✓ हो तो कुंडली हमेशा साथ जाए (हिंदी/रोमन कोई भी भाषा)
   let ctx = '';
   const P = panchangCtx(); if (P) ctx += '### ' + P + '\n\n';
-  if (kq) ctx += `### यजमान की कुंडली (${KD.n}, ${KD.d} ${KD.t}, ${KD.p || ''}):\n${KD.x}\n\n`;
+  if (kq) ctx += `### यजमान की कुंडली (${KD.n}, ${KD.d} ${KD.t}, ${KD.p || ''}):\n${kSel(q)}\n\n`;
   if (R.length) ctx += '### साइट का ज्ञान भंडार:\n' + R.map(o => `[${o.k.t}] ${o.k.x}`).join('\n\n');
   try {
     const r = await fetch(EXEC, { method: 'POST', body: JSON.stringify({ act: 'ask', q, ctx, dev: DEV }) }).then(x => x.json());

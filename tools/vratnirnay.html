@@ -48,8 +48,8 @@ ul.nl{margin:0;padding-left:20px}ul.nl li{margin:4px 0;font-size:14.5px;line-hei
 <header class="av-head"><div class="ic">📜</div><h1>व्रत निर्णय</h1><p>कौन सा व्रत किस दिन — शास्त्रीय नियम, ग्रंथों के प्रमाण और इस वर्ष की सही तिथि</p><span class="brand">ASTRO VIKASS</span></header>
 <main class="av-wrap">
 <div class="av-card"><div id="pl"></div></div>
-<div class="vn-tabs" id="tabs"><button data-t="up" class="on">📅 आने वाले</button><button data-t="all">📜 सभी व्रत</button><button data-t="rule">⚖️ मूल सिद्धांत</button></div>
-<div id="v-up" class="av-card"><h3 style="margin-top:0">📅 अगले 45 दिनों के व्रत-पर्व</h3><div id="upl" class="prog">गणना हो रही है…</div></div>
+<div class="vn-tabs" id="tabs"><button data-t="up" class="on">🗓️ आने वाले</button><button data-t="all">📜 सभी व्रत</button><button data-t="rule">⚖️ मूल सिद्धांत</button></div>
+<div id="v-up" class="av-card"><h3 style="margin-top:0">🗓️ अगले 45 दिनों के व्रत-पर्व</h3><div id="upl" class="prog">गणना हो रही है…</div></div>
 <div id="v-all" class="hide">
   <input class="in" id="q" placeholder="🔍 व्रत खोजें — एकादशी, शिवरात्रि, करवा चौथ…" style="margin-bottom:8px">
   <div class="flt" id="flt"></div>
@@ -329,7 +329,7 @@ const tz = () => loc().tz, ft = j => A.fmtJd(j, tz());
 function dateHtml(v) {
   const r = DT[v.id]; if (!r) return '<div class="prog">गणना हो रही है…</div>'; if (!r.length) return '<div class="prog">अगले 13 महीनों में नहीं</div>';
   if (v.k === 'ek' || v.k === 'ekone') return r.map(e => `<div class="dates"><span>🙏 ${esc(e.name)} — स्मार्त: ${fd(e.I)}</span>${key(e.V) !== key(e.I) ? `<span class="vs">वैष्णव: ${fd(e.V)}</span>` : ''}</div><div class="note" style="margin:2px 0 8px">${e.pe > e.ps ? `पारण (स्मार्त): ${ft(e.ps)} से ${ft(Math.min(e.pe, e.par.jdSet))} तक • हरिवासर समाप्ति ${ft(e.hv)}` : `पारण: ${ft(e.par.jdRise)} सूर्योदय के बाद (द्वादशी सूर्योदय से पहले ही समाप्त)`}</div>`).join('');
-  return '<div class="dates">' + r.map(x => `<span>📅 ${fd(x.I)}${v.rep && x.I.adhik ? ' (अधिक मास)' : ''}</span>`).join('') + '</div>';
+  return '<div class="dates">' + r.map(x => `<span>🗓️ ${fd(x.I)}${v.rep && x.I.adhik ? ' (अधिक मास)' : ''}</span>`).join('') + '</div>';
 }
 /* ---------- आने वाले ---------- */
 function drawUp() {
@@ -352,7 +352,7 @@ function drawList(openId) {
   const L = V.filter(v => (F === 'all' || v.c === F) && (!q || (v.n + v.tithi + v.ni.join('')).includes(q)));
   $('list').innerHTML = L.length ? L.map(v => `<details class="vr" id="v_${v.id}"${openId === v.id ? ' open' : ''}><summary><span class="ic">${v.ic}</span><span class="t"><b>${v.n}</b><small>${v.tithi}</small></span>${DT[v.id] && DT[v.id][0] ? `<span class="d">${DT[v.id][0].I.d} ${MN[DT[v.id][0].I.m - 1]}</span>` : ''}</summary><div class="vb">
     <div class="kv"><span>तिथि</span><b>${v.tithi}</b><span>कर्मकाल</span><b>${v.kaal}</b></div>
-    <div class="vh">📅 ${v.rep ? 'आने वाली तिथियाँ' : 'इस वर्ष की तिथि'}</div>${dateHtml(v)}
+    <div class="vh">🗓️ ${v.rep ? 'आने वाली तिथियाँ' : 'इस वर्ष की तिथि'}</div>${dateHtml(v)}
     <div class="vh">⚖️ निर्णय के नियम</div><ul class="nl">${v.ni.map(x => `<li>${x}</li>`).join('')}</ul>
     <div class="vh">🔀 तिथि दो दिन हो तो?</div><div class="dvi">${v.dvi}</div>
     <div class="vh">📚 शास्त्र प्रमाण</div>${v.pr.map(prHtml).join('')}
@@ -360,7 +360,7 @@ function drawList(openId) {
   if (openId) setTimeout(() => { const el = $('v_' + openId); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
 }
 $('list').onclick = e => { const b = e.target.closest('[data-sh]'); if (!b) return; const v = V.find(x => x.id === b.dataset.sh), r = DT[v.id] || [];
-  share(`📜 *${v.n} — व्रत निर्णय*\n🗓️ ${v.tithi}\n⏰ कर्मकाल: ${v.kaal}` + (r[0] ? `\n📅 तिथि: ${fd(r[0].I)}` + (r[0].V && key(r[0].V) !== key(r[0].I) ? ` (वैष्णव: ${fd(r[0].V)})` : '') : '') + `\n\n⚖️ नियम:\n• ${v.ni.join('\n• ')}\n\n🔀 ${v.dvi}\n\n📚 प्रमाण:\n` + v.pr.map(p => (p.q ? '"' + p.q + '"' : p.t) + ' — ' + p.s).join('\n') + '\n\n— Astro Vikass ☎ 7069492135'); };
+  share(`📜 *${v.n} — व्रत निर्णय*\n🗓️ ${v.tithi}\n⏰ कर्मकाल: ${v.kaal}` + (r[0] ? `\n🗓️ तिथि: ${fd(r[0].I)}` + (r[0].V && key(r[0].V) !== key(r[0].I) ? ` (वैष्णव: ${fd(r[0].V)})` : '') : '') + `\n\n⚖️ नियम:\n• ${v.ni.join('\n• ')}\n\n🔀 ${v.dvi}\n\n📚 प्रमाण:\n` + v.pr.map(p => (p.q ? '"' + p.q + '"' : p.t) + ' — ' + p.s).join('\n') + '\n\n— Astro Vikass ☎ 7069492135'); };
 /* ---------- सिद्धांत ---------- */
 $('rules').innerHTML = RULES.map(r => `<details class="vr"><summary><span class="t"><b>${r[0]}</b></span></summary><div class="vb"><p style="margin:0 0 6px;font-size:14.5px;line-height:1.7">${r[1]}</p>${r[2] ? prHtml(pr(r[2])) : ''}</div></details>`).join('');
 $('books').innerHTML = BOOKS.map(b => `<div><b>${b[0]}</b><br>${b[1]}</div>`).join('');

@@ -247,6 +247,12 @@ html,body{margin:0;background:#1a0a0f;min-height:100%}
 .sav-today-box span{font-size:12px}
 .sav-today-box.g{border-color:#2f7d4f;background:#12291d}.sav-today-box.g span{color:#6fd696}
 .sav-today-box.b{border-color:#a63a3a;background:#2c1414}.sav-today-box.b span{color:#ef8b8b}
+.sav-tl h4{margin:14px 0 6px;color:#e8c766;font-size:14.5px;text-align:center}
+.sav-tl-r{display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:10px;border:1px solid #5a2a35;background:#200a10;margin:5px 0;font-size:13px;color:#f3e6c8}
+.sav-tl-r.g{border-color:#2f7d4f;background:#12291d}.sav-tl-r.b{border-color:#6b2a2a;background:#241010}
+.sav-tl-r .tm{flex:0 0 46%;font-weight:700;line-height:1.35}.sav-tl-r .tm small{display:block;font-weight:500;color:#b89a7a;font-size:11.5px}
+.sav-tl-r .pl{flex:1;line-height:1.35}.sav-tl-r .pl small{display:block;font-size:11.5px}.sav-tl-r.g .pl small{color:#6fd696}.sav-tl-r.b .pl small{color:#ef8b8b}
+.sav-tl-r.now{outline:2px solid #e8c766}
 .sav-today-note{font-size:11.5px;color:#b89a7a;text-align:center;margin-top:8px}
 </style>
 </head>
@@ -263,12 +269,13 @@ html,body{margin:0;background:#1a0a0f;min-height:100%}
 
   <!-- ===================== मुख्य मेनू ===================== -->
   <div class="sav-today" id="sav-today">
-    <div class="sav-today-h">📅 आज — <span id="sav-today-d">गणना हो रही है…</span></div>
+    <div class="sav-today-h">🗓️ आज — <span id="sav-today-d">गणना हो रही है…</span></div>
     <div class="sav-today-row">
       <div class="sav-today-box" id="sav-today-shiv"><small>🔱 शिव वास</small><b>—</b><span></span></div>
       <div class="sav-today-box" id="sav-today-agni"><small>🔥 अग्नि वास</small><b>—</b><span></span></div>
     </div>
     <div class="sav-today-note" id="sav-today-note"></div>
+    <div id="sav-tl"></div>
   </div>
   <div class="sav-menu" id="sav-menu">
     <div class="sav-menu-row">
@@ -601,6 +608,34 @@ function savToday(){
   document.getElementById('sav-agni-day').value = vaar;
 }
 savToday();
+
+/* ===== अगले 7 दिन — शिववास व अग्निवास कब से कब तक ===== */
+function savTimeline(){
+  if (!window.AVAstro) return;
+  var A = AVAstro, L0 = (window.AVPlaces && AVPlaces.load()) || { name:'वाराणसी', lat:25.31, lon:83.01, tz:5.5 };
+  var now = new Date(), tz = L0.zone ? AVPlaces.tzOf(L0.zone) : L0.tz, L = { lat:L0.lat, lon:L0.lon, tz:tz };
+  var VA = ['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि'], days = [];
+  for (var i = -1; i <= 8; i++) { var dt = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i); days.push(A.dayInfo(dt.getFullYear(), dt.getMonth()+1, dt.getDate(), L)); }
+  var p0 = A.nextChange(days[0].jdRise + 1e-4, A.tithiNo, 0.02), start = p0 && p0 < days[1].jdRise ? p0 : days[1].jdRise, end = days[8].jdRise, cuts = days.slice(1,9).map(function(d){ return d.jdRise; }).concat([start]);
+  { var q = days[0].jdRise; while (true) { var c = A.nextChange(q + 1e-4, A.tithiNo, 0.02); if (!c || c >= days[1].jdRise) break; start = c; q = c; } cuts.push(start); }
+  cuts = cuts.filter(function(c){ return c >= start; }); var t = start; while (true) { t = A.nextChange(t + 1e-4, A.tithiNo, 0.02); if (!t || t >= end) break; cuts.push(t); }
+  cuts.push(end); cuts.sort(function(a,b){ return a-b; });
+  var jn = A.jdFromDate(now), shiv = [], agni = [];
+  for (var k = 0; k < cuts.length - 1; k++) {
+    var a = cuts[k], b = cuts[k+1]; if (b - a < 1e-4) continue;
+    var t30 = A.tithiNo((a + b) / 2), di = days.filter(function(d){ return d.jdRise <= a + 1e-6; }).pop(), vaar = di.vaar + 1;
+    var sv = SHIV_VAS[(t30*2+5)%7], av = AGNI_VAS[(t30+1+vaar)%4];
+    var push = function(arr, r){ var l = arr[arr.length-1]; if (l && l.r === r) l.b = b; else arr.push({ a:a, b:b, r:r }); };
+    push(shiv, sv); push(agni, av);
+  }
+  function row(x){ var cur = jn >= x.a && jn < x.b;
+    return '<div class="sav-tl-r '+(x.r.tag==='good'?'g':'b')+(cur?' now':'')+'"><div class="tm">'+A.fmtJd(x.a,tz)+'<small>से '+A.fmtJd(x.b,tz)+' तक'+(cur?' • अभी':'')+'</small></div><div class="pl">'+x.r.place+'<small>'+x.r.tagLabel+'</small></div></div>'; }
+  var fut = function(arr){ return arr.filter(function(x){ return x.b > jn; }); };
+  document.getElementById('sav-tl').innerHTML = '<div class="sav-tl"><h4>🔱 शिववास — कब से कब तक (अगले 7 दिन)</h4>' + fut(shiv).map(row).join('')
+    + '<h4>🔥 अग्निवास — कब से कब तक (अगले 7 दिन)</h4>' + fut(agni).map(row).join('')
+    + '<div class="sav-today-note">शिववास तिथि बदलने पर बदलता है; अग्निवास तिथि या वार (सूर्योदय से) बदलने पर। समय '+L0.name+' के अनुसार।</div></div>';
+}
+try { savTimeline(); } catch (e) { console.error(e); }
 
 })();
 </script>

@@ -4,7 +4,7 @@
   {
    "id": "panchang",
    "title": "पंचांग एवं चौघड़िया",
-   "icon": "📅",
+   "icon": "🌞",
    "desc": "तिथि, नक्षत्र, मुहूर्त, चौघड़िया",
    "path": "tools/panchang.html",
    "order": 50,

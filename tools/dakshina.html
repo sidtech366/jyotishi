@@ -62,7 +62,7 @@ $('secs').addEventListener('click', e => { const a = e.target.closest('[data-add
 $('tp').onchange = () => { D = fresh($('tp').value); D.yj = $('yj').value; save(); draw(); toast('सूची भर दी — अब दर लिखें'); };
 $('yj').oninput = () => { D.yj = $('yj').value; save(); }; $('dt').onchange = () => { D.dt = $('dt').value; save(); };
 $('clr').onclick = () => { D = fresh('खाली (अपना बनाएं)'); $('tp').value = D.tp; save(); draw(); };
-$('sh').onclick = () => { const g = totals(); let t = `🧾 *${D.tp} — खर्च विवरण*\n👤 यजमान: ${D.yj || '-'}\n📅 ${(D.dt || '').split('-').reverse().join('/')}\n`; SEC.forEach(([k, n]) => { const rs = D.rows[k].filter(r => r.n && amt(r)); if (rs.length) { t += `\n${n}\n` + rs.map(r => `• ${r.n}${+r.q !== 1 ? ' × ' + r.q : ''} = ${fmt(amt(r))}`).join('\n') + '\n'; } }); t += `\n💰 *कुल योग: ${fmt(g)}*`; share(t); };
+$('sh').onclick = () => { const g = totals(); let t = `🧾 *${D.tp} — खर्च विवरण*\n👤 यजमान: ${D.yj || '-'}\n🗓️ ${(D.dt || '').split('-').reverse().join('/')}\n`; SEC.forEach(([k, n]) => { const rs = D.rows[k].filter(r => r.n && amt(r)); if (rs.length) { t += `\n${n}\n` + rs.map(r => `• ${r.n}${+r.q !== 1 ? ' × ' + r.q : ''} = ${fmt(amt(r))}`).join('\n') + '\n'; } }); t += `\n💰 *कुल योग: ${fmt(g)}*`; share(t); };
 draw();
 </script>
 </body>
