@@ -165,6 +165,10 @@ h4{font-size:18px;margin:22px 0 8px;color:hsl(var(--h),90%,76%);font-weight:800}
 .yc{border-color:#f5b94255}.yc-h{font-weight:800;color:var(--gold2);font-size:18px}
 .dc{border-color:#e8488f55}.dc-h{font-weight:800;color:#ff9ab9;font-size:18px}
 .dc.ss{margin-top:12px;border-color:#7c6cff77}
+.rt-c{padding:14px 15px;border-radius:14px;background:#100d31;border:1px solid #17c3a588;margin:10px 0}.rt-h{display:flex;justify-content:space-between;gap:8px;align-items:center}.rt-h b{font-size:17px;color:#ffd9a8}.rt-h span{font-size:12px;font-weight:800;border-radius:999px;padding:2px 10px;background:#1fd17a22;color:#7ff0b5;white-space:nowrap}
+.rt-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin:10px 0}.rt-g span{display:block;padding:8px 10px;border-radius:10px;border:1px solid var(--line);font-size:14px;line-height:1.5}.rt-g i{display:block;font-style:normal;font-size:12px;opacity:.75;font-weight:700}
+.rt-c p{font-size:14px;line-height:1.65;margin:6px 0}.warnp{color:#ffb48a}
+html.embed .rt-c{background:#fff;border-color:#a9dcbc}html.embed .rt-h b{color:#6b1418}html.embed .rt-h span{background:#e9f6ee;color:#1d7d4b}html.embed .warnp{color:#b83227}
 .ds-sum{padding:12px 14px;border-radius:14px;border:1px solid var(--line);margin-bottom:6px;font-size:15px}.ds-sum b{font-size:20px;color:#ff9ab9}
 .ds-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
 .ds-c{padding:13px 15px;border-radius:14px;background:#100d31;border:1px solid var(--line)}.ds-c.yes{border-color:#e8488f88}.ds-c.mild{border-color:#f5b94288}.ds-c.ask{border-color:#4fc3ff66}
@@ -1033,6 +1037,68 @@ function doshSection(k, inp) {
     + `<p class="note">⚖️ दोष का अर्थ "डर" नहीं — यह सावधानी और उपाय का संकेत है। अधिकांश दोष अन्य शुभ योगों से कट जाते हैं। शान्ति-अनुष्ठान योग्य आचार्य से कराएँ।</p>`;
 }
 
+/* ===== रत्न परामर्श एवं इष्ट देव — पूर्ण विधि (रत्ती, धातु, उंगली, दिन, समय, शुद्धि, मंत्र, उपरत्न) ===== */
+const RATNA = {
+  Sun: { g: 'माणिक्य (Ruby)', ur: 'सूर्यकांत मणि / लाल तामड़ा (Garnet)', min: 3, max: 6, unit: 'रत्ती', dh: 'सोना या तांबा', f: 'अनामिका (Ring finger)', hand: 'दाहिना हाथ', day: 'रविवार', time: 'सूर्योदय से 1 घंटे के भीतर (सूर्य की होरा)', paksh: 'शुक्ल पक्ष', nak: 'कृत्तिका, उत्तराफाल्गुनी, उत्तराषाढ़ा', bij: 'ॐ ह्रां ह्रीं ह्रौं सः सूर्याय नमः', jap: 7000 },
+  Moon: { g: 'मोती (Pearl)', ur: 'चंद्रकांत मणि (Moonstone)', min: 4, max: 7, unit: 'रत्ती', dh: 'चाँदी', f: 'कनिष्ठा (Little finger)', hand: 'दाहिना हाथ', day: 'सोमवार', time: 'सूर्योदय से 1 घंटे के भीतर या संध्या में चंद्र की होरा', paksh: 'शुक्ल पक्ष (पूर्णिमा के निकट श्रेष्ठ)', nak: 'रोहिणी, हस्त, श्रवण', bij: 'ॐ श्रां श्रीं श्रौं सः चंद्रमसे नमः', jap: 11000 },
+  Mars: { g: 'मूंगा (Red Coral)', ur: 'लाल अकीक / कार्नेलियन', min: 6, max: 9, unit: 'रत्ती', dh: 'सोना या तांबा', f: 'अनामिका (Ring finger)', hand: 'दाहिना हाथ', day: 'मंगलवार', time: 'सूर्योदय से 1 घंटे के भीतर (मंगल की होरा)', paksh: 'शुक्ल पक्ष', nak: 'मृगशिरा, चित्रा, धनिष्ठा', bij: 'ॐ क्रां क्रीं क्रौं सः भौमाय नमः', jap: 10000 },
+  Mercury: { g: 'पन्ना (Emerald)', ur: 'हरा ओनेक्स / पेरिडॉट (Peridot)', min: 3, max: 6, unit: 'रत्ती', dh: 'सोना या कांसा', f: 'कनिष्ठा (Little finger)', hand: 'दाहिना हाथ', day: 'बुधवार', time: 'सूर्योदय से 2 घंटे के भीतर (बुध की होरा)', paksh: 'शुक्ल पक्ष', nak: 'आश्लेषा, ज्येष्ठा, रेवती', bij: 'ॐ ब्रां ब्रीं ब्रौं सः बुधाय नमः', jap: 9000 },
+  Jupiter: { g: 'पुखराज (Yellow Sapphire)', ur: 'सुनैला (Citrine) / पीला टोपाज़', min: 3, max: 6, unit: 'रत्ती', dh: 'सोना', f: 'तर्जनी (Index finger)', hand: 'दाहिना हाथ', day: 'गुरुवार', time: 'सूर्योदय से 1 घंटे के भीतर (गुरु की होरा)', paksh: 'शुक्ल पक्ष', nak: 'पुनर्वसु, विशाखा, पूर्वाभाद्रपद', bij: 'ॐ ग्रां ग्रीं ग्रौं सः गुरवे नमः', jap: 19000 },
+  Venus: { g: 'हीरा (Diamond)', ur: 'ओपल / सफ़ेद जरकन / स्फटिक', min: 0.5, max: 1, unit: 'कैरेट (हीरा) • ओपल 5-7 रत्ती', dh: 'चाँदी या प्लैटिनम', f: 'मध्यमा या कनिष्ठा', hand: 'दाहिना हाथ', day: 'शुक्रवार', time: 'सूर्योदय से 1 घंटे के भीतर (शुक्र की होरा)', paksh: 'शुक्ल पक्ष', nak: 'भरणी, पूर्वाफाल्गुनी, पूर्वाषाढ़ा', bij: 'ॐ द्रां द्रीं द्रौं सः शुक्राय नमः', jap: 16000 },
+  Saturn: { g: 'नीलम (Blue Sapphire)', ur: 'नीली / जामुनिया (Amethyst) / लाजवर्त', min: 3, max: 5, unit: 'रत्ती', dh: 'चाँदी, पंचधातु या लोहा', f: 'मध्यमा (Middle finger)', hand: 'दाहिना हाथ', day: 'शनिवार', time: 'सूर्योदय के बाद शनि की होरा में (या सूर्यास्त से 2 घंटे पूर्व)', paksh: 'शुक्ल पक्ष', nak: 'पुष्य, अनुराधा, उत्तराभाद्रपद', bij: 'ॐ प्रां प्रीं प्रौं सः शनैश्चराय नमः', jap: 23000, test: 'नीलम पहले 3 दिन तकिये के नीचे या ढीली अंगूठी में रखकर परखें — बुरे स्वप्न, दुर्घटना या अशांति हो तो तुरंत उतार दें।' },
+  Rahu: { g: 'गोमेद (Hessonite)', ur: 'तुरसावा / गोमेद का हल्का रूप', min: 6, max: 9, unit: 'रत्ती', dh: 'चाँदी या अष्टधातु', f: 'मध्यमा (Middle finger)', hand: 'दाहिना हाथ', day: 'शनिवार', time: 'सूर्यास्त के बाद (राहु काल नहीं)', paksh: 'शुक्ल पक्ष', nak: 'आर्द्रा, स्वाति, शतभिषा', bij: 'ॐ भ्रां भ्रीं भ्रौं सः राहवे नमः', jap: 18000 },
+  Ketu: { g: 'लहसुनिया (Cat\'s Eye)', ur: 'संगी / टाइगर आई', min: 3, max: 6, unit: 'रत्ती', dh: 'चाँदी या पंचधातु', f: 'कनिष्ठा या मध्यमा', hand: 'दाहिना हाथ', day: 'मंगलवार या गुरुवार', time: 'सूर्योदय से 1 घंटे के भीतर', paksh: 'शुक्ल पक्ष', nak: 'अश्विनी, मघा, मूल', bij: 'ॐ स्रां स्रीं स्रौं सः केतवे नमः', jap: 17000 },
+};
+const ISHTA_FULL = { Sun: 'सूर्य देव / भगवान श्री राम', Moon: 'भगवान शिव / माँ पार्वती', Mars: 'हनुमान जी / कार्तिकेय', Mercury: 'गणेश जी / भगवान विष्णु', Jupiter: 'भगवान विष्णु / दत्तात्रेय', Venus: 'माँ लक्ष्मी / माँ दुर्गा', Saturn: 'शनि देव / हनुमान जी / भैरव' };
+const ISHTA_MANTRA = { Sun: 'ॐ घृणि सूर्याय नमः / श्री राम जय राम जय जय राम', Moon: 'ॐ नमः शिवाय', Mars: 'ॐ हं हनुमते नमः', Mercury: 'ॐ गं गणपतये नमः', Jupiter: 'ॐ नमो भगवते वासुदेवाय', Venus: 'ॐ श्रीं महालक्ष्म्यै नमः', Saturn: 'ॐ शं शनैश्चराय नमः / ॐ हं हनुमते नमः' };
+const ORDH = n => n + (n === 1 ? 'ले' : n === 2 || n === 3 ? 'रे' : n === 4 ? 'थे' : n === 6 ? 'ठे' : 'वें');
+
+function ratnaPlan(k) {
+  const q = k.planets, ln = k.lagnaSign, L = h => Astro.SIGN_LORD[(ln + h - 1) % 12];
+  const l1 = L(1), l5 = L(5), l9 = L(9), dus = [L(6), L(8), L(12)];
+  const good = [...new Set([l1, l5, l9])];
+  const role = p => [p === l1 ? 'लग्नेश' : '', p === l5 ? 'पंचमेश' : '', p === l9 ? 'भाग्येश (नवमेश)' : ''].filter(Boolean).join(' + ');
+  const why = p => {
+    const d = q[p].dignity, h = q[p].house, w = [];
+    if (['neech', 'shatru'].includes(d) || [6, 8, 12].includes(h) || q[p].combust) w.push('यह ग्रह ' + (d === 'neech' ? 'नीच राशि में' : d === 'shatru' ? 'शत्रु राशि में' : q[p].combust ? 'अस्त' : ORDH(h) + ' भाव में') + ' होकर कमजोर है — रत्न इसे बल देगा');
+    else w.push('शुभ भाव का स्वामी — रत्न इसके शुभ फल बढ़ाएगा');
+    return w.join('; ');
+  };
+  // मुख्य रत्न: लग्नेश; यदि लग्नेश 6/8/12 का भी स्वामी हो तब भी लग्नेश शुभ
+  const main = l1, sup = good.filter(p => p !== main);
+  const avoid = [...new Set(dus)].filter(p => !good.includes(p) && RATNA[p]);
+  return { main, sup, avoid, role, why, l5, l9 };
+}
+
+function ratnaCard(p, tag, plan) {
+  const R = RATNA[p];
+  return `<div class="rt-c"><div class="rt-h"><b>💎 ${R.g}</b><span>${tag}</span></div>
+  <p class="dim">${K.P[p].hi} का रत्न • ${plan.role(p) || ''} — ${plan.why(p)}</p>
+  <div class="rt-g">
+   <span><i>⚖️ वज़न</i>${R.unit === 'रत्ती' ? `${R.min}–${R.max} रत्ती (शरीर के वज़न का 1/10 — जैसे 60 किलो पर 6 रत्ती; न्यूनतम ${R.min} रत्ती)` : `${R.min}–${R.max} ${R.unit}`}</span>
+   <span><i>🪙 धातु</i>${R.dh}</span><span><i>☝️ उंगली</i>${R.f} • ${R.hand}</span>
+   <span><i>🗓️ दिन</i>${R.day}, ${R.paksh}</span><span><i>⏰ समय</i>${R.time}</span>
+   <span><i>⭐ श्रेष्ठ नक्षत्र</i>${R.nak}</span><span><i>🔁 उपरत्न (सस्ता विकल्प)</i>${R.ur}</span>
+  </div>
+  <p><b>धारण विधि:</b> एक दिन पहले रात को अंगूठी कच्चे दूध + गंगाजल में रखें। धारण के दिन स्नान कर, पूजा स्थान में अंगूठी पर धूप-दीप-पुष्प चढ़ाएँ, <b>"${R.bij}"</b> का 108 बार जाप करके ${R.time.split('(')[0]}धारण करें। उस दिन ${K.P[p].daan} का दान करें। रत्न ऐसा जड़वाएँ कि नीचे से त्वचा को स्पर्श करे; रत्न दोषरहित (दरार, धब्बा न हो) और प्रमाणित (लैब सर्टिफ़िकेट) हो।</p>
+  ${R.test ? `<p class="warnp">⚠️ ${R.test}</p>` : ''}
+  <p class="dim">पूर्ण सिद्धि हेतु जाप संख्या: ${R.jap.toLocaleString('hi-IN')} (40 दिन में) • रत्न 3-5 वर्ष बाद या टूटने पर बदलें।</p></div>`;
+}
+
+function ratnaSection(k) {
+  const plan = ratnaPlan(k), l1 = plan.main;
+  let h = `<div class="ds-sum">आपके लिए <b>मुख्य रत्न: ${RATNA[l1].g}</b> (लग्नेश ${K.P[l1].hi})${plan.sup.length ? ' • सहायक: ' + plan.sup.map(p => RATNA[p].g.split(' (')[0]).join(', ') : ''}</div>`;
+  h += ratnaCard(l1, '✅ मुख्य रत्न', plan);
+  plan.sup.forEach(p => { h += ratnaCard(p, p === plan.l9 ? '✅ भाग्य रत्न' : '✅ विद्या/संतान रत्न', plan); });
+  if (plan.sup.length) h += `<p class="dim">एक साथ अधिकतम दो रत्न पहनें — पहले मुख्य रत्न, 40 दिन बाद आवश्यकता हो तो सहायक रत्न। माणिक्य-नीलम, मोती-गोमेद, पुखराज-हीरा, मूंगा-पन्ना एक साथ न पहनें।</p>`;
+  if (plan.avoid.length) h += `<h4>🚫 ये रत्न न पहनें</h4><p>${plan.avoid.map(p => `<b>${RATNA[p].g}</b> (${K.P[p].hi} आपकी कुंडली में ${[6, 8, 12].filter(x => Astro.SIGN_LORD[(k.lagnaSign + x - 1) % 12] === p).map(ORDH).join(', ')} भाव का स्वामी है)`).join('; ')} — इनके लिए रत्न नहीं, केवल मंत्र-जाप और दान करें।</p>`;
+  const R5 = Astro.SIGN_LORD[(k.lagnaSign + 4) % 12];
+  h += `<h4>🙏 इष्ट देव</h4><div class="rt-g"><span><i>इष्ट देव (लग्नेश ${K.P[l1].hi})</i>${ISHTA_FULL[l1] || ''} • मंत्र: ${ISHTA_MANTRA[l1] || ''}</span><span><i>आराध्य (पंचमेश ${K.P[R5].hi} — पूर्व पुण्य)</i>${ISHTA_FULL[R5] || ''} • मंत्र: ${ISHTA_MANTRA[R5] || ''}</span></div>
+  <p class="dim">इष्ट देव की प्रतिदिन पूजा, उनके दिन (${K.P[l1].day}) व्रत या विशेष आराधना करें। रत्न से भी अधिक स्थायी फल इष्ट-उपासना से मिलता है।</p>
+  <p class="dim">📜 आधार: लग्न, पंचम (त्रिकोण) व नवम भाव के स्वामी सदा शुभ; 6, 8, 12 भाव के स्वामी के रत्न वर्जित — बृहत् पाराशर होरा शास्त्र (शुभाशुभ ग्रह विचार)। रत्न-ग्रह संबंध: गरुड़ पुराण (रत्न परीक्षा), बृहत् संहिता।</p>`;
+  return h;
+}
+
 /* ===== वेबसाइट लॉजिक ===== */
 const CONFIG = {
   SITE_NAME: 'Astro Vikass',
@@ -1154,11 +1220,22 @@ async function onSubmit(e) {
     hideForm(name, dob, tob, $('#place').value);
     try {   // "पूछें" (AI सहायक) के लिए — इसी ब्राउज़र में आख़िरी कुंडली
       const rp = $('#report').cloneNode(true); rp.querySelectorAll('.ktoc,.kpager,.actions,.r-foot,.r-consult,button,script').forEach(e => e.remove());
-      localStorage.setItem('av_kundli_last', JSON.stringify({ n: name, d: dob.split('-').reverse().join('/'), t: tob, p: $('#place').value, x: rp.textContent.replace(/\s+/g, ' ').trim().slice(0, 30000), at: Date.now() }));
+      localStorage.setItem('av_kundli_last', JSON.stringify({ n: name, d: dob.split('-').reverse().join('/'), t: tob, p: $('#place').value, x: rp.textContent.replace(/\s+/g, ' ').trim().slice(0, 30000), s: kSummary(k, inp), at: Date.now() }));
     } catch (e) { }
     $('#editbar').scrollIntoView({ behavior: 'smooth', block: 'start' });
     saveLead(save);
   }, 700);
+}
+/* बिना AI के उत्तर देने हेतु संरचित सार */
+function kSummary(k, inp) {
+  const q = k.planets, now = new Date(), cm = k.dasha.list.find(d => d.start <= now && d.end > now) || k.dasha.list[0], ca = cm.antar.find(a => a.start <= now && a.end > now) || cm.antar[0];
+  const pl = ratnaPlan(k), D = (() => { try { return doshAll(k, inp); } catch (e) { return null; } })();
+  const gem = p => Object.assign({ p: K.P[p].hi }, RATNA[p], { daan: K.P[p].daan, role: pl.role(p), why: pl.why(p) });
+  const L5 = Astro.SIGN_LORD[(k.lagnaSign + 4) % 12];
+  return { lagna: K.SIGN[k.lagnaSign], rashi: K.SIGN[q.Moon.sign], nak: K.NAK[q.Moon.nak][0], maha: K.P[cm.lord].hi, mahaEnd: cm.end.getFullYear(), antar: K.P[ca.lord].hi, antarEnd: ca.end.toLocaleDateString('hi-IN'), mahaMantra: K.P[cm.lord].mantra,
+    main: gem(pl.main), sup: pl.sup.map(gem), avoid: pl.avoid.map(p => RATNA[p].g + ' (' + K.P[p].hi + ')'),
+    ishta: ISHTA_FULL[pl.main], ishtaM: ISHTA_MANTRA[pl.main], ishta5: ISHTA_FULL[L5], ishta5M: ISHTA_MANTRA[L5], day: K.P[pl.main].day, color: K.P[pl.main].color,
+    dosh: D ? [...D.J, ...D.G, ...D.L].filter(d => d.st === 'yes' || d.st === 'mild').map(d => ({ n: d.n, st: d.st, how: d.how, u: d.u || '', sh: d.sh || '' })) : [] };
 }
 async function saveLead(s) {
   if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_ANON_KEY) return;
@@ -1328,6 +1405,7 @@ function buildReport(k, u) {
   s2 += `<h4>🏠 भाव-वार फलादेश</h4><div class="houses">${[...Array(12)].map((_, i) => i + 1).filter(hh => inHouse(k, hh).length).map(hh => `<div class="hc"><b>${ord(hh)} भाव — ${inHouse(k, hh).map(p => K.P[p].hi).join(' + ')}</b><small>${K.HOUSE[hh]}</small><p>${inHouse(k, hh).map(p => K.LK[p][hh - 1][0]).join(' ')}</p></div>`).join('')}</div>`;
   h += sec(2, 'YOGA & BHAVA', 'योग एवं भाव विश्लेषण', 'राजयोग, दोष और भाव फलादेश', '⚡', s2, 330);
   try { h += sec('D', 'DOSHA VICHAR', 'सम्पूर्ण दोष विचार', 'जनन दोष (गंडमूल आदि), ग्रह दोष, लाल किताब ऋण — उपाय व शास्त्र प्रमाण सहित', '🛡️', doshSection(k, u.inp), 0).replace('data-k="sD"', 'data-k="dosh"').replace('SECTION 0D', 'SECTION ✦'); } catch (e) { console.error(e); }
+  try { h += sec('R', 'RATNA & ISHTA', 'रत्न परामर्श एवं इष्ट देव', 'कौन सा रत्न, कितनी रत्ती, किस धातु व उंगली में, कब और कैसे धारण करें', '💎', ratnaSection(k), 160).replace('data-k="sR"', 'data-k="ratna"').replace('SECTION 0R', 'SECTION ✦'); } catch (e) { console.error(e); }
 
   /* SECTION 3 */
   const L = K.LAGNA[ln];
@@ -1393,7 +1471,7 @@ function buildReport(k, u) {
   <div class="two"><div class="good"><b>✅ क्या करें (Do's)</b><ol>${dos.map(x => `<li>${x}</li>`).join('')}</ol></div><div class="bad"><b>❌ क्या न करें (Don'ts)</b><ol>${donts.map(x => `<li>${x}</li>`).join('')}</ol></div></div>
   <h4>🕉️ मंत्र जाप (108 बार प्रतिदिन)</h4>${mantras.map(p => `<div class="mantra" style="--c:${K.P[p].c}"><b>${K.P[p].mantra}</b><small>${K.P[p].hi} ${p === curMaha.lord ? '— वर्तमान महादशा में सर्वाधिक प्रभावी' : p === lagnaLord ? '— लग्नेश, आत्मबल के लिए' : '— कमजोर ग्रह को बल देने हेतु'} • 40 दिन नियमित</small></div>`).join('')}
   <h4>💎 शुभ तत्व</h4><div class="pills"><span>💎 रत्न: ${K.P[lagnaLord].gem} (लग्नेश)</span><span>💠 सहायक रत्न: ${K.P[lordOf(k, 5)].gem}, ${K.P[lordOf(k, 9)].gem}</span><span>🎨 रंग: ${K.P[lagnaLord].color}</span><span>🗓️ दिन: ${days}</span><span>🙏 इष्ट: ${ISHTA[lagnaLord]}</span></div>
-  <p class="dim">रत्न धारण करने से पहले किसी अनुभवी ज्योतिषी से सलाह अवश्य लें।</p>`;
+  <p class="dim">रत्न की पूरी विधि (रत्ती, धातु, उंगली, दिन, समय) "💎 रत्न-इष्ट" खंड में देखें।</p>`;
   h += sec(10, 'GUIDANCE & CONCLUSION', 'मार्गदर्शिका एवं अंतिम निष्कर्ष', "Do's & Don'ts, मंत्र, शुभ तत्व", '🎓', s10, 280);
 
   const share = `${u.name} की कुंडली: ${K.SIGN[ln]} लग्न, ${K.SIGN[ms]} राशि, ${nak[0]} नक्षत्र, ${K.P[curMaha.lord].hi} महादशा। Astro Vikass पर अपनी लाल किताब कुंडली बनाएं: https://sidtech366.vercel.app/AstroVikas`;
@@ -1404,7 +1482,7 @@ function buildReport(k, u) {
     <div class="rf-b"><div class="r-logo"><div class="mark"><span>✦</span></div><div><b>ASTRO VIKASS</b><small>लाल किताब • वैदिक ज्योतिष</small></div></div><p>ग्रहों की सटीक गणना और लाल किताब के अनुभव पर आधारित व्यक्तिगत रिपोर्ट।</p></div>
     <div class="rf-c"><b>संपर्क</b><span>☎ 7069492135</span><span>💬 WhatsApp: 7069492135</span><span>🌐 sidtech366.vercel.app/AstroVikas</span></div>
     <div class="rf-s"><b>रिपोर्ट विवरण</b><span>नं. ${rid} • ${today}</span><span>लाहिरी अयनांश ${k.ayanamsa.toFixed(3)}°</span><span>${u.inp.lat}°, ${u.inp.lon}° • UTC${u.inp.tz >= 0 ? '+' : ''}${u.inp.tz}</span></div>
-  </div><p class="rf-d">यह रिपोर्ट ज्योतिषीय गणना पर आधारित मार्गदर्शन है। रत्न, उपाय या महत्वपूर्ण निर्णय से पहले अनुभवी ज्योतिषी से परामर्श अवश्य लें। © ${now.getFullYear()} Astro Vikass</p></div>`;
+  </div><p class="rf-d">यह रिपोर्ट शास्त्रीय ज्योतिषीय गणना (पराशर, लाल किताब) पर आधारित Astro Vikass का मार्गदर्शन है। © ${now.getFullYear()} Astro Vikass</p></div>`;
   return h;
 }
 /* कुंडली बनने के बाद फॉर्म छिपाएं — सिर्फ़ "एडिट" बटन */
@@ -1420,7 +1498,7 @@ function showForm() {
   $('#form').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 document.addEventListener('click', e => { const a = e.target.closest('a[href="#form"]'); if (a && document.querySelector('.hero.formhidden')) { e.preventDefault(); showForm(); } });
-const TOC = [['info', '📋', 'जन्म विवरण'], ['chart', '🪔', 'कुंडली चार्ट'], ['graha', '🪐', 'ग्रह स्पष्ट'], ['s1', '🔭', 'ग्रह शक्ति'], ['s2', '⚡', 'योग-दोष, भाव'], ['dosh', '🛡️', 'सम्पूर्ण दोष'], ['s3', '🧬', 'व्यक्तित्व'], ['s4', '💼', 'करियर-धन'], ['s5', '💞', 'विवाह-संतान'], ['s6', '🌿', 'स्वास्थ्य'], ['s7', '📕', 'लाल किताब उपाय'], ['s8', '⏳', 'दशा-वर्षफल'], ['s9', '🔢', 'अंक ज्योतिष'], ['s10', '🎓', 'मार्गदर्शन']];
+const TOC = [['info', '📋', 'जन्म विवरण'], ['chart', '🪔', 'कुंडली चार्ट'], ['graha', '🪐', 'ग्रह स्पष्ट'], ['s1', '🔭', 'ग्रह शक्ति'], ['s2', '⚡', 'योग-दोष, भाव'], ['dosh', '🛡️', 'सम्पूर्ण दोष'], ['ratna', '💎', 'रत्न-इष्ट'], ['s3', '🧬', 'व्यक्तित्व'], ['s4', '💼', 'करियर-धन'], ['s5', '💞', 'विवाह-संतान'], ['s6', '🌿', 'स्वास्थ्य'], ['s7', '📕', 'लाल किताब उपाय'], ['s8', '⏳', 'दशा-वर्षफल'], ['s9', '🔢', 'अंक ज्योतिष'], ['s10', '🎓', 'मार्गदर्शन']];
 function kTab(key, scroll) {
   const r = document.getElementById('report'); if (!r) return;
   r.classList.add('tabbed');

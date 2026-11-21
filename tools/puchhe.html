@@ -64,7 +64,7 @@ const ROM = { kundli: 'कुंडली', kundali: 'कुंडली', kundl
   manglik: 'मांगलिक', mangal: 'मंगल', kalsarp: 'कालसर्प', kaalsarp: 'कालसर्प', sadesati: 'साढ़े', sadhesati: 'साढ़े', shani: 'शनि', rahu: 'राहु', ketu: 'केतु', guru: 'गुरु', shukra: 'शुक्र', budh: 'बुध', surya: 'सूर्य', chandra: 'चंद्र',
   shadi: 'विवाह', shaadi: 'विवाह', vivah: 'विवाह', naukri: 'नौकरी', career: 'करियर', santan: 'संतान', bachche: 'संतान', swasthya: 'स्वास्थ्य', sehat: 'स्वास्थ्य', dhan: 'धन', paisa: 'धन', ratna: 'रत्न', ratn: 'रत्न', stone: 'रत्न',
   ekadashi: 'एकादशी', vrat: 'व्रत', tyohar: 'त्योहार', tithi: 'तिथि', nakshatra: 'नक्षत्र', panchang: 'पंचांग', muhurat: 'मुहूर्त', rahukaal: 'राहुकाल', puja: 'पूजा', pooja: 'पूजा', havan: 'हवन', mantra: 'मंत्र', mantr: 'मंत्र',
-  vastu: 'वास्तु', sapna: 'स्वप्न', sapne: 'स्वप्न', swapna: 'स्वप्न', sankalp: 'संकल्प', dhyan: 'ध्यान', lal: 'लाल', kitab: 'किताब', ank: 'अंक', gandmool: 'गंडमूल', gandmul: 'गंडमूल', mool: 'मूल', mul: 'मूल', garbh: 'गर्भ', garbhadhan: 'गर्भाधान', sanskar: 'संस्कार', pitra: 'पितृ', pitru: 'पितृ', rin: 'ऋण', janeu: 'जनेऊ', upanayan: 'उपनयन', mundan: 'मुंडन', griha: 'गृह', grah_pravesh: 'गृह', pravesh: 'प्रवेश', namkaran: 'नामकरण', annaprashan: 'अन्नप्राशन', sagai: 'सगाई', vahan: 'वाहन', gaadi: 'वाहन', ratn: 'रत्न', operation: 'ऑपरेशन', yatra: 'यात्रा', dukan: 'दुकान', vyapar: 'व्यापार', bhumi: 'भूमि', grahan: 'ग्रहण', amavasya: 'अमावस्या', mera: 'मेरा', meri: 'मेरी', mere: 'मेरे', mujhe: 'मुझे' };
+  vastu: 'वास्तु', sapna: 'स्वप्न', sapne: 'स्वप्न', swapna: 'स्वप्न', sankalp: 'संकल्प', dhyan: 'ध्यान', lal: 'लाल', kitab: 'किताब', ank: 'अंक', gandmool: 'गंडमूल', gandmul: 'गंडमूल', mool: 'मूल', mul: 'मूल', garbh: 'गर्भ', garbhadhan: 'गर्भाधान', sanskar: 'संस्कार', pitra: 'पितृ', pitru: 'पितृ', rin: 'ऋण', janeu: 'जनेऊ', upanayan: 'उपनयन', mundan: 'मुंडन', griha: 'गृह', grah_pravesh: 'गृह', pravesh: 'प्रवेश', namkaran: 'नामकरण', annaprashan: 'अन्नप्राशन', sagai: 'सगाई', vahan: 'वाहन', gaadi: 'वाहन', ratn: 'रत्न', operation: 'ऑपरेशन', yatra: 'यात्रा', dukan: 'दुकान', vyapar: 'व्यापार', bhumi: 'भूमि', grahan: 'ग्रहण', amavasya: 'अमावस्या', isht: 'इष्ट', ishta: 'इष्ट', ist: 'इष्ट', devta: 'देवता', devata: 'देवता', dev: 'देवता', bhagwan: 'देवता', aradhya: 'इष्ट', pahane: 'पहनें', pahanu: 'पहनें', pahne: 'पहनें', pahnu: 'पहनें', angoothi: 'अंगूठी', anguthi: 'अंगूठी', ratti: 'रत्ती', gem: 'रत्न', gemstone: 'रत्न', nakshatr: 'नक्षत्र', mahadasa: 'महादशा', dasa: 'दशा', kaunsa: 'कौन', kaun: 'कौन', mera: 'मेरा', meri: 'मेरी', mere: 'मेरे', mujhe: 'मुझे' };
 const rom = w => ROM[w] || ROM[w.replace(/(on|o|ein|en|e|a|i)$/, '')] || (/^dosh/.test(w) ? 'दोष' : /^upa+y/.test(w) ? 'उपाय' : /^kund/.test(w) ? 'कुंडली' : w);
 const tok = s => (s.toLowerCase().match(/[ऀ-ॿ\w]+/g) || []).map(rom).filter(w => w.length > 1 && !STOP.has(w));
 function retrieve(q, n = 8) {
@@ -117,12 +117,34 @@ function kSel(q) {
   let out = [], n = 1500; for (const p of sc) { if (n + p[1].length > 9000) break; out.push(p); n += p[1].length; }
   return head + ' … ' + out.sort((a, b) => a[0] - b[0]).map(p => p[1]).join(' … ');
 }
+/* ===== बिना AI — कुंडली की गणना से सीधा उत्तर (तेज़, कभी error नहीं) ===== */
+function localAns(q) {
+  const S = useK && KD && KD.s; if (!S) return null;
+  const T = tok(q).join(' ') + ' ' + q, has = re => re.test(T), out = [];
+  const gemTxt = (g, tag) => `<b>💎 ${g.g}</b> — ${tag} (${g.p}${g.role ? ', ' + g.role : ''})\n• वज़न: ${g.unit === 'रत्ती' ? `${g.min}–${g.max} रत्ती (शरीर के वज़न का 1/10, जैसे 60 किलो → 6 रत्ती)` : `${g.min}–${g.max} ${g.unit}`}\n• धातु: ${g.dh} • उंगली: ${g.f}, ${g.hand}\n• दिन: ${g.day}, ${g.paksh} • समय: ${g.time}\n• धारण मंत्र: ${g.bij} (108 बार)\n• विधि: पहली रात कच्चे दूध + गंगाजल में रखें, धूप-दीप से पूजन कर मंत्र जपकर पहनें; उस दिन ${g.daan} का दान करें।\n• उपरत्न (कम बजट में): ${g.ur}${g.test ? '\n• ⚠️ ' + g.test : ''}`;
+  if (has(/रत्न|रत्ती|अंगूठी|पहनें|पहन/)) {
+    let t = `<b>आपके लिए रत्न परामर्श</b> (${S.lagna} लग्न)\n\n` + gemTxt(S.main, 'मुख्य रत्न');
+    S.sup.forEach(g => t += '\n\n' + gemTxt(g, 'सहायक रत्न'));
+    if (S.sup.length) t += '\n\nएक साथ अधिकतम दो रत्न — पहले मुख्य रत्न, 40 दिन बाद आवश्यकता हो तो सहायक।';
+    if (S.avoid.length) t += `\n\n🚫 <b>न पहनें:</b> ${S.avoid.join(', ')} — ये आपकी कुंडली के 6/8/12 भाव के स्वामी के रत्न हैं।`;
+    out.push(t);
+  }
+  if (has(/इष्ट|देवता|आराध्य|कुलदेव/)) out.push(`<b>🙏 इष्ट देव:</b> ${S.ishta}\n• मंत्र: ${S.ishtaM}\n• आराध्य (पंचम भाव — पूर्व पुण्य): ${S.ishta5} • मंत्र: ${S.ishta5M}\n• विशेष दिन: ${S.day} • शुभ रंग: ${S.color}`);
+  if (has(/दोष|मांगलिक|मंगली|कालसर्प|पितृ|गंडमूल|ऋण/)) out.push(S.dosh.length ? `<b>🛡️ आपकी कुंडली के दोष (${S.dosh.length}):</b>\n\n` + S.dosh.map((d, i) => `${i + 1}. <b>${d.n}</b>${d.st === 'mild' ? ' (आंशिक/शमित)' : ''}\n• स्थिति: ${d.how}\n• उपाय: ${d.u}${d.sh ? '\n• समय: ' + d.sh : ''}`).join('\n\n') : '✅ आपकी कुंडली में कोई प्रमुख दोष नहीं है।');
+  if (has(/दशा|महादशा|अंतर्दशा|समय कैसा/)) out.push(`<b>⏳ दशा:</b> अभी <b>${S.maha} महादशा</b> (${S.mahaEnd} तक) में <b>${S.antar} अंतर्दशा</b> (${S.antarEnd} तक) चल रही है।\n• महादशा मंत्र: ${S.mahaMantra} — प्रतिदिन 108 बार।`);
+  if (!out.length && has(/उपाय/)) out.push(`<b>🪔 आपके लिए मुख्य उपाय:</b>\n• इष्ट देव ${S.ishta} की नियमित पूजा — ${S.ishtaM}\n• महादशा (${S.maha}) मंत्र: ${S.mahaMantra}\n` + S.dosh.slice(0, 4).map(d => `• ${d.n.split(' / ')[0]}: ${d.u}`).join('\n'));
+  if (has(/लग्न|राशि|नक्षत्र/) && !out.length) out.push(`<b>आपकी कुंडली:</b> ${S.lagna} लग्न • ${S.rashi} राशि • ${S.nak} नक्षत्र • ${S.maha} महादशा`);
+  return out.length ? out.join('\n\n━━━━━━\n\n') : null;
+}
+const fmtA = t => t.replace(/\n/g, '<br>');
 let busy = false;
 async function ask() {
   const q = $('q').value.trim(); if (!q || busy) return;
   busy = true; $('go').disabled = true; $('q').value = '';
   add('u', esc(q)); const w = add('b', '<span class="dots"><i></i><i></i><i></i></span>');
   await kbLoad().catch(() => { });
+  const LA = localAns(q);
+  if (LA) { w.innerHTML = fmtA(LA) + '<div class="src"><a href="../kundli/?embed=1">🪔 ' + esc(KD.n) + ' की कुंडली से गणना</a></div>'; busy = false; $('go').disabled = false; return; }
   const R = retrieve(q), kq = useK && KD;   // "शामिल करें" ✓ हो तो कुंडली हमेशा साथ जाए (हिंदी/रोमन कोई भी भाषा)
   let ctx = '';
   const P = panchangCtx(); if (P) ctx += '### ' + P + '\n\n';
@@ -135,7 +157,7 @@ async function ask() {
     $('left').textContent = r.data.left >= 0 ? `आज ${r.data.left} प्रश्न और पूछ सकते हैं` : '';
   } catch (e) {
     const m = String(e.message || e);
-    if (/AI_OFF|Failed to fetch|NetworkError|JSON/.test(m)) {   // AI बंद/नेटवर्क ➜ सीधे ज्ञान भंडार से
+    if (true) {   // AI में कोई भी दिक्कत ➜ बिना error, सीधे ज्ञान भंडार से
       w.classList.add('sys');
       w.innerHTML = R.length ? '📚 <b>साइट में मिली जानकारी:</b>\n\n' + R.slice(0, 3).map(o => `<b>${esc(o.k.t)}</b>\n${esc(o.k.x.length > 450 ? o.k.x.slice(0, 450) + '…' : o.k.x)}`).join('\n\n') + srcHtml(R) : esc(NOINFO);
     } else { w.classList.add('sys'); w.innerHTML = esc(m); }

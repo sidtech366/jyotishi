@@ -25,6 +25,7 @@ details.mo summary::-webkit-details-marker{display:none}
 .mt{flex:1}.mt b{display:block;color:var(--mar);font-size:16px}.mt small{color:var(--mut);font-size:12.5px}
 .mb{padding:0 13px 13px}
 .kv{display:grid;grid-template-columns:96px 1fr;gap:6px 10px;font-size:14.5px;line-height:1.6;margin-top:6px}.kv b{color:var(--mar3)}
+.mdt{display:block;margin-top:3px;color:var(--ok);font-weight:700}.now .mn{background:linear-gradient(135deg,#bfe8cd,#8fd3a8)}
 .gp{display:inline-block;background:#efe7ff;color:#4b3bb0;border-radius:999px;padding:1px 9px;font-size:12.5px;font-weight:700}
 .warn{background:var(--badbg);border:1px solid #f0b8ae;border-radius:12px;padding:10px 12px;color:#8a2a20;font-size:14px;line-height:1.6}
 .rt{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border-radius:12px;overflow:hidden}
@@ -87,7 +88,7 @@ details.mo summary::-webkit-details-marker{display:none}
   <div class="sh">🗓️ मास-दर-मास गर्भ संस्कार</div>
   <p style="margin-top:0">वराहमिहिर ने गर्भ के हर मास का एक <b>स्वामी ग्रह (मासाधिपति)</b> बताया है — उस मास में उसी ग्रह का शुभ-अशुभ प्रभाव गर्भ पर पड़ता है, इसलिए उस ग्रह की प्रसन्नता का उपाय किया जाता है।</p>
   <div class="q">"कललघनाङ्कुरास्थिचर्माङ्गजचेतनताः सितकुजजीवसूर्यचन्द्रार्किबुधाः परतः। उदयपचन्द्रसूर्यनाथाः क्रमशो गदिता भवति शुभाशुभं च मासाधिपतेः सदृशम्॥"<small>— बृहत् जातक 4.16 (निषेकाध्याय): पहले से दसवें मास तक क्रमशः शुक्र, मंगल, गुरु, सूर्य, चंद्र, शनि, बुध, आधान-लग्नेश, चंद्र, सूर्य स्वामी; गर्भ में कलल, घन, अंकुर, अस्थि, चर्म, रोम और चेतना क्रम से बनते हैं।</small></div>
-  <div id="months"></div>
+  <p class="note">👉 "गर्भाधान" टैब में मासिक धर्म की तिथि चुनें — हर मास की वास्तविक तारीखें और "अभी कौन सा मास" यहाँ अपने-आप दिख जाएगा।</p><div id="months"></div>
   <div class="src">📜 विकास: गर्भोपनिषद्; चरक संहिता, शारीर 4 (महतीगर्भावक्रान्ति); सुश्रुत संहिता, शारीर 3 (गर्भावक्रान्ति) • आहार: चरक संहिता, शारीर 8.32 (मासानुमासिक); सुश्रुत संहिता, शारीर 10 • मासाधिपति: बृहत् जातक 4.16 • पाठ-मंत्र: ग्रह-अनुकूल परंपरागत सुझाव</div>
 </div>
 </section>
@@ -185,7 +186,7 @@ const MO = [
     ahar: 'मधुर औषधियों से सिद्ध तेल की अनुवासन बस्ति और योनि में तेल का फाहा — प्रसव मार्ग को कोमल करने हेतु (चरक) — केवल वैद्य/चिकित्सक द्वारा।', vihar: 'सूतिकागार में शांत वातावरण; हल्का टहलना (डॉक्टर की सलाह से); अनुभवी स्त्रियों का साथ।',
     path: 'दुर्गा सप्तशती / देवी कवच, संतान गोपाल स्तोत्र', mantra: 'ॐ श्रां श्रीं श्रौं सः चंद्रमसे नमः', daan: 'सोमवार — चावल, दूध; कन्या भोजन' },
 ];
-$('months').innerHTML = MO.map((m, i) => `<details class="mo"${i ? '' : ' open'}><summary><div class="mn">${i + 1}<small>मास</small></div><div class="mt"><b>${['प्रथम', 'द्वितीय', 'तृतीय', 'चतुर्थ', 'पंचम', 'षष्ठ', 'सप्तम', 'अष्टम', 'नवम'][i]} मास — ${m.bn}</b><small>मासाधिपति <span class="gp">${m.gi} ${m.g}</span></small></div></summary><div class="mb">
+$('months').innerHTML = MO.map((m, i) => `<details class="mo"${i ? '' : ' open'}><summary><div class="mn">${i + 1}<small>मास</small></div><div class="mt"><b>${['प्रथम', 'द्वितीय', 'तृतीय', 'चतुर्थ', 'पंचम', 'षष्ठ', 'सप्तम', 'अष्टम', 'नवम'][i]} मास — ${m.bn}</b><small>मासाधिपति <span class="gp">${m.gi} ${m.g}</span><span class="mdt" data-i="${i}"></span></small></div></summary><div class="mb">
   <div class="kv"><b>👶 विकास</b><span>${m.dev}</span><b>🥛 आहार</b><span>${m.ahar}</span><b>🧘 दिनचर्या</b><span>${m.vihar}</span><b>📖 पाठ</b><span>${m.path}</span><b>🕉️ ग्रह मंत्र</b><span>${m.mantra} <small>(108 जप)</small></span><b>🎁 ग्रह दान</b><span>${m.daan}</span></div></div></details>`).join('')
   + `<details class="mo"><summary><div class="mn">10<small>मास</small></div><div class="mt"><b>दशम मास — प्रसव</b><small>मासाधिपति <span class="gp">☀️ सूर्य</span></small></div></summary><div class="mb"><p>नौवें से बारहवें मास के बीच प्रसव सामान्य कहा गया है (चरक शारीर 4)। जन्म के समय जातकर्म, फिर छठी (षष्ठी पूजन), 11वें-12वें दिन नामकरण।</p></div></details>`;
 /* ===== ऋतु रात्रि गणक ===== */
@@ -197,7 +198,7 @@ function ritu() {
   const v = $('rd').value; if (!v) { $('rout').innerHTML = '<div class="empty">ऊपर तिथि चुनें</div>'; return; }
   const L = pf.get(), loc = L ? { lat: L.lat, lon: L.lon, tz: pf.tz() } : { lat: 25.31, lon: 83.01, tz: 5.5 };
   const [y, m, d] = v.split('-').map(Number), base = Date.UTC(y, m - 1, d);
-  let rows = '';
+  let rows = ''; const boy = [], girl = [], boy2 = [], girl2 = [];
   for (let n = 1; n <= 16; n++) {
     const dt = new Date(base + (n - 1) * 864e5), Y = dt.getUTCFullYear(), Mo = dt.getUTCMonth() + 1, D = dt.getUTCDate();
     const jd = A.jdOf(Y, Mo, D, 22 - loc.tz), t = A.tithiNo(jd), nk = A.nakNo(jd), vr = dt.getUTCDay(), pt = t > 15 ? t - 15 : t;
@@ -205,12 +206,26 @@ function ritu() {
     if (n <= 4) why.push('ऋतु के प्रथम 4 दिन'); if (n === 11 || n === 13) why.push(n + 'वीं रात्रि निन्दित (मनु)');
     if ([8, 14].includes(pt) || t === 15 || t === 30) why.push('पर्व तिथि'); if ([4, 6, 9, 12].includes(pt)) why.push('तिथि अनुकूल नहीं');
     const ok = !why.length, nkOk = GN.includes(nk), vrOk = [1, 3, 4, 5].includes(vr);
-    const sex = n <= 4 ? '—' : n % 2 ? 'कन्या' : 'पुत्र';
+    const sex = n <= 4 ? '—' : n % 2 ? '👧 कन्या' : '👦 पुत्र';
+    if (!ok && n > 4 && n !== 11 && n !== 13) (n % 2 ? girl2 : boy2).push(`${D} ${MNAME[Mo - 1]} (${n}वीं रात्रि) — ${why.some(x => /पर्व/.test(x)) ? '❌ वर्जित' : '🟡 मध्यम'}: ${why.join(', ')}`);
+    if (ok && n > 4) (n % 2 ? girl : boy).push(`${D} ${MNAME[Mo - 1]} (${n}वीं रात्रि, ${N.VAAR[vr]})${nkOk && vrOk ? ' ✅' : ''}`);
     rows += `<tr class="${ok ? (nkOk && vrOk ? 'g' : '') : 'x'}"><td>${n}</td><td>${D} ${MNAME[Mo - 1]}<br><small>${N.VAAR[vr]}</small></td><td>${A.tithiName(t)}<br><small>${N.NAK[nk]}</small></td><td>${sex}</td><td>${ok ? (nkOk && vrOk ? '✅ श्रेष्ठ' : '🟡 मध्यम' + (!nkOk ? ' (नक्षत्र)' : '') + (!vrOk ? ' (वार)' : '')) : '❌ ' + why.join(', ')}</td></tr>`;
   }
   const edd = new Date(base + 280 * 864e5), ej = A.jdOf(edd.getUTCFullYear(), edd.getUTCMonth() + 1, edd.getUTCDate(), 6), lm = A.lunarMonth(ej);
-  $('rout').innerHTML = `<div class="tbl-wrap"><table class="rt"><tr><th>रात्रि</th><th>दिनांक</th><th>तिथि • नक्षत्र (रात 10 बजे)</th><th>योग</th><th>विचार</th></tr>${rows}</table></div>
+  updMonths(base);
+  $('rout').innerHTML = `<div class="mm" style="margin-bottom:10px"><div class="mc" style="border-color:#9fc7f0"><b>👦 पुत्र प्राप्ति हेतु (युग्म रात्रि)</b><p>${boy.join('<br>') || 'शुद्ध रात्रि नहीं; विकल्प:<br>' + boy2.join('<br>')}</p></div><div class="mc" style="border-color:#f0a9c7"><b>👧 कन्या प्राप्ति हेतु (अयुग्म रात्रि)</b><p>${girl.join('<br>') || 'इस ऋतु में पूर्ण शुद्ध रात्रि नहीं बनी; विकल्प (दोष सहित):<br>' + girl2.join('<br>')}</p></div></div>
+   <p class="note" style="margin-top:0">✅ = तिथि, नक्षत्र और वार तीनों शुद्ध (श्रेष्ठ)। मनुस्मृति 3.49: पुरुष का बीज अधिक हो तो पुत्र, स्त्री का अधिक हो तो कन्या — रात्रि का नियम सहायक है।</p>
+   <div class="tbl-wrap"><table class="rt"><tr><th>रात्रि</th><th>दिनांक</th><th>तिथि • नक्षत्र (रात 10 बजे)</th><th>योग</th><th>विचार</th></tr>${rows}</table></div>
    <div class="q" style="margin-top:10px">🤰 यदि इसी ऋतु में गर्भ ठहरे तो <b>संभावित प्रसव ≈ ${edd.getUTCDate()} ${MNAME[edd.getUTCMonth()]} ${edd.getUTCFullYear()}</b> (अंतिम मासिक धर्म + 280 दिन) — हिंदू मास लगभग <b>${N.MAAS[lm.maas]}</b>।<small>जन्म मास फल: ${JM[lm.maas]}</small></div>`;
+}
+/* चुनी गई तिथि से हर गर्भ-मास की वास्तविक तारीखें (गर्भाधान ≈ मासिक धर्म + 14 दिन) */
+function updMonths(base) {
+  const c = base + 13 * 864e5, now = Date.now(), f = t => { const d = new Date(t); return d.getUTCDate() + ' ' + MNAME[d.getUTCMonth()] + ' ' + String(d.getUTCFullYear()).slice(2); };
+  document.querySelectorAll('.mdt').forEach(el => { const i = +el.dataset.i, a = c + i * 30 * 864e5, b = a + 29 * 864e5, cur = now >= a && now < b + 864e5;
+    const lm = A.lunarMonth(A.jdOf(new Date(a).getUTCFullYear(), new Date(a).getUTCMonth() + 1, new Date(a).getUTCDate(), 6));
+    el.textContent = '📆 ' + f(a) + ' – ' + f(b) + ' • ' + N.MAAS[lm.maas] + (cur ? ' • 👉 अभी यह मास' : ''); el.closest('details').classList.toggle('now', cur); });
+  const gm = A.lunarMonth(A.jdOf(new Date(c).getUTCFullYear(), new Date(c).getUTCMonth() + 1, new Date(c).getUTCDate(), 6)).maas;
+  document.querySelectorAll('#gj tr').forEach((tr, i) => tr.style.background = i - 1 === gm ? '#e7f6ec' : '');
 }
 /* ===== जन्म मास फल (मानसागरी) ===== */
 const JM = ['आकर्षक, अहंकार रहित, श्रेष्ठ कार्य करने वाले, आँखों में लालिमा, शीघ्र क्रोधी', 'सुखमय जीवन के प्रेमी, धनवान, अच्छे चित्त वाले, सुंदर नेत्र, रूपवान, कुछ क्रोधी', 'विदेश में रहने वाले, शुभ विचार वाले, दीर्घायु', 'पुत्र-पौत्र युक्त, धार्मिक, गौर वर्ण, सुखी — धन के उतार-चढ़ाव', 'सुख-दुख, लाभ-हानि में समभाव रखने वाले, स्थिर चित्त (शिवप्रिय मास)', 'प्रायः प्रसन्न, वाक्पटु, मधुरभाषी, संतानवान, सुंदर व विनम्र', 'सुंदर, पवित्र जीवन, गुणवान, धनवान, उत्साही', 'धनवान, व्यापार (क्रय-विक्रय) में कुशल — संगति और विवेक पर ध्यान आवश्यक', 'मधुरभाषी, धनवान, धर्मपरायण, अनेक मित्र, वीर, परोपकारी', 'शूरवीर, तेजस्वी, बलवान, स्पष्टवादी — समृद्धि के निर्माता', 'बुद्धिमान, धनवान, शूरवीर, स्पष्ट (कठोर) वाणी, धैर्यवान योद्धा', 'गौर वर्ण, परोपकारी, धनवान, विद्वान, सुखी, यात्राप्रिय (विदेश यात्रा)'];

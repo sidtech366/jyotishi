@@ -119,11 +119,22 @@ async function onSubmit(e) {
     hideForm(name, dob, tob, $('#place').value);
     try {   // "पूछें" (AI सहायक) के लिए — इसी ब्राउज़र में आख़िरी कुंडली
       const rp = $('#report').cloneNode(true); rp.querySelectorAll('.ktoc,.kpager,.actions,.r-foot,.r-consult,button,script').forEach(e => e.remove());
-      localStorage.setItem('av_kundli_last', JSON.stringify({ n: name, d: dob.split('-').reverse().join('/'), t: tob, p: $('#place').value, x: rp.textContent.replace(/\s+/g, ' ').trim().slice(0, 30000), at: Date.now() }));
+      localStorage.setItem('av_kundli_last', JSON.stringify({ n: name, d: dob.split('-').reverse().join('/'), t: tob, p: $('#place').value, x: rp.textContent.replace(/\s+/g, ' ').trim().slice(0, 30000), s: kSummary(k, inp), at: Date.now() }));
     } catch (e) { }
     $('#editbar').scrollIntoView({ behavior: 'smooth', block: 'start' });
     saveLead(save);
   }, 700);
+}
+/* बिना AI के उत्तर देने हेतु संरचित सार */
+function kSummary(k, inp) {
+  const q = k.planets, now = new Date(), cm = k.dasha.list.find(d => d.start <= now && d.end > now) || k.dasha.list[0], ca = cm.antar.find(a => a.start <= now && a.end > now) || cm.antar[0];
+  const pl = ratnaPlan(k), D = (() => { try { return doshAll(k, inp); } catch (e) { return null; } })();
+  const gem = p => Object.assign({ p: K.P[p].hi }, RATNA[p], { daan: K.P[p].daan, role: pl.role(p), why: pl.why(p) });
+  const L5 = Astro.SIGN_LORD[(k.lagnaSign + 4) % 12];
+  return { lagna: K.SIGN[k.lagnaSign], rashi: K.SIGN[q.Moon.sign], nak: K.NAK[q.Moon.nak][0], maha: K.P[cm.lord].hi, mahaEnd: cm.end.getFullYear(), antar: K.P[ca.lord].hi, antarEnd: ca.end.toLocaleDateString('hi-IN'), mahaMantra: K.P[cm.lord].mantra,
+    main: gem(pl.main), sup: pl.sup.map(gem), avoid: pl.avoid.map(p => RATNA[p].g + ' (' + K.P[p].hi + ')'),
+    ishta: ISHTA_FULL[pl.main], ishtaM: ISHTA_MANTRA[pl.main], ishta5: ISHTA_FULL[L5], ishta5M: ISHTA_MANTRA[L5], day: K.P[pl.main].day, color: K.P[pl.main].color,
+    dosh: D ? [...D.J, ...D.G, ...D.L].filter(d => d.st === 'yes' || d.st === 'mild').map(d => ({ n: d.n, st: d.st, how: d.how, u: d.u || '', sh: d.sh || '' })) : [] };
 }
 async function saveLead(s) {
   if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_ANON_KEY) return;
@@ -293,6 +304,7 @@ function buildReport(k, u) {
   s2 += `<h4>🏠 भाव-वार फलादेश</h4><div class="houses">${[...Array(12)].map((_, i) => i + 1).filter(hh => inHouse(k, hh).length).map(hh => `<div class="hc"><b>${ord(hh)} भाव — ${inHouse(k, hh).map(p => K.P[p].hi).join(' + ')}</b><small>${K.HOUSE[hh]}</small><p>${inHouse(k, hh).map(p => K.LK[p][hh - 1][0]).join(' ')}</p></div>`).join('')}</div>`;
   h += sec(2, 'YOGA & BHAVA', 'योग एवं भाव विश्लेषण', 'राजयोग, दोष और भाव फलादेश', '⚡', s2, 330);
   try { h += sec('D', 'DOSHA VICHAR', 'सम्पूर्ण दोष विचार', 'जनन दोष (गंडमूल आदि), ग्रह दोष, लाल किताब ऋण — उपाय व शास्त्र प्रमाण सहित', '🛡️', doshSection(k, u.inp), 0).replace('data-k="sD"', 'data-k="dosh"').replace('SECTION 0D', 'SECTION ✦'); } catch (e) { console.error(e); }
+  try { h += sec('R', 'RATNA & ISHTA', 'रत्न परामर्श एवं इष्ट देव', 'कौन सा रत्न, कितनी रत्ती, किस धातु व उंगली में, कब और कैसे धारण करें', '💎', ratnaSection(k), 160).replace('data-k="sR"', 'data-k="ratna"').replace('SECTION 0R', 'SECTION ✦'); } catch (e) { console.error(e); }
 
   /* SECTION 3 */
   const L = K.LAGNA[ln];
@@ -358,7 +370,7 @@ function buildReport(k, u) {
   <div class="two"><div class="good"><b>✅ क्या करें (Do's)</b><ol>${dos.map(x => `<li>${x}</li>`).join('')}</ol></div><div class="bad"><b>❌ क्या न करें (Don'ts)</b><ol>${donts.map(x => `<li>${x}</li>`).join('')}</ol></div></div>
   <h4>🕉️ मंत्र जाप (108 बार प्रतिदिन)</h4>${mantras.map(p => `<div class="mantra" style="--c:${K.P[p].c}"><b>${K.P[p].mantra}</b><small>${K.P[p].hi} ${p === curMaha.lord ? '— वर्तमान महादशा में सर्वाधिक प्रभावी' : p === lagnaLord ? '— लग्नेश, आत्मबल के लिए' : '— कमजोर ग्रह को बल देने हेतु'} • 40 दिन नियमित</small></div>`).join('')}
   <h4>💎 शुभ तत्व</h4><div class="pills"><span>💎 रत्न: ${K.P[lagnaLord].gem} (लग्नेश)</span><span>💠 सहायक रत्न: ${K.P[lordOf(k, 5)].gem}, ${K.P[lordOf(k, 9)].gem}</span><span>🎨 रंग: ${K.P[lagnaLord].color}</span><span>🗓️ दिन: ${days}</span><span>🙏 इष्ट: ${ISHTA[lagnaLord]}</span></div>
-  <p class="dim">रत्न धारण करने से पहले किसी अनुभवी ज्योतिषी से सलाह अवश्य लें।</p>`;
+  <p class="dim">रत्न की पूरी विधि (रत्ती, धातु, उंगली, दिन, समय) "💎 रत्न-इष्ट" खंड में देखें।</p>`;
   h += sec(10, 'GUIDANCE & CONCLUSION', 'मार्गदर्शिका एवं अंतिम निष्कर्ष', "Do's & Don'ts, मंत्र, शुभ तत्व", '🎓', s10, 280);
 
   const share = `${u.name} की कुंडली: ${K.SIGN[ln]} लग्न, ${K.SIGN[ms]} राशि, ${nak[0]} नक्षत्र, ${K.P[curMaha.lord].hi} महादशा। Astro Vikass पर अपनी लाल किताब कुंडली बनाएं: https://sidtech366.vercel.app/AstroVikas`;
@@ -369,7 +381,7 @@ function buildReport(k, u) {
     <div class="rf-b"><div class="r-logo"><div class="mark"><span>✦</span></div><div><b>ASTRO VIKASS</b><small>लाल किताब • वैदिक ज्योतिष</small></div></div><p>ग्रहों की सटीक गणना और लाल किताब के अनुभव पर आधारित व्यक्तिगत रिपोर्ट।</p></div>
     <div class="rf-c"><b>संपर्क</b><span>☎ 7069492135</span><span>💬 WhatsApp: 7069492135</span><span>🌐 sidtech366.vercel.app/AstroVikas</span></div>
     <div class="rf-s"><b>रिपोर्ट विवरण</b><span>नं. ${rid} • ${today}</span><span>लाहिरी अयनांश ${k.ayanamsa.toFixed(3)}°</span><span>${u.inp.lat}°, ${u.inp.lon}° • UTC${u.inp.tz >= 0 ? '+' : ''}${u.inp.tz}</span></div>
-  </div><p class="rf-d">यह रिपोर्ट ज्योतिषीय गणना पर आधारित मार्गदर्शन है। रत्न, उपाय या महत्वपूर्ण निर्णय से पहले अनुभवी ज्योतिषी से परामर्श अवश्य लें। © ${now.getFullYear()} Astro Vikass</p></div>`;
+  </div><p class="rf-d">यह रिपोर्ट शास्त्रीय ज्योतिषीय गणना (पराशर, लाल किताब) पर आधारित Astro Vikass का मार्गदर्शन है। © ${now.getFullYear()} Astro Vikass</p></div>`;
   return h;
 }
 /* कुंडली बनने के बाद फॉर्म छिपाएं — सिर्फ़ "एडिट" बटन */
@@ -385,7 +397,7 @@ function showForm() {
   $('#form').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 document.addEventListener('click', e => { const a = e.target.closest('a[href="#form"]'); if (a && document.querySelector('.hero.formhidden')) { e.preventDefault(); showForm(); } });
-const TOC = [['info', '📋', 'जन्म विवरण'], ['chart', '🪔', 'कुंडली चार्ट'], ['graha', '🪐', 'ग्रह स्पष्ट'], ['s1', '🔭', 'ग्रह शक्ति'], ['s2', '⚡', 'योग-दोष, भाव'], ['dosh', '🛡️', 'सम्पूर्ण दोष'], ['s3', '🧬', 'व्यक्तित्व'], ['s4', '💼', 'करियर-धन'], ['s5', '💞', 'विवाह-संतान'], ['s6', '🌿', 'स्वास्थ्य'], ['s7', '📕', 'लाल किताब उपाय'], ['s8', '⏳', 'दशा-वर्षफल'], ['s9', '🔢', 'अंक ज्योतिष'], ['s10', '🎓', 'मार्गदर्शन']];
+const TOC = [['info', '📋', 'जन्म विवरण'], ['chart', '🪔', 'कुंडली चार्ट'], ['graha', '🪐', 'ग्रह स्पष्ट'], ['s1', '🔭', 'ग्रह शक्ति'], ['s2', '⚡', 'योग-दोष, भाव'], ['dosh', '🛡️', 'सम्पूर्ण दोष'], ['ratna', '💎', 'रत्न-इष्ट'], ['s3', '🧬', 'व्यक्तित्व'], ['s4', '💼', 'करियर-धन'], ['s5', '💞', 'विवाह-संतान'], ['s6', '🌿', 'स्वास्थ्य'], ['s7', '📕', 'लाल किताब उपाय'], ['s8', '⏳', 'दशा-वर्षफल'], ['s9', '🔢', 'अंक ज्योतिष'], ['s10', '🎓', 'मार्गदर्शन']];
 function kTab(key, scroll) {
   const r = document.getElementById('report'); if (!r) return;
   r.classList.add('tabbed');
