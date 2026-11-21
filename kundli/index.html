@@ -1022,16 +1022,14 @@ function doshAll(k, inp) {
 }
 
 function doshSection(k, inp) {
-  const D = doshAll(k, inp), all = [...D.J, ...D.G, ...D.L], yes = all.filter(d => d.st === 'yes').length, mild = all.filter(d => d.st === 'mild').length;
-  const badge = st => ({ yes: '<span class="ds-b y">⚠️ दोष है</span>', mild: '<span class="ds-b m">🟡 आंशिक / शमित</span>', no: '<span class="ds-b n">✅ नहीं</span>', ask: '<span class="ds-b a">👪 परिवार से पूछें</span>' }[st]);
+  const D = doshAll(k, inp), has = l => l.filter(d => d.st === 'yes' || d.st === 'mild');
+  const J = has(D.J), G = has(D.G), L = has(D.L), n = J.length + G.length + L.length;
+  const badge = st => st === 'yes' ? '<span class="ds-b y">⚠️ दोष है</span>' : '<span class="ds-b m">🟡 आंशिक / शमित</span>';
   const card = d => `<div class="ds-c ${d.st}"><div class="ds-h"><b>${d.n}</b>${badge(d.st)}</div><p><b>स्थिति:</b> ${d.how}</p>${d.f ? `<p>${d.f}</p>` : ''}${d.u ? `<p class="up"><b>उपाय / शान्ति:</b> ${d.u}</p>` : ''}${d.sh ? `<p class="dim">🗓️ ${d.sh}</p>` : ''}${d.pr ? `<p class="ds-pr">📜 ${d.pr.join(' • ')}</p>` : ''}</div>`;
-  const grp = (t, sub, list) => { const on = list.filter(d => d.st !== 'no'), off = list.filter(d => d.st === 'no');
-    return `<h4>${t}</h4><p class="dim">${sub}</p>${on.length ? `<div class="ds-g">${on.map(card).join('')}</div>` : '<p class="ds-ok">✅ इस वर्ग का कोई दोष नहीं है।</p>'}${off.length ? `<details class="ds-no"><summary>✅ जो दोष नहीं हैं (${off.length}) — देखें</summary><ul>${off.map(d => `<li><b>${d.n}</b> — ${d.how}</li>`).join('')}</ul></details>` : ''}`; };
-  return `<div class="ds-sum"><b>${yes}</b> दोष • <b>${mild}</b> आंशिक/शमित • कुल ${all.length} दोषों की जाँच</div>`
-    + grp('🍼 जन्मकालीन (जनन) दोष', 'जन्म के नक्षत्र, तिथि, लग्न, योग, करण, संक्रांति व ग्रहण से — इनकी शान्ति प्रायः जन्म के 12वें या 27वें दिन होती है; बड़े होने पर भी कराई जा सकती है।', D.J)
-    + grp('🪐 ग्रह दोष एवं अशुभ योग', 'ग्रहों की युति, भाव और राशि से बनने वाले दोष — परिहार (भंग) होने पर "आंशिक" दिखाया गया है।', D.G)
-    + grp('📕 लाल किताब ऋण (पितृ ऋण आदि)', 'लाल किताब के अनुसार पूर्व जन्म के कर्ज़ — उपाय पूरे परिवार के सहयोग से एक ही दिन में करने का विधान है।', D.L)
-    + grp('👪 परिवार की जानकारी से जाँचें', 'ये दोष कुंडली से नहीं, जन्म की परिस्थिति से तय होते हैं।', D.F)
+  const grp = (t, list) => list.length ? `<h4>${t}</h4><div class="ds-g">${list.map(card).join('')}</div>` : '';
+  if (!n) return `<div class="ds-sum">✅ इस कुंडली में कोई प्रमुख दोष नहीं है।</div>`;
+  return `<div class="ds-sum">इस कुंडली में <b>${n}</b> दोष ${G.concat(J, L).some(d => d.st === 'mild') ? '(कुछ आंशिक / शमित)' : ''}</div>`
+    + grp('🍼 जन्मकालीन (जनन) दोष', J) + grp('🪐 ग्रह दोष एवं अशुभ योग', G) + grp('📕 लाल किताब ऋण', L)
     + `<p class="note">⚖️ दोष का अर्थ "डर" नहीं — यह सावधानी और उपाय का संकेत है। अधिकांश दोष अन्य शुभ योगों से कट जाते हैं। शान्ति-अनुष्ठान योग्य आचार्य से कराएँ।</p>`;
 }
 
