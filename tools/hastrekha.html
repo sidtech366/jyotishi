@@ -552,7 +552,11 @@ function camHelp(kind) {
 }
 async function openLive() {
   engine().catch(() => { });
-  if (IN_FRAME && framePolicyBlocks()) return camHelp('frame');
+  if (IN_FRAME && framePolicyBlocks()) {   // फ्रेम में कैमरा बंद — उसी टैप में नई विंडो खोलें (बिना रुकावट)
+    const w = window.open(SELF_URL, '_blank');
+    if (w) { $('smsg').innerHTML = '<div class="msg ok">📷 कैमरा नई विंडो में खुल रहा है — वहाँ अनुमति (Allow) दें। स्कैन के बाद यहाँ लौटें तो आपके चुनाव यहाँ भी दिखेंगे।</div>'; return; }
+    return camHelp('frame');
+  }
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return camHelp(INAPP ? 'inapp' : IN_FRAME ? 'frame' : 'none');
   try {
     STRM = await navigator.mediaDevices.getUserMedia({ video: { facingMode: FACE, width: { ideal: 1280 }, height: { ideal: 1280 } }, audio: false });
@@ -635,6 +639,7 @@ function report() {
   $('rst').onclick = () => { if (!confirm('सारे चुनाव साफ़ करें?')) return; Object.assign(S, { q: {}, auto: {}, l: {}, m: {}, sg: [], meas: null }); save(); IMG = LM = ENH = null; $('stage').classList.remove('on'); $('tog').style.display = 'none'; $('pv').classList.remove('on'); $('smsg').innerHTML = ''; renderQ(); go(1); };
 }
 function tone(o) { const s = Object.values(o || {}).reduce((a, b) => a + b, 0); return s > 0 ? 'g' : s < 0 ? 'b' : 'm'; }
+window.addEventListener('storage', e => { if (e.key !== KEY) return; Object.assign(S, store.get(KEY, {})); renderQ(); markDone(); const on = document.querySelector('.pane.on'); if (on && on.id === 'p4') report(); });
 markDone();
 </script>
 </body>
