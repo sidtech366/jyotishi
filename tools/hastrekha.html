@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>हस्त रेखा स्कैन | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+<style>
+.stp{display:flex;gap:5px;position:sticky;top:0;z-index:20;background:linear-gradient(var(--cream) 82%,#fdf5e600);padding:8px 0 10px;margin-bottom:2px}
+.stp button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:6px 2px;font-weight:700;font-size:12.5px;color:var(--mar);cursor:pointer;line-height:1.25}
+.stp button i{font-style:normal;display:block;font-size:17px}
+.stp button.on{background:linear-gradient(135deg,var(--mar3),var(--mar));color:#fff;border-color:var(--mar)}
+.stp button.dn:not(.on){background:#fff4e6;border-color:#f3c98b}
+.pane{display:none}.pane.on{display:block}
+.shl{text-align:center;font-size:14.5px;line-height:1.9;color:var(--mar);background:#fff8ea;border:1px dashed #e9c98a;border-radius:14px;padding:8px}
+.shl small{display:block;color:var(--mut);font-size:12px}
+.bigb{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.bigb button,.bigb label{display:flex;flex-direction:column;align-items:center;gap:4px;border:0;border-radius:18px;padding:16px 8px;font-weight:700;font-size:15px;cursor:pointer;color:#fff;text-align:center;line-height:1.3}
+.bigb i{font-style:normal;font-size:30px}.bigb small{font-weight:500;font-size:12px;opacity:.9}
+.bigb .b1{background:linear-gradient(135deg,#c2410c,#6b1418);box-shadow:0 12px 22px -14px #6b1418}
+.bigb .b2{background:linear-gradient(135deg,#a16207,#c2410c);box-shadow:0 12px 22px -14px #a16207}
+.tips{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.tips div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 8px;font-size:12.5px}
+.stage{position:relative;border-radius:18px;overflow:hidden;background:#1b0b06;margin-top:12px;display:none}
+.stage.on{display:block}.stage canvas{display:block;width:100%;height:auto}
+.scan{position:absolute;inset:0;display:none;background:repeating-linear-gradient(0deg,#ffb45a10 0 1px,transparent 1px 22px),repeating-linear-gradient(90deg,#ffb45a10 0 1px,transparent 1px 22px),#00000059}
+.scan.on{display:block}
+.scan:before{content:"";position:absolute;left:0;right:0;height:70px;top:-70px;background:linear-gradient(#ffa53a00,#ffa53a55 85%,#ffe29a);animation:sw 1.5s linear infinite;box-shadow:0 6px 18px #ffa53a}
+@keyframes sw{to{top:100%}}
+.scan p{position:absolute;left:0;right:0;bottom:14px;text-align:center;color:#fff;font-weight:700;font-size:15px;text-shadow:0 2px 6px #000}
+.scan p small{display:block;font-weight:500;font-size:12.5px;color:#ffe29a}
+.tog{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tog .chip{font-size:13px;padding:5px 11px}
+.msg{border-radius:12px;padding:9px 12px;font-size:14px;margin-top:10px}
+.msg.ok{background:var(--okbg);color:#14532d;border:1px solid #a9dcbc}
+.msg.er{background:var(--badbg);color:#7f1d1d;border:1px solid #f0b8ae}
+.msg.in{background:#fff4dc;color:#6b4a00;border:1px solid #ecd08a}
+.q{padding:10px 0;border-bottom:1px dashed #efdcb6}.q:last-child{border:0}
+.q>b{display:block;color:var(--mar);font-size:14.5px;margin-bottom:6px}
+.q .auto{display:inline-block;font-size:11px;background:#e9f6ee;color:var(--ok);border-radius:999px;padding:0 8px;margin-left:6px;font-weight:700;vertical-align:middle}
+.q .f{font-size:13.5px;color:#4a3426;margin-top:6px;background:#fffaf1;border-left:3px solid var(--saf);padding:5px 9px;border-radius:8px}
+.q .f:empty{display:none}
+.lc h3 small{font-family:'Noto Sans Devanagari';font-size:13px;color:var(--mut)}
+.lc .wh{font-size:13px;color:var(--mut);margin:-4px 0 8px}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:8px}
+.op{position:relative;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:5px 4px 8px;cursor:pointer;text-align:center;font-size:12.5px;font-weight:600;line-height:1.3;color:var(--ink)}
+.op svg{width:100%;height:92px;display:block;margin-bottom:3px}
+.op.on{border-color:var(--saf);background:#fff4e6;box-shadow:0 0 0 3px #ee6f1630}
+.op.on:after{content:"✓";position:absolute;top:5px;right:6px;width:19px;height:19px;border-radius:50%;background:var(--saf);color:#fff;font-size:12px;line-height:19px}
+.lc .f{font-size:14px;margin-top:10px;background:#fff8e8;border-left:4px solid var(--saf);border-radius:10px;padding:8px 11px}
+.lc .f:empty{display:none}
+.pv{position:sticky;top:74px;z-index:15;display:none;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:6px 10px;margin-bottom:10px;box-shadow:0 8px 18px -14px #6b1418}
+.pv.on{display:flex}.pv img{width:42px;height:42px;object-fit:cover;border-radius:10px}.pv span{font-size:13px;flex:1}
+.zoom{position:fixed;inset:0;z-index:95;background:#000d;display:none;align-items:center;justify-content:center;padding:12px}
+.zoom.on{display:flex}.zoom img{max-width:100%;max-height:100%;border-radius:12px}
+.zoom button{position:absolute;top:12px;right:12px}
+.mt{display:flex;gap:10px;align-items:flex-start}
+.mt svg{flex:0 0 64px;width:64px;height:84px}
+.mt .tx{flex:1}
+.mt .tx b{color:var(--mar)}.mt .tx small{display:block;color:var(--mut);font-size:12.5px;margin-bottom:5px}
+.sg{display:grid;grid-template-columns:1fr;gap:6px}
+.sg label{display:flex;gap:9px;align-items:flex-start;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;cursor:pointer;font-size:13.5px}
+.sg label input{margin-top:4px;accent-color:var(--saf);width:17px;height:17px;flex:0 0 auto}
+.sg label b{color:var(--mar)}.sg label small{display:block;color:var(--mut);font-size:12px}
+.sg label.on{border-color:var(--saf);background:#fff4e6}
+.hero{border-radius:20px;padding:18px 16px;color:#fff;text-align:center;background:radial-gradient(120% 120% at 50% 0,#ff9a3d 0,#c2410c 40%,#6b1418 80%);box-shadow:0 14px 28px -18px #6b1418;margin-bottom:14px}
+.hero .e{font-size:44px;line-height:1}.hero h2{font-family:'Yatra One',serif;font-weight:400;font-size:26px;margin:4px 0}
+.hero p{font-size:14.5px;opacity:.95}.hero .nm{font-size:13px;color:#ffe29a}
+.sc{display:grid;grid-template-columns:96px 1fr 44px;gap:8px;align-items:center;font-size:14px;margin:7px 0}
+.sc b{font-family:Poppins;color:var(--mar);text-align:right}
+.rs{list-style:none;margin:0;padding:0}.rs li{padding:8px 0;border-bottom:1px dashed #efdcb6;font-size:14.5px}.rs li:last-child{border:0}
+.rs li b{color:var(--mar)}.rs li .tg{font-size:11.5px;border-radius:999px;padding:0 8px;margin-left:4px;font-weight:700}
+.tg.g{background:var(--okbg);color:var(--ok)}.tg.b{background:var(--badbg);color:var(--bad)}.tg.m{background:var(--midbg);color:var(--mid)}
+.up{background:#fff8e8;border-left:4px solid var(--saf);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:14px}
+.up b{color:var(--mar)}
+.src{font-size:12.5px;color:var(--mut);line-height:1.7}
+.nav2{display:flex;gap:8px;margin-top:6px}.nav2 .btn{flex:1}
+.live{position:fixed;inset:0;z-index:90;background:#000;display:none}
+.live.on{display:block}.live video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.live video.mir{transform:scaleX(-1)}
+.live .gd{position:absolute;left:50%;top:46%;width:min(78vw,52vh);transform:translate(-50%,-50%);opacity:.85;pointer-events:none}
+.live .gd path{fill:none;stroke:#ffe29a;stroke-width:1.2;stroke-dasharray:3 2}
+.live .gd.ok path{stroke:#4ade80;stroke-dasharray:none;stroke-width:1.6}
+.live .tp{position:absolute;top:14px;left:0;right:0;text-align:center;color:#fff;font-weight:700;font-size:15px;text-shadow:0 2px 8px #000;padding:0 14px}
+.live .tp small{display:block;font-weight:500;color:#ffe29a;font-size:13px}
+.live .bt{position:absolute;bottom:22px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:26px}
+.live .cap{width:76px;height:76px;border-radius:50%;border:5px solid #fff;background:radial-gradient(circle,#ffa53a 55%,#c2410c 56%);cursor:pointer}
+.live .cap.ok{animation:pl 1s infinite}@keyframes pl{50%{box-shadow:0 0 0 12px #4ade8055}}
+.live .sm{width:48px;height:48px;border-radius:50%;border:0;background:#ffffff2e;color:#fff;font-size:21px;cursor:pointer}
+@media print{.stp,.btn,.noprint,.pv,header .brand{display:none!important}.pane{display:none!important}#p4{display:block!important}body,html{background:#fff}.av-card{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<header class="av-head"><div class="ic">🖐️</div><h1>हस्त रेखा स्कैन</h1><p>हाथ स्कैन करें — हस्त प्रकार, रेखाएं, पर्वत और चिह्न से संपूर्ण फलादेश</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<div class="stp" id="stp">
+  <button data-s="1" class="on"><i>📷</i>1. स्कैन</button>
+  <button data-s="2"><i>〰️</i>2. रेखाएं</button>
+  <button data-s="3"><i>⛰️</i>3. पर्वत-चिह्न</button>
+  <button data-s="4"><i>📜</i>4. फलादेश</button>
+</div>
+
+<!-- ===== 1. स्कैन ===== -->
+<section class="pane on" id="p1">
+  <div class="av-card">
+    <div class="shl">कराग्रे वसते लक्ष्मीः करमध्ये सरस्वती।<br>करमूले तु गोविन्दः प्रभाते करदर्शनम्॥<small>— प्रातः कर-दर्शन श्लोक</small></div>
+    <label class="l">👤 नाम (फलादेश पर लिखा जाएगा)</label>
+    <input class="in" id="nm" placeholder="जैसे: राहुल शर्मा" autocomplete="off">
+    <label class="l">✋ कौन सा हाथ दिखा रहे हैं?</label>
+    <div class="chips" id="hand"><span class="chip on" data-v="R">दायाँ हाथ / Right</span><span class="chip" data-v="L">बायाँ हाथ / Left</span></div>
+    <div class="note">सामुद्रिक परंपरा: पुरुष का दायाँ, स्त्री का बायाँ हाथ प्रमुख। आधुनिक मत: जिस हाथ से काम करते हैं वह वर्तमान व कर्म दिखाता है, दूसरा जन्मजात स्वभाव।</div>
+    <div class="bigb">
+      <button class="b1" id="bLive"><i>📷</i>लाइव कैमरा से स्कैन<small>हथेली कैमरे के सामने रखें</small></button>
+      <label class="b2" for="file"><i>🖼️</i>फोटो से स्कैन<small>फोटो खींचें या गैलरी से चुनें</small></label>
+    </div>
+    <input type="file" id="file" accept="image/*" hidden>
+    <div class="tips"><div>💡 अच्छी रोशनी में, बिना फ़्लैश की छाया</div><div>🖐️ पूरी हथेली फ्रेम में, उंगलियाँ हल्की खुली</div><div>📐 कैमरा हथेली के ठीक सामने</div><div>🔒 फोटो आपके फ़ोन में ही रहती है, कहीं अपलोड नहीं होती</div></div>
+    <div class="stage" id="stage"><canvas id="cv"></canvas><div class="scan" id="scan"><p id="scanT">स्कैन हो रहा है…</p></div></div>
+    <div class="tog noprint" id="tog" style="display:none">
+      <span class="chip on" data-k="pts">• बिंदु</span><span class="chip on" data-k="mnt">⛰️ पर्वत</span><span class="chip on" data-k="gd">〰️ रेखाओं का स्थान</span><span class="chip" data-k="enh">🔍 रेखाएं उभारें</span>
+    </div>
+    <div id="smsg"></div>
+  </div>
+
+  <div class="av-card">
+    <h3>🖐️ हस्त प्रकार व उंगलियाँ</h3>
+    <div class="note" style="margin:-4px 0 4px" id="mnote">स्कैन करने पर ये अपने आप भर जाएंगे (✓ स्कैन)। बिना स्कैन के खुद चुनें — गलत लगे तो बदल दें।</div>
+    <div id="qs"></div>
+  </div>
+  <div class="nav2"><button class="btn blk" data-go="2">आगे — रेखाएं चुनें ➜</button></div>
+</section>
+
+<!-- ===== 2. रेखाएं ===== -->
+<section class="pane" id="p2">
+  <div class="pv" id="pv"><img id="pvi" alt=""><span>अपनी हथेली की फोटो देखकर मिलान करें — <b>बड़ा करने के लिए छुएं</b></span></div>
+  <div class="note" style="margin:0 0 10px">हर रेखा के लिए वह चित्र चुनें जो आपकी हथेली से सबसे ज़्यादा मिलता हो। जो रेखा समझ न आए उसे छोड़ दें। चित्र <b id="hside">दाएँ</b> हाथ के अनुसार हैं।</div>
+  <div id="lines"></div>
+  <div class="nav2"><button class="btn ln" data-go="1">⬅ पीछे</button><button class="btn" data-go="3">आगे — पर्वत ➜</button></div>
+</section>
+
+<!-- ===== 3. पर्वत व चिह्न ===== -->
+<section class="pane" id="p3">
+  <div class="av-card">
+    <h3>⛰️ ग्रह पर्वत</h3>
+    <div class="note" style="margin:-4px 0 6px">हथेली को हल्का मोड़कर देखें — कौन सा भाग गद्दीदार/उभरा है, कौन सा समतल या दबा।</div>
+    <div id="mounts"></div>
+  </div>
+  <div class="av-card">
+    <h3>✨ विशेष चिह्न</h3>
+    <div class="note" style="margin:-4px 0 8px">जो चिह्न आपकी हथेली में साफ़ दिखते हों, उन्हें चुनें।</div>
+    <div class="sg" id="signs"></div>
+  </div>
+  <div class="nav2"><button class="btn ln" data-go="2">⬅ पीछे</button><button class="btn" data-go="4">📜 फलादेश देखें</button></div>
+</section>
+
+<!-- ===== 4. फलादेश ===== -->
+<section class="pane" id="p4"><div id="rep"></div></section>
+</main>
+
+<div class="live" id="live">
+  <video id="vid" playsinline muted autoplay></video>
+  <svg class="gd" id="gd" viewBox="0 0 100 132"></svg>
+  <div class="tp" id="ltp">हथेली को आकृति में रखें<small>उंगलियाँ ऊपर, हल्की खुली</small></div>
+  <div class="bt"><button class="sm" id="lx" title="बंद करें">✕</button><button class="cap" id="lc" title="स्कैन करें"></button><button class="sm" id="lf" title="कैमरा बदलें">🔄</button></div>
+</div>
+<div class="zoom" id="zoom"><img id="zi" alt=""><button class="btn sm ln" id="zx">✕ बंद</button></div>
+
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script>
+const { $, esc, store, toast, share } = AVUI;
+const KEY = 'av_hast';
+const S = Object.assign({ name: '', hand: 'R', q: {}, auto: {}, l: {}, m: {}, sg: [] }, store.get(KEY, {}));
+const save = () => store.set(KEY, S);
+
+/* ============ चित्र (SVG) — दायाँ हाथ, अंगूठा दाईं ओर (अपनी हथेली देखते समय) ============ */
+const OUT = 'M26 130C22 118 18 104 18 88L18 58C18 48 18 40 19 34C19 27 30 27 30 34L31 52L31 20C31 11 44 11 44 20L45 50L45 13C45 4 58 4 58 13L58 51L59 22C59 13 72 13 72 22L72 60C76 58 82 52 87 48C92 44 99 50 95 57C90 66 86 77 83 92C80 104 76 116 74 130Z';
+const BASE = { jeevan: 'M73 64C60 70 56 92 64 126', mastishk: 'M73 65C58 70 40 76 22 84', hriday: 'M18 68C34 66 50 64 58 56' };
+function palm(inner, ctx) {
+  const c = (ctx || []).map(k => `<path d="${BASE[k]}" fill="none" stroke="#c9a27a" stroke-width="1.3" stroke-linecap="round"/>`).join('');
+  const g = `<path d="${OUT}" fill="url(#pg)" stroke="#9b5a32" stroke-width="1.4" stroke-linejoin="round"/>${c}${inner}`;
+  return `<svg viewBox="0 0 100 132"><defs><radialGradient id="pg" cx="50%" cy="65%" r="70%"><stop offset="0" stop-color="#ffe9d6"/><stop offset="1" stop-color="#f6c9a5"/></radialGradient></defs>${S.hand === 'L' ? `<g transform="translate(100 0) scale(-1 1)">${g}</g>` : g}</svg>`;
+}
+const ST = { '': 'stroke="#c2410c" stroke-width="2.8"', w: 'stroke="#c2410c" stroke-width="1.5"', c: 'stroke="#c2410c" stroke-width="2.6" stroke-dasharray="1.4 1.6"', z: 'stroke="#b89a84" stroke-width="1.6" stroke-dasharray="2 3"' };
+const ln = arr => arr.map(([d, s]) => `<path d="${d}" fill="none" stroke-linecap="round" ${ST[s || '']}/>`).join('');
+const dot = (x, y) => `<circle cx="${x}" cy="${y}" r="9" fill="#ee6f16" opacity=".35"/><circle cx="${x}" cy="${y}" r="3.4" fill="#c2410c"/>`;
+
+/* ============ हस्त प्रकार, उंगलियाँ, अंगूठा (स्कैन से अपने आप) ============ */
+const Q = [
+  { id: 'palm', t: 'हथेली का आकार', o: [['sq', 'चौकोर (लंबाई≈चौड़ाई)'], ['lg', 'लंबी (लंबाई अधिक)']] },
+  { id: 'fing', t: 'उंगलियों की लंबाई (हथेली की तुलना में)', o: [['sh', 'छोटी'], ['lo', 'लंबी']] },
+  { id: 'gr', t: 'तर्जनी (गुरु) बनाम अनामिका (सूर्य)', o: [['gu', 'तर्जनी बड़ी', 'नेतृत्व, आत्मसम्मान और महत्वाकांक्षा प्रबल; प्रशासन, शिक्षण, धर्म व प्रबंधन में आगे रहते हैं।', { ka: 2 }], ['eq', 'दोनों बराबर', 'संतुलित स्वभाव — महत्वाकांक्षा व रचनात्मकता दोनों; विवेक से निर्णय लेते हैं।', { bu: 1 }], ['su', 'अनामिका बड़ी', 'कला, रचनात्मकता, जोखिम लेने का साहस और यश की चाह; मंच, व्यापार, खेल व डिज़ाइन में आगे।', { ka: 1, dh: 1 }]] },
+  { id: 'kan', t: 'कनिष्ठा (बुध) की लंबाई', o: [['lo', 'अनामिका के ऊपरी पोर तक या आगे', 'वाणी-कौशल, व्यापार बुद्धि, लेखन व संवाद में निपुण — बात से काम बनाने वाले।', { bu: 2, dh: 1 }], ['md', 'सामान्य', 'व्यवहार-कुशल, ज़रूरत भर बोलने वाले; हिसाब-किताब में ठीक।', {}], ['sh', 'छोटी', 'मन की बात कहने में संकोच; लेन-देन व अनुबंध में सतर्क रहें, लिखित में काम करें।', { bu: -1 }]] },
+  { id: 'ang', t: 'अंगूठे की लंबाई', o: [['lo', 'लंबा', 'प्रबल इच्छाशक्ति, तर्क और नेतृत्व; सामुद्रिक में बड़ा, सुडौल अंगूठा भाग्य और अधिकार का सूचक।', { ka: 2 }], ['md', 'सामान्य', 'संतुलित इच्छाशक्ति — परिस्थिति देखकर निर्णय।', {}], ['sh', 'छोटा', 'भावना-प्रधान, दूसरों से जल्दी प्रभावित — दृढ़ता और आत्मविश्वास बढ़ाएँ।', { ka: -1 }]] },
+  { id: 'kon', t: 'अंगूठे और तर्जनी के बीच का कोण', o: [['wd', 'चौड़ा (खुला)', 'उदार, खुले विचार, स्वतंत्रता-प्रिय; दिल खोलकर खर्च करते हैं — बचत की योजना रखें।', { pr: 1, dh: -1 }], ['md', 'मध्यम', 'संतुलित और व्यावहारिक — न अधिक कंजूस, न अधिक खर्चीले।', { dh: 1 }], ['nr', 'संकरा (सटा हुआ)', 'संकोची, सावधान, बचत करने वाले; बातें मन में रखते हैं।', { dh: 1, pr: -1 }]] },
+  { id: 'lach', t: 'अंगूठा पीछे की ओर मुड़ता है? (हाथ से हल्का दबाकर देखें)', o: [['lc', 'हाँ, लचीला', 'अनुकूलनशील, उदार, कला-प्रिय; हर माहौल में ढल जाते हैं — खर्च पर नियंत्रण रखें।', { pr: 1 }], ['sk', 'नहीं, सख्त', 'दृढ़ निश्चयी, भरोसेमंद और ज़िद्दी; वचन के पक्के, बचत करने वाले।', { ka: 1, dh: 1 }]] },
+  { id: 'gap', t: 'उंगलियाँ मिलाकर रोशनी की ओर करें — बीच में छेद दिखते हैं?', o: [['ha', 'हाँ, छेद दिखते हैं', 'सामुद्रिक के अनुसार उंगलियों के बीच छिद्र होने से धन टिकता नहीं — बजट बनाकर चलें, हर माह कुछ बचत अवश्य करें।', { dh: -2 }], ['na', 'नहीं, उंगलियाँ सटी हैं', 'धन संचय का अच्छा योग — कमाया हुआ धन टिकता है।', { dh: 2 }]] },
+  { id: 'rang', t: 'हथेली का रंग', o: [['gl', 'गुलाबी / कमल जैसा', 'सामुद्रिक में सर्वश्रेष्ठ — स्वस्थ, प्रसन्नचित्त, संतुलित और भाग्यशाली।', { sw: 2, dh: 1 }], ['lal', 'गहरा लाल', 'ऊर्जा व जोश अधिक — क्रोध और रक्तचाप पर ध्यान रखें।', { sw: 0, ka: 1 }], ['pl', 'पीलापन', 'पित्त की अधिकता व चिंता का स्वभाव — सकारात्मक संगति और नियमित दिनचर्या रखें।', { sw: -1 }], ['sf', 'सफ़ेद / फीका', 'ऊर्जा व उत्साह की कमी — पोषण, धूप और व्यायाम पर ध्यान दें।', { sw: -2 }]] },
+  { id: 'spr', t: 'हथेली का स्पर्श', o: [['km', 'कोमल', 'सुख-सुविधा और कला-प्रिय; सामुद्रिक में कोमल हथेली ऐश्वर्य का सूचक।', { dh: 1, pr: 1 }], ['md', 'मध्यम', 'संतुलित — परिश्रम और आराम दोनों में संतुलन।', { sw: 1 }], ['kt', 'कठोर', 'कर्मठ, सहनशील, परिश्रमी — मेहनत से आगे बढ़ने वाले।', { ka: 1, sw: 1 }]] }
+];
+const EL = {
+  'sq-sh': ['पृथ्वी', '🌍', 'पृथ्वी तत्व हस्त', 'व्यावहारिक, मेहनती, भरोसेमंद और ज़मीन से जुड़े। खेती, निर्माण, इंजीनियरिंग, व्यापार व हाथ के कामों में सफल। जो ठान लें, धीरे-धीरे पूरा करते हैं; बदलाव कम पसंद, कभी-कभी ज़िद्दी।', { sw: 2, dh: 1 }],
+  'sq-lo': ['वायु', '🌬️', 'वायु तत्व हस्त', 'बुद्धिमान, जिज्ञासु और संवाद-कुशल। लेखन, शिक्षण, मीडिया, IT, सलाह व विपणन में सफल। विचार तेज़ चलते हैं — अधिक सोचने और बेचैनी से बचें।', { bu: 3 }],
+  'lg-sh': ['अग्नि', '🔥', 'अग्नि तत्व हस्त', 'ऊर्जावान, साहसी, उत्साही और नेतृत्व करने वाले। व्यवसाय, खेल, पुलिस-सेना, राजनीति व बिक्री में सफल। क्रोध और जल्दबाज़ी पर नियंत्रण आवश्यक।', { ka: 3 }],
+  'lg-lo': ['जल', '💧', 'जल तत्व हस्त', 'संवेदनशील, कल्पनाशील, दयालु और अंतर्ज्ञानी। कला, संगीत, चिकित्सा, आध्यात्म व सेवा-क्षेत्र में सफल। भावनात्मक चोट जल्दी लगती है — मन को मज़बूत रखें।', { pr: 2, bu: 1 }]
+};
+
+/* ============ रेखाएं ============ */
+const BR = (a, b) => [[a], [b]];
+const LINES = [
+  { id: 'jeevan', n: 'जीवन रेखा', en: 'Life Line', ctx: ['mastishk', 'hriday'], wh: 'तर्जनी और अंगूठे के बीच से निकलकर अंगूठे की जड़ (शुक्र पर्वत) को घेरते हुए कलाई की ओर जाती है। परंपरा में इसे आयु रेखा भी कहा गया, पर केवल लंबाई से आयु तय नहीं होती — यह जीवनशक्ति, स्वास्थ्य और स्थिरता दिखाती है।', o: [
+    ['lambi', 'लंबी, गहरी व साफ़', [['M73 64C60 70 56 92 64 126']], 'उत्तम जीवनशक्ति और अच्छा स्वास्थ्य; रोग से जल्दी उबरते हैं। जीवन में स्थिरता और परिश्रम से आगे बढ़ने की क्षमता।', { sw: 4 }],
+    ['chhoti', 'छोटी', [['M73 64C62 70 58 84 59 98']], 'छोटी जीवन रेखा कम आयु नहीं दर्शाती — ऊर्जा सीमित तरीके से खर्च होती है। नींद, दिनचर्या व व्यायाम पर ध्यान रखें। भाग्य रेखा मज़बूत हो तो वह इसकी पूर्ति करती है।', { sw: -1 }],
+    ['tooti', 'बीच में टूटी', BR('M73 64C62 70 57 82 57 92', 'M60 96C59 108 61 118 64 126'), 'टूटे स्थान की आयु के आसपास जीवन में बड़ा परिवर्तन — स्थान, नौकरी, स्वास्थ्य या सोच में। टूटे सिरे एक-दूसरे पर चढ़े हों तो संकट टल जाता है; टूटे स्थान पर वर्ग चिह्न रक्षा करता है।', { sw: -2 }],
+    ['dohri', 'दोहरी (साथ में मंगल रेखा)', [['M73 64C60 70 56 92 64 126'], ['M71 72C65 80 63 96 67 118', 'w']], 'बहुत शुभ — दोहरी जीवनशक्ति। मंगल रेखा संकट में रक्षा करती है, साहस व रोग-प्रतिरोधक क्षमता बढ़ाती है।', { sw: 5, ka: 1 }],
+    ['janjir', 'जंजीर जैसी / कटी-फटी', [['M73 64C60 70 56 92 64 126', 'c']], 'स्वास्थ्य में उतार-चढ़ाव, ऊर्जा की कमी और चिंता का स्वभाव। पाचन व नींद का विशेष ध्यान रखें।', { sw: -3 }],
+    ['chauda', 'चौड़ा घेरा (हथेली के बीच तक)', [['M73 64C50 70 43 100 58 126']], 'उत्साह, दरियादिली, भरपूर ऊर्जा व प्रेम-भावना। सामाजिक जीवन सक्रिय, परिवार से सुख।', { sw: 2, pr: 2 }],
+    ['sankra', 'अंगूठे से सटी (संकरा घेरा)', [['M73 64C67 72 67 100 70 124']], 'सावधान, संकोची व कम खर्च करने वाले; जल्दी थकान। भावनाएँ खुलकर व्यक्त नहीं करते।', { sw: -1, pr: -1, dh: 1 }],
+    ['upar', 'ऊपर की ओर शाखाएं', [['M73 64C60 70 56 92 64 126'], ['M59 86L53 76', 'w'], ['M58 100L51 91', 'w']], 'उन्नति के संकेत — जिस आयु पर शाखा उठती है उस समय प्रयास सफल होते हैं, पद-प्रतिष्ठा बढ़ती है।', { dh: 2, ka: 2 }],
+    ['chandra', 'अंत में चंद्र पर्वत की ओर मुड़ी', [['M73 64C60 70 56 92 60 112'], ['M60 112L64 126'], ['M60 112C52 118 45 121 38 123']], 'यात्रा-प्रिय; विदेश या जन्मस्थान से दूर बसने का योग। जीवन के उत्तरार्ध में स्थान परिवर्तन।', { ka: 1 }]
+  ] },
+  { id: 'mastishk', n: 'मस्तिष्क रेखा', en: 'Head Line', ctx: ['jeevan', 'hriday'], wh: 'जीवन रेखा के आरंभ के पास से निकलकर हथेली के आर-पार कनिष्ठा की ओर जाती है। बुद्धि, सोचने का ढंग, विद्या और निर्णय-क्षमता बताती है।', o: [
+    ['seedhi', 'सीधी व लंबी', [['M73 65C58 70 40 76 22 84']], 'तार्किक, व्यावहारिक और योजनाबद्ध। गणित, विज्ञान, व्यापार, प्रबंधन व कानून में तेज़।', { bu: 4, ka: 2 }],
+    ['jhuki', 'चंद्र पर्वत की ओर झुकी', [['M73 65C58 72 42 86 32 104']], 'कल्पनाशील व रचनात्मक — लेखन, कला, संगीत, डिज़ाइन, अभिनय में प्रतिभा। निर्णय भावना से लेते हैं; बहुत अधिक झुकाव हो तो मन जल्दी उदास होता है, अच्छी संगति रखें।', { bu: 2, pr: 1 }],
+    ['chhoti', 'छोटी (बीच तक)', [['M73 65C64 68 56 72 48 76']], 'व्यावहारिक, सीधी बात करने वाले; लंबा सोचने के बजाय तुरंत करने में विश्वास। एक काम पर ध्यान रखें तो सफलता।', { bu: -1, ka: 1 }],
+    ['alag', 'जीवन रेखा से अलग शुरुआत', [['M70 59C56 66 40 74 22 82']], 'आत्मविश्वासी, स्वतंत्र व साहसी — जल्दी निर्णय लेते हैं, नेतृत्व क्षमता। कभी-कभी जल्दबाज़ी से बचें।', { ka: 3, bu: 1 }],
+    ['judi', 'जीवन रेखा से देर तक जुड़ी', [['M73 64C67 66 64 70 62 75C50 79 36 82 22 86']], 'सावधान और परिवार से गहरा जुड़ाव; निर्णय में समय लेते हैं। आत्मनिर्भरता थोड़ी देर से आती है, पर निर्णय सुरक्षित होते हैं।', { bu: 1, ka: -1 }],
+    ['doshakha', 'अंत में दोशाखा (लेखक का कांटा)', [['M73 65C58 70 44 76 34 80'], ['M34 80L21 82'], ['M34 80C30 86 28 92 27 99']], 'दोनों पक्षों से सोचने वाले — लेखन, वकालत, शिक्षण, शोध और परामर्श में विशेष सफलता।', { bu: 4, ka: 1 }],
+    ['tooti', 'बीच में टूटी', BR('M73 65C64 68 56 71 49 73', 'M45 76C38 79 30 81 22 84'), 'सोच या कार्यक्षेत्र में अचानक बड़ा बदलाव; सिर की चोट व मानसिक तनाव से सावधानी। वर्ग चिह्न हो तो रक्षा।', { bu: -2 }],
+    ['lahar', 'लहरदार', [['M73 65C67 61 62 72 55 70C48 68 45 78 38 76C31 74 28 84 22 84']], 'मन चंचल, एकाग्रता की कमी, बार-बार विचार बदलना। ध्यान-प्राणायाम और बुध मंत्र लाभ देंगे।', { bu: -2 }]
+  ] },
+  { id: 'hriday', n: 'हृदय रेखा', en: 'Heart Line', ctx: ['jeevan', 'mastishk'], wh: 'कनिष्ठा के नीचे हथेली के किनारे से निकलकर तर्जनी/मध्यमा की ओर जाती है — उंगलियों के सबसे पास वाली मुख्य रेखा। प्रेम, भावनाएँ व दांपत्य बताती है।', o: [
+    ['guru', 'गुरु पर्वत (तर्जनी) तक जाकर ऊपर मुड़ी', [['M18 68C34 66 52 64 63 60C67 58 67 54 65 51']], 'आदर्श और वफ़ादार प्रेम, उच्च विचार; जीवनसाथी से सम्मान चाहते हैं। सुखी दांपत्य का उत्तम संकेत।', { pr: 5 }],
+    ['beech', 'तर्जनी-मध्यमा के बीच खत्म', [['M18 68C34 66 50 64 58 56']], 'संतुलित प्रेम — भावना और व्यवहार दोनों; देखभाल करने वाले और भरोसेमंद।', { pr: 4 }],
+    ['shani', 'शनि पर्वत (मध्यमा) के नीचे खत्म', [['M18 68C30 67 42 66 50 62']], 'प्रेम में व्यावहारिक, भावनाएँ कम व्यक्त करते हैं। विवाह सोच-समझकर या कुछ देर से।', { pr: 0, ka: 1 }],
+    ['seedhi', 'पूरी हथेली में सीधी', [['M18 68C40 67 60 66 76 66']], 'बहुत गहरा लगाव, पर ईर्ष्या व अधिकार-भाव भी; भावनाएँ नियंत्रण में रखें।', { pr: 1 }],
+    ['shakha', 'शाखाओं वाली', [['M18 68C34 66 50 64 58 56'], ['M34 66L36 59', 'w'], ['M44 65L47 58', 'w'], ['M28 67L27 73', 'w']], 'मिलनसार, लोकप्रिय व भावुक। ऊपर की शाखाएँ प्रेम में सुख, नीचे की शाखाएँ निराशा के क्षण दिखाती हैं।', { pr: 2 }],
+    ['janjir', 'जंजीर जैसी', [['M18 68C34 66 50 64 58 56', 'c']], 'प्रेम में बार-बार आकर्षण, भावनात्मक उतार-चढ़ाव। हृदय व रक्तचाप का ध्यान रखें।', { pr: -2, sw: -1 }],
+    ['tooti', 'बीच में टूटी', BR('M18 68C26 67 32 67 37 66', 'M42 65C48 64 54 61 58 56'), 'प्रेम में धोखा या संबंध-विच्छेद का भय। शनि के नीचे टूटी हो तो परिस्थितिवश, सूर्य के नीचे हो तो अहंकारवश — धैर्य से संबंध बचते हैं।', { pr: -3 }],
+    ['ek', 'मस्तिष्क-हृदय एक ही रेखा', [['M18 74C40 72 58 70 73 64']], 'दुर्लभ रेखा — अत्यंत एकाग्र, अपनी धुन के पक्के; जो ठान लें करके दिखाते हैं। भावना और बुद्धि में टकराव से बचें।', { ka: 3, pr: -1 }]
+  ] },
+  { id: 'bhagya', n: 'भाग्य रेखा', en: 'Fate Line', ctx: ['jeevan', 'mastishk', 'hriday'], wh: 'कलाई के पास से ऊपर की ओर मध्यमा (शनि पर्वत) तक जाने वाली खड़ी रेखा। करियर, भाग्योदय और जीवन की दिशा बताती है।', o: [
+    ['spasht', 'कलाई से शनि तक गहरी व सीधी', [['M50 126C50 106 51 84 52 58']], 'प्रबल भाग्य — स्थिर करियर, लक्ष्य स्पष्ट; जीवन व्यवस्थित ढंग से आगे बढ़ता है।', { dh: 4, ka: 3 }],
+    ['nahi', 'भाग्य रेखा नहीं है', [['M50 126C50 106 51 84 52 58', 'z']], 'भाग्य रेखा न होना बुरा नहीं — व्यक्ति अपनी मेहनत से भाग्य बनाता है। जीवन में बदलाव अधिक, स्वतंत्र काम में सफलता।', { dh: -1, ka: 1 }],
+    ['chandra', 'चंद्र पर्वत से शुरू', [['M30 116C40 100 48 82 52 58']], 'जनता, यात्रा, विदेश या दूसरों की सहायता से भाग्योदय; कला, राजनीति व सार्वजनिक क्षेत्र में सफलता। विवाह के बाद उन्नति।', { dh: 3, ka: 2 }],
+    ['jeevan', 'जीवन रेखा से शुरू', [['M62 104C56 90 53 76 52 58']], 'अपने परिश्रम और परिवार के सहयोग से उन्नति; शुरुआत में ज़िम्मेदारियाँ, बाद में सफलता।', { dh: 2, ka: 1 }],
+    ['madhya', 'हथेली के बीच से शुरू', [['M51 92C51 80 52 70 52 58']], 'भाग्योदय कुछ देर से (लगभग 30–35 वर्ष के बाद); जीवन का उत्तरार्ध अधिक सुखद।', { dh: 2 }],
+    ['tooti', 'बीच में टूटी', BR('M50 126C50 112 50 100 51 90', 'M53 94C52 82 52 70 52 58'), 'करियर में परिवर्तन के योग। टूटे सिरे एक-दूसरे पर चढ़े हों तो बदलाव लाभदायक।', { dh: 0 }],
+    ['hriday', 'हृदय रेखा पर रुक जाती है', [['M50 126C50 106 50 86 51 67']], 'भावनात्मक निर्णय या प्रेम-संबंध से करियर में रुकावट — बड़े निर्णय बुद्धि से लें।', { dh: -1 }],
+    ['guru', 'गुरु पर्वत (तर्जनी) की ओर मुड़ती है', [['M50 126C52 100 58 76 64 58']], 'महत्वाकांक्षा पूर्ण होती है — ऊँचा पद, अधिकार और सम्मान।', { dh: 3, ka: 4 }]
+  ] },
+  { id: 'surya', n: 'सूर्य रेखा', en: 'Sun / Apollo Line', ctx: ['jeevan', 'mastishk', 'hriday'], wh: 'अनामिका के नीचे खड़ी रेखा। यश, प्रसिद्धि, कला और मान-सम्मान बताती है।', o: [
+    ['spasht', 'स्पष्ट व लंबी', [['M38 100C38 86 38 72 38 58']], 'यश, प्रसिद्धि, कला-प्रतिभा और धन; सरकार व अधिकारियों से लाभ।', { ka: 3, dh: 2 }],
+    ['chhoti', 'हृदय रेखा के ऊपर छोटी', [['M38 70L38 57']], 'जीवन के उत्तरार्ध में मान-सम्मान; अपनी कला व कार्य से संतोष।', { ka: 1 }],
+    ['nahi', 'सूर्य रेखा नहीं है', [['M38 100C38 86 38 72 38 58', 'z']], 'प्रसिद्धि के लिए अधिक परिश्रम — रविवार को सूर्य को अर्घ्य देना शुभ।', { ka: -1 }],
+    ['kai', 'कई छोटी रेखाएं', [['M35 70L35 59', 'w'], ['M38.5 72L38.5 58', 'w'], ['M42 70L42 59', 'w']], 'बहुत सारी रुचियाँ, ऊर्जा बिखरती है — एक क्षेत्र चुनें तो सफलता निश्चित।', { ka: 0 }]
+  ] },
+  { id: 'budh', n: 'बुध / स्वास्थ्य रेखा', en: 'Mercury / Health Line', ctx: ['jeevan', 'mastishk', 'hriday'], wh: 'कनिष्ठा के नीचे से तिरछी कलाई की ओर आने वाली रेखा। स्वास्थ्य, पाचन और व्यापार-बुद्धि बताती है।', o: [
+    ['nahi', 'यह रेखा नहीं है', [['M26 60C34 80 46 102 56 120', 'z']], 'उत्तम — स्वास्थ्य रेखा का न होना अच्छे स्वास्थ्य का संकेत (कीरो)।', { sw: 2 }],
+    ['seedhi', 'स्पष्ट व सीधी', [['M26 60C34 80 46 102 56 120']], 'व्यापार-बुद्धि, वाणी-कौशल और अच्छी याददाश्त; पाचन ठीक रहता है।', { bu: 1, dh: 2 }],
+    ['tooti', 'टुकड़ों में टूटी', [['M26 60L31 72'], ['M33 77L39 89'], ['M42 94L48 106'], ['M50 110L55 119']], 'पाचन, पित्त या स्नायु-तंत्र में कमज़ोरी — खान-पान व समय नियमित रखें।', { sw: -2 }],
+    ['lahar', 'लहरदार', [['M26 60C32 66 28 72 34 80C40 88 36 94 42 100C48 106 46 112 56 120']], 'पित्त/लीवर व अनियमित दिनचर्या से परेशानी; तला-भुना कम करें।', { sw: -2 }]
+  ] },
+  { id: 'vivah', n: 'विवाह रेखा', en: 'Marriage Line', ctx: ['hriday'], wh: 'कनिष्ठा के नीचे, हृदय रेखा और उंगली की जड़ के बीच हथेली के किनारे पर छोटी आड़ी रेखाएं। हथेली को हल्का मोड़कर किनारे से देखें।', o: [
+    ['ek', 'एक स्पष्ट लंबी', [['M17 60L29 60']], 'एक स्थिर, गहरा संबंध; सुखी दांपत्य।', { pr: 3 }],
+    ['do', 'दो रेखाएं', [['M17 57L28 57'], ['M17 62L27 62']], 'जीवन में दो महत्वपूर्ण संबंध या गहरे लगाव; पहला संबंध सोच-समझकर निभाएँ।', { pr: 0 }],
+    ['kai', 'कई छोटी रेखाएं', [['M17 55L22 55', 'w'], ['M17 58L23 58', 'w'], ['M17 61L22 61', 'w'], ['M17 64L23 64', 'w']], 'आकर्षक स्वभाव, कई छोटे प्रेम-प्रसंग; विवाह का निर्णय सोच-समझकर लें।', { pr: -1 }],
+    ['neeche', 'अंत में नीचे मुड़ी', [['M17 60C23 60 27 62 29 66']], 'जीवनसाथी के स्वास्थ्य या संबंध में खटास का संकेत — आपसी संवाद और सम्मान बढ़ाएँ।', { pr: -2 }],
+    ['upar', 'अंत में ऊपर मुड़ी', [['M17 60C23 60 27 58 29 53']], 'विवाह देर से या करियर को प्राथमिकता; अविवाहित रहने की प्रवृत्ति।', { pr: -1, ka: 1 }],
+    ['kanta', 'अंत में दोशाखा', [['M17 60L25 60'], ['M25 60L30 57'], ['M25 60L30 63']], 'विचारों में मतभेद व दूरी के योग — धैर्य और समझदारी से संबंध बचते हैं।', { pr: -2 }],
+    ['surya', 'सूर्य रेखा तक पहुँचती', [['M17 60C26 60 32 60 38 61']], 'प्रतिष्ठित, धनी या प्रसिद्ध परिवार में विवाह; विवाह से उन्नति।', { pr: 2, dh: 2 }]
+  ] },
+  { id: 'mani', n: 'मणिबंध', en: 'Bracelets / Rascettes', ctx: ['jeevan'], wh: 'कलाई पर हथेली के ठीक नीचे की आड़ी रेखाएं (कंगन जैसी)।', o: [
+    ['teen', 'तीन स्पष्ट रेखाएं', [['M27 118Q49 121 72 118'], ['M27 123Q49 126 73 123'], ['M27 128Q49 131 73 128']], 'सामुद्रिक में बहुत शुभ — दीर्घ आयु, अच्छा स्वास्थ्य और धन-सुख।', { sw: 2, dh: 2 }],
+    ['do', 'दो रेखाएं', [['M27 120Q49 123 72 120'], ['M27 126Q49 129 73 126']], 'सामान्य सुख-समृद्धि और मध्यम स्वास्थ्य।', { sw: 1, dh: 1 }],
+    ['chaap', 'पहली रेखा ऊपर की ओर धनुषाकार', [['M27 120Q49 110 72 120'], ['M27 126Q49 129 73 126']], 'मूत्र व प्रजनन तंत्र की कमज़ोरी की प्रवृत्ति (कीरो) — नियमित जाँच व संयमित दिनचर्या रखें।', { sw: -2 }],
+    ['janjir', 'जंजीर जैसी', [['M27 120Q49 123 72 120', 'c'], ['M27 126Q49 129 73 126', 'c']], 'परिश्रम के बाद सफलता; धन धीरे-धीरे जुड़ता है।', { dh: 0, ka: 1 }]
+  ] }
+];
+
+/* ============ पर्वत ============ */
+const GR = { Sun: 'सूर्य', Moon: 'चंद्र', Mars: 'मंगल', Mercury: 'बुध', Jupiter: 'गुरु', Venus: 'शुक्र', Saturn: 'शनि', Rahu: 'राहु', Ketu: 'केतु' };
+const MOUNTS = [
+  { id: 'guru', n: 'गुरु पर्वत', g: 'Jupiter', at: [66, 62], wh: 'तर्जनी के नीचे', u: ['नेतृत्व, धर्म व ज्ञान, मान-सम्मान; शिक्षण, प्रशासन व न्याय क्षेत्र में सफलता और सुखी विवाह।', { ka: 3, pr: 1 }], s: ['संतुलित आत्मविश्वास और सामान्य मान-सम्मान।', {}], d: ['आत्मविश्वास की कमी, बड़ों व गुरुजनों का सहयोग कम मिलता है।', { ka: -2 }] },
+  { id: 'shani', n: 'शनि पर्वत', g: 'Saturn', at: [52, 60], wh: 'मध्यमा के नीचे', u: ['गंभीर, अनुशासित, दार्शनिक; शोध, विज्ञान, भूमि, लोहा, तेल व न्याय से लाभ। बहुत अधिक उभरा हो तो एकांतप्रिय व चिंतित।', { ka: 1, dh: 1 }], s: ['संतुलित — परिश्रम का फल समय पर मिलता है।', {}], d: ['अनुशासन की कमी, मेहनत का पूरा फल देर से — शनि की शांति लाभ देगी।', { dh: -1, ka: -1 }] },
+  { id: 'surya', n: 'सूर्य पर्वत', g: 'Sun', at: [38, 60], wh: 'अनामिका के नीचे', u: ['यश, आकर्षक व्यक्तित्व, कला-प्रेम और सरकारी लाभ।', { ka: 3, dh: 1 }], s: ['सामान्य प्रतिष्ठा व आत्मविश्वास।', {}], d: ['मान-सम्मान व आत्मविश्वास में कमी; पिता/अधिकारियों से सहयोग कम।', { ka: -2 }] },
+  { id: 'budh', n: 'बुध पर्वत', g: 'Mercury', at: [25, 62], wh: 'कनिष्ठा के नीचे', u: ['वाणी, व्यापार, गणित, चिकित्सा व संचार में तेज़; चतुर और हाज़िरजवाब।', { bu: 3, dh: 2 }], s: ['सामान्य व्यवहार-कुशलता।', {}], d: ['व्यापार में हानि का डर, संवाद में झिझक।', { bu: -2, dh: -1 }] },
+  { id: 'shukra', n: 'शुक्र पर्वत', g: 'Venus', at: [70, 100], wh: 'अंगूठे की जड़ (जीवन रेखा के अंदर)', u: ['प्रेम, आकर्षण, सौंदर्य, कला-संगीत, सुख-सुविधा और भरपूर ऊर्जा।', { pr: 3, sw: 2 }], s: ['संतुलित प्रेम व सुख।', {}], d: ['प्रेम व सुख-सुविधा में कमी, ऊर्जा कम।', { pr: -2, sw: -1 }] },
+  { id: 'chandra', n: 'चंद्र पर्वत', g: 'Moon', at: [26, 104], wh: 'हथेली के निचले बाहरी किनारे पर (कनिष्ठा की ओर, कलाई के ऊपर)', u: ['कल्पना, कविता, अंतर्ज्ञान; यात्रा, विदेश व जल से लाभ।', { bu: 2, ka: 1 }], s: ['सामान्य कल्पनाशक्ति व मन की शांति।', {}], d: ['कल्पनाशक्ति कम, मन अशांत; माता से संबंधित चिंता।', { bu: -1, sw: -1 }] },
+  { id: 'mangal1', n: 'मंगल पर्वत (अंदरूनी)', g: 'Mars', at: [72, 76], wh: 'अंगूठे और तर्जनी के बीच, जीवन रेखा के आरंभ के नीचे', u: ['साहस, शारीरिक बल; खेल, सेना, पुलिस व सुरक्षा क्षेत्र में सफलता।', { sw: 2, ka: 1 }], s: ['संतुलित साहस।', {}], d: ['साहस की कमी, निर्णय में डर।', { ka: -1, sw: -1 }] },
+  { id: 'mangal2', n: 'मंगल पर्वत (बाहरी)', g: 'Mars', at: [22, 79], wh: 'हथेली के बाहरी किनारे पर, हृदय व मस्तिष्क रेखा के बीच', u: ['धैर्य और मानसिक दृढ़ता — कठिन समय में नहीं टूटते।', { ka: 2 }], s: ['सामान्य धैर्य।', {}], d: ['जल्दी हार मान लेना — धैर्य बढ़ाएँ।', { ka: -1 }] },
+  { id: 'rahu', n: 'राहु क्षेत्र', g: 'Rahu', at: [47, 86], wh: 'हथेली का बीच (मंगल का मैदान)', u: ['हथेली का बीच भरा हुआ — संघर्ष में विजय, अचानक लाभ।', { dh: 2 }], s: ['सामान्य।', {}], d: ['सामुद्रिक के अनुसार बीच में गहरी (गड्ढेदार) हथेली से धन टिकने में कठिनाई।', { dh: -2 }], lb: ['भरा हुआ', 'सामान्य', 'गहरा'] },
+  { id: 'ketu', n: 'केतु क्षेत्र', g: 'Ketu', at: [48, 116], wh: 'कलाई के ऊपर, भाग्य रेखा के आरंभ के पास', u: ['आध्यात्मिक रुचि, बचपन में सुख-सुविधा।', { ka: 1 }], s: ['सामान्य।', {}], d: ['बचपन में संघर्ष; आध्यात्म से मन को शांति मिलेगी।', { sw: -1 }] }
+];
+
+/* ============ चिह्न ============ */
+const SIGNS = [
+  ['matsya', 'मत्स्य (मछली)', 'मणिबंध के ऊपर या चंद्र पर्वत पर', 'सामुद्रिक में राजयोग-चिह्न — धन, धर्म, यश और विदेश/जल-यात्रा से लाभ।', 'g', { dh: 3 }],
+  ['trishul', 'त्रिशूल', 'गुरु पर्वत पर या हृदय रेखा के अंत में', 'शिव-कृपा, उच्च पद, विद्या और अधिकार।', 'g', { ka: 3 }],
+  ['kamal', 'कमल', 'हथेली में कहीं भी', 'लक्ष्मी-कृपा, ऐश्वर्य और मान-सम्मान।', 'g', { dh: 2 }],
+  ['shankh', 'शंख', 'हथेली या उंगलियों के पोर पर', 'धार्मिक, विद्वान और यशस्वी।', 'g', { bu: 1, ka: 1 }],
+  ['dhwaja', 'ध्वज (झंडा)', 'हथेली में कहीं भी', 'नेतृत्व, विजय और प्रतिष्ठा।', 'g', { ka: 2 }],
+  ['swastik', 'स्वस्तिक', 'हथेली में कहीं भी', 'मंगलमय जीवन, धार्मिकता और सुख।', 'g', { sw: 1, dh: 1 }],
+  ['trikon', 'बड़ा त्रिकोण', 'जीवन, मस्तिष्क व स्वास्थ्य रेखा से बना', 'बुद्धि, विज्ञान व गूढ़ विद्या में रुचि; सफल योजनाकार।', 'g', { bu: 2 }],
+  ['varg', 'वर्ग (चौकोर)', 'किसी रेखा पर', 'रक्षा-चिह्न — उस रेखा से जुड़े संकट से बचाव होता है।', 'g', { sw: 1 }],
+  ['tara1', 'तारा (नक्षत्र)', 'गुरु या सूर्य पर्वत पर', 'अचानक यश, ऊँचा पद और प्रसिद्धि।', 'g', { ka: 3 }],
+  ['cross1', 'क्रॉस (×)', 'गुरु पर्वत पर', 'सुखी विवाह और प्रेम में सफलता (कीरो)।', 'g', { pr: 2 }],
+  ['rahasya', 'रहस्यमयी क्रॉस', 'हृदय व मस्तिष्क रेखा के बीच', 'अध्यात्म, ज्योतिष व गूढ़ विद्याओं में रुचि; प्रबल अंतर्ज्ञान।', 'g', { bu: 1 }],
+  ['m', "'M' आकार", 'जीवन, मस्तिष्क, हृदय व भाग्य रेखा से बनता', 'लोक मान्यता — ईमानदार, सहज ज्ञान वाले; अपने उद्यम में सफल।', 'g', { ka: 1, dh: 1 }],
+  ['til', 'तिल', 'मुट्ठी बंद करने पर अंदर छिपा', 'लोक मान्यता — धन संचय; मुट्ठी के बाहर दिखने वाला तिल खर्च बढ़ाता है।', 'm', { dh: 1 }],
+  ['tara2', 'तारा (नक्षत्र)', 'शनि पर्वत पर', 'अचानक घटनाएँ और भाग्य में बड़ा मोड़ — बड़े निर्णय सोच-समझकर लें।', 'b', { ka: -1 }],
+  ['cross2', 'क्रॉस (×)', 'गुरु के अलावा किसी पर्वत/रेखा पर', 'उस पर्वत या रेखा के क्षेत्र में बाधा व संघर्ष।', 'b', { ka: -1 }],
+  ['dweep', 'द्वीप (आँख जैसा घेरा)', 'किसी रेखा पर', 'उस अवधि में कमज़ोरी, रुकावट या स्वास्थ्य-चिंता।', 'b', { sw: -2 }],
+  ['jaal', 'जाल (जाली)', 'किसी पर्वत पर', 'उस ग्रह की ऊर्जा बिखरी हुई, मन बेचैन।', 'b', { bu: -1 }]
+];
+
+/* ============ उपाय (रत्न-डेटा ‘रत्न सुझाव’ टूल जैसा) ============ */
+const UPAY = {
+  Jupiter: ['ॐ बृं बृहस्पतये नमः', 'गुरुवार को केसर/हल्दी का तिलक, पीपल में जल, चने की दाल-पीले वस्त्र का दान; बड़ों व गुरु का आशीर्वाद लें।', 'पुखराज (Yellow Sapphire) — तर्जनी, सोना, गुरुवार सुबह; उपरत्न सुनहला'],
+  Saturn: ['ॐ शं शनैश्चराय नमः', 'शनिवार को सरसों के तेल का दान, पीपल के नीचे दीपक; मज़दूरों व बुज़ुर्गों की सेवा, झूठ और शराब से दूरी।', 'नीलम (Blue Sapphire) — मध्यमा, पंचधातु/चाँदी, शनिवार शाम; पहले 3 दिन परीक्षण करें; उपरत्न नीली'],
+  Sun: ['ॐ घृणि सूर्याय नमः', 'रोज़ सुबह तांबे के लोटे से सूर्य को अर्घ्य, पिता का सम्मान; रविवार को गेहूँ-गुड़ का दान।', 'माणिक्य (Ruby) — अनामिका, सोना/तांबा, रविवार सूर्योदय; उपरत्न गार्नेट'],
+  Mercury: ['ॐ बुं बुधाय नमः', 'बुधवार को गाय को हरा चारा, हरी मूंग का दान; बहन-बेटी-बुआ का सम्मान; दाँत व नाक साफ़ रखें।', 'पन्ना (Emerald) — कनिष्ठा, सोना/पंचधातु, बुधवार सुबह; उपरत्न पेरिडॉट'],
+  Venus: ['ॐ शुं शुक्राय नमः', 'शुक्रवार को सफ़ेद वस्त्र/चावल का दान, सुगंध (इत्र) का प्रयोग, गाय की सेवा; जीवनसाथी का सम्मान।', 'हीरा/ओपल — मध्यमा या अनामिका, चाँदी/प्लेटिनम, शुक्रवार सुबह; उपरत्न जरकन'],
+  Moon: ['ॐ सों सोमाय नमः', 'सोमवार को शिवलिंग पर दूध-जल, माता का आशीर्वाद; चाँदी का प्रयोग, चावल-दूध का दान।', 'मोती (Pearl) — कनिष्ठा, चाँदी, सोमवार शाम; उपरत्न चंद्रकांत मणि'],
+  Mars: ['ॐ अं अंगारकाय नमः', 'मंगलवार को हनुमान चालीसा, मसूर दाल व गुड़ का दान; भाइयों से अच्छे संबंध रखें।', 'मूंगा (Coral) — अनामिका, सोना/तांबा, मंगलवार सुबह; उपरत्न लाल अकीक'],
+  Rahu: ['ॐ रां राहवे नमः', 'जौ या नारियल बहते जल में प्रवाहित करें; ससुराल से अच्छे संबंध; बिजली के सामान व नीले वस्त्र का दान।', 'गोमेद (Hessonite) — मध्यमा, पंचधातु/चाँदी, शनिवार शाम'],
+  Ketu: ['ॐ कें केतवे नमः', 'कुत्ते को रोटी, गणेश जी की पूजा, कंबल का दान; मंदिर में ध्वजा चढ़ाएँ।', 'लहसुनिया (Cat’s Eye) — मध्यमा या कनिष्ठा, पंचधातु/चाँदी, मंगलवार या शनिवार']
+};
+const CAT = { sw: ['ऊर्जा-स्वास्थ्य', '💪'], bu: ['बुद्धि-विद्या', '🧠'], pr: ['प्रेम-दांपत्य', '💞'], dh: ['धन-भाग्य', '💰'], ka: ['करियर-यश', '🏆'] };
+const CATUP = { sw: 'Sun', bu: 'Mercury', pr: 'Venus', dh: 'Jupiter', ka: 'Sun' };
+
+/* ============ चरण (steps) ============ */
+function go(n) {
+  [...$('stp').children].forEach(b => b.classList.toggle('on', b.dataset.s == n));
+  document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === 'p' + n));
+  if (n == 2) renderLines(); if (n == 3) { renderMounts(); renderSigns(); } if (n == 4) report();
+  markDone(); window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function markDone() {
+  const d = { 1: Object.keys(S.q).length > 1, 2: Object.keys(S.l).length > 0, 3: Object.keys(S.m).length > 0 || S.sg.length > 0, 4: false };
+  [...$('stp').children].forEach(b => b.classList.toggle('dn', d[b.dataset.s]));
+}
+$('stp').onclick = e => { const b = e.target.closest('button'); if (b) go(+b.dataset.s); };
+document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) go(+b.dataset.go); });
+
+/* ============ चरण 1: प्रश्न ============ */
+$('nm').value = S.name; $('nm').oninput = () => { S.name = $('nm').value.trim(); save(); };
+function setHand(v) { S.hand = v; save(); [...$('hand').children].forEach(c => c.classList.toggle('on', c.dataset.v === v)); $('hside').textContent = v === 'L' ? 'बाएँ' : 'दाएँ'; }
+$('hand').onclick = e => { const c = e.target.closest('.chip'); if (c) setHand(c.dataset.v); };
+setHand(S.hand);
+function qf(q) { const v = S.q[q.id], o = q.o.find(x => x[0] === v); return o && o[2] ? o[2] : ''; }
+function renderQ() {
+  $('qs').innerHTML = Q.map(q => `<div class="q" data-q="${q.id}"><b>${q.t}${S.auto[q.id] ? '<span class="auto">✓ स्कैन</span>' : ''}</b><div class="chips">${q.o.map(o => `<span class="chip${S.q[q.id] === o[0] ? ' on' : ''}" data-v="${o[0]}">${o[1]}</span>`).join('')}</div><div class="f">${esc(qf(q))}</div></div>`).join('') + elBox();
+}
+function elBox() {
+  const e = EL[(S.q.palm || '') + '-' + (S.q.fing || '')];
+  return e ? `<div class="msg ok" style="margin-top:12px"><b>${e[1]} ${e[2]}</b> — ${e[3]}</div>` : '<div class="note">हथेली का आकार और उंगलियों की लंबाई चुनने पर हस्त-तत्व (पृथ्वी / वायु / अग्नि / जल) दिखेगा।</div>';
+}
+$('qs').onclick = e => { const c = e.target.closest('.chip'); if (!c) return; const id = c.closest('.q').dataset.q; S.q[id] = S.q[id] === c.dataset.v ? undefined : c.dataset.v; if (!S.q[id]) delete S.q[id]; delete S.auto[id]; save(); renderQ(); markDone(); };
+renderQ();
+
+/* ============ चरण 2: रेखाएं ============ */
+function renderLines() {
+  $('lines').innerHTML = LINES.map(L => {
+    const v = S.l[L.id], o = L.o.find(x => x[0] === v);
+    return `<div class="av-card lc" data-l="${L.id}"><h3>${L.n} <small>/ ${L.en}</small></h3><div class="wh">${L.wh}</div><div class="opts">${L.o.map(x => `<button class="op${x[0] === v ? ' on' : ''}" data-v="${x[0]}">${palm(ln(x[2]), L.ctx)}${x[1]}</button>`).join('')}</div><div class="f">${o ? '<b>फल:</b> ' + esc(o[3]) : ''}</div></div>`;
+  }).join('');
+}
+$('lines').onclick = e => {
+  const b = e.target.closest('.op'); if (!b) return; const card = b.closest('.lc'), id = card.dataset.l, L = LINES.find(x => x.id === id);
+  S.l[id] = S.l[id] === b.dataset.v ? undefined : b.dataset.v; if (!S.l[id]) delete S.l[id]; save();
+  [...card.querySelectorAll('.op')].forEach(x => x.classList.toggle('on', x.dataset.v === S.l[id]));
+  const o = L.o.find(x => x[0] === S.l[id]); card.querySelector('.f').innerHTML = o ? '<b>फल:</b> ' + esc(o[3]) : ''; markDone();
+};
+
+/* ============ चरण 3: पर्वत व चिह्न ============ */
+function renderMounts() {
+  $('mounts').innerHTML = MOUNTS.map(M => {
+    const v = S.m[M.id], lb = M.lb || ['उभरा', 'सामान्य', 'दबा'], t = v ? M[v][0] : '';
+    return `<div class="q" data-m="${M.id}"><div class="mt">${palm(dot(M.at[0], M.at[1]), ['jeevan', 'mastishk', 'hriday'])}<div class="tx"><b>${M.n}</b> <span class="note">(${GR[M.g]} ग्रह)</span><small>${M.wh}</small><div class="chips">${['u', 's', 'd'].map((k, i) => `<span class="chip${v === k ? ' on' : ''}" data-v="${k}">${lb[i]}</span>`).join('')}</div></div></div><div class="f">${esc(t)}</div></div>`;
+  }).join('');
+}
+$('mounts').onclick = e => {
+  const c = e.target.closest('.chip'); if (!c) return; const row = c.closest('[data-m]'), id = row.dataset.m, M = MOUNTS.find(x => x.id === id);
+  S.m[id] = S.m[id] === c.dataset.v ? undefined : c.dataset.v; if (!S.m[id]) delete S.m[id]; save();
+  [...row.querySelectorAll('.chip')].forEach(x => x.classList.toggle('on', x.dataset.v === S.m[id])); row.querySelector('.f').textContent = S.m[id] ? M[S.m[id]][0] : ''; markDone();
+};
+function renderSigns() {
+  $('signs').innerHTML = SIGNS.map(s => `<label class="${S.sg.includes(s[0]) ? 'on' : ''}"><input type="checkbox" value="${s[0]}"${S.sg.includes(s[0]) ? ' checked' : ''}><span><b>${s[1]}</b> — ${s[2]}<small>${s[3]}</small></span></label>`).join('');
+}
+$('signs').onchange = e => { const i = e.target; S.sg = S.sg.filter(x => x !== i.value); if (i.checked) S.sg.push(i.value); i.closest('label').classList.toggle('on', i.checked); save(); markDone(); };
+
+/* ============ स्कैन इंजन (MediaPipe — फ़ोन के ब्राउज़र में ही) ============ */
+const MPV = '0.10.14', MPU = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@' + MPV;
+const MODEL = 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task';
+let HL = null, HLp = null;
+function engine() {
+  if (HL) return Promise.resolve(HL); if (HLp) return HLp;
+  HLp = (async () => {
+    const m = await import(MPU + '/vision_bundle.mjs'), fs = await m.FilesetResolver.forVisionTasks(MPU + '/wasm');
+    const opt = d => ({ baseOptions: { modelAssetPath: MODEL, delegate: d }, runningMode: 'IMAGE', numHands: 1, minHandDetectionConfidence: 0.4, minHandPresenceConfidence: 0.4 });
+    try { HL = await m.HandLandmarker.createFromOptions(fs, opt('GPU')); } catch (e) { HL = await m.HandLandmarker.createFromOptions(fs, opt('CPU')); }
+    return HL;
+  })();
+  HLp.catch(() => { HLp = null; }); return HLp;
+}
+const CONN = [[0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8], [5, 9], [9, 10], [10, 11], [11, 12], [9, 13], [13, 14], [14, 15], [15, 16], [13, 17], [17, 18], [18, 19], [19, 20], [0, 17]];
+const V2 = { sub: (a, b) => ({ x: a.x - b.x, y: a.y - b.y }), add: (a, b) => ({ x: a.x + b.x, y: a.y + b.y }), mul: (a, k) => ({ x: a.x * k, y: a.y * k }), d: (a, b) => Math.hypot(a.x - b.x, a.y - b.y), lerp: (a, b, t) => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }), dot: (a, b) => a.x * b.x + a.y * b.y };
+const flen = (P, a) => V2.d(P[a], P[a + 1]) + V2.d(P[a + 1], P[a + 2]) + V2.d(P[a + 2], P[a + 3]);
+
+/* 21 बिंदुओं से माप — अनुपात, इसलिए फोटो की दूरी से फ़र्क नहीं */
+function measure(P) {
+  const pl = V2.d(P[0], P[9]), kw = V2.d(P[5], P[17]), R = pl / kw;
+  const mid = flen(P, 9), idx = flen(P, 5), ring = flen(P, 13), F = mid / pl;
+  const ax = V2.mul(V2.sub(P[9], P[0]), 1 / pl), pj = p => V2.dot(V2.sub(p, P[0]), ax);
+  const reach = (pj(P[20]) - pj(P[15])) / idx;
+  const th = V2.d(P[2], P[3]) + V2.d(P[3], P[4]), T = th / idx;
+  const a = V2.sub(P[4], P[2]), b = V2.sub(P[8], P[5]);
+  const ang = Math.acos(Math.max(-1, Math.min(1, V2.dot(a, b) / Math.hypot(a.x, a.y) / Math.hypot(b.x, b.y)))) * 180 / Math.PI;
+  const RI = ring / idx;
+  return {
+    R, F, RI, reach, T, ang,
+    palm: R < 1.53 ? 'sq' : 'lg', fing: F < 0.98 ? 'sh' : 'lo',
+    gr: RI > 1.04 ? 'su' : RI < 0.97 ? 'gu' : 'eq',
+    kan: reach > -0.03 ? 'lo' : reach < -0.13 ? 'sh' : 'md',
+    ang_: T > 0.70 ? 'lo' : T < 0.58 ? 'sh' : 'md',
+    kon: ang > 55 ? 'wd' : ang < 32 ? 'nr' : 'md'
+  };
+}
+/* पर्वत व रेखाओं के अनुमानित स्थान (फोटो पर) */
+function zones(P) {
+  const K = [5, 9, 13, 17].reduce((s, i) => V2.add(s, V2.mul(P[i], 0.25)), { x: 0, y: 0 }), C = V2.lerp(P[0], K, 0.55);
+  const out = V2.sub(P[17], P[13]), E17 = V2.add(P[17], V2.mul(out, 0.5)), down = V2.sub(P[0], P[9]);
+  const L = V2.lerp, pt = {
+    'गुरु': L(P[5], P[0], 0.14), 'शनि': L(P[9], P[0], 0.14), 'सूर्य': L(P[13], P[0], 0.14), 'बुध': L(P[17], P[0], 0.14),
+    'शुक्र': L(L(P[1], P[0], 0.3), C, 0.38), 'चंद्र': V2.add(L(P[0], E17, 0.42), V2.mul(out, 0.2)), 'मंगल': L(L(P[2], P[5], 0.5), C, 0.3),
+    'मंगल ': L(L(E17, P[0], 0.33), C, 0.18), 'राहु': C, 'केतु': L(P[0], C, 0.42)
+  };
+  const S0 = L(L(P[5], P[2], 0.5), C, 0.12), lifeE = L(L(P[0], P[1], 0.3), C, 0.2), apex = L(L(S0, lifeE, 0.5), C, 0.5);
+  const q = (a, m, b) => ({ a, c: V2.sub(V2.mul(m, 2), V2.mul(V2.add(a, b), 0.5)), b });
+  const headE = L(C, L(E17, P[0], 0.45), 1.12), hs = V2.add(V2.add(P[17], V2.mul(out, 0.55)), V2.mul(down, 0.16)), he = V2.add(L(P[5], P[9], 0.5), V2.mul(down, 0.13));
+  const gl = {
+    'जीवन': q(S0, apex, lifeE), 'मस्तिष्क': q(S0, V2.add(L(S0, headE, 0.5), V2.mul(down, 0.05)), headE),
+    'हृदय': q(hs, V2.add(L(hs, he, 0.5), V2.mul(down, 0.06)), he), 'भाग्य': q(L(P[0], P[9], 0.06), L(P[0], P[9], 0.45), L(P[9], P[0], 0.16))
+  };
+  return { pt, gl };
+}
+
+/* ============ फोटो, कैनवास व परतें ============ */
+const cv = $('cv'), cx = cv.getContext('2d');
+let IMG = null, ENH = null, LM = null, TG = { pts: 1, mnt: 1, gd: 1, enh: 0 };
+function loadImg(src) {
+  const w0 = src.videoWidth || src.naturalWidth || src.width, h0 = src.videoHeight || src.naturalHeight || src.height, k = Math.min(1, 1100 / Math.max(w0, h0));
+  const c = document.createElement('canvas'); c.width = Math.round(w0 * k); c.height = Math.round(h0 * k);
+  c.getContext('2d').drawImage(src, 0, 0, c.width, c.height); return c;
+}
+/* रेखाएं उभारें: हाई-पास फ़िल्टर (स्थानीय औसत घटाकर) — बारीक रेखाएं साफ़ दिखती हैं */
+function enhance(c) {
+  const W = c.width, H = c.height, d = c.getContext('2d').getImageData(0, 0, W, H), p = d.data, g = new Float32Array(W * H), I = new Float64Array((W + 1) * (H + 1));
+  for (let i = 0; i < W * H; i++) g[i] = 0.3 * p[i * 4] + 0.59 * p[i * 4 + 1] + 0.11 * p[i * 4 + 2];
+  for (let y = 0; y < H; y++) { let r = 0; for (let x = 0; x < W; x++) { r += g[y * W + x]; I[(y + 1) * (W + 1) + x + 1] = I[y * (W + 1) + x + 1] + r; } }
+  const R = Math.max(4, Math.round(Math.max(W, H) / 55)), o = document.createElement('canvas'); o.width = W; o.height = H;
+  const od = o.getContext('2d').createImageData(W, H), q = od.data;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const x0 = Math.max(0, x - R), x1 = Math.min(W, x + R + 1), y0 = Math.max(0, y - R), y1 = Math.min(H, y + R + 1);
+    const m = (I[y1 * (W + 1) + x1] - I[y0 * (W + 1) + x1] - I[y1 * (W + 1) + x0] + I[y0 * (W + 1) + x0]) / ((x1 - x0) * (y1 - y0));
+    let v = 205 + (g[y * W + x] - m) * 5.5; v = v < 0 ? 0 : v > 255 ? 255 : v; const j = (y * W + x) * 4;
+    q[j] = v; q[j + 1] = v * 0.86; q[j + 2] = v * 0.72; q[j + 3] = 255;
+  }
+  o.getContext('2d').putImageData(od, 0, 0); return o;
+}
+function draw() {
+  if (!IMG) return; cv.width = IMG.width; cv.height = IMG.height;
+  cx.drawImage(TG.enh ? (ENH || (ENH = enhance(IMG))) : IMG, 0, 0);
+  if (!LM) return; const s = Math.max(IMG.width, IMG.height) / 500, P = LM.map(p => ({ x: p.x * IMG.width, y: p.y * IMG.height })), Z = zones(P);
+  cx.lineCap = 'round'; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+  if (TG.gd) for (const [n, g] of Object.entries(Z.gl)) {
+    cx.setLineDash([7 * s, 5 * s]); cx.lineWidth = 3 * s; cx.strokeStyle = '#ffe29acc'; cx.beginPath(); cx.moveTo(g.a.x, g.a.y); cx.quadraticCurveTo(g.c.x, g.c.y, g.b.x, g.b.y); cx.stroke(); cx.setLineDash([]);
+    const t = { 'भाग्य': 0.3, 'जीवन': 0.4, 'मस्तिष्क': 0.9, 'हृदय': 0.55 }[n], u = 1 - t, m = { x: u * u * g.a.x + 2 * u * t * g.c.x + t * t * g.b.x, y: u * u * g.a.y + 2 * u * t * g.c.y + t * t * g.b.y }; tag(n, m, s, '#6b1418');
+  }
+  if (TG.pts) {
+    cx.strokeStyle = '#ffffffb0'; cx.lineWidth = 2 * s; CONN.forEach(([a, b]) => { cx.beginPath(); cx.moveTo(P[a].x, P[a].y); cx.lineTo(P[b].x, P[b].y); cx.stroke(); });
+    P.forEach(p => { cx.fillStyle = '#ee6f16'; cx.beginPath(); cx.arc(p.x, p.y, 3.2 * s, 0, 7); cx.fill(); cx.strokeStyle = '#fff'; cx.lineWidth = 1.5 * s; cx.stroke(); });
+  }
+  if (TG.mnt) for (const [n, p] of Object.entries(Z.pt)) { cx.fillStyle = '#ee6f1640'; cx.beginPath(); cx.arc(p.x, p.y, 11 * s, 0, 7); cx.fill(); tag(n.trim(), p, s, '#c2410c'); }
+}
+function tag(t, p, s, bg) {
+  cx.font = `700 ${Math.round(9.5 * s)}px 'Noto Sans Devanagari',sans-serif`; const w = cx.measureText(t).width + 8 * s, h = 14 * s;
+  cx.fillStyle = bg; cx.beginPath(); cx.roundRect ? cx.roundRect(p.x - w / 2, p.y - h / 2, w, h, 6 * s) : cx.rect(p.x - w / 2, p.y - h / 2, w, h); cx.fill(); cx.fillStyle = '#fff'; cx.fillText(t, p.x, p.y + s);
+}
+$('tog').onclick = e => { const c = e.target.closest('.chip'); if (!c) return; TG[c.dataset.k] ^= 1; c.classList.toggle('on', !!TG[c.dataset.k]); if (c.dataset.k === 'enh' && TG.enh && !ENH) { toast('रेखाएं उभार रहे हैं…'); setTimeout(draw, 30); } else draw(); thumb(); };
+function thumb() { if (!IMG) return; const u = (TG.enh ? (ENH || (ENH = enhance(IMG))) : IMG).toDataURL('image/jpeg', 0.85); $('pvi').src = u; $('zi').src = u; $('pv').classList.add('on'); }
+$('pv').onclick = () => $('zoom').classList.add('on'); $('zx').onclick = $('zoom').onclick = e => { if (e.target.id !== 'zi') $('zoom').classList.remove('on'); };
+const msg = (t, k) => $('smsg').innerHTML = `<div class="msg ${k}">${t}</div>`;
+
+const STEPS = ['हाथ खोज रहे हैं…', '21 बिंदु माप रहे हैं…', 'उंगलियों का अनुपात निकाल रहे हैं…', 'ग्रह पर्वत पहचान रहे हैं…', 'रेखाओं का क्षेत्र बना रहे हैं…'];
+async function process(src) {
+  IMG = loadImg(src); ENH = null; LM = null; TG.enh = 0; [...$('tog').children].forEach(c => c.classList.toggle('on', !!TG[c.dataset.k]));
+  $('stage').classList.add('on'); $('scan').classList.add('on'); $('smsg').innerHTML = ''; draw();
+  $('stage').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  let i = 0; const iv = setInterval(() => { $('scanT').innerHTML = STEPS[Math.min(i, STEPS.length - 1)] + (HL ? '' : '<small>पहली बार स्कैन इंजन लोड हो रहा है (लगभग 10 MB)</small>'); i++; }, 650);
+  const t0 = Date.now();
+  try {
+    const hl = await engine(), r = hl.detect(IMG);
+    await new Promise(r2 => setTimeout(r2, Math.max(0, 3000 - (Date.now() - t0))));
+    if (!r.landmarks || !r.landmarks.length) { msg('🙏 हथेली साफ़ नहीं दिखी। अच्छी रोशनी में, पूरी हथेली फ्रेम में रखकर दोबारा फोटो लें — या नीचे खुद चुनें।', 'er'); }
+    else {
+      LM = r.landmarks[0]; const M = measure(LM.map(p => ({ x: p.x * IMG.width, y: p.y * IMG.height })));
+      const xs = LM.map(p => p.x), ys = LM.map(p => p.y), size = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
+      const set = { palm: M.palm, fing: M.fing, gr: M.gr, kan: M.kan, ang: M.ang_, kon: M.kon };
+      for (const k in set) { S.q[k] = set[k]; S.auto[k] = 1; }
+      S.meas = { R: +M.R.toFixed(2), F: +M.F.toFixed(2), RI: +M.RI.toFixed(2), T: +M.T.toFixed(2), ang: Math.round(M.ang), at: Date.now() }; save(); renderQ(); markDone();
+      $('tog').style.display = ''; draw(); thumb();
+      const e = EL[S.q.palm + '-' + S.q.fing];
+      msg(`✅ स्कैन पूरा — <b>${e[1]} ${e[2]}</b>। हथेली लंबाई/चौड़ाई ${M.R.toFixed(2)}, मध्यमा/हथेली ${M.F.toFixed(2)}, अंगूठे का कोण ${Math.round(M.ang)}°।${size < 0.35 ? '<br>⚠️ हाथ फोटो में छोटा है — पास से फोटो लें तो माप और सटीक होगा।' : ''}<br>फोटो पर पर्वत व रेखाओं के अनुमानित स्थान दिखाए गए हैं। <b>“रेखाएं उभारें”</b> दबाकर अपनी रेखाएं साफ़ देखें, फिर अगले चरण में मिलान करें।`, 'ok');
+    }
+  } catch (err) {
+    msg('📶 स्कैन इंजन लोड नहीं हो पाया (इंटरनेट धीमा या बंद)। इंटरनेट चालू करके दोबारा प्रयास करें — या नीचे के विकल्प खुद चुनकर आगे बढ़ें।', 'er');
+    $('tog').style.display = ''; thumb();
+  } finally { clearInterval(iv); $('scan').classList.remove('on'); }
+}
+$('file').onchange = e => {
+  const f = e.target.files[0]; if (!f) return; const u = URL.createObjectURL(f), im = new Image();
+  im.onload = () => { process(im); URL.revokeObjectURL(u); }; im.onerror = () => toast('यह फोटो खुल नहीं पाई'); im.src = u; e.target.value = '';
+};
+
+/* ============ लाइव कैमरा ============ */
+let STRM = null, FACE = 'environment', LIVET = null, hits = 0;
+$('gd').innerHTML = `<path d="${OUT}"/>`;
+async function openLive() {
+  engine().catch(() => { });
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast('लाइव कैमरा उपलब्ध नहीं — “फोटो से स्कैन” चुनें'); $('file').click(); return; }
+  try {
+    STRM = await navigator.mediaDevices.getUserMedia({ video: { facingMode: FACE, width: { ideal: 1280 }, height: { ideal: 1280 } }, audio: false });
+    const v = $('vid'); v.srcObject = STRM; v.classList.toggle('mir', FACE === 'user'); await v.play().catch(() => { });
+    $('live').classList.add('on'); document.body.style.overflow = 'hidden'; hits = 0; liveLoop();
+  } catch (e) { toast('कैमरा अनुमति नहीं मिली — “फोटो से स्कैन” से फोटो खींचें'); }
+}
+function closeLive() { clearTimeout(LIVET); if (STRM) STRM.getTracks().forEach(t => t.stop()); STRM = null; $('live').classList.remove('on'); document.body.style.overflow = ''; $('gd').classList.remove('ok'); $('lc').classList.remove('ok'); }
+function liveLoop() {
+  clearTimeout(LIVET); if (!STRM) return;
+  LIVET = setTimeout(() => {
+    const v = $('vid');
+    if (HL && v.videoWidth) {
+      try {
+        const r = HL.detect(v), ok = r.landmarks && r.landmarks.length; hits = ok ? hits + 1 : 0;
+        $('gd').classList.toggle('ok', hits >= 2); $('lc').classList.toggle('ok', hits >= 2);
+        $('ltp').innerHTML = hits >= 2 ? '✓ हाथ मिल गया<small>अब बीच वाला बटन दबाएँ</small>' : 'हथेली को आकृति में रखें<small>उंगलियाँ ऊपर, हल्की खुली</small>';
+      } catch (e) { }
+    } else if (!HL) $('ltp').innerHTML = 'हथेली को आकृति में रखें<small>स्कैन इंजन तैयार हो रहा है…</small>';
+    liveLoop();
+  }, 450);
+}
+$('bLive').onclick = openLive; $('lx').onclick = closeLive;
+$('lf').onclick = () => { FACE = FACE === 'user' ? 'environment' : 'user'; closeLive(); openLive(); };
+$('lc').onclick = () => { const v = $('vid'); if (!v.videoWidth) return; const c = loadImg(v); closeLive(); process(c); };
+
+/* ============ चरण 4: फलादेश ============ */
+function report() {
+  const sc = { sw: 60, bu: 60, pr: 60, dh: 60, ka: 60 }, add = o => { for (const k in o || {}) sc[k] += o[k] * 3; };
+  const items = { q: [], l: [], m: [], s: [] };
+  const e = EL[(S.q.palm || '') + '-' + (S.q.fing || '')]; if (e) add(e[4]);
+  Q.forEach(q => { const o = q.o.find(x => x[0] === S.q[q.id]); if (o && o[2]) { add(o[3]); items.q.push([q.t, o[1], o[2]]); } });
+  LINES.forEach(L => { const o = L.o.find(x => x[0] === S.l[L.id]); if (o) { add(o[4]); items.l.push([L.n, o[1], o[3], tone(o[4])]); } });
+  const weak = new Set(), strong = [];
+  MOUNTS.forEach(M => { const v = S.m[M.id]; if (!v) return; add(M[v][1]); items.m.push([M.n, (M.lb || ['उभरा', 'सामान्य', 'दबा'])['usd'.indexOf(v)], M[v][0], v === 'u' ? 'g' : v === 'd' ? 'b' : 'm']); if (v === 'd') weak.add(M.g); if (v === 'u') strong.push(M.n); });
+  SIGNS.forEach(s => { if (S.sg.includes(s[0])) { add(s[5]); items.s.push([s[1] + ' — ' + s[2], s[3], s[4]]); } });
+  for (const k in sc) sc[k] = Math.max(25, Math.min(96, Math.round(sc[k])));
+  const filled = items.q.length + items.l.length + items.m.length + items.s.length + (e ? 1 : 0);
+  if (filled < 3) { $('rep').innerHTML = `<div class="av-card empty">🖐️ फलादेश के लिए पहले हाथ स्कैन करें या कुछ रेखाएं व पर्वत चुनें।<div class="nav2" style="margin-top:12px"><button class="btn" data-go="1">📷 स्कैन करें</button><button class="btn ln" data-go="2">〰️ रेखाएं चुनें</button></div></div>`; return; }
+  const ord = Object.keys(sc).sort((a, b) => sc[b] - sc[a]), top = ord[0], low = ord[ord.length - 1];
+  const lab = v => v >= 80 ? 'उत्तम' : v >= 65 ? 'अच्छा' : v >= 50 ? 'सामान्य' : 'ध्यान दें';
+  const nm = S.name || 'जातक', hand = S.hand === 'L' ? 'बायाँ' : 'दायाँ';
+  let sar = `${esc(nm)} का ${hand} हाथ ${e ? `<b>${e[0]} तत्व</b> का है — ${e[3].split('।')[0]}।` : 'देखा गया।'} सबसे प्रबल पक्ष <b>${CAT[top][0]}</b> है${sc[low] < 60 ? `, जबकि <b>${CAT[low][0]}</b> पर विशेष ध्यान देने की आवश्यकता है` : ''}।`;
+  if (strong.length) sar += ` प्रबल पर्वत: ${strong.join(', ')}।`;
+  // उपाय: दबे पर्वतों के ग्रह + सबसे कमज़ोर क्षेत्र
+  if (sc[low] < 60) weak.add(CATUP[low]);
+  const upay = [...weak].slice(0, 4).map(g => { const u = UPAY[g]; return `<div class="up"><b>${GR[g]} ग्रह को बल दें</b><br>🕉️ मंत्र: <b>${u[0]}</b> — प्रतिदिन 108 बार<br>🙏 उपाय: ${u[1]}<br>💎 रत्न: ${u[2]} <a href="ratna.html" style="color:var(--saf)">(कुंडली से मिलान करें ➜)</a></div>`; }).join('');
+  const li = (arr, f) => `<ul class="rs">${arr.map(f).join('')}</ul>`;
+  const tg = t => t === 'g' ? '<span class="tg g">शुभ</span>' : t === 'b' ? '<span class="tg b">सावधानी</span>' : '<span class="tg m">मिश्रित</span>';
+  const dt = new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  $('rep').innerHTML = `
+  <div class="hero"><div class="e">${e ? e[1] : '🖐️'}</div><div class="nm">${esc(nm)} • ${hand} हाथ • ${dt}</div><h2>${e ? e[2] : 'हस्त रेखा फलादेश'}</h2><p>${sar}</p></div>
+  <div class="av-card"><h3>📊 जीवन के पक्ष</h3>${ord.map(k => `<div class="sc"><span>${CAT[k][1]} ${CAT[k][0]}</span><div class="bar"><i style="width:${sc[k]}%"></i></div><b>${sc[k]}</b></div>`).join('')}<div class="note">${ord.map(k => CAT[k][0] + ': ' + lab(sc[k])).join(' • ')}</div></div>
+  ${e ? `<div class="av-card"><h3>${e[1]} हस्त प्रकार व स्वभाव</h3><p>${e[3]}</p></div>` : ''}
+  ${items.q.length ? `<div class="av-card"><h3>☝️ उंगलियाँ, अंगूठा व हथेली</h3>${li(items.q, x => `<li><b>${x[0]}:</b> ${x[1]}<br>${x[2]}</li>`)}</div>` : ''}
+  ${items.l.length ? `<div class="av-card"><h3>〰️ रेखाओं का फल</h3>${li(items.l, x => `<li><b>${x[0]}</b> — ${x[1]} ${tg(x[3])}<br>${x[2]}</li>`)}</div>` : ''}
+  ${items.m.length ? `<div class="av-card"><h3>⛰️ पर्वतों का फल</h3>${li(items.m, x => `<li><b>${x[0]}</b> — ${x[1]} ${tg(x[3])}<br>${x[2]}</li>`)}</div>` : ''}
+  ${items.s.length ? `<div class="av-card"><h3>✨ विशेष चिह्न</h3>${li(items.s, x => `<li><b>${x[0]}</b> ${tg(x[2])}<br>${x[1]}</li>`)}</div>` : ''}
+  ${upay ? `<div class="av-card"><h3>🪔 उपाय</h3>${upay}<div class="note">रत्न हमेशा शुद्ध, प्रमाणित और शुभ मुहूर्त में धारण करें। मंत्र-जाप व दान से कोई हानि नहीं — इन्हें पहले आरंभ करें।</div></div>` : ''}
+  <div class="av-card"><h3>📚 आधार</h3><div class="src">सामुद्रिक शास्त्र (हस्त-लक्षण, चिह्न, मणिबंध, उंगलियों के छिद्र) • हस्त संजीवन — मेघविजय गणि (17वीं शती) • कीरो — Language of the Hand (स्वास्थ्य रेखा, मणिबंध, गुरु पर्वत का क्रॉस) • आधुनिक हस्त-विज्ञान का तत्व-वर्गीकरण (पृथ्वी, वायु, अग्नि, जल)। जहाँ ‘लोक मान्यता’ लिखा है वह परंपरागत विश्वास है।<br>रेखाएं समय के साथ बदलती हैं — 6–12 महीने में दोबारा स्कैन करें। दोनों हाथ देखने से फलादेश और पूर्ण होता है।</div></div>
+  <div class="nav2 noprint"><button class="btn ok" id="shr">📲 WhatsApp पर भेजें</button><button class="btn mar" id="prt">🖨️ PDF / प्रिंट</button></div>
+  <div class="nav2 noprint"><button class="btn ln" data-go="2">✏️ रेखाएं बदलें</button><button class="btn ln" id="other">🔁 ${S.hand === 'L' ? 'दायाँ' : 'बायाँ'} हाथ देखें</button></div>
+  <button class="btn ln blk noprint" id="rst">🗑️ नया फलादेश (सब साफ़ करें)</button>`;
+  $('shr').onclick = () => {
+    let t = `🖐️ *हस्त रेखा फलादेश — ${nm}* (${hand} हाथ)\n\n${e ? `${e[1]} *${e[2]}*: ${e[3]}\n\n` : ''}📊 ${ord.map(k => `${CAT[k][1]} ${CAT[k][0]} ${sc[k]}`).join(' | ')}\n`;
+    if (items.l.length) t += '\n〰️ *रेखाएं*\n' + items.l.map(x => `• ${x[0]} (${x[1]}): ${x[2]}`).join('\n') + '\n';
+    if (items.m.length) t += '\n⛰️ *पर्वत*\n' + items.m.filter(x => x[3] !== 'm').map(x => `• ${x[0]} — ${x[1]}: ${x[2]}`).join('\n') + '\n';
+    if (items.s.length) t += '\n✨ *चिह्न*\n' + items.s.map(x => `• ${x[0]}: ${x[1]}`).join('\n') + '\n';
+    if (weak.size) t += '\n🪔 *उपाय*\n' + [...weak].slice(0, 4).map(g => `• ${GR[g]}: ${UPAY[g][0]} — ${UPAY[g][1]}`).join('\n') + '\n';
+    share(t.trim());
+  };
+  $('prt').onclick = () => window.print();
+  $('other').onclick = () => { setHand(S.hand === 'L' ? 'R' : 'L'); S.l = {}; S.m = {}; S.sg = []; ['palm', 'fing', 'gr', 'kan', 'ang', 'kon'].forEach(k => { delete S.q[k]; delete S.auto[k]; }); save(); IMG = LM = ENH = null; $('stage').classList.remove('on'); $('tog').style.display = 'none'; $('pv').classList.remove('on'); $('smsg').innerHTML = ''; renderQ(); go(1); toast('अब दूसरा हाथ स्कैन करें'); };
+  $('rst').onclick = () => { if (!confirm('सारे चुनाव साफ़ करें?')) return; Object.assign(S, { q: {}, auto: {}, l: {}, m: {}, sg: [], meas: null }); save(); IMG = LM = ENH = null; $('stage').classList.remove('on'); $('tog').style.display = 'none'; $('pv').classList.remove('on'); $('smsg').innerHTML = ''; renderQ(); go(1); };
+}
+function tone(o) { const s = Object.values(o || {}).reduce((a, b) => a + b, 0); return s > 0 ? 'g' : s < 0 ? 'b' : 'm'; }
+markDone();
+</script>
+</body>
+</html>

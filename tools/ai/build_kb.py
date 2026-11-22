@@ -16,6 +16,10 @@ X = {
  'tools/muhurat.html': """() => Object.values(EV).map(e => e.info ? `मुहूर्त — ${e.t} (${e.al}): ${e.info} प्रमाण: ${e.pr.join('; ')}` : `मुहूर्त — ${e.t} (अन्य नाम: ${e.al}): नक्षत्र: ${e.nak === ALL ? 'कोई भी' : e.nakI.map(i => N.NAK[i]).join(', ')}। तिथि: ${e.tt.map(t => t === 15 ? 'पूर्णिमा' : N.TITHI[t - 1]).join(', ')}${e.k === 0 ? ' (केवल शुक्ल पक्ष)' : ''}। वार: ${e.vrI.map(v => N.VAAR[v]).join(', ')}।${e.maasI ? ' मास: ' + e.maasI.map(m => N.MAAS[m]).join(', ') + '।' : ''}${e.sun ? ' सूर्य: ' + e.sun.map(x => N.SIGN[x]).join(', ') + ' राशि में।' : ''}${e.age ? ' समय/आयु: ' + e.age + '।' : ''} ${(e.nt || []).join(' ')} प्रमाण: ${e.pr.join('; ')}`)""",
  'tools/garbh.html': """() => MO.map((m, i) => `गर्भ संस्कार — गर्भ का ${i + 1}वाँ मास (${m.bn}), मासाधिपति ग्रह ${m.g}: विकास: ${m.dev} आहार: ${m.ahar} दिनचर्या: ${m.vihar} पाठ: ${m.path} मंत्र: ${m.mantra} दान: ${m.daan}`).concat(N.MAAS.map((mm, i) => `जन्म मास फल — ${mm} मास में जन्म: ${JM[i]}`)).concat([...document.querySelectorAll('.kt,.av-card ul')].map(e => 'गर्भ संस्कार — ' + e.textContent))""",
  'tools/mulank.html': """() => M.slice(1).map((m,i) => `अंक ज्योतिष — मूलांक ${i+1} (स्वामी ${m[0]}): ${m[1]} मित्र अंक ${m[2]}, शत्रु अंक ${m[3]}, शुभ रंग ${m[4]}, शुभ दिन ${m[5]}`)""",
+ 'tools/hastrekha.html': """() => LINES.map(L => `हस्त रेखा — ${L.n} (${L.en}): ${L.wh} ` + L.o.map(o => `${o[1]}: ${o[3]}`).join(' || '))
+   .concat(MOUNTS.map(M => `हस्त रेखा पर्वत — ${M.n} (${GR[M.g]}), स्थान ${M.wh}: उभरा: ${M.u[0]} दबा: ${M.d[0]} उपाय: ${UPAY[M.g][0]} — ${UPAY[M.g][1]}`),
+     SIGNS.map(s => `हस्त रेखा चिह्न — ${s[1]} (${s[2]}): ${s[3]}`), Object.values(EL).map(e => `हस्त प्रकार — ${e[2]}: ${e[3]}`),
+     Q.filter(q => q.o[0][2]).map(q => `हस्त रेखा — ${q.t}: ` + q.o.map(o => `${o[1]}: ${o[2]}`).join(' || ')))""",
 }
 TITLES = {}
 for c in json.load(open(os.path.join(ROOT, 'cards.json')))['cards']: TITLES.setdefault(c['path'].split('#')[0], c['title'])

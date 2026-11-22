@@ -225,7 +225,7 @@ function openFromHash() {
   if (c && c.locked) { history.replaceState(null, '', location.pathname + location.search); closeView(); return lockSheet(c); }
   if (!c || $('vTitle').dataset.id === id && $('view').classList.contains('on')) return;
   $('vTitle').dataset.id = id;
-  showView(c.title, `<iframe src="${esc(c.path)}" allow="clipboard-write; geolocation; accelerometer; gyroscope; magnetometer; screen-wake-lock"></iframe>`);
+  showView(c.title, `<iframe src="${esc(c.path)}" allow="clipboard-write; camera; geolocation; accelerometer; gyroscope; magnetometer; screen-wake-lock"></iframe>`);
 }
 window.addEventListener('hashchange', () => { $('vTitle').dataset.id = ''; openFromHash(); });
 load();
