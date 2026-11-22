@@ -76,6 +76,13 @@
 .tg.g{background:var(--okbg);color:var(--ok)}.tg.b{background:var(--badbg);color:var(--bad)}.tg.m{background:var(--midbg);color:var(--mid)}
 .up{background:#fff8e8;border-left:4px solid var(--saf);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:14px}
 .up b{color:var(--mar)}
+.pos{margin-top:10px;background:#fffaf1;border:1px dashed #e9c98a;border-radius:12px;padding:8px 10px}.pos:empty{display:none}
+.pos b{display:block;font-size:13.5px;color:var(--mar);margin-bottom:6px}.pos .chip{font-size:13px;padding:5px 10px}
+.tl3 h4{display:flex;align-items:center;gap:6px;font-size:16px;margin:12px 0 6px;color:var(--mar)}.tl3 h4 small{font-weight:500;color:var(--mut);font-size:12.5px}
+.ev{display:grid;grid-template-columns:74px 1fr;gap:8px;padding:8px 10px;border-radius:12px;margin-bottom:6px;background:#fff;border:1px solid var(--line);font-size:14px}
+.ev .ag{font-family:Poppins;font-weight:700;color:var(--mar);font-size:13px;line-height:1.3}.ev .ag small{display:block;font-family:'Noto Sans Devanagari';font-weight:500;color:var(--mut);font-size:11.5px}
+.ev.g{border-left:4px solid var(--ok)}.ev.b{border-left:4px solid var(--bad)}.ev.m{border-left:4px solid var(--mid)}
+.ev.now{background:#fff4e6}
 .src{font-size:12.5px;color:var(--mut);line-height:1.7}
 .nav2{display:flex;gap:8px;margin-top:6px}.nav2 .btn{flex:1}
 .live{position:fixed;inset:0;z-index:90;background:#000;display:none}
@@ -109,6 +116,8 @@
     <div class="shl">कराग्रे वसते लक्ष्मीः करमध्ये सरस्वती।<br>करमूले तु गोविन्दः प्रभाते करदर्शनम्॥<small>— प्रातः कर-दर्शन श्लोक</small></div>
     <label class="l">👤 नाम (फलादेश पर लिखा जाएगा)</label>
     <input class="in" id="nm" placeholder="जैसे: राहुल शर्मा" autocomplete="off">
+    <label class="l">🎂 वर्तमान आयु (वर्ष) — भूत, वर्तमान और भविष्य के लिए</label>
+    <input class="in" id="age" type="number" min="5" max="100" inputmode="numeric" placeholder="जैसे: 32">
     <label class="l">✋ कौन सा हाथ दिखा रहे हैं?</label>
     <div class="chips" id="hand"><span class="chip on" data-v="R">दायाँ हाथ / Right</span><span class="chip" data-v="L">बायाँ हाथ / Left</span></div>
     <div class="note">सामुद्रिक परंपरा: पुरुष का दायाँ, स्त्री का बायाँ हाथ प्रमुख। आधुनिक मत: जिस हाथ से काम करते हैं वह वर्तमान व कर्म दिखाता है, दूसरा जन्मजात स्वभाव।</div>
@@ -175,7 +184,9 @@
 <script>
 const { $, esc, store, toast, share } = AVUI;
 const KEY = 'av_hast';
-const S = Object.assign({ name: '', hand: 'R', q: {}, auto: {}, l: {}, m: {}, sg: [] }, store.get(KEY, {}));
+const S = Object.assign({ name: '', age: '', hand: 'R', q: {}, auto: {}, l: {}, lp: {}, m: {}, sg: [] }, store.get(KEY, {}));
+S.lp = S.lp || {};
+const POP = location.hash === '#live' && !!window.opener;   // लाइव कैमरा के लिए खुली नई विंडो
 const save = () => store.set(KEY, S);
 
 /* ============ चित्र (SVG) — दायाँ हाथ, अंगूठा दाईं ओर (अपनी हथेली देखते समय) ============ */
@@ -283,6 +294,62 @@ const LINES = [
   ] }
 ];
 
+/* ============ काल-निर्णय (आयु) — रेखा के भाग से आयु (कीरो की आयु-माप पद्धति; भाग्य रेखा मस्तिष्क रेखा को ~35, हृदय रेखा को ~50 वर्ष पर काटती है) ============ */
+const SCALE = {
+  jeevan: { q: 'यह टूट / शाखा जीवन रेखा के किस भाग में है?', p: [['ऊपरी भाग (तर्जनी के पास)', 1, 20], ['बीच (अंगूठे के घुमाव पर)', 21, 45], ['निचला भाग (कलाई के पास)', 46, 75]] },
+  mastishk: { q: 'यह टूट मस्तिष्क रेखा के किस भाग में है?', p: [['शुरू (तर्जनी के नीचे)', 1, 20], ['बीच (मध्यमा के नीचे)', 21, 40], ['आख़िरी भाग (अनामिका के आगे)', 41, 65]] },
+  hriday: { q: 'यह टूट हृदय रेखा के किस भाग में है?', p: [['शुरू (कनिष्ठा के नीचे)', 1, 25], ['बीच (अनामिका-मध्यमा के नीचे)', 26, 45], ['आख़िरी भाग (तर्जनी की ओर)', 46, 65]] },
+  bhagya: { q: 'यह टूट भाग्य रेखा के किस भाग में है?', p: [['नीचे — कलाई से मस्तिष्क रेखा तक', 1, 35], ['बीच — मस्तिष्क से हृदय रेखा तक', 35, 50], ['ऊपर — हृदय रेखा के बाद', 50, 75]] },
+  vivah: { q: 'विवाह रेखा हथेली के किनारे पर कहाँ है?', p: [['हृदय रेखा के पास', 18, 23], ['बीच में', 24, 28], ['कनिष्ठा उंगली की जड़ के पास', 29, 36]] }
+};
+/* pos = आयु रेखा के चुने भाग से; fix = तय आयु [से, तक, घटना, शुभ g / अशुभ b / मिश्रित m] */
+const TIME = {
+  'jeevan.tooti': { pos: ['जीवन में बड़ा परिवर्तन — स्थान, नौकरी, स्वास्थ्य या सोच में', 'b'] },
+  'jeevan.upar': { pos: ['उन्नति — प्रयास सफल, पद-प्रतिष्ठा में वृद्धि', 'g'] },
+  'jeevan.chhoti': { fix: [[46, 60, 'ऊर्जा घटने का समय — स्वास्थ्य व दिनचर्या पर विशेष ध्यान', 'b']] },
+  'jeevan.chandra': { fix: [[50, 70, 'जन्मस्थान से दूर बसना / बड़ा स्थान परिवर्तन', 'm']] },
+  'mastishk.tooti': { pos: ['सोच या कार्यक्षेत्र में अचानक बदलाव; मानसिक तनाव से सावधानी', 'b'] },
+  'mastishk.judi': { fix: [[1, 22, 'परिवार पर निर्भरता — निर्णय बड़ों की सलाह से', 'm']] },
+  'mastishk.alag': { fix: [[14, 24, 'कम उम्र में आत्मनिर्भरता और स्वतंत्र निर्णय', 'g']] },
+  'mastishk.doshakha': { fix: [[35, 60, 'लेखन, परामर्श या शिक्षण से विशेष पहचान', 'g']] },
+  'hriday.tooti': { pos: ['प्रेम-संबंध में दरार या बड़ा भावनात्मक मोड़', 'b'] },
+  'hriday.shani': { fix: [[27, 33, 'प्रेम-विवाह में सोच-समझकर, कुछ देर से निर्णय', 'm']] },
+  'bhagya.spasht': { fix: [[20, 60, 'स्थिर करियर और लगातार उन्नति', 'g']] },
+  'bhagya.chandra': { fix: [[24, 35, 'दूसरों, जनता या विदेश के सहयोग से भाग्योदय; विवाह के बाद उन्नति', 'g']] },
+  'bhagya.jeevan': { fix: [[18, 30, 'परिवार की ज़िम्मेदारियाँ और संघर्ष', 'm'], [30, 45, 'अपने परिश्रम से उन्नति', 'g']] },
+  'bhagya.madhya': { fix: [[1, 29, 'करियर में अस्थिरता — अपनी दिशा की खोज', 'm'], [30, 36, 'भाग्योदय — स्थायी उन्नति की शुरुआत', 'g']] },
+  'bhagya.tooti': { pos: ['करियर या व्यवसाय में परिवर्तन', 'm'] },
+  'bhagya.hriday': { fix: [[48, 52, 'करियर में ठहराव — भावनात्मक निर्णयों से बचें', 'b']] },
+  'bhagya.guru': { fix: [[42, 60, 'उच्च पद, अधिकार और सम्मान', 'g']] },
+  'surya.spasht': { fix: [[35, 55, 'यश, प्रतिष्ठा और धन का उत्तम समय', 'g']] },
+  'surya.chhoti': { fix: [[50, 70, 'मान-सम्मान और जीवन से संतोष', 'g']] },
+  'vivah.ek': { pos: ['विवाह / जीवन का स्थायी संबंध', 'g'] },
+  'vivah.do': { pos: ['पहला गहरा संबंध / विवाह', 'm'], next: ['दूसरा महत्वपूर्ण संबंध या बड़ा मोड़', 'm'] },
+  'vivah.kai': { pos: ['प्रेम-प्रसंग; विवाह का निर्णय सोच-समझकर', 'm'] },
+  'vivah.neeche': { pos: ['विवाह — आगे जीवनसाथी के स्वास्थ्य व आपसी संवाद पर ध्यान', 'm'] },
+  'vivah.upar': { pos: ['विवाह (करियर को प्राथमिकता के बाद)', 'm'] },
+  'vivah.kanta': { pos: ['विवाह — आगे चलकर मतभेद से बचें', 'm'] },
+  'vivah.surya': { pos: ['प्रतिष्ठित परिवार में विवाह', 'g'] },
+  'mani.teen': { fix: [[60, 85, 'सुखी और स्वस्थ वृद्धावस्था', 'g']] },
+  'mani.janjir': { fix: [[35, 50, 'परिश्रम के बाद धन संचय', 'm']] },
+  'm.ketu.u': { fix: [[1, 14, 'सुख-सुविधा वाला बचपन', 'g']] },
+  'm.ketu.d': { fix: [[1, 14, 'बचपन में संघर्ष', 'b']] }
+};
+function events() {
+  const E = [];
+  LINES.forEach(L => {
+    const v = S.l[L.id], t = v && TIME[L.id + '.' + v]; if (!t) return;
+    (t.fix || []).forEach(f => E.push({ a: f[0], b: f[1], t: f[2], k: f[3], src: L.n }));
+    if (t.pos && SCALE[L.id] && S.lp[L.id] != null) {
+      const P = SCALE[L.id].p[S.lp[L.id]]; E.push({ a: P[1], b: P[2], t: t.pos[0], k: t.pos[1], src: L.n });
+      if (t.next) E.push({ a: P[2] + 3, b: P[2] + 10, t: t.next[0], k: t.next[1], src: L.n });
+    }
+  });
+  MOUNTS.forEach(M => { const t = TIME['m.' + M.id + '.' + S.m[M.id]]; if (t) t.fix.forEach(f => E.push({ a: f[0], b: f[1], t: f[2], k: f[3], src: M.n })); });
+  return E.sort((x, y) => x.a - y.a || x.b - y.b);
+}
+const needPos = () => LINES.filter(L => { const t = TIME[L.id + '.' + S.l[L.id]]; return t && t.pos && S.lp[L.id] == null; }).map(L => L.n);
+
 /* ============ पर्वत ============ */
 const GR = { Sun: 'सूर्य', Moon: 'चंद्र', Mars: 'मंगल', Mercury: 'बुध', Jupiter: 'गुरु', Venus: 'शुक्र', Saturn: 'शनि', Rahu: 'राहु', Ketu: 'केतु' };
 const MOUNTS = [
@@ -350,6 +417,7 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-go]'
 
 /* ============ चरण 1: प्रश्न ============ */
 $('nm').value = S.name; $('nm').oninput = () => { S.name = $('nm').value.trim(); save(); };
+$('age').value = S.age || ''; $('age').oninput = () => { S.age = $('age').value; save(); };
 function setHand(v) { S.hand = v; save(); [...$('hand').children].forEach(c => c.classList.toggle('on', c.dataset.v === v)); $('hside').textContent = v === 'L' ? 'बाएँ' : 'दाएँ'; }
 $('hand').onclick = e => { const c = e.target.closest('.chip'); if (c) setHand(c.dataset.v); };
 setHand(S.hand);
@@ -365,17 +433,23 @@ $('qs').onclick = e => { const c = e.target.closest('.chip'); if (!c) return; co
 renderQ();
 
 /* ============ चरण 2: रेखाएं ============ */
+function posHtml(L) {
+  const t = TIME[L.id + '.' + S.l[L.id]]; if (!t || !t.pos) return '';
+  return `<b>⏳ ${SCALE[L.id].q} <span class="note">(इसी से आयु निकलेगी)</span></b><div class="chips">${SCALE[L.id].p.map((p, i) => `<span class="chip${S.lp[L.id] === i ? ' on' : ''}" data-p="${i}">${p[0]} • ${p[1]}–${p[2]} वर्ष</span>`).join('')}</div>`;
+}
 function renderLines() {
   $('lines').innerHTML = LINES.map(L => {
     const v = S.l[L.id], o = L.o.find(x => x[0] === v);
-    return `<div class="av-card lc" data-l="${L.id}"><h3>${L.n} <small>/ ${L.en}</small></h3><div class="wh">${L.wh}</div><div class="opts">${L.o.map(x => `<button class="op${x[0] === v ? ' on' : ''}" data-v="${x[0]}">${palm(ln(x[2]), L.ctx)}${x[1]}</button>`).join('')}</div><div class="f">${o ? '<b>फल:</b> ' + esc(o[3]) : ''}</div></div>`;
+    return `<div class="av-card lc" data-l="${L.id}"><h3>${L.n} <small>/ ${L.en}</small></h3><div class="wh">${L.wh}</div><div class="opts">${L.o.map(x => `<button class="op${x[0] === v ? ' on' : ''}" data-v="${x[0]}">${palm(ln(x[2]), L.ctx)}${x[1]}</button>`).join('')}</div><div class="f">${o ? '<b>फल:</b> ' + esc(o[3]) : ''}</div><div class="pos">${posHtml(L)}</div></div>`;
   }).join('');
 }
 $('lines').onclick = e => {
+  const pc = e.target.closest('.pos .chip');
+  if (pc) { const card = pc.closest('.lc'), id = card.dataset.l, i = +pc.dataset.p; S.lp[id] = S.lp[id] === i ? undefined : i; if (S.lp[id] == null) delete S.lp[id]; save(); card.querySelector('.pos').innerHTML = posHtml(LINES.find(x => x.id === id)); return; }
   const b = e.target.closest('.op'); if (!b) return; const card = b.closest('.lc'), id = card.dataset.l, L = LINES.find(x => x.id === id);
   S.l[id] = S.l[id] === b.dataset.v ? undefined : b.dataset.v; if (!S.l[id]) delete S.l[id]; save();
   [...card.querySelectorAll('.op')].forEach(x => x.classList.toggle('on', x.dataset.v === S.l[id]));
-  const o = L.o.find(x => x[0] === S.l[id]); card.querySelector('.f').innerHTML = o ? '<b>फल:</b> ' + esc(o[3]) : ''; markDone();
+  const o = L.o.find(x => x[0] === S.l[id]); card.querySelector('.f').innerHTML = o ? '<b>फल:</b> ' + esc(o[3]) : ''; card.querySelector('.pos').innerHTML = posHtml(L); markDone();
 };
 
 /* ============ चरण 3: पर्वत व चिह्न ============ */
@@ -499,6 +573,35 @@ $('pv').onclick = () => $('zoom').classList.add('on'); $('zx').onclick = $('zoom
 const msg = (t, k) => $('smsg').innerHTML = `<div class="msg ${k}">${t}</div>`;
 
 const STEPS = ['हाथ खोज रहे हैं…', '21 बिंदु माप रहे हैं…', 'उंगलियों का अनुपात निकाल रहे हैं…', 'ग्रह पर्वत पहचान रहे हैं…', 'रेखाओं का क्षेत्र बना रहे हैं…'];
+function applyScan(lm) {
+  LM = lm; const M = measure(LM.map(p => ({ x: p.x * IMG.width, y: p.y * IMG.height })));
+  const xs = LM.map(p => p.x), ys = LM.map(p => p.y), size = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
+  const set = { palm: M.palm, fing: M.fing, gr: M.gr, kan: M.kan, ang: M.ang_, kon: M.kon };
+  for (const k in set) { S.q[k] = set[k]; S.auto[k] = 1; }
+  S.meas = { R: +M.R.toFixed(2), F: +M.F.toFixed(2), RI: +M.RI.toFixed(2), T: +M.T.toFixed(2), ang: Math.round(M.ang), at: Date.now() }; save(); renderQ(); markDone();
+  $('stage').classList.add('on'); $('tog').style.display = ''; draw(); thumb();
+  const e = EL[S.q.palm + '-' + S.q.fing];
+  msg(`✅ स्कैन पूरा — <b>${e[1]} ${e[2]}</b>। हथेली लंबाई/चौड़ाई ${M.R.toFixed(2)}, मध्यमा/हथेली ${M.F.toFixed(2)}, अंगूठे का कोण ${Math.round(M.ang)}°।${size < 0.35 ? '<br>⚠️ हाथ फोटो में छोटा है — पास से फोटो लें तो माप और सटीक होगा।' : ''}<br>फोटो पर पर्वत व रेखाओं के अनुमानित स्थान दिखाए गए हैं। <b>“रेखाएं उभारें”</b> दबाकर अपनी रेखाएं साफ़ देखें, फिर अगले चरण में मिलान करें।`, 'ok');
+}
+/* नई विंडो (लाइव कैमरा) से स्कैन पिछली विंडो में भेजें और यह विंडो बंद करें */
+function sendBack() {
+  if (!POP) return;
+  try { window.opener.postMessage({ t: 'av-hast', img: IMG.toDataURL('image/jpeg', 0.85), lm: LM.map(p => ({ x: p.x, y: p.y, z: p.z })) }, location.origin); } catch (e) { return; }
+  $('smsg').insertAdjacentHTML('beforeend', '<div class="msg in">↩️ स्कैन पिछली विंडो में भेज दिया — यह विंडो अपने आप बंद हो रही है…</div>');
+  setTimeout(() => { window.close(); setTimeout(() => $('smsg').insertAdjacentHTML('beforeend', '<div class="msg in">यह टैब बंद करके पिछली विंडो पर लौटें — वहाँ स्कैन आ चुका है।</div>'), 700); }, 1800);
+}
+window.addEventListener('message', e => {
+  if (e.origin !== location.origin || !e.data || e.data.t !== 'av-hast' || !Array.isArray(e.data.lm)) return;
+  const im = new Image();
+  im.onload = () => {
+    Object.assign(S, store.get(KEY, {})); S.lp = S.lp || {};
+    IMG = loadImg(im); ENH = null; TG.enh = 0; [...$('tog').children].forEach(c => c.classList.toggle('on', !!TG[c.dataset.k]));
+    if (!$('p1').classList.contains('on')) go(1);
+    applyScan(e.data.lm); try { window.focus(); } catch (x) { }
+    setTimeout(() => $('stage').scrollIntoView({ behavior: 'smooth', block: 'center' }), 200); toast('✅ स्कैन यहाँ आ गया');
+  };
+  im.src = e.data.img;
+});
 async function process(src) {
   IMG = loadImg(src); ENH = null; LM = null; TG.enh = 0; [...$('tog').children].forEach(c => c.classList.toggle('on', !!TG[c.dataset.k]));
   $('stage').classList.add('on'); $('scan').classList.add('on'); $('smsg').innerHTML = ''; draw();
@@ -510,14 +613,7 @@ async function process(src) {
     await new Promise(r2 => setTimeout(r2, Math.max(0, 3000 - (Date.now() - t0))));
     if (!r.landmarks || !r.landmarks.length) { msg('🙏 हथेली साफ़ नहीं दिखी। अच्छी रोशनी में, पूरी हथेली फ्रेम में रखकर दोबारा फोटो लें — या नीचे खुद चुनें।', 'er'); }
     else {
-      LM = r.landmarks[0]; const M = measure(LM.map(p => ({ x: p.x * IMG.width, y: p.y * IMG.height })));
-      const xs = LM.map(p => p.x), ys = LM.map(p => p.y), size = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
-      const set = { palm: M.palm, fing: M.fing, gr: M.gr, kan: M.kan, ang: M.ang_, kon: M.kon };
-      for (const k in set) { S.q[k] = set[k]; S.auto[k] = 1; }
-      S.meas = { R: +M.R.toFixed(2), F: +M.F.toFixed(2), RI: +M.RI.toFixed(2), T: +M.T.toFixed(2), ang: Math.round(M.ang), at: Date.now() }; save(); renderQ(); markDone();
-      $('tog').style.display = ''; draw(); thumb();
-      const e = EL[S.q.palm + '-' + S.q.fing];
-      msg(`✅ स्कैन पूरा — <b>${e[1]} ${e[2]}</b>। हथेली लंबाई/चौड़ाई ${M.R.toFixed(2)}, मध्यमा/हथेली ${M.F.toFixed(2)}, अंगूठे का कोण ${Math.round(M.ang)}°।${size < 0.35 ? '<br>⚠️ हाथ फोटो में छोटा है — पास से फोटो लें तो माप और सटीक होगा।' : ''}<br>फोटो पर पर्वत व रेखाओं के अनुमानित स्थान दिखाए गए हैं। <b>“रेखाएं उभारें”</b> दबाकर अपनी रेखाएं साफ़ देखें, फिर अगले चरण में मिलान करें।`, 'ok');
+      applyScan(r.landmarks[0]); sendBack();
     }
   } catch (err) {
     msg('📶 स्कैन इंजन लोड नहीं हो पाया (इंटरनेट धीमा या बंद)। इंटरनेट चालू करके दोबारा प्रयास करें — या नीचे के विकल्प खुद चुनकर आगे बढ़ें।', 'er');
@@ -615,6 +711,7 @@ function report() {
   const dt = new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' });
   $('rep').innerHTML = `
   <div class="hero"><div class="e">${e ? e[1] : '🖐️'}</div><div class="nm">${esc(nm)} • ${hand} हाथ • ${dt}</div><h2>${e ? e[2] : 'हस्त रेखा फलादेश'}</h2><p>${sar}</p></div>
+  ${timeline()}
   <div class="av-card"><h3>📊 जीवन के पक्ष</h3>${ord.map(k => `<div class="sc"><span>${CAT[k][1]} ${CAT[k][0]}</span><div class="bar"><i style="width:${sc[k]}%"></i></div><b>${sc[k]}</b></div>`).join('')}<div class="note">${ord.map(k => CAT[k][0] + ': ' + lab(sc[k])).join(' • ')}</div></div>
   ${e ? `<div class="av-card"><h3>${e[1]} हस्त प्रकार व स्वभाव</h3><p>${e[3]}</p></div>` : ''}
   ${items.q.length ? `<div class="av-card"><h3>☝️ उंगलियाँ, अंगूठा व हथेली</h3>${li(items.q, x => `<li><b>${x[0]}:</b> ${x[1]}<br>${x[2]}</li>`)}</div>` : ''}
@@ -631,12 +728,30 @@ function report() {
     if (items.l.length) t += '\n〰️ *रेखाएं*\n' + items.l.map(x => `• ${x[0]} (${x[1]}): ${x[2]}`).join('\n') + '\n';
     if (items.m.length) t += '\n⛰️ *पर्वत*\n' + items.m.filter(x => x[3] !== 'm').map(x => `• ${x[0]} — ${x[1]}: ${x[2]}`).join('\n') + '\n';
     if (items.s.length) t += '\n✨ *चिह्न*\n' + items.s.map(x => `• ${x[0]}: ${x[1]}`).join('\n') + '\n';
+    const ag = parseInt(S.age, 10), EV = events();
+    if (ag > 0 && EV.length) { const f = (L, a) => a.length ? `\n${L}\n` + a.map(x => `• ${x.a}–${x.b} वर्ष: ${x.t}`).join('\n') + '\n' : ''; t += '\n⏳ *भूत • वर्तमान • भविष्य* (आयु ' + ag + ')' + f('🕰️ भूतकाल', EV.filter(x => x.b < ag)) + f('📍 वर्तमान', EV.filter(x => x.a <= ag && x.b >= ag)) + f('🔭 भविष्य', EV.filter(x => x.a > ag)); }
     if (weak.size) t += '\n🪔 *उपाय*\n' + [...weak].slice(0, 4).map(g => `• ${GR[g]}: ${UPAY[g][0]} — ${UPAY[g][1]}`).join('\n') + '\n';
     share(t.trim());
   };
   $('prt').onclick = () => window.print();
-  $('other').onclick = () => { setHand(S.hand === 'L' ? 'R' : 'L'); S.l = {}; S.m = {}; S.sg = []; ['palm', 'fing', 'gr', 'kan', 'ang', 'kon'].forEach(k => { delete S.q[k]; delete S.auto[k]; }); save(); IMG = LM = ENH = null; $('stage').classList.remove('on'); $('tog').style.display = 'none'; $('pv').classList.remove('on'); $('smsg').innerHTML = ''; renderQ(); go(1); toast('अब दूसरा हाथ स्कैन करें'); };
-  $('rst').onclick = () => { if (!confirm('सारे चुनाव साफ़ करें?')) return; Object.assign(S, { q: {}, auto: {}, l: {}, m: {}, sg: [], meas: null }); save(); IMG = LM = ENH = null; $('stage').classList.remove('on'); $('tog').style.display = 'none'; $('pv').classList.remove('on'); $('smsg').innerHTML = ''; renderQ(); go(1); };
+  if ($('ageGo')) $('ageGo').onclick = () => { const v = $('age2').value; if (!(+v > 0)) return toast('आयु लिखें'); S.age = v; $('age').value = v; save(); report(); };
+  $('other').onclick = () => { setHand(S.hand === 'L' ? 'R' : 'L'); S.l = {}; S.lp = {}; S.m = {}; S.sg = []; ['palm', 'fing', 'gr', 'kan', 'ang', 'kon'].forEach(k => { delete S.q[k]; delete S.auto[k]; }); save(); IMG = LM = ENH = null; $('stage').classList.remove('on'); $('tog').style.display = 'none'; $('pv').classList.remove('on'); $('smsg').innerHTML = ''; renderQ(); go(1); toast('अब दूसरा हाथ स्कैन करें'); };
+  $('rst').onclick = () => { if (!confirm('सारे चुनाव साफ़ करें?')) return; Object.assign(S, { q: {}, auto: {}, l: {}, lp: {}, m: {}, sg: [], meas: null }); save(); IMG = LM = ENH = null; $('stage').classList.remove('on'); $('tog').style.display = 'none'; $('pv').classList.remove('on'); $('smsg').innerHTML = ''; renderQ(); go(1); };
+}
+function timeline() {
+  const age = parseInt(S.age, 10), E = events(), np = needPos();
+  let h = '<div class="av-card tl3"><h3>⏳ भूत • वर्तमान • भविष्य</h3>';
+  if (!(age > 0 && age < 110)) return h + `<div class="note" style="margin:0 0 6px">अपनी वर्तमान आयु लिखें — रेखाओं से बीते, चल रहे और आने वाले समय का फल दिखेगा।</div><div class="av-row"><input class="in" id="age2" type="number" inputmode="numeric" placeholder="आयु (वर्ष)"><button class="btn" id="ageGo">देखें</button></div></div>`;
+  const past = E.filter(x => x.b < age), now = E.filter(x => x.a <= age && x.b >= age), fut = E.filter(x => x.a > age);
+  const row = (x, w) => `<div class="ev ${x.k}${w === 'n' ? ' now' : ''}"><div class="ag">${x.a}–${x.b} वर्ष<small>${w === 'f' ? (x.a - age <= 1 ? 'अगले वर्ष' : `${x.a - age} वर्ष बाद`) : w === 'p' ? (age - x.b <= 1 ? 'पिछले वर्ष' : `${age - x.b} वर्ष पहले`) : 'अभी चल रहा'}</small></div><div>${esc(x.t)}<div class="note" style="margin:2px 0 0">${esc(x.src)}</div></div></div>`;
+  const ph = age < 25 ? 'शिक्षा और जीवन की नींव बनाने का काल' : age < 40 ? 'करियर, विवाह और स्थिरता का काल' : age < 55 ? 'उपलब्धियों, ज़िम्मेदारियों और प्रतिष्ठा का काल' : 'अनुभव, मार्गदर्शन और आध्यात्म का काल';
+  h += `<div class="note" style="margin:-4px 0 4px">आयु ${age} वर्ष — ${ph}। आयु रेखाओं के माप से अनुमानित है, ±2 वर्ष का अंतर संभव।</div>`;
+  h += `<h4>🕰️ भूतकाल <small>— जो बीत चुका (मिलान करें)</small></h4>` + (past.length ? past.map(x => row(x, 'p')).join('') : '<div class="note">रेखाओं में बीते समय का कोई विशेष योग नहीं चुना गया।</div>');
+  h += `<h4>📍 वर्तमान <small>— अभी चल रहा</small></h4>` + (now.length ? now.map(x => row(x, 'n')).join('') : '<div class="note">इस आयु पर कोई बड़ा मोड़ नहीं — सामान्य, स्थिर समय।</div>');
+  h += `<h4>🔭 भविष्य <small>— आने वाला समय</small></h4>` + (fut.length ? fut.map(x => row(x, 'f')).join('') : '<div class="note">आगे के लिए कोई विशेष योग नहीं चुना गया।</div>');
+  if (np.length) h += `<div class="msg in">⏳ ${np.join(', ')} में टूट/शाखा/स्थान किस भाग में है — यह चुनें तो उसकी आयु भी जुड़ जाएगी। <button class="btn sm ln" data-go="2">चुनें ➜</button></div>`;
+  if (past.length) h += '<div class="note">बीते समय की घटनाएँ आपके जीवन से मिलें तो भविष्य का फल भी उतना ही भरोसेमंद है।</div>';
+  return h + '</div>';
 }
 function tone(o) { const s = Object.values(o || {}).reduce((a, b) => a + b, 0); return s > 0 ? 'g' : s < 0 ? 'b' : 'm'; }
 window.addEventListener('storage', e => { if (e.key !== KEY) return; Object.assign(S, store.get(KEY, {})); renderQ(); markDone(); const on = document.querySelector('.pane.on'); if (on && on.id === 'p4') report(); });
