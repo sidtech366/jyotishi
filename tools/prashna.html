@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>प्रश्न कुंडली | Astro Vikass</title>
+<meta name="theme-color" content="#6b1418">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/ui.css">
+<style>.qg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.qg button{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:8px 4px;font-size:13px;font-weight:700;color:var(--mar);cursor:pointer;line-height:1.3}
+.qg button i{font-style:normal;display:block;font-size:20px}.qg button.on{background:linear-gradient(135deg,#7a1f12,#b5451b);color:#fff;border-color:#7a1f12}
+.vd{border-radius:20px;padding:16px;color:#fff;text-align:center;margin-bottom:12px;box-shadow:0 12px 26px -16px #0008}
+.vd.g{background:linear-gradient(135deg,#0f7a43,#16a34a)}.vd.m{background:linear-gradient(135deg,#a16207,#d97706)}.vd.w{background:linear-gradient(135deg,#b45309,#c2410c)}.vd.b{background:linear-gradient(135deg,#7f1d1d,#b91c1c)}
+.vd .q{font-size:13.5px;opacity:.9}.vd .v{font-family:'Yatra One',serif;font-size:28px;line-height:1.25;margin:4px 0}.vd .s{font-size:14px;opacity:.95}
+.meter{height:10px;background:#ffffff40;border-radius:9px;margin:10px 4px 4px;overflow:hidden}.meter i{display:block;height:100%;background:#fff;border-radius:9px}
+.tri{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.tri div{background:#ffffff26;border-radius:10px;padding:6px 4px;font-size:12px}.tri b{display:block;font-size:18px}
+.sec2{background:#fff;border:1px solid var(--line);border-radius:18px;margin-bottom:12px;overflow:hidden}
+.sec2>h3{margin:0;padding:10px 14px;font-family:'Yatra One',serif;font-weight:400;font-size:19px;color:#fff;background:linear-gradient(90deg,#7a1f12,#b5451b)}
+.sec2 .in{padding:6px 14px 12px}
+.fl{list-style:none;padding:0;margin:6px 0}.fl li{padding:7px 0;border-bottom:1px dashed #efdcb6;font-size:14.5px;display:flex;gap:8px}.fl li:last-child{border:0}.fl li i{font-style:normal;flex:0 0 22px}
+.kv2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.kv2>div{background:#fffaf1;border:1px solid var(--line);border-radius:12px;padding:8px 10px;font-size:13px}.kv2 b{display:block;color:var(--mar);font-size:15px}
+.kv2 .g{background:#effaf3;border-color:#a9dcbb}.kv2 .x{background:#fff4f1;border-color:#f3c0b3}
+.chartw{max-width:330px;margin:6px auto}.chartw svg{width:100%;height:auto}.chartw .sn{font:600 13px Poppins,sans-serif;fill:#b5451b;text-anchor:middle}.chartw .pl{font:700 15px 'Noto Sans Devanagari';text-anchor:middle}.chartw .pl.sm{font-size:12.5px}
+.tl{width:100%;border-collapse:collapse;font-size:13.5px}.tl th{background:#fbefd9;color:var(--mar);padding:6px;text-align:left;font-size:12.5px}.tl td{padding:6px;border-bottom:1px solid #f3e4c6}
+.up{background:#fff8e8;border-left:4px solid #ee6f16;border-radius:10px;padding:8px 12px;margin:6px 0;font-size:14.5px}</style>
+</head>
+<body>
+<header class="av-head"><div class="ic">🔮</div><h1>प्रश्न कुंडली</h1><p>जन्म तिथि पता न हो तब भी — प्रश्न कुंडली + नाम राशि + अंक ज्योतिष, तीनों मिलाकर उत्तर</p><span class="brand">ASTRO VIKASS</span></header>
+<main class="av-wrap">
+<div class="av-card">
+  <div class="note" style="margin:0 0 6px">जिनकी जन्म तिथि/समय पता नहीं — उनके लिए। प्रश्न पूछने के <b>इसी क्षण</b> की कुंडली (प्रश्न मार्ग, षट्पंचाशिका, ताजिक नीलकंठी), <b>नाम राशि</b> (तारा बल, चंद्र बल, गोचर) और <b>अंक ज्योतिष</b> — तीनों मिलाकर उत्तर।</div>
+  <label class="l">👤 यजमान का नाम (हिंदी या English)</label>
+  <input class="in" id="nm" placeholder="जैसे: रमेश कुमार / Ramesh Kumar" autocomplete="off">
+  <div class="note" id="nmI"></div>
+  <label class="l">❓ प्रश्न किस विषय का है?</label>
+  <div class="qg" id="qg"></div>
+  <label class="l">✍️ प्रश्न (वैकल्पिक)</label>
+  <input class="in" id="qt" placeholder="जैसे: क्या इस साल विवाह होगा?">
+  <div id="pl"></div>
+  <details style="margin-top:8px"><summary style="cursor:pointer;color:var(--mar);font-weight:700">⚙️ प्रश्न का समय / जन्म तिथि (वैकल्पिक)</summary>
+    <label class="l">🕐 प्रश्न का समय (खाली = अभी)</label><input class="in" type="datetime-local" id="pt">
+    <label class="l">🎂 जन्म तिथि अनुमानित भी पता हो तो (अंक ज्योतिष के लिए)</label><input class="in" type="date" id="dob">
+  </details>
+  <button class="btn blk mt" id="go">🔮 प्रश्न का उत्तर देखें</button>
+</div>
+<div id="out"></div>
+</main>
+<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+<script src="lib/places.js"></script>
+<script src="lib/astro.js"></script>
+<script src="lib/ui.js"></script>
+<script src="lib/akshar.js"></script>
+<script>
+const { $, esc, store, share, toast } = AVUI, A = AVAstro, N = A.N, K = AVAkshar;
+const Q = [
+  ['vivah', '💍', 'विवाह', 7, 'विवाह कब/होगा या नहीं'], ['prem', '❤️', 'प्रेम संबंध', 5, 'प्रेम सफल होगा?'], ['naukri', '💼', 'नौकरी', 10, 'नौकरी/प्रमोशन मिलेगा?'],
+  ['vyapar', '📈', 'व्यापार', 7, 'व्यापार/सौदा सफल?'], ['dhan', '💰', 'धन लाभ', 11, 'पैसा/लाभ मिलेगा?'], ['rog', '🌿', 'रोग-स्वास्थ्य', 6, 'रोग ठीक होगा?'],
+  ['santan', '👶', 'संतान', 5, 'संतान सुख कब?'], ['mukadma', '⚖️', 'मुकदमा', 6, 'केस जीतेंगे?'], ['yatra', '✈️', 'यात्रा-विदेश', 9, 'यात्रा/विदेश योग?'],
+  ['vastu', '🔎', 'खोई वस्तु', 2, 'खोई चीज़ मिलेगी?'], ['pariksha', '📚', 'परीक्षा-पढ़ाई', 4, 'परीक्षा में सफलता?'], ['sampatti', '🏠', 'मकान-ज़मीन', 4, 'संपत्ति/मकान मिलेगा?'],
+  ['karz', '🧾', 'कर्ज़ मुक्ति', 6, 'कर्ज़ से छुटकारा?'], ['samanya', '🙏', 'सामान्य भाग्य', 1, 'आने वाला समय कैसा?'], ['lauta', '🚶', 'गया व्यक्ति', 7, 'गया व्यक्ति लौटेगा?']];
+const EXA = { Sun: 0, Moon: 1, Mars: 9, Mercury: 5, Jupiter: 3, Venus: 11, Saturn: 6 };
+const SPEED = ['Moon', 'Mercury', 'Venus', 'Sun', 'Mars', 'Jupiter', 'Saturn'];
+const BEN = ['Jupiter', 'Venus', 'Mercury'], MAL = ['Saturn', 'Mars', 'Rahu', 'Ketu', 'Sun'];
+const PLS = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'];
+const SH = { Sun: 'सू', Moon: 'चं', Mars: 'मं', Mercury: 'बु', Jupiter: 'गु', Venus: 'शु', Saturn: 'श', Rahu: 'रा', Ketu: 'के' };
+const PC = { Sun: '#c2410c', Moon: '#1d4ed8', Mars: '#b91c1c', Mercury: '#15803d', Jupiter: '#a16207', Venus: '#be185d', Saturn: '#334155', Rahu: '#4b5563', Ketu: '#6b21a8' };
+const UP = { Sun: ['ॐ घृणि सूर्याय नमः', 'रोज़ तांबे के लोटे से सूर्य को जल दें, पिता का सम्मान करें।', 'माणिक्य'], Moon: ['ॐ सों सोमाय नमः', 'सोमवार को शिवलिंग पर दूध-जल, माता का आशीर्वाद लें।', 'मोती'], Mars: ['ॐ अं अंगारकाय नमः', 'मंगलवार को हनुमान चालीसा, गुड़-चना दान।', 'मूंगा'], Mercury: ['ॐ बुं बुधाय नमः', 'बुधवार को गाय को हरा चारा, गणेश जी को दूर्वा।', 'पन्ना'], Jupiter: ['ॐ बृं बृहस्पतये नमः', 'गुरुवार को पीली वस्तु (चना दाल, हल्दी) दान, केले के वृक्ष की पूजा।', 'पुखराज'], Venus: ['ॐ शुं शुक्राय नमः', 'शुक्रवार को लक्ष्मी पूजा, सफेद मिठाई/वस्त्र दान।', 'हीरा/ओपल'], Saturn: ['ॐ शं शनैश्चराय नमः', 'शनिवार को पीपल के नीचे सरसों तेल का दीपक, गरीब को भोजन।', 'नीलम'], Rahu: ['ॐ रां राहवे नमः', 'शनिवार को नारियल बहते जल में, दुर्गा पूजा।', 'गोमेद'], Ketu: ['ॐ कें केतवे नमः', 'कुत्ते को रोटी, गणेश पूजा।', 'लहसुनिया'] };
+const ISHT = { Sun: 'सूर्य देव / श्री राम', Moon: 'भगवान शिव', Mars: 'श्री हनुमान', Mercury: 'श्री गणेश / विष्णु', Jupiter: 'भगवान विष्णु / गुरु', Venus: 'माँ लक्ष्मी', Saturn: 'शनिदेव / हनुमान' };
+const CH = { A: 1, I: 1, J: 1, Q: 1, Y: 1, B: 2, K: 2, R: 2, C: 3, G: 3, L: 3, S: 3, D: 4, M: 4, T: 4, E: 5, H: 5, N: 5, X: 5, U: 6, V: 6, W: 6, O: 7, Z: 7, F: 8, P: 8 };
+const NP = [null, 'Sun', 'Moon', 'Jupiter', 'Rahu', 'Mercury', 'Venus', 'Ketu', 'Saturn', 'Mars'];
+const NF = [null, [1, 2, 3, 9], [1, 2, 7], [3, 6, 9], [1, 4, 8], [1, 5, 6], [3, 6, 9], [2, 7], [1, 4, 8], [3, 6, 9]], NE = [null, [8], [8, 9], [5, 8], [2, 9], [2], [4, 8], [8, 9], [2, 9], [5]];
+const NCOL = [null, 'सुनहरा, नारंगी', 'सफेद, हल्का हरा', 'पीला', 'नीला, धूसर', 'हरा', 'गुलाबी, सफेद', 'हल्का हरा, सफेद', 'गहरा नीला', 'लाल'];
+const root = n => { while (n > 9) n = String(n).split('').reduce((a, b) => a + +b, 0); return n; };
+const dsum = s => String(s).replace(/\D/g, '').split('').reduce((a, b) => a + +b, 0);
+const sg = x => Math.floor(x / 30), ORD = n => ['', 'पहले', 'दूसरे', 'तीसरे', 'चौथे', 'पाँचवें', 'छठे', 'सातवें', 'आठवें', 'नौवें', 'दसवें', 'ग्यारहवें', 'बारहवें'][n] || n + 'वें';
+
+let QK = 'samanya';
+$('qg').innerHTML = Q.map(q => `<button data-k="${q[0]}"${q[0] === QK ? ' class="on"' : ''}><i>${q[1]}</i>${q[2]}</button>`).join('');
+$('qg').onclick = e => { const b = e.target.closest('button'); if (!b) return; QK = b.dataset.k; $('qg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); const q = Q.find(x => x[0] === QK); $('qt').placeholder = 'जैसे: ' + q[4]; };
+const pf = AVUI.placeField($('pl'), { hint: 'प्रश्न पूछने का स्थान (डिफ़ॉल्ट: वाराणसी)' });
+const s0 = store.get('av_prashna', {}); $('nm').value = s0.nm || '';
+function nmInfo() { const v = $('nm').value.trim(); if (!v) { $('nmI').textContent = ''; return null; } const r = K.fromName(v); if (!r) { $('nmI').textContent = 'नाम का पहला अक्षर पहचाना नहीं गया'; return null; }
+  $('nmI').innerHTML = `नामाक्षर <b>${r.s}</b> ➜ ${N.NAK[r.n]} नक्षत्र, चरण ${r.p || 1} • <b>${N.SIGN[r.sign]}</b> राशि${r.approx ? ' (लगभग)' : ''}`; return r; }
+$('nm').oninput = nmInfo; nmInfo();
+
+function chart(pos, asc) {
+  const lagS = sg(asc), HP = [null, [200, 100], [100, 36], [36, 100], [100, 200], [36, 300], [100, 364], [200, 300], [300, 364], [364, 300], [300, 200], [364, 100], [300, 36]];
+  const SP = [null, [200, 182], [100, 90], [88, 104], [182, 204], [88, 304], [100, 322], [200, 230], [300, 322], [314, 304], [220, 204], [314, 104], [300, 90]];
+  let t = '';
+  for (let h = 1; h <= 12; h++) { const s = (lagS + h - 1) % 12, [x, y] = HP[h], [sx, sy] = SP[h]; t += `<text x="${sx}" y="${sy + 4}" class="sn">${s + 1}</text>`;
+    const L = PLS.filter(p => sg(pos[p]) === s).map(p => ({ s: SH[p] + ' ' + Math.floor(pos[p] % 30) + '°', c: PC[p] })); if (h === 1) L.unshift({ s: 'प्र.ल ' + Math.floor(asc % 30) + '°', c: '#7a1f12' });
+    const big = [1, 4, 7, 10].includes(h), lh = big ? 17 : 14, y0 = y - (L.length - 1) * lh / 2 - (big ? 8 : 0); L.forEach((l, i) => t += `<text x="${x}" y="${y0 + i * lh + 5}" class="pl${big ? '' : ' sm'}" style="fill:${l.c}">${l.s}</text>`); }
+  return `<div class="chartw"><svg viewBox="0 0 400 400"><rect x="2" y="2" width="396" height="396" rx="14" fill="#fffaf1" stroke="#b5451b" stroke-width="3"/><path d="M2 2L398 398M398 2L2 398M200 2L398 200L200 398L2 200Z" fill="none" stroke="#d98a4a" stroke-width="2"/>${t}</svg></div>`;
+}
+
+$('go').onclick = () => {
+  const nmv = $('nm').value.trim(); if (!nmv) { toast('यजमान का नाम लिखें', 1); $('nm').focus(); return; }
+  store.set('av_prashna', { nm: nmv });
+  const P = pf.get() || { name: 'वाराणसी', lat: 25.31, lon: 83.01 }, now = new Date();
+  let dt = now; if ($('pt').value) dt = new Date($('pt').value);
+  const y = dt.getFullYear(), m = dt.getMonth() + 1, d = dt.getDate(), hr = dt.getHours() + dt.getMinutes() / 60, tz = pf.tz(y + '-' + String(m).padStart(2, '0') + '-' + String(d).padStart(2, '0'));
+  const jd = A.jdOf(y, m, d, hr - tz), pos = A.planets(jd), asc = A.ascendant(jd, P.lat, P.lon), lagS = sg(asc);
+  const H = p => ((sg(pos[p]) - lagS + 12) % 12) + 1, HS = s => ((s - lagS + 12) % 12) + 1;
+  const q = Q.find(x => x[0] === QK), KB = q[3], kSign = (lagS + KB - 1) % 12;
+  const L1 = N.LORD[lagS], LK = N.LORD[kSign];
+  const ret = p => !['Sun', 'Moon', 'Rahu', 'Ketu'].includes(p) && A.retro(p, jd);
+  const comb = p => !['Sun', 'Moon', 'Rahu', 'Ketu'].includes(p) && Math.abs(((pos[p] - pos.Sun + 540) % 360) - 180) < 8;
+  const F = [];  // [चिह्न, पाठ, अंक]
+  function strength(p, role) {
+    let s = 0; const h = H(p), x = sg(pos[p]); const why = [];
+    if ([1, 4, 7, 10].includes(h)) { s += 2; why.push(ORD(h) + ' (केंद्र) भाव में'); } else if ([5, 9].includes(h)) { s += 2; why.push(ORD(h) + ' (त्रिकोण) भाव में'); } else if (h === 11) { s += 1.5; why.push('11वें (लाभ) भाव में'); } else if ([6, 8, 12].includes(h)) { s -= 2; why.push(ORD(h) + ' (दुःस्थान) भाव में'); } else { s += 0.3; why.push(ORD(h) + ' भाव में'); }
+    if (EXA[p] === x) { s += 2; why.push('उच्च राशि'); } else if (EXA[p] != null && (EXA[p] + 6) % 12 === x) { s -= 2; why.push('नीच राशि'); } else if (N.LORD[x] === p) { s += 1; why.push('स्वराशि'); }
+    if (ret(p)) { s -= 0.5; why.push('वक्री (विलंब)'); } if (comb(p)) { s -= 1; why.push('अस्त'); }
+    F.push([s >= 1.5 ? '✅' : s <= -1 ? '⚠️' : '🔸', `${role} <b>${N.P[p]}</b> — ${why.join(', ')}`, s]); return s;
+  }
+  let sc = 0;
+  const s1 = strength(L1, 'लग्नेश (आप/प्रश्नकर्ता)'); let sK = s1; sc += s1 * 1.2;
+  if (LK !== L1) sc += (sK = strength(LK, `कार्येश (${ORD(KB)} भाव — ${q[2]}) का स्वामी`)) * 1.2;
+  else F.push(['✅', 'लग्नेश ही कार्येश है — कार्य आपके अपने हाथ में है', 1.5]), sc += 1.5;
+  // ताजिक: इत्थशाल
+  if (LK !== L1) {
+    const dist = ((sg(pos[LK]) - sg(pos[L1]) + 12) % 12) + 1;
+    if ([1, 3, 5, 9, 11].includes(dist)) {
+      const fast = SPEED.indexOf(L1) < SPEED.indexOf(LK) ? L1 : LK, slow = fast === L1 ? LK : L1, app = (pos[fast] % 30) < (pos[slow] % 30);
+      if (app) { sc += 3; F.push(['🤝', `<b>इत्थशाल योग</b> — लग्नेश और कार्येश मित्र-दृष्टि में, तेज़ ग्रह (${N.P[fast]}) पीछे से मिल रहा है: कार्य सिद्धि का प्रबल संकेत`, 3]); }
+      else { sc -= 0.5; F.push(['↩️', `<b>ईसराफ़ योग</b> — दोनों का योग बीत चुका है: मौका निकल गया हो या पहले जैसी बात न बने`, -0.5]); }
+    } else if ([4, 7, 10].includes(dist)) { sc += 0.5; F.push(['🔸', 'लग्नेश-कार्येश शत्रु दृष्टि (4/7/10) में — संघर्ष/मेहनत के बाद काम बनेगा', 0.5]); }
+    else { sc -= 1; F.push(['⚠️', 'लग्नेश-कार्येश में कोई दृष्टि-संबंध नहीं — किसी माध्यम (मध्यस्थ) की ज़रूरत होगी', -1]); }
+  }
+  // चंद्रमा
+  const mh = H('Moon'), wax = ((pos.Moon - pos.Sun + 360) % 360) < 180;
+  if ([1, 4, 7, 10, 5, 9, 11].includes(mh)) { sc += 1.5; F.push(['🌙', `चंद्रमा ${ORD(mh)} भाव में — मन स्थिर, प्रश्न शुभ`, 1.5]); } else if ([6, 8, 12].includes(mh)) { sc -= 1.5; F.push(['🌙', `चंद्रमा ${ORD(mh)} भाव में — चिंता, बाधा`, -1.5]); }
+  if (wax) { sc += 0.5; F.push(['🌔', 'शुक्ल पक्ष (बढ़ता चंद्र) — वृद्धि', 0.5]); } else F.push(['🌘', 'कृष्ण पक्ष — धीमी प्रगति', 0]);
+  // शुभ-पाप
+  const inH = (h) => PLS.filter(p => H(p) === h);
+  const bL = inH(1).filter(p => BEN.includes(p)), mL = inH(1).filter(p => MAL.includes(p)), bK = inH(KB).filter(p => BEN.includes(p)), mK = inH(KB).filter(p => MAL.includes(p));
+  if (bL.length) { sc += 1; F.push(['✨', `लग्न में शुभ ग्रह (${bL.map(p => N.P[p]).join(', ')})`, 1]); } if (mL.length) { sc -= 1; F.push(['⚠️', `लग्न में पाप ग्रह (${mL.map(p => N.P[p]).join(', ')})`, -1]); }
+  if (KB !== 1) { if (bK.length) { sc += 1; F.push(['✨', `${ORD(KB)} भाव (${q[2]}) में शुभ ग्रह ${bK.map(p => N.P[p]).join(', ')}`, 1]); } if (mK.length && QK !== 'mukadma' && QK !== 'karz' && QK !== 'rog') { sc -= 1; F.push(['⚠️', `${KB}वें भाव में पाप ग्रह ${mK.map(p => N.P[p]).join(', ')}`, -1]); } }
+  if ([1, 5, 7, 9].includes(H('Jupiter'))) { sc += 1; F.push(['🙏', 'गुरु की दृष्टि लग्न पर — ईश्वर कृपा, रक्षा', 1]); }
+  // विशेष प्रश्न
+  if (QK === 'rog' || QK === 'karz') { const s8 = inH(8).filter(p => MAL.includes(p)); if (s8.length) { sc -= 1; F.push(['⚠️', '8वें भाव में पाप ग्रह — सावधानी, इलाज लंबा', -1]); } if ([3, 6, 11].includes(H('Mars')) || [3, 6, 11].includes(H('Saturn'))) { sc += 1; F.push(['💪', 'पाप ग्रह 3/6/11 में — रोग/शत्रु/कर्ज़ पर विजय', 1]); } }
+  if (QK === 'mukadma') { const L7 = N.LORD[(lagS + 6) % 12]; const a = strength(L7, 'विरोधी पक्ष (सातवें भाव) का स्वामी'); sc += (s1 > a ? 1 : -1); F.push([s1 > a ? '⚖️' : '⚠️', s1 > a ? 'आपका पक्ष (लग्नेश) विरोधी से बलवान' : 'विरोधी पक्ष बलवान — समझौता बेहतर', 0]); }
+  const lt = [0, 3, 6, 9].includes(lagS) ? 'chara' : [1, 4, 7, 10].includes(lagS) ? 'sthira' : 'dwi';
+  // प्रश्न पंचांग
+  const ti = A.tithiNo(jd), pn = A.nakNo(jd), vr = dt.getDay();
+  if ([4, 9, 14, 19, 24, 29].includes(ti)) { sc -= 0.5; F.push(['🔸', 'रिक्ता तिथि (' + A.tithiName(ti) + ') में प्रश्न — थोड़ी बाधा', -0.5]); }
+  const pScore = Math.max(0, Math.min(100, 50 + sc * 6));
+
+  /* ---- नाम राशि ---- */
+  const nr = K.fromName(nmv), NFct = []; let nScore = 50;
+  if (nr) {
+    const ms = sg(pos.Moon), mN = Math.floor(pos.Moon / (360 / 27)), tara = ((mN - nr.n + 27) % 27) % 9, cb = ((ms - nr.sign + 12) % 12) + 1;
+    const TN = ['जन्म', 'सम्पत्', 'विपत्', 'क्षेम', 'प्रत्यरि', 'साधक', 'वध', 'मित्र', 'अति-मित्र'], tg = [1, 3, 5, 7, 8].includes(tara);
+    nScore += tg ? 15 : tara === 0 ? 0 : -15; NFct.push([tg ? 'g' : 'x', 'तारा बल', `${TN[tara]} तारा — ${tg ? 'शुभ' : tara === 0 ? 'सामान्य' : 'अशुभ'}`]);
+    const cg = [1, 3, 6, 7, 10, 11].includes(cb); nScore += cg ? 15 : -15; NFct.push([cg ? 'g' : 'x', 'चंद्र बल', `प्रश्न का चंद्रमा आपकी राशि से ${cb}वाँ — ${cg ? 'बलवान' : 'कमज़ोर'}`]);
+    const sh = ((sg(pos.Saturn) - nr.sign + 12) % 12) + 1, jh = ((sg(pos.Jupiter) - nr.sign + 12) % 12) + 1;
+    const ss = [12, 1, 2].includes(sh) ? 'साढ़ेसाती (' + ({ 12: 'पहला', 1: 'दूसरा', 2: 'तीसरा' })[sh] + ' चरण)' : [4, 8].includes(sh) ? 'ढैया (' + sh + 'वाँ शनि)' : '';
+    if (ss) { nScore -= 10; NFct.push(['x', 'शनि गोचर', ss + ' चल रही है']); } else NFct.push(['g', 'शनि गोचर', `शनि ${sh}वें — साढ़ेसाती/ढैया नहीं`]);
+    const jg = [2, 5, 7, 9, 11].includes(jh); nScore += jg ? 10 : -5; NFct.push([jg ? 'g' : '', 'गुरु गोचर', `गुरु आपकी राशि से ${jh}वें — ${jg ? 'शुभ, सहायक' : 'सामान्य'}`]);
+    nr.lord = N.LORD[nr.sign];
+  }
+  nScore = Math.max(0, Math.min(100, nScore));
+
+  /* ---- अंक ज्योतिष ---- */
+  const lat = (/[a-z]/i.test(nmv) ? nmv : AVQ.rom(nmv)).toUpperCase().replace(/[^A-Z]/g, '');
+  const nn = lat ? root(lat.split('').reduce((a, c) => a + (CH[c] || 0), 0)) : null;
+  const dayN = root(dsum(y + '' + m + d)), dob = $('dob').value, mul = dob ? root(+dob.slice(8)) : null, bh = dob ? root(dsum(dob)) : null;
+  const base = mul || nn; let aScore = 50, afr = '';
+  if (base) { const ok = NF[base].includes(dayN), bad = NE[base].includes(dayN); aScore += ok ? 25 : bad ? -25 : 0; afr = ok ? 'मित्र' : bad ? 'शत्रु' : 'सम'; }
+  aScore = Math.max(0, Math.min(100, aScore));
+
+  /* ---- संयुक्त निर्णय ---- */
+  const tot = Math.round(pScore * 0.6 + nScore * 0.25 + aScore * 0.15);
+  const V = tot >= 66 ? ['g', '✅ हाँ — कार्य सिद्ध होगा'] : tot >= 52 ? ['m', '🟡 प्रयास से सफलता मिलेगी'] : tot >= 40 ? ['w', '⚠️ विलंब व बाधा — उपाय करें'] : ['b', '❌ अभी अनुकूल समय नहीं'];
+  const TIME = { chara: 'शीघ्र — लगभग 1 से 4 सप्ताह में', dwi: 'मध्यम — लगभग 1 से 3 महीने में', sthira: 'देर से — लगभग 3 से 6 महीने या अधिक' }[lt];
+  const LTN = { chara: 'चर', dwi: 'द्विस्वभाव', sthira: 'स्थिर' }[lt];
+  const DIRS = ['पूर्व', 'दक्षिण', 'पश्चिम', 'उत्तर'];
+  let spec = '';
+  if (QK === 'vastu') spec = `<div class="up">🔎 <b>खोई वस्तु:</b> ${lt === 'sthira' ? 'घर/कार्यस्थल के अंदर ही है' : lt === 'dwi' ? 'पास ही है, किसी के पास या रखी जगह से थोड़ा हटकर' : 'दूर चली गई है/किसी के हाथ लगी है'} • दिशा: <b>${DIRS[lagS % 4]}</b> • ${[1, 4, 7, 10].includes(mh) || bL.length ? 'मिलने की अच्छी संभावना' : 'मिलना कठिन — खोज जारी रखें'}</div>`;
+  if (QK === 'lauta') spec = `<div class="up">🚶 ${lt === 'chara' ? 'व्यक्ति आगे बढ़ रहा है — लौटने में समय लगेगा' : lt === 'sthira' ? 'व्यक्ति एक जगह टिका है — शीघ्र खबर मिलेगी' : 'व्यक्ति लौटने के बारे में सोच रहा है'}</div>`;
+  if (QK === 'rog') spec = `<div class="up">🌿 ${tot >= 52 ? 'इलाज से लाभ होगा — दवा जारी रखें' : 'डॉक्टर बदलकर/दूसरी राय लेकर इलाज करें, महामृत्युंजय जप करें'}</div>`;
+  const weak = s1 < sK ? L1 : LK;
+  const qtxt = $('qt').value.trim() || q[4];
+
+  $('out').innerHTML = `
+  <div class="vd ${V[0]}"><div class="q">${q[1]} ${esc(qtxt)}</div><div class="v">${V[1]}</div><div class="s">संयुक्त अंक ${tot}/100 • समय: ${TIME}</div>
+    <div class="meter"><i style="width:${tot}%"></i></div>
+    <div class="tri"><div>🔮 प्रश्न कुंडली<b>${Math.round(pScore)}</b></div><div>👤 नाम राशि<b>${Math.round(nScore)}</b></div><div>🔢 अंक<b>${Math.round(aScore)}</b></div></div></div>
+  ${spec}
+  <div class="sec2"><h3>🔮 प्रश्न कुंडली</h3><div class="in">
+    <div class="note">${d}/${m}/${y} ${A.fmtH(hr)} • ${esc(P.name)} • प्रश्न लग्न <b>${N.SIGN[lagS]}</b> (${LTN}) • ${A.tithiName(ti)} • ${N.NAK[pn]} • ${N.VAAR[vr]}</div>
+    ${chart(pos, asc)}
+    <ul class="fl">${F.map(f => `<li><i>${f[0]}</i><span>${f[1]}</span></li>`).join('')}</ul>
+    <div class="note">लग्न ${LTN} है — ${lt === 'chara' ? 'चर लग्न: परिणाम जल्दी, स्थिति बदलती है' : lt === 'sthira' ? 'स्थिर लग्न: परिणाम देर से पर स्थायी' : 'द्विस्वभाव: परिणाम दो चरणों में'}।</div>
+    <details><summary style="cursor:pointer;color:var(--mar);font-weight:700;margin-top:6px">ग्रह स्थिति तालिका</summary><table class="tl"><tr><th>ग्रह</th><th>राशि</th><th>अंश</th><th>भाव</th></tr>${PLS.map(p => `<tr><td style="color:${PC[p]};font-weight:700">${N.P[p]}${ret(p) ? ' (व)' : ''}${comb(p) ? ' (अ)' : ''}</td><td>${N.SIGN[sg(pos[p])]}</td><td>${(pos[p] % 30).toFixed(1)}°</td><td>${H(p)}</td></tr>`).join('')}</table></details>
+  </div></div>
+  <div class="sec2"><h3>👤 नाम से भाग्यफल</h3><div class="in">
+    ${nr ? `<div class="note">नामाक्षर <b>${nr.s}</b> • ${N.NAK[nr.n]} (चरण ${nr.p || 1}) • <b>${N.SIGN[nr.sign]}</b> राशि • राशि स्वामी ${N.P[nr.lord]}</div>
+    <div class="kv2">${NFct.map(f => `<div class="${f[0]}"><b>${f[1]}</b>${f[2]}</div>`).join('')}</div>
+    <div class="kv2"><div><b>💎 शुभ रत्न</b>${UP[nr.lord][2]}</div><div><b>🙏 इष्ट देव</b>${ISHT[nr.lord]}</div></div>` : '<div class="note">नाम का अक्षर पहचाना नहीं गया</div>'}
+  </div></div>
+  <div class="sec2"><h3>🔢 अंक ज्योतिष</h3><div class="in"><div class="kv2">
+    <div><b>नामांक</b>${nn || '—'} ${nn ? '(' + N.P[NP[nn]] + ')' : ''}</div>
+    ${mul ? `<div><b>मूलांक / भाग्यांक</b>${mul} / ${bh}</div>` : '<div><b>मूलांक</b>जन्म तिथि नहीं दी</div>'}
+    <div class="${afr === 'मित्र' ? 'g' : afr === 'शत्रु' ? 'x' : ''}"><b>आज का अंक</b>${dayN} — आपके अंक ${base || '—'} से ${afr || '—'}</div>
+    <div><b>शुभ अंक / रंग</b>${base ? NF[base].join(', ') + ' • ' + NCOL[base] : '—'}</div>
+  </div></div></div>
+  <div class="sec2"><h3>🙏 उपाय</h3><div class="in">
+    <div class="up"><b>कार्य सिद्धि हेतु (${N.P[LK]}):</b> ${UP[LK][1]}<br>मंत्र: <b>${UP[LK][0]}</b> — 108 बार</div>
+    ${weak !== LK ? `<div class="up"><b>कमज़ोर ग्रह (${N.P[weak]}):</b> ${UP[weak][1]}<br>मंत्र: <b>${UP[weak][0]}</b></div>` : ''}
+    ${nr ? `<div class="up"><b>राशि स्वामी (${N.P[nr.lord]}):</b> ${ISHT[nr.lord]} की पूजा करें।</div>` : ''}
+    <div class="up">शुभ समय पर (अपने शुभ अंक ${base ? NF[base][0] : ''} वाली तारीख, शुभ होरा) काम आगे बढ़ाएँ।</div>
+  </div></div>
+  <button class="btn ok blk" id="sh">💬 WhatsApp पर भेजें</button>
+  <div class="note" style="margin-top:8px">आधार: प्रश्न मार्ग, षट्पंचाशिका, ताजिक नीलकंठी (इत्थशाल-ईसराफ़), मुहूर्त चिंतामणि (तारा-चंद्र बल), कीरो/कैल्डियन अंक पद्धति। संयुक्त अंक = प्रश्न 60% + नाम 25% + अंक 15%।</div>`;
+  $('sh').onclick = () => share(`🔮 *प्रश्न कुंडली — ${nmv}*\n${q[1]} ${qtxt}\n\n*उत्तर: ${V[1]}*\nसंयुक्त अंक: ${tot}/100\n⏳ समय: ${TIME}\n\n🔮 प्रश्न लग्न: ${N.SIGN[lagS]} (${LTN})\n${F.filter(f => Math.abs(f[2]) >= 1).slice(0, 5).map(f => '• ' + f[1].replace(/<[^>]+>/g, '')).join('\n')}\n\n👤 नाम राशि: ${nr ? N.SIGN[nr.sign] + ', ' + N.NAK[nr.n] : '—'}\n${NFct.map(f => '• ' + f[1] + ': ' + f[2]).join('\n')}\n🔢 नामांक ${nn || '—'}${mul ? ', मूलांक ' + mul : ''}\n\n🙏 उपाय: ${UP[LK][1]} मंत्र: ${UP[LK][0]}`);
+  $('out').scrollIntoView({ behavior: 'smooth' });
+};
+</script>
+</body>
+</html>
