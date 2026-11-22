@@ -532,14 +532,38 @@ $('file').onchange = e => {
 /* ============ लाइव कैमरा ============ */
 let STRM = null, FACE = 'environment', LIVET = null, hits = 0;
 $('gd').innerHTML = `<path d="${OUT}"/>`;
+/* कैमरा न खुलने के कारण पहचानकर सही हल दिखाएं */
+const IN_FRAME = (() => { try { return window.top !== window.self; } catch (e) { return true; } })();
+const SELF_URL = location.href.split('#')[0] + '#live';
+const INAPP = /FBAN|FBAV|Instagram|WhatsApp|Line\/|; wv\)/i.test(navigator.userAgent);
+function framePolicyBlocks() { const fp = document.permissionsPolicy || document.featurePolicy; try { return fp && fp.allowsFeature ? !fp.allowsFeature('camera') : false; } catch (e) { return false; } }
+function camHelp(kind) {
+  const nw = `<a class="btn blk" href="${SELF_URL}" target="_blank" rel="noopener" id="nwin">🔓 नई विंडो में खोलकर कैमरा चालू करें</a>`;
+  const ph = `<button class="btn ln blk" onclick="document.getElementById('file').click()">🖼️ अभी फोटो से स्कैन करें</button>`;
+  const T = {
+    frame: `📷 यह पेज वेबसाइट के अंदर (फ्रेम में) खुला है, जहाँ फ़ोन कैमरा चालू नहीं होने देता। नीचे दबाएं — टूल नई विंडो में खुलेगा और कैमरा की अनुमति माँगेगा। आपके चुनाव वहाँ भी बने रहेंगे।${nw}${ph}`,
+    denied: `📷 इस वेबसाइट के लिए कैमरा बंद (Block) है। चालू करने के लिए:<br>1️⃣ ऊपर पते (URL) के बाईं ओर 🔒 / ⓘ चिह्न दबाएं<br>2️⃣ <b>अनुमतियाँ / Permissions → कैमरा → अनुमति दें (Allow)</b><br>3️⃣ पेज रीफ़्रेश करके फिर “लाइव कैमरा” दबाएं${IN_FRAME ? nw : ''}${ph}`,
+    inapp: `📷 WhatsApp/Instagram/Facebook के अंदर खुले पेज में लाइव कैमरा नहीं चलता। ऊपर ⋮ मेनू से <b>“Chrome में खोलें / Open in browser”</b> चुनें।${ph}`,
+    none: `📷 इस फ़ोन/ब्राउज़र में लाइव कैमरा उपलब्ध नहीं।${ph}`,
+    busy: `📷 कैमरा किसी दूसरे ऐप में चल रहा है। वह ऐप बंद करके फिर प्रयास करें।${ph}`
+  };
+  $('smsg').innerHTML = `<div class="msg in">${T[kind]}</div>`; $('smsg').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const a = $('nwin'); if (a) a.onclick = e => { const w = window.open(SELF_URL, '_blank'); if (w) e.preventDefault(); };
+}
 async function openLive() {
   engine().catch(() => { });
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast('लाइव कैमरा उपलब्ध नहीं — “फोटो से स्कैन” चुनें'); $('file').click(); return; }
+  if (IN_FRAME && framePolicyBlocks()) return camHelp('frame');
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return camHelp(INAPP ? 'inapp' : IN_FRAME ? 'frame' : 'none');
   try {
     STRM = await navigator.mediaDevices.getUserMedia({ video: { facingMode: FACE, width: { ideal: 1280 }, height: { ideal: 1280 } }, audio: false });
     const v = $('vid'); v.srcObject = STRM; v.classList.toggle('mir', FACE === 'user'); await v.play().catch(() => { });
-    $('live').classList.add('on'); document.body.style.overflow = 'hidden'; hits = 0; liveLoop();
-  } catch (e) { toast('कैमरा अनुमति नहीं मिली — “फोटो से स्कैन” से फोटो खींचें'); }
+    $('live').classList.add('on'); document.body.style.overflow = 'hidden'; hits = 0; liveLoop(); $('smsg').innerHTML = '';
+  } catch (e) {
+    const n = e && e.name;
+    if (n === 'NotFoundError' || n === 'OverconstrainedError') return camHelp('none');
+    if (n === 'NotReadableError' || n === 'AbortError') return camHelp('busy');
+    camHelp(IN_FRAME ? 'frame' : INAPP ? 'inapp' : 'denied');
+  }
 }
 function closeLive() { clearTimeout(LIVET); if (STRM) STRM.getTracks().forEach(t => t.stop()); STRM = null; $('live').classList.remove('on'); document.body.style.overflow = ''; $('gd').classList.remove('ok'); $('lc').classList.remove('ok'); }
 function liveLoop() {
@@ -556,7 +580,8 @@ function liveLoop() {
     liveLoop();
   }, 450);
 }
-$('bLive').onclick = openLive; $('lx').onclick = closeLive;
+$('bLive').onclick = openLive;
+if (location.hash === '#live' && !IN_FRAME) { history.replaceState(null, '', location.pathname + location.search); setTimeout(openLive, 300); } $('lx').onclick = closeLive;
 $('lf').onclick = () => { FACE = FACE === 'user' ? 'environment' : 'user'; closeLive(); openLive(); };
 $('lc').onclick = () => { const v = $('vid'); if (!v.videoWidth) return; const c = loadImg(v); closeLive(); process(c); };
 
