@@ -238,6 +238,7 @@ const PERS = /मेरी|मेरा|मेरे|मुझे|मैं|ह�
 function done(w, a, cls) { if (cls) w.classList.add(cls); w.innerHTML = fmtA(a.h) + (a.src || ''); busy = false; $('go').disabled = false; }
 async function ask(qq) {
   const q = (qq || $('q').value).trim(); if (!q || busy) return;
+  try { AVTRK('search', '🙏 सिद्धांत से प्रश्न: ' + q); } catch (e) { }
   busy = true; $('go').disabled = true; $('q').value = ''; $('q').style.height = 'auto';
   add('u', esc(q)); const w = add('b', '<span class="dots"><i></i><i></i><i></i></span>');
   await new Promise(r => setTimeout(r, 30));

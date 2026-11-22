@@ -91,3 +91,35 @@
   const foot = () => '<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>';
   window.AVUI = { $, esc, store, toast, share, waUrl, iso, placeField, birthForm, foot };
 })();
+/* 📊 AVTRK — मुख्य ऐप (Apps Script) के अंदर खुलने पर गतिविधि भेजें: क्या खोजा, क्या भरा (एडमिन लॉग, हर रविवार साफ़) */
+(function (W) {
+  if (W.AVTRK || W.parent === W) { W.AVTRK = W.AVTRK || function () {}; return; }
+  function send(t, d, x) { try { W.parent.postMessage({ avTrk: 1, t: t, d: String(d || '').slice(0, 400), x: x || null }, '*'); } catch (e) {} }
+  W.AVTRK = send;
+  const D = document;
+  const lab = el => {
+    let l = '';
+    if (el.id) { const L = D.querySelector('label[for="' + el.id + '"]'); if (L) l = L.textContent; }
+    if (!l) { const p = el.closest('label'); if (p) l = p.textContent.replace(el.value || '', ''); }
+    if (!l && el.previousElementSibling && el.previousElementSibling.tagName === 'LABEL') l = el.previousElementSibling.textContent;
+    if (!l) { let p = el.parentElement; for (let k = 0; k < 3 && p && !l; k++, p = p.parentElement) { const L = p.querySelector('label'); if (L && !L.contains(el) && p.querySelectorAll('input,select,textarea').length <= 2) l = L.textContent; } }
+    if (!l) l = el.getAttribute('aria-label') || el.title || '';
+    return String(l || el.placeholder || el.name || el.id || 'फ़ील्ड').replace(/[*:\s]+$/,'').replace(/\s+/g, ' ').trim().slice(0, 40);
+  };
+  const isSrch = el => el.type === 'search' || /खोज|search|🔍|ढूँढ|ढूंढ/i.test((el.placeholder || '') + ' ' + (el.id || ''));
+  const val = el => el.tagName === 'SELECT' ? (el.options[el.selectedIndex] || {}).text || el.value : el.value;
+  let ti = null, lastI = '', ts = null, lastS = '';
+  function snap() {
+    const o = {}, a = [];
+    D.querySelectorAll('input,select,textarea').forEach(el => {
+      if (/^(password|hidden|button|submit|checkbox|radio|file|range)$/.test(el.type) || isSrch(el) || !el.value || !el.offsetParent) return;
+      const k = lab(el), v = String(val(el)).slice(0, 80); if (o[k]) return; o[k] = v; a.push(k + ': ' + v);
+    });
+    const s = a.join(' | '); if (!s || s === lastI) return; lastI = s; send('input', s, o);
+  }
+  D.addEventListener('change', e => { const el = e.target; if (!el || !el.matches || !el.matches('input,select,textarea') || isSrch(el)) return; clearTimeout(ti); ti = setTimeout(snap, 4000); }, true);
+  D.addEventListener('input', e => {
+    const el = e.target; if (!el || !el.matches || !el.matches('input') || !isSrch(el)) return;
+    clearTimeout(ts); ts = setTimeout(() => { const v = el.value.trim(); if (v.length >= 2 && v !== lastS && !(lastS && lastS.indexOf(v) === 0)) { lastS = v; send('search', v); } }, 2500);
+  }, true);
+})(window);

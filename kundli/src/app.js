@@ -48,7 +48,21 @@ function initForm() {
     if (s && s.lat) $('#placeHint').textContent = `✓ ${s.place}`;
   } catch (e) { }
   $('#kForm').addEventListener('submit', onSubmit);
+  /* मुख्य ऐप की "मेरी कुंडलियाँ" से खुलने पर: #kd=<विवरण> ➜ वही कुंडली फिर से बनाकर दिखाएँ */
+  try {
+    const m = location.hash.match(/kd=([^&]+)/);
+    if (m) {
+      const s = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(m[1])))));
+      for (const k in s) if ($('#' + k)) $('#' + k).value = s[k];
+      if (s.lat) $('#placeHint').textContent = `✓ ${s.place}`;
+      history.replaceState(null, '', location.pathname + location.search);
+      REPLAY = true; setTimeout(() => $('#kForm').requestSubmit ? $('#kForm').requestSubmit() : onSubmit({ preventDefault() { } }), 200);
+    }
+  } catch (e) { }
 }
+/* 📊 मुख्य ऐप के अंदर खुला हो तो बनी कुंडली का विवरण एडमिन लॉग + क्लाइंट की "मेरी कुंडलियाँ" में भेजें */
+let REPLAY = false;
+function avTrk(t, d, x) { try { if (window.parent !== window) window.parent.postMessage({ avTrk: 1, t, d: String(d || '').slice(0, 400), x: x || null }, '*'); } catch (e) { } }
 function localMatches(q) {
   const n = norm(q); if (!n) return [];
   const scored = [];
@@ -123,6 +137,8 @@ async function onSubmit(e) {
     } catch (e) { }
     $('#editbar').scrollIntoView({ behavior: 'smooth', block: 'start' });
     saveLead(save);
+    if (!REPLAY) avTrk('kundli', name + ' • ' + dob.split('-').reverse().join('/') + ' ' + tob + ' • ' + ($('#place').value || ''), save);
+    REPLAY = false;
   }, 700);
 }
 /* बिना AI के उत्तर देने हेतु संरचित सार */
