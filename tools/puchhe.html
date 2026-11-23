@@ -9,41 +9,72 @@
 <link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="lib/ui.css">
 <style>.hide{display:none!important}
-.chat{display:flex;flex-direction:column;gap:10px;min-height:120px}
-.msg{max-width:92%;padding:11px 13px;border-radius:16px;font-size:15px;line-height:1.7;white-space:pre-line;word-wrap:break-word}
-.msg.u{align-self:flex-end;background:linear-gradient(135deg,#7a1c1c,#a8321e);color:#fff;border-bottom-right-radius:4px}
-.msg.b{align-self:flex-start;background:#fff;border:1px solid #f0dcb4;color:#3a2418;border-bottom-left-radius:4px;box-shadow:0 8px 20px -16px #6b141866}
+:root{--sd:#6b1418;--sd2:#a8321e;--sg:#ee6f16;--gold:#f6c453}
+html,body{height:100%}
+body{margin:0;background:#fbf3e6;overflow:hidden}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column;max-width:760px;margin:0 auto;background:#fffaf2;box-shadow:0 0 40px -20px #6b141855}
+/* शीर्ष पट्टी */
+.top{flex:0 0 auto;display:flex;align-items:center;gap:11px;padding:10px 14px;color:#fff;background:linear-gradient(120deg,#3d0a0d,#6b1418 45%,#a8321e);position:relative;z-index:2;box-shadow:0 6px 18px -10px #3d0a0dcc}
+.av{position:relative;flex:0 0 44px;height:44px;border-radius:50%;display:grid;place-items:center;font:400 22px 'Yatra One',serif;color:#6b1418;background:radial-gradient(circle at 35% 30%,#fff3c4,#f6c453 55%,#e0912b);box-shadow:0 0 0 2px #ffffff40,0 4px 12px #0006}
+.av::after{content:'';position:absolute;right:1px;bottom:1px;width:11px;height:11px;border-radius:50%;background:#22c55e;border:2px solid #6b1418}
+.top .nm{flex:1;min-width:0;line-height:1.25}
+.top .nm b{display:block;font:400 20px 'Yatra One','Noto Sans Devanagari',serif;letter-spacing:.3px}
+.top .nm small{display:block;font-size:12px;opacity:.88;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .br{font:700 10.5px Poppins,sans-serif;letter-spacing:1.2px;color:var(--gold);border:1px solid #f6c45366;border-radius:999px;padding:3px 9px;white-space:nowrap}
+/* कुंडली पट्टी */
+#kbx{flex:0 0 auto}
+.kb{display:flex;align-items:center;gap:10px;padding:8px 14px;background:#fff3dd;border-bottom:1px solid #f1dcb2;font-size:13px;color:#4a2a1a}
+.kb b{color:var(--sd)}.kb small{color:#8a6d5a}.kb a{color:var(--sd2);font-weight:700}
+.kb label{margin-left:auto;display:flex;align-items:center;gap:6px;font-weight:700;color:#166534;white-space:nowrap;font-size:12.5px}
+.kb input{accent-color:#16a34a;width:16px;height:16px}
+/* चैट */
+.chat{flex:1 1 auto;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:16px 14px 10px;overscroll-behavior:contain;
+  background:radial-gradient(circle at 20% 10%,#fff 0,#fffaf200 40%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ctext x='30' y='38' font-size='16' text-anchor='middle' fill='%23e9d3a8' fill-opacity='.35'%3E%E0%A5%90%3C/text%3E%3C/svg%3E") #fffaf2}
+.msg{position:relative;max-width:84%;padding:10px 14px;border-radius:18px;font-size:15px;line-height:1.7;white-space:pre-line;word-wrap:break-word;animation:pop .22s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.msg.u{align-self:flex-end;background:linear-gradient(135deg,#8a1f1a,#c2410c);color:#fff;border-bottom-right-radius:5px;box-shadow:0 6px 16px -10px #a8321e}
+.msg.b{align-self:flex-start;margin-left:36px;background:#fff;color:#3a2418;border:1px solid #f0e0c2;border-bottom-left-radius:5px;box-shadow:0 8px 22px -16px #6b141880}
+.msg.b::before{content:'ॐ';position:absolute;left:-36px;bottom:0;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font:400 14px 'Yatra One',serif;color:#6b1418;background:radial-gradient(circle at 35% 30%,#fff3c4,#f6c453 60%,#e0912b);box-shadow:0 2px 6px #6b141844}
 .msg.b.sys{background:#fffbeb;border-color:#fde68a}
-.msg .src{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.msg .src a{font-size:12px;font-weight:700;color:#a8321e;background:#fff1e0;border-radius:999px;padding:3px 9px;text-decoration:none}
-.msg .meta{display:block;font-size:11.5px;color:#8a6d5a;margin-top:6px}
-.dots{display:inline-flex;gap:4px}.dots i{width:7px;height:7px;border-radius:50%;background:#a8321e;animation:bl 1s infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
-@keyframes bl{0%,100%{opacity:.25}50%{opacity:1}}
-.sug{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}.sug::-webkit-scrollbar{display:none}
-.sug span{flex:0 0 auto;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid #f3c98b;color:var(--mar);font-size:13px;font-weight:600;cursor:pointer}
-.kb{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:#fff7e6;border:1px solid #f3dcae;margin-bottom:10px;font-size:13.5px}
-.kb b{color:var(--mar)}.kb label{margin-left:auto;display:flex;align-items:center;gap:6px;font-weight:700;color:#166534;white-space:nowrap}
-.inp{position:sticky;bottom:0;display:flex;gap:8px;padding:10px 0 4px;background:linear-gradient(#fff8ec00,#fff8ec 30%)}
-.inp textarea{flex:1;resize:none;min-height:48px;max-height:120px;padding:12px 14px;border-radius:16px;border:1.5px solid #efd9ae;font:500 15px 'Noto Sans Devanagari',sans-serif;outline:none;background:#fff}
-.inp textarea:focus{border-color:#ee6f16}
-.inp button{flex:0 0 54px;border:0;border-radius:16px;background:linear-gradient(135deg,#ee6f16,#a8321e);color:#fff;font-size:22px;cursor:pointer}
-.inp button:disabled{opacity:.5}
-.left{text-align:center;font-size:12px;color:var(--mut);margin-top:4px}</style>
+.msg b{color:var(--sd)}.msg.u b{color:#fff}
+.msg .src{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;padding-top:8px;border-top:1px dashed #f0dcb4}
+.msg .src a{font-size:12px;font-weight:700;color:var(--sd2);background:#fff1e0;border:1px solid #f8d9b0;border-radius:999px;padding:3px 10px;text-decoration:none}
+.msg .meta{display:block;font-size:12px;color:#8a6d5a;margin-top:6px}
+.wel b.h{display:block;font:400 19px 'Yatra One',serif;color:var(--sd);margin-bottom:2px}
+.cap{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0 2px;white-space:normal}
+.cap span{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:12px;background:#fff7ea;border:1px solid #f5e1bd;font-size:12px;font-weight:600;color:#5a3320;text-align:center;line-height:1.3;cursor:pointer;transition:.15s}
+.cap span i{font-style:normal;font-size:19px}
+.cap span:active{transform:scale(.96);background:#ffeccc}
+.dots{display:inline-flex;gap:4px;vertical-align:middle}.dots i{width:7px;height:7px;border-radius:50%;background:var(--sd2);animation:bl 1s infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes bl{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}
+/* नीचे: सुझाव + इनपुट */
+.dock{flex:0 0 auto;background:#fffaf2;border-top:1px solid #f1e2c6;padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
+.sug{display:flex;gap:6px;overflow-x:auto;padding:0 2px 8px;scrollbar-width:none}.sug::-webkit-scrollbar{display:none}
+.sug span{flex:0 0 auto;padding:6px 12px;border-radius:999px;background:#fff;border:1px solid #f3c98b;color:var(--sd);font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.sug span:active{background:#fff1e0}
+.inp{display:flex;align-items:flex-end;gap:8px;background:#fff;border:1.5px solid #efd9ae;border-radius:26px;padding:5px 5px 5px 16px;box-shadow:0 6px 20px -14px #6b141899;transition:border-color .15s}
+.inp:focus-within{border-color:var(--sg)}
+.inp textarea{flex:1;resize:none;border:0;outline:none;background:none;min-height:24px;max-height:120px;padding:9px 0;font:500 15px/1.45 'Noto Sans Devanagari',sans-serif;color:#3a2418}
+.inp button{flex:0 0 42px;height:42px;border:0;border-radius:50%;background:linear-gradient(135deg,#ee6f16,#a8321e);color:#fff;font-size:18px;cursor:pointer;display:grid;place-items:center;box-shadow:0 4px 12px -4px #a8321e}
+.inp button:disabled{opacity:.45}
+.inp button:active{transform:scale(.93)}
+.left{text-align:center;font-size:11.5px;color:#8a6d5a;margin-top:5px;min-height:0}
+.left:empty{display:none}
+.tag{text-align:center;font-size:11px;color:#a08670;margin-top:5px}</style>
 </head>
 <body>
-<header class="av-head"><div class="ic">🙏</div><h1>सिद्धांत — पूछें</h1><p>Astro Vikass के ज्योतिष सहायक — व्रत, मुहूर्त, पंचांग, कुंडली, मंत्र, उपाय — तुरंत उत्तर</p><span class="brand">ASTRO VIKASS</span></header>
-<main class="av-wrap">
-<div class="av-card">
-  <div id="kbx"></div>
+<div class="app">
+<header class="top"><div class="av">सि</div><div class="nm"><b>सिद्धांत</b><small>● ऑनलाइन • ज्योतिष सहायक</small></div><span class="br">ASTRO VIKASS</span></header>
+<div id="kbx"></div>
+<div class="chat" id="chat"><div class="msg b wel"><b class="h">🙏 नमस्ते, मैं सिद्धांत हूँ</b>हिंदी या Hinglish में कुछ भी पूछिए —
+<div class="cap"><span data-ask="आज का पंचांग"><i>🌅</i>पंचांग</span><span data-ask="अगली एकादशी का पारण कब है?"><i>🪔</i>व्रत-त्योहार</span><span data-ask="गृह प्रवेश का शुभ मुहूर्त"><i>⏳</i>मुहूर्त</span><span data-ask="मेरी कुंडली के दोष"><i>🔯</i>कुंडली</span><span data-ask="हनुमान जी का ध्यान मंत्र"><i>📿</i>मंत्र-पूजा</span><span data-ask="नौकरी के लिए उपाय"><i>🌿</i>उपाय-वास्तु</span></div><small class="meta">जैसे: “karwa chauth ki puja vidhi”, “सपने में बैल देखना”</small></div></div>
+<div class="dock">
   <div class="sug" id="sug"></div>
-  <div class="chat" id="chat"><div class="msg b">🙏 नमस्ते! मैं <b>सिद्धांत</b> हूँ — Astro Vikass का ज्योतिष सहायक।
-व्रत-त्योहार की तिथि, मुहूर्त, पारण, पूजा विधि, सामग्री, कथा • आज का पंचांग • आपकी कुंडली (दोष, रत्न, दशा) • मंत्र, वास्तु, उपाय — कुछ भी पूछिए, हिंदी या Hinglish में।
-<small class="meta">उदाहरण: “karwa chauth ki puja vidhi”, “अगली एकादशी का पारण कब है?”</small></div></div>
-  <div class="inp"><textarea id="q" rows="1" placeholder="अपना प्रश्न लिखें…"></textarea><button id="go">➤</button></div>
+  <div class="inp"><textarea id="q" rows="1" placeholder="अपना प्रश्न लिखें…"></textarea><button id="go" aria-label="भेजें">➤</button></div>
   <div class="left" id="left"></div>
+  <div class="tag">Astro Vikass • ☎ 7069492135</div>
 </div>
-</main>
-<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
+</div>
 <script src="lib/places.js"></script>
 <script src="lib/astro.js"></script>
 <script src="lib/ui.js"></script>
@@ -116,7 +147,8 @@ $('sug').innerHTML = SUG.map(s => `<span>${s}</span>`).join('');
 $('sug').onclick = e => { const s = e.target.closest('span'); if (s) ask(s.textContent); };
 /* ---------- चैट ---------- */
 const chat = $('chat');
-function add(cls, html) { const d = document.createElement('div'); d.className = 'msg ' + cls; d.innerHTML = html; chat.appendChild(d); d.scrollIntoView({ behavior: 'smooth', block: 'end' }); return d; }
+function add(cls, html) { const d = document.createElement('div'); d.className = 'msg ' + cls; d.innerHTML = html; chat.appendChild(d); down(); return d; }
+function down() { requestAnimationFrame(() => chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' })); }
 const srcHtml = R => { const seen = new Set(), L = R.filter(o => !seen.has(o.k.t) && seen.add(o.k.t)).slice(0, 4); return L.length ? `<div class="src">${L.map(o => `<a href="../${o.k.p}">📚 ${esc(o.k.t)}</a>`).join('')}</div>` : ''; };
 /* कुंडली का केवल प्रश्न से जुड़ा भाग भेजें — उत्तर तेज़ */
 function kSel(q) {
@@ -235,7 +267,7 @@ function kbAns(q) {
 const fmtA = t => t.replace(/\n/g, '<br>');
 let busy = false;
 const PERS = /मेरी|मेरा|मेरे|मुझे|मैं|हमारी|हमारा|meri|mera|mere|mujhe|main\b|hamari|hamara|my\b|mine|कुंडली|kundli|kundali|लग्न|lagna|दशा|dasha|रत्न|ratna|ratn|इष्ट|isht|दोष|dosh|मांगलिक|manglik/i;
-function done(w, a, cls) { if (cls) w.classList.add(cls); w.innerHTML = fmtA(a.h) + (a.src || ''); busy = false; $('go').disabled = false; }
+function done(w, a, cls) { if (cls) w.classList.add(cls); w.innerHTML = fmtA(a.h) + (a.src || ''); down(); busy = false; $('go').disabled = false; }
 async function ask(qq) {
   const q = (qq || $('q').value).trim(); if (!q || busy) return;
   try { AVTRK('search', '🙏 सिद्धांत से प्रश्न: ' + q); } catch (e) { }
@@ -267,7 +299,7 @@ async function ask(qq) {
     w.classList.add('sys');
     w.innerHTML = esc(NOINFO) + '\n\n<small>प्रश्न ऐसे पूछें: “करवा चौथ की पूजा विधि”, “अगली एकादशी का पारण कब है”, “आज राहुकाल”, “मेरी कुंडली के दोष”, “पूजा घर किस दिशा में”</small>';
   }
-  busy = false; $('go').disabled = false;
+  down(); busy = false; $('go').disabled = false;
 }
 $('go').onclick = () => ask();
 chat.addEventListener('click', e => { const a = e.target.closest('[data-ask]'); if (!a) return; e.preventDefault(); ask(a.dataset.ask); });
