@@ -386,13 +386,16 @@ async function ask(qq) {
   if (kq) ctx += `### यजमान की कुंडली (${KD.n}, ${KD.d} ${KD.t}, ${KD.p || ''}):\n${kSel(q)}\n\n`;
   if (R.length) ctx += '### साइट का ज्ञान भंडार:\n' + R.map(o => `[${o.k.t}] ${o.k.x}`).join('\n\n');
   try {
-    const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 12000);
-    const r = await fetch(EXEC, { method: 'POST', body: JSON.stringify({ act: 'ask', q, ctx, dev: DEV }), signal: ac.signal }).then(x => x.json()); clearTimeout(tm);
+    let r = await askParent(q, ctx);                          // मुख्य ऐप में खुला ➜ लॉगिन क्लाइंट की पहचान से (प्रति क्लाइंट सीमा)
+    if (!r || r.error === 'NOLOGIN') { const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 30000);
+      r = await fetch(EXEC, { method: 'POST', body: JSON.stringify({ act: 'ask', q, ctx, dev: DEV }), signal: ac.signal }).then(x => x.json()); clearTimeout(tm); }
     if (!r.ok) throw new Error(r.error || 'त्रुटि');
-    w.innerHTML = esc(r.data.a).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/^\s*[\*\-] /gm, '• ') + (r.data.a.includes('उपलब्ध नहीं') ? '' : (kq ? '<div class="src"><a href="../kundli/?embed=1">🪔 आपकी कुंडली</a></div>' : srcHtml(R)));
+    w.innerHTML = esc(r.data.a).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/^\s*[\*\-] /gm, '• ') + (r.data.a.includes('उपलब्ध नहीं') ? '' : (kq ? '<div class="src"><a href="../kundli/?embed=1">🪔 आपकी कुंडली</a></div>' : /स्रोत/.test(r.data.a) ? srcHtml(R) : ''));
     $('left').textContent = r.data.left >= 0 ? `आज ${r.data.left} प्रश्न और पूछ सकते हैं` : '';
   } catch (e) {
     w.classList.add('sys');
+    const em = String((e && e.message) || '');
+    if (/सीमा|प्रश्न पूरे|बहुत प्रश्न|कल फिर/.test(em)) { w.innerHTML = '🙏 ' + esc(em.replace(/^🙏\s*/, '')) + '\n\n<small>व्रत, पंचांग, आपकी कुंडली और ज्ञान भंडार वाले प्रश्नों के उत्तर बिना सीमा मिलते रहेंगे।</small>'; down(); busy = false; $('go').disabled = false; return; }
     w.innerHTML = esc(NOINFO) + '\n\n<small>प्रश्न ऐसे पूछें: “करवा चौथ की पूजा विधि”, “अगली एकादशी का पारण कब है”, “आज राहुकाल”, “मेरी कुंडली के दोष”, “पूजा घर किस दिशा में”</small>';
   }
   down(); busy = false; $('go').disabled = false;
@@ -401,6 +404,15 @@ $('go').onclick = () => ask();
 chat.addEventListener('click', e => { const a = e.target.closest('[data-ask]'); if (!a) return; e.preventDefault(); ask(a.dataset.ask); });
 $('q').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(); } });
 $('q').addEventListener('input', () => { $('q').style.height = 'auto'; $('q').style.height = Math.min(120, $('q').scrollHeight) + 'px'; });
+/* मुख्य ऐप (लॉगिन) के ज़रिये AI प्रश्न — जवाब न आए तो null */
+function askParent(q, ctx) {
+  if (window.parent === window) return Promise.resolve(null);
+  return new Promise(res => { const id = 'a' + Date.now() + Math.random().toString(36).slice(2, 6); let done = false;
+    let ack = false; const h = e => { const m = e.data; if (!m || !m.avAskR || m.id !== id) return; if (m.ack) { ack = true; return; } done = true; removeEventListener('message', h); res(m); };
+    addEventListener('message', h); try { window.parent.postMessage({ avAsk: 1, id, q, ctx }, '*'); } catch (e) { }
+    setTimeout(() => { if (!ack && !done) { removeEventListener('message', h); res(null); } }, 2500);   // मुख्य ऐप ने तुरंत ‘ack’ न भेजा ➜ सीधा
+    setTimeout(() => { if (!done) { removeEventListener('message', h); res(null); } }, 45000); });
+}
 const pq = new URLSearchParams(location.search).get('q'); if (pq) { $('q').value = pq; setTimeout(() => ask(), 300); }
 </script>
 </body>
