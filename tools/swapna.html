@@ -18,15 +18,18 @@
 <header class="av-head"><div class="ic">🌙</div><h1>स्वप्न फल एवं शकुन</h1><p>सपनों का अर्थ (स्वप्न शास्त्र) • शुभ-अशुभ शकुन (आँख फड़कना, छींक आदि)</p><span class="brand">ASTRO VIKASS</span></header>
 <main class="av-wrap">
 <div class="tabs" id="tb"><button data-k="s" class="on">🌙 स्वप्न फल</button><button data-k="k">🔮 शकुन शास्त्र</button></div>
-<div class="search"><span>🔍</span><input id="q" placeholder="जैसे: साँप, पानी, मंदिर, दाहिनी आँख…"></div>
+<div class="search"><span>🔍</span><input id="q" placeholder="पूरा सपना लिखें — जैसे: बैल घर में आया, माँ ने रोटी खिलाई"></div>
 <div class="chips" id="fl" style="margin-bottom:10px"><span class="chip on" data-f="">सभी</span><span class="chip" data-f="g">शुभ</span><span class="chip" data-f="b">अशुभ</span></div>
-<div class="av-card" id="out"></div>
+<div class="note" id="cnt" style="margin:-4px 0 8px"></div>
+<div id="out"></div>
+<div class="av-card" id="tm"></div>
 <div class="av-card"><p class="note">स्वप्न शास्त्र के अनुसार ब्रह्म मुहूर्त (सुबह 3–5 बजे) के सपने जल्दी फल देते हैं। अशुभ सपना आए तो सुबह उठकर इष्ट देव का स्मरण करें, किसी को न बताएं और दान करें। शुभ सपना किसी को न बताएं।</p></div>
 </main>
 <div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>
 <script src="lib/places.js"></script>
 <script src="lib/astro.js"></script>
 <script src="lib/ui.js"></script>
+<script src="lib/swapnadata.js"></script>
 <script>
 const { $, share } = AVUI;
 const S = [
@@ -35,16 +38,81 @@ const S = [
 const K = [
 ['दाहिनी आँख फड़कना (पुरुष)', 'g', 'शुभ समाचार, धन लाभ, प्रियजन से मिलन'], ['बाईं आँख फड़कना (पुरुष)', 'b', 'परेशानी या विवाद का संकेत'], ['बाईं आँख फड़कना (स्त्री)', 'g', 'शुभ समाचार और सुख'], ['दाहिनी आँख फड़कना (स्त्री)', 'b', 'चिंता या अशुभ समाचार'], ['दाहिना हाथ खुजलाना', 'g', 'धन प्राप्ति'], ['बायां हाथ खुजलाना', 'b', 'धन खर्च / हानि'], ['पैर के तलवे में खुजली', 'm', 'यात्रा के योग'], ['माथा फड़कना', 'g', 'सम्मान व सुख'], ['होंठ फड़कना', 'g', 'मित्र से मिलन, स्वादिष्ट भोजन'], ['छींक — काम पर निकलते समय', 'b', 'कुछ क्षण रुकें, पानी पीकर निकलें'], ['दो छींक एक साथ', 'g', 'काम में सफलता'], ['काली बिल्ली रास्ता काटे', 'b', 'थोड़ा रुककर या रास्ता बदलकर जाएं'], ['निकलते समय गाय दिखे', 'g', 'कार्य सिद्धि'], ['बछड़े को दूध पिलाती गाय', 'g', 'अत्यंत शुभ, मनोकामना पूर्ण'], ['घर से निकलते समय खाली बर्तन', 'b', 'काम में बाधा'], ['भरा घड़ा / पानी का कलश दिखे', 'g', 'सफलता निश्चित'], ['शव-यात्रा दिखे', 'g', 'कार्य सफल होगा'], ['सुहागिन स्त्री दिखे', 'g', 'शुभ, लाभ'], ['रोता हुआ व्यक्ति', 'b', 'निराशा, कार्य टालें'], ['मोर दिखे / बोले', 'g', 'सौभाग्य, वर्षा के योग'], ['कौआ घर की मुंडेर पर बोले', 'm', 'मेहमान आने का संकेत'], ['उल्लू की आवाज़ रात में', 'b', 'अशुभ; हनुमान चालीसा पढ़ें'], ['कुत्ते का रोना', 'b', 'अशुभ समाचार का संकेत'], ['छिपकली सिर पर गिरे', 'b', 'विवाद/चिंता; स्नान कर दान करें'], ['छिपकली दाहिने कंधे पर', 'g', 'सम्मान और विजय'], ['दूध उबलकर गिरना', 'm', 'पूर्व दिशा में गिरे तो शुभ, अन्यथा सावधानी'], ['हाथ से नमक गिरना', 'b', 'विवाद या आर्थिक हानि'], ['हाथ से दूध गिरना', 'b', 'मानसिक अशांति'], ['काँच/शीशा टूटना', 'm', 'संकट टल गया — टूटा शीशा तुरंत हटा दें'], ['घर में चींटियों की कतार (काली)', 'g', 'धन आगमन'], ['घर में लाल चींटियां', 'b', 'कर्ज़ या विवाद'], ['गिलहरी दिखे', 'g', 'शुभ, बचत बढ़ेगी'], ['तोता घर आए', 'g', 'प्रेम और सुख'], ['बिल्ली का रोना', 'b', 'कलह या बीमारी का संकेत'], ['रास्ते में सिक्का मिलना', 'g', 'पितृ कृपा, धन लाभ'], ['सुबह उठते ही शंख/घंटी की आवाज़', 'g', 'दिन शुभ रहेगा'], ['यात्रा पर निकलते दही-मछली दिखे', 'g', 'यात्रा सफल'],
 ];
+S.push(...(window.SWX || []));
 let tab = 's', F = '';
 const T = { g: ['शुभ', 'g'], b: ['अशुभ', 'b'], m: ['मिश्रित', 'm'] };
-function draw() {
-  const q = $('q').value.trim(), L = (tab === 's' ? S : K).filter(x => (!F || x[1] === F) && (!q || AVQ(x[0] + ' ' + x[2], q)));
-  $('out').innerHTML = (L.length ? L.map(x => `<div class="sw"><div class="t ${x[1]}">${T[x[1]][0]}</div><div><b>${x[0]}</b><br>${x[2]}</div></div>`).join('') : '<div class="empty">कुछ नहीं मिला — दूसरा शब्द लिखें</div>') + `<button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button>`;
-  $('sh').onclick = () => share((tab === 's' ? '🌙 *स्वप्न फल*\n' : '🔮 *शकुन*\n') + L.slice(0, 12).map(x => `• ${x[0]} — ${T[x[1]][0]}: ${x[2]}`).join('\n'));
+/* ===== वाक्य-खोज: "सपने में बैल घर में आया, माँ ने रोटी खिलाई" — हर प्रतीक पहचानकर फल ===== */
+const NRM = w => String(w || '').normalize('NFD').replace(/़/g, '').normalize('NFC').replace(/ँ/g, 'ं').toLowerCase();
+const STOP = new Set(('सपने सपना सपनों सपनो स्वप्न स्वप्नों में मे मैं मैंने मेने मेरा मेरी मेरे मुझे मुझको हम हमने हमारे हमारी देखना देखा देखी देखे देख देखते देखती देखता दिखना दिखा दिखी दिखे दिखाई दिखता दिखती है हैं हे था थी थे हो होना होता होती होते हुआ हुई हुए रहा रही रहे रहें ' +
+  'का की के को से ने पर और या तो भी एक उसका उसकी उसके उसको उसे उसने उन्हें उनको उनका उनकी वह वो वे ये यह इस उस इसका इसके कोई कुछ बहुत बार मतलब अर्थ क्या क्यों कैसा कैसे कैसी होगा होगी फल आज रात कल अभी फिर जब तब आ आता आती आते आया आई आए आये आना जा जाता जाती गया गई गए गये जाना ' +
+  'कर करता करती करते करना किया की करके रहा अंदर भीतर बाहर द्वारा तरफ़ तरफ ओर साथ लिए लिये वाला वाली वाले जैसा जैसे जी श्री ' +
+  'sapne sapna sapno me mein main maine dekhna dekha dekhi dekhe hai hain tha thi the ho raha rahi rahe ka ki ke ko se ne par aur ya to bhi matlab arth kya kyu kaisa aaj raat aa aaya aayi gaya gayi kar karna andar').split(' ').map(NRM));
+const NOSTEM = new Set(['हाथी', 'मोती', 'घी', 'जी'].map(NRM));
+function stem(w) {
+  w = NRM(w); if (NOSTEM.has(w)) return w;
+  w = w.replace(/ं$/, '');
+  for (const x of ['ियों', 'ियां', 'ाओं', 'ाएं', 'ाएँ', 'ों', 'ें']) if (w.endsWith(x) && w.length - x.length >= 2) { w = w.slice(0, -x.length); break; }
+  for (const x of ['ती', 'ता', 'ते', 'ना', 'नी', 'ने', 'या', 'यी', 'ये']) if (w.endsWith(x) && w.length - x.length >= 2) { w = w.slice(0, -x.length); break; }
+  if (/[ा-ौ]$/.test(w) && w.length > 2) w = w.slice(0, -1);
+  return w;
 }
-$('tb').onclick = e => { const b = e.target.closest('button'); if (!b) return; tab = b.dataset.k; [...$('tb').children].forEach(x => x.classList.toggle('on', x === b)); $('q').placeholder = tab === 's' ? 'जैसे: साँप, पानी, मंदिर…' : 'जैसे: आँख, छींक, बिल्ली…'; draw(); };
+const GRP = [
+  'माँ मां माता मम्मी अम्मा माई मैया अम्मी maa ma mata mummy mammi amma', 'पिता पापा बाप बापू पिताजी बाबूजी', 'बैल सांड साँड नंदी वृषभ बैलों bail saand sand nandi', 'गाय गऊ गैया गौ गौमाता gaay gay gai gau cow', 'बछड़ा बछड़े बछिया',
+  'साँप सांप सर्प सपोला saap sanp saanp snake', 'नाग नागिन', 'रोटी चपाती फुल्का रोटियां roti chapati', 'खिलाना खिलाती खिलाता खिलाते खिलाया खिलाई खिलाए खिला khilana khilati khilate khilaya', 'खाना खाती खाता खाते खाया खाई खाए खा भोजन',
+  'घर मकान गृह ghar makan house home', 'पानी जल नीर pani paani jal water', 'भगवान ईश्वर प्रभु देवता bhagwan bhagvan god', 'मंदिर देवालय mandir temple', 'शिव शंकर महादेव भोलेनाथ शिवजी भोले', 'हनुमान बजरंगबली हनुमानजी बजरंग', 'गणेश गणपति गणेशजी विनायक',
+  'कृष्ण कान्हा श्रीकृष्ण कन्हैया', 'राम श्रीराम रामजी', 'कुत्ता कुत्ते कुत्तों श्वान kutta kutte dog', 'बंदर वानर', 'शेर सिंह बब्बर', 'घोड़ा घोड़े घोड़ी अश्व', 'हाथी गज', 'मछली मीन मछलियां',
+  'पैसा पैसे रुपया रुपये नोट paisa paise rupay money', 'सोना स्वर्ण गोल्ड', 'चांदी रजत', 'मृत्यु मौत मरना मरा मरी मरे निधन', 'शव लाश अर्थी मुर्दा', 'विवाह शादी ब्याह', 'बच्चा बच्चे शिशु बालक बेबी',
+  'आग अग्नि', 'दीपक दीया दिया दीप', 'पेड़ वृक्ष', 'फूल पुष्प', 'बारिश वर्षा बरसात', 'दांत दाँत', 'बाल केश', 'कौआ कौए कौवा कौवे काग', 'चूहा चूहे मूषक', 'बिल्ली बिल्लियाँ बिलाव',
+  'उड़ना उड़ता उड़ती उड़ते उड़ा उड़', 'गिरना गिरता गिरती गिरा गिरी गिरे', 'रोना रोता रोती रोया रोई रो', 'पीछा पीछे', 'काटना काटा काटी काटे', 'मारना मारा मारी मारे पीटना',
+  'दूध दुग्ध', 'चाँद चांद चंद्रमा चन्द्रमा', 'सूरज सूर्य', 'नदी दरिया', 'पहाड़ पर्वत', 'गाड़ी कार वाहन', 'हवाई जहाज़ प्लेन', 'देवी दुर्गा', 'लक्ष्मी लक्ष्मीजी'
+];
+const CAN = new Map(), CANS = new Map();
+GRP.forEach(g => { const ws = g.split(' '), c = stem(ws[0]); ws.forEach(w => { CAN.set(NRM(w), c); CANS.set(stem(w), c); }); });
+const toks = t => NRM(t).split(/[^ऀ-ॣ०-ॿa-z0-9]+/).filter(w => w && !STOP.has(w)).map(w => CAN.get(w) || CANS.get(stem(w)) || stem(w)).filter(w => w.length >= 1 && !STOP.has(w));
+const same = (a, b) => a === b || (a.length >= 4 && b.length >= 4 && (a.startsWith(b) || b.startsWith(a))) || (/^[a-z]+$/.test(a) && a.length >= 3 && AVQ.sk(a).length >= 2 && AVQ.sk(a) === AVQ.sk(b.replace(/\u0902/g, '')));
+const IDX = new Map();
+const tk = x => { let v = IDX.get(x); if (!v) { v = [...new Set(toks(x[0]))]; IDX.set(x, v); } return v; };
+function smart(L, q) {
+  const Q = [...new Set(toks(q))]; if (!Q.length) return null;
+  const R = [];
+  L.forEach(x => { const et = tk(x), hit = Q.filter(w => et.some(e => same(w, e))); if (hit.length) R.push({ x, hit, sc: hit.length - et.length * 0.01 }); });
+  R.sort((a, b) => b.sc - a.sc);
+  return { Q, R };
+}
+function verdict(P) {
+  const g = P.filter(p => p.x[1] === 'g').length, b = P.filter(p => p.x[1] === 'b').length;
+  if (!b) return ['g', 'शुभ स्वप्न — अच्छा फल मिलेगा'];
+  if (!g) return ['b', 'अशुभ संकेत — सावधानी व उपाय करें'];
+  return g >= b ? ['m', 'मिश्रित, पर शुभ पक्ष अधिक'] : ['m', 'मिश्रित — सावधानी अधिक आवश्यक'];
+}
+function draw() {
+  const q = $('q').value.trim(), base = (tab === 's' ? S : K);
+  let L, A = '', shareTxt = '';
+  const sm = q ? smart(base, q) : null;
+  if (sm && sm.R.length) {
+    L = sm.R.map(r => r.x).filter(x => !F || x[1] === F);
+    if (sm.Q.length >= 2) {   // पूरे सपने का विश्लेषण: हर शब्द को ढकने वाले मुख्य प्रतीक
+      const left = new Set(sm.Q), P = [], pool = sm.R.slice();
+      while (left.size && pool.length) {
+        pool.sort((a, b) => b.hit.filter(w => left.has(w)).length - a.hit.filter(w => left.has(w)).length || b.sc - a.sc);
+        const p = pool.shift(), nw = p.hit.filter(w => left.has(w)); if (!nw.length) break;
+        P.push(p); nw.forEach(w => left.delete(w)); if (P.length >= 5) break;
+      }
+      const v = verdict(P);
+      A = `<div class="av-card"><b style="color:var(--mar)">🔮 आपके सपने का फल</b><div class="note" style="margin:4px 0 8px">“${AVUI.esc ? AVUI.esc(q) : q}”</div>` +
+        P.map(p => `<div class="sw"><div class="t ${p.x[1]}">${T[p.x[1]][0]}</div><div><b>${p.x[0]}</b><br>${p.x[2]}</div></div>`).join('') +
+        `<div class="sw"><div class="t ${v[0]}">कुल फल</div><div><b>${v[1]}</b></div></div></div>`;
+      shareTxt = `🌙 *मेरे सपने का फल*\n_${q}_\n\n` + P.map(p => `• ${p.x[0]} — ${T[p.x[1]][0]}: ${p.x[2]}`).join('\n') + `\n\n*कुल फल:* ${v[1]}`;
+    }
+  } else L = base.filter(x => (!F || x[1] === F) && (!q || AVQ(x[0] + ' ' + x[2], q)));
+  $('out').innerHTML = A + `<div class="av-card">` + (L.length ? (A ? '<b style="color:var(--mar)">मिलते-जुलते सभी फल</b>' : '') + L.map(x => `<div class="sw"><div class="t ${x[1]}">${T[x[1]][0]}</div><div><b>${x[0]}</b><br>${x[2]}</div></div>`).join('') : '<div class="empty">कुछ नहीं मिला — दूसरा शब्द लिखें</div>') + `<button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button></div>`;
+  $('sh').onclick = () => share(shareTxt || ((tab === 's' ? '🌙 *स्वप्न फल*\n' : '🔮 *शकुन*\n') + L.slice(0, 12).map(x => `• ${x[0]} — ${T[x[1]][0]}: ${x[2]}`).join('\n')));
+  $('cnt').textContent = (tab === 's' ? S : K).length + (tab === 's' ? ' स्वप्न फल' : ' शकुन');
+}
+$('tb').onclick = e => { const b = e.target.closest('button'); if (!b) return; tab = b.dataset.k; [...$('tb').children].forEach(x => x.classList.toggle('on', x === b)); $('tm').style.display = tab === 's' ? '' : 'none'; $('q').placeholder = tab === 's' ? 'पूरा सपना लिखें — जैसे: बैल घर में आया, माँ ने रोटी खिलाई' : 'जैसे: आँख, छींक, बिल्ली…'; draw(); };
 $('fl').onclick = e => { const c = e.target.closest('.chip'); if (!c) return; F = c.dataset.f; [...$('fl').children].forEach(x => x.classList.toggle('on', x === c)); draw(); };
 $('q').oninput = draw;
+$('tm').innerHTML = '<b style="color:var(--mar)">⏳ सपना कब फल देता है?</b>' + (window.SWT || []).map(t => `<div class="sw"><div><b>${t[0]}</b><br>${t[1]}</div></div>`).join('') + '<p class="note">प्रमाण: स्वप्नाध्याय — अग्नि पुराण, मत्स्य पुराण, ब्रह्मवैवर्त पुराण (श्रीकृष्ण जन्म खंड)</p>';
 if (location.hash === '#shakun') $('tb').children[1].click(); else draw();
 </script>
 </body>
