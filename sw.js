@@ -1,7 +1,7 @@
 /* Astro Vikass — तेज़ लोडिंग कैश (Service Worker)
    होमपेज व cards.json: पहले इंटरनेट से ताज़ा (2.5 सेकंड में न आए तो कैश से)
    टूल्स, कुंडली, फॉन्ट: तुरंत कैश से, पीछे से अपडेट (अगली बार नया) */
-const V = 'av-v42';
+const V = 'av-v43';
 const PRE = ["./", "index.html", "cards.json", "tools/lib/places.js", "tools/lib/astro.js", "tools/lib/ui.js", "tools/lib/swapnadata.js", "tools/lib/ui.css", "tools/lib/akshar.js", "tools/lib/calendar.js", "tools/lib/vratinfo.js", "tools/panchang.html", "tools/shivvas.html", "tools/dhyan.html", "tools/jaap.html", "tools/prem.html", "tools/rashifal.html", "tools/milan.html", "tools/muhurat.html", "tools/vrat.html", "tools/sadesati.html", "tools/gochar.html", "tools/lagna.html", "tools/hora.html", "tools/bhadra.html", "tools/grahan.html", "tools/namakshar.html", "tools/ratna.html", "tools/mulank.html", "tools/stuti.html", "tools/sankalp.html", "tools/puchhe.html", "tools/shodash.html", "tools/vratnirnay.html", "tools/mala.html", "tools/dakshina.html", "tools/vastu.html", "tools/upay.html", "tools/swapna.html", "tools/hastrekha.html", "tools/tantra.html", "kundli/"];
 self.addEventListener('install', e => { e.waitUntil(caches.open(V).then(c => Promise.all(PRE.map(u => c.add(u).catch(() => { })))).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== V).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
