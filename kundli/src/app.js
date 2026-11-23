@@ -150,7 +150,12 @@ function kSummary(k, inp) {
   return { lagna: K.SIGN[k.lagnaSign], rashi: K.SIGN[q.Moon.sign], nak: K.NAK[q.Moon.nak][0], maha: K.P[cm.lord].hi, mahaEnd: cm.end.getFullYear(), antar: K.P[ca.lord].hi, antarEnd: ca.end.toLocaleDateString('hi-IN'), mahaMantra: K.P[cm.lord].mantra,
     main: gem(pl.main), sup: pl.sup.map(gem), avoid: pl.avoid.map(p => RATNA[p].g + ' (' + K.P[p].hi + ')'),
     ishta: ISHTA_FULL[pl.main], ishtaM: ISHTA_MANTRA[pl.main], ishta5: ISHTA_FULL[L5], ishta5M: ISHTA_MANTRA[L5], day: K.P[pl.main].day, color: K.P[pl.main].color,
-    dosh: D ? [...D.J, ...D.G, ...D.L].filter(d => d.st === 'yes' || d.st === 'mild').map(d => ({ n: d.n, st: d.st, how: d.how, u: d.u || '', sh: d.sh || '' })) : [] };
+    dosh: D ? [...D.J, ...D.G, ...D.L].filter(d => d.st === 'yes' || d.st === 'mild').map(d => ({ n: d.n, st: d.st, how: d.how, u: d.u || '', sh: d.sh || '' })) : [],
+    /* सिद्धांत के सटीक उत्तर हेतु — हर ग्रह की स्थिति, लग्न अंश, चंद्र नक्षत्र-चरण, योग, पूरी दशा */
+    v: 2, lagnaIdx: k.lagnaSign, lagnaDeg: +k.lagnaDeg.toFixed(2), lagnaNak: K.NAK[k.lagnaNak][0], moonIdx: q.Moon.sign, nakIdx: q.Moon.nak, pada: q.Moon.pada,
+    pl: Object.keys(q).map(p => ({ p, hi: K.P[p].hi, s: K.SIGN[q[p].sign], si: q[p].sign, h: q[p].house, d: +q[p].deg.toFixed(2), nk: K.NAK[q[p].nak][0], pd: q[p].pada, dg: K.DIG[q[p].dignity] || '', r: !!q[p].retro, c: !!q[p].combust })),
+    yog: (() => { try { return findYogas(k).Y.map(y => ({ n: y.n, how: y.how, f: y.f })); } catch (e) { return []; } })(),
+    dl: k.dasha.list.map(d => ({ l: K.P[d.lord].hi, a: d.start.getFullYear(), b: d.end.getFullYear() })) };
 }
 async function saveLead(s) {
   if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_ANON_KEY) return;
