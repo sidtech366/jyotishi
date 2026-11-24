@@ -1,5 +1,6 @@
-/* Astro Vikass Android app = Trusted Web Activity (Chrome engine, full screen) around
-   https://sidtech366.vercel.app/astrovikas/ . Website changes reach the app instantly — no new APK needed.
+/* Astro Vikass Android app = its own full-screen WebView around
+   https://sidtech366.vercel.app/astrovikas/ . No Chrome, no URL bar, no Google account needed.
+   Website changes reach the app instantly — no new APK needed.
    Built by GitHub Actions (.github/workflows/android-app.yml). */
 plugins {
     id 'com.android.application'
@@ -48,6 +49,3 @@ android {
     }
 }
 
-dependencies {
-    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
-}
