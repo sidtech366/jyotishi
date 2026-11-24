@@ -1,0 +1,78 @@
+name: Build Astro Vikass APK
+
+# Builds the Android app and publishes it at a fixed link:
+#   https://github.com/sidtech366/jyotishi/releases/latest/download/AstroVikass.apk
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - '.github/workflows/android-app.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      KEYSTORE_B64: ${{ secrets.AV_KEYSTORE_B64 }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      # Fixed signing key (repo secrets AV_KEYSTORE_B64 + AV_KEYSTORE_PASSWORD).
+      # Same key every build = app updates install over the old one, and full screen (no URL bar) works.
+      - name: Prepare signing key
+        if: env.KEYSTORE_B64 != ''
+        run: |
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/av.keystore"
+          echo "AV_KEYSTORE_FILE=$RUNNER_TEMP/av.keystore" >> "$GITHUB_ENV"
+          echo "AV_KEYSTORE_PASSWORD=${{ secrets.AV_KEYSTORE_PASSWORD }}" >> "$GITHUB_ENV"
+
+      - name: Build APK
+        working-directory: android
+        run: |
+          set -o pipefail
+          gradle assembleRelease --no-daemon 2>&1 | tee "$RUNNER_TEMP/build.log"
+
+      - name: Report build error
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          LOG="$RUNNER_TEMP/build.log"
+          [ -f "$LOG" ] || echo "Build log missing (failed before Gradle ran)" > "$LOG"
+          ERR=$(grep -n -i -E "error|wrong|failed|exception|could not|cannot|unresolved" "$LOG" | head -40)
+          TAIL=$(tail -n 40 "$LOG")
+          BODY=$(printf 'APK build failed.\n\nError lines:\n```\n%s\n```\n\nLast lines:\n```\n%s\n```' "$ERR" "$TAIL")
+          gh api "repos/${{ github.repository }}/commits/${{ github.sha }}/comments" -f body="$BODY"
+
+      - name: Rename APK
+        run: cp android/app/build/outputs/apk/release/app-release.apk AstroVikass.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AstroVikass
+          path: AstroVikass.apk
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: app-v1.${{ github.run_number }}
+          name: Astro Vikass App 1.${{ github.run_number }}
+          body: |
+            Astro Vikass — लाल किताब, वैदिक ज्योतिष, वास्तु, कुंडली, राशिफल।
+            नीचे **AstroVikass.apk** डाउनलोड करके फ़ोन में इंस्टॉल करें।
+            ${{ env.KEYSTORE_B64 == '' && '⚠️ Signing key secret not set — test build only (shows URL bar, update needs reinstall).' || '' }}
+          files: AstroVikass.apk
+          make_latest: true

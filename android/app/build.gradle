@@ -1,0 +1,53 @@
+/* Astro Vikass Android app = Trusted Web Activity (Chrome engine, full screen) around
+   https://sidtech366.vercel.app/astrovikas/ . Website changes reach the app instantly — no new APK needed.
+   Built by GitHub Actions (.github/workflows/android-app.yml). */
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.astrovikass.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.astrovikass.app'
+        minSdk 23
+        targetSdk 34
+        versionCode((System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger())
+        versionName "1.0.${System.getenv('GITHUB_RUN_NUMBER') ?: '0'}"
+    }
+
+    signingConfigs {
+        release {
+            def ks = System.getenv('AV_KEYSTORE_FILE')
+            if (ks && file(ks).exists()) {
+                storeFile file(ks)
+                storePassword System.getenv('AV_KEYSTORE_PASSWORD')
+                keyAlias 'astrovikass'
+                keyPassword System.getenv('AV_KEYSTORE_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            def ks = System.getenv('AV_KEYSTORE_FILE')
+            signingConfig = (ks && file(ks).exists()) ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
+}
