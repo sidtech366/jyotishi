@@ -39,6 +39,12 @@
             </intent-filter>
         </activity>
 
+        <provider
+            android:name=".ApkProvider"
+            android:authorities="com.astrovikass.app.apk"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
         <!-- subah ka rashifal notification: phone par hi chalta hai, server / Google account ki zaroorat nahi -->
         <receiver android:name=".DailyReceiver" android:exported="false">
             <intent-filter>

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
 import android.webkit.GeolocationPermissions;
+import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
 import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
@@ -30,6 +32,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -97,6 +104,7 @@ public class MainActivity extends Activity {
         CookieManager cm = CookieManager.getInstance();
         cm.setAcceptCookie(true);
         cm.setAcceptThirdPartyCookies(web, true);   // site Apps Script ko iframe me kholti hai
+        web.addJavascriptInterface(new Bridge(), "AVApp");   // website ka "ऐप शेयर करें" button isse ऐप की फ़ाइल भेजता है
         web.setBackgroundColor(NAVY);
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
 
@@ -169,6 +177,38 @@ public class MainActivity extends Activity {
                 } catch (Exception e) { openOutside(Uri.parse(url)); }
             }
         });
+    }
+
+
+    /** Website se bulaya jata hai: window.AVApp.shareApp() */
+    class Bridge {
+        @JavascriptInterface public boolean isApp() { return true; }
+        @JavascriptInterface public void shareApp() {
+            runOnUiThread(new Runnable() { @Override public void run() { doShareApp(); } });
+        }
+    }
+
+    /** Installed ऐप की APK फ़ाइल ही शेयर करता है (लिंक नहीं) — WhatsApp, Bluetooth, Nearby Share आदि से। */
+    void doShareApp() {
+        try {
+            File out = ApkProvider.file(this);
+            out.getParentFile().mkdirs();
+            InputStream in = new FileInputStream(getApplicationInfo().sourceDir);
+            OutputStream os = new FileOutputStream(out);
+            byte[] buf = new byte[65536]; int n;
+            while ((n = in.read(buf)) > 0) os.write(buf, 0, n);
+            os.close(); in.close();
+
+            Uri uri = Uri.parse("content://" + ApkProvider.AUTH + "/" + ApkProvider.NAME);
+            Intent send = new Intent(Intent.ACTION_SEND);
+            send.setType("application/vnd.android.package-archive");
+            send.putExtra(Intent.EXTRA_STREAM, uri);
+            send.putExtra(Intent.EXTRA_SUBJECT, "Astro Vikass ऐप");
+            send.putExtra(Intent.EXTRA_TEXT, "🙏 Astro Vikass ऐप — लाल किताब, वैदिक ज्योतिष, वास्तु, कुंडली, राशिफल।\nइसे इंस्टॉल करने के लिए यह फ़ाइल खोलें (\"अनजान स्रोत से इंस्टॉल\" की अनुमति दें)।");
+            send.setClipData(ClipData.newRawUri("Astro Vikass", uri));
+            send.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(send, "Astro Vikass ऐप शेयर करें").addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
+        } catch (Exception e) { toast("ऐप शेयर नहीं हो सका"); }
     }
 
     void openOutside(Uri u) {
