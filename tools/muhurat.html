@@ -41,10 +41,37 @@
 .bdg.g{background:#e7f6ec;color:var(--ok);border-color:#b5dfc4}
 .blk{background:var(--badbg);border:1px solid #f0b8ae;border-radius:12px;padding:8px 11px;color:var(--bad);font-weight:600;margin-bottom:8px;font-size:14px}
 .blk small{display:block;font-weight:500;color:#8a3b33}
-.info{background:var(--midbg);border:1px solid #ecd08a;border-radius:12px;padding:10px 12px;font-size:14.5px;line-height:1.6}</style>
+.info{background:var(--midbg);border:1px solid #ecd08a;border-radius:12px;padding:10px 12px;font-size:14.5px;line-height:1.6}
+.dwf{margin:2px -2px 0;border-radius:20px;overflow:hidden;background:#fffaf1;border:1px solid var(--line);box-shadow:0 14px 30px -18px #6b141866}
+.dwf .fc-h{position:relative;display:flex;align-items:center;gap:12px;padding:15px 16px;color:#fff7e6;background:linear-gradient(135deg,#3b1d6e,#6b1418 55%,#b5451b);overflow:hidden}
+.dwf .fc-h:after{content:"";position:absolute;inset:0;background:radial-gradient(1px 1px at 18% 30%,#fff,transparent),radial-gradient(1px 1px at 62% 22%,#ffe6a8,transparent),radial-gradient(1.4px 1.4px at 80% 70%,#fff,transparent),radial-gradient(1px 1px at 40% 80%,#ffe6a8,transparent);opacity:.8;pointer-events:none}
+.dwf .fc-ic{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:22px;background:radial-gradient(circle at 35% 30%,#fff6dc,#f3c86a 60%,#c9902f);box-shadow:0 0 0 3px #ffe6a844}
+.dwf .fc-h b{display:block;font-family:'Yatra One',serif;font-weight:400;font-size:19px;line-height:1.2}.dwf .fc-h small{color:#f6dcae;font-size:12.5px}
+.dwf .bd{display:grid;gap:10px;padding:12px}
+.dwf .seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#f6e8c9;padding:4px;border-radius:14px}
+.dwf .seg button{border:0;border-radius:11px;padding:9px 6px;font:700 13.5px 'Noto Sans Devanagari',sans-serif;background:transparent;color:var(--mar);cursor:pointer;line-height:1.25}
+.dwf .seg button small{display:block;font-weight:500;font-size:11.5px;color:var(--mut)}
+.dwf .seg button.on{background:#fff;box-shadow:0 3px 10px -4px #6b141855}
+.fld{display:flex;align-items:center;gap:10px;min-height:56px;padding:6px 12px;border-radius:14px;border:1.5px solid #ecd7ab;background:#fff;transition:.15s}
+.fld:focus-within{border-color:#ee6f16;box-shadow:0 0 0 4px #ee6f161a}
+.fld>i{flex:none;font-style:normal;font-size:19px;width:24px;text-align:center}
+.fld .in2{flex:1;min-width:0}.fld .in2 label{display:block;font-size:11.5px;font-weight:700;color:#93301f;margin:0 0 1px}
+.fld .in2 input,.fld .in2 select{width:100%;border:0;background:transparent;font-size:16px;padding:1px 0;outline:none;color:var(--ink)}
+.dwf .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dwf .pfw label.l{display:none}.dwf .pfw .locrow{display:flex;gap:6px}.dwf .pfw .in{border:0;padding:1px 0;font-size:16px;box-shadow:none!important}.dwf .pfw .note{margin:2px 0 0;font-size:11.5px}
+.dwf .pfw .btn{padding:6px 9px;font-size:13px}
+.dwf .route{display:flex;align-items:center;gap:12px;border-radius:14px;padding:10px 12px;background:linear-gradient(135deg,#fff3d6,#ffe6b5);border:1px solid #f0d28f}
+.dwf .route .cmp{flex:none;width:54px;height:54px;border-radius:50%;background:#fff;border:2px solid #c99a2e;position:relative;display:grid;place-items:center;font:700 10px sans-serif;color:#93301f}
+.dwf .route .cmp i{position:absolute;left:50%;top:50%;width:4px;height:24px;margin:-24px 0 0 -2px;background:linear-gradient(#ee6f16,#6b1418);border-radius:4px;transform-origin:50% 100%}
+.dwf .route b{color:var(--mar);font-size:16px}.dwf .route small{display:block;color:var(--mut);font-size:12.5px;line-height:1.4}
+.dwf details summary{font-size:13.5px;color:var(--mar);font-weight:700;cursor:pointer}
+.tier{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 9px;margin:4px 4px 0 0}
+.tier.u{background:#e7f6ec;color:#1d7d4b;border:1px solid #b5dfc4}.tier.m{background:#fff4d6;color:#8a5a00;border:1px solid #f0d28f}
+@media(max-width:360px){.dwf .g2{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-<header class="av-head"><div class="ic">📿</div><h1>शुभ मुहूर्त</h1><p>16 संस्कार, विवाह, भूमि-भवन, व्यापार, यात्रा, पूजा-अनुष्ठान — 56 कार्यों के मुहूर्त, लग्न-शुद्धि व शास्त्र प्रमाण सहित</p><span class="brand">ASTRO VIKASS</span></header>
+<header class="av-head"><div class="ic">📿</div><h1>शुभ मुहूर्त</h1><p>16 संस्कार, विवाह, भूमि-भवन, व्यापार, यात्रा, पूजा-अनुष्ठान — 55 कार्यों के मुहूर्त, लग्न-शुद्धि व शास्त्र प्रमाण सहित</p><span class="brand">ASTRO VIKASS</span></header>
 <main class="av-wrap">
 <div class="av-card">
   <input type="search" id="q" class="msq" placeholder="🔍 मुहूर्त खोजें — विवाह, जनेऊ, गृह प्रवेश, रत्न…" autocomplete="off">
@@ -55,7 +82,7 @@
 <div class="av-card">
   <div id="pl"></div>
   <div class="spec" id="spec"></div>
-  <details class="det"><summary>👤 नाम या राशि / नक्षत्र से छाँटें (वर-वधू दोनों का चंद्र बल, तारा बल)</summary>
+  <details class="det" id="pdet"><summary>👤 नाम या राशि / नक्षत्र से छाँटें (वर-वधू दोनों का चंद्र बल, तारा बल)</summary>
     <label class="l">👦 वर / यजमान का नाम (हिंदी या Hinglish)</label><input class="in" id="pn1" placeholder="जैसे: Vikas या विकास">
     <div class="pers"><div><label class="l">जन्म राशि (चंद्र)</label><select id="jr"></select></div><div><label class="l">जन्म नक्षत्र</label><select id="jn"></select></div></div>
     <label class="l" style="margin-top:10px">👧 वधू का नाम (विवाह/सगाई हेतु — वैकल्पिक)</label><input class="in" id="pn2" placeholder="जैसे: Priya या प्रिया">
@@ -153,13 +180,10 @@ const EV = {
   vivah: { g: 'viv', rkv: 1, t: '💍 विवाह', al: 'पाणिग्रहण / शादी / लग्न / फेरे', nak: 'रोहिणी,मृग,मघा,उफा,हस्त,स्वाति,अनुराधा,मूल,उषा,उभा,रेवती', tt: [2, 3, 5, 7, 10, 11, 12, 13, 15], vr: 'r,s,m,b,g,sk,sh', sun: [0, 1, 2, 7, 9, 10], ch: 1, asta: 1, sg: 1, mal: 1, hol: 1, sk: 1, h7: 1, pl: 1, yb: 1, time: 'any',
     nt: ['सूर्य मेष, वृषभ, मिथुन, वृश्चिक, मकर, कुंभ राशि में हो — धनु-मीन (खरमास) और देवशयन (चातुर्मास) वर्जित।', 'विवाह में वार का विशेष विचार नहीं — नक्षत्र, तिथि व लग्न-शुद्धि प्रधान।', 'ऋषिकेश पद्धति में विवाह के दश दोष — लत्ता, पात, युति, वेध, जामित्र, बाण, एकार्गल, उपग्रह, क्रान्तिसाम्य, दग्धा तिथि — में से युति (पाप ग्रह उसी नक्षत्र में), सप्तशलाका वेध, मृत्युबाण, सूर्यभोग्य नक्षत्र, मासान्त, भद्रा, व्यतीपात-वैधृति देखकर दिन चुना जाता है; फिर वही लग्न दिया जाता है जिसमें कम से कम 5 ग्रह इष्ट भाव में हों (पञ्चेष्ट लग्न) — लग्नेश/चंद्र/शुक्र/मंगल/शनि की अशुभ स्थिति टिप्पणी में बताई जाती है।', 'आधुनिक (दृक्) पद्धति चुनने पर कठोर लग्न-शुद्धि: लग्न में पाप ग्रह न हो, सप्तम और अष्टम भाव खाली हों, चंद्र 6-8-12 में न हो।', 'वर-कन्या दोनों का चंद्र बल, कन्या का गुरु बल और वर का सूर्य बल अवश्य देखें।', 'गोधूलि लग्न (सूर्यास्त के समय) आपात स्थिति में सर्वदोषनाशक माना गया है।'],
     pr: [MCS + ' — विवाह प्रकरण (रोहिणी, मृगशिरा, मघा, उत्तराफाल्गुनी, हस्त, स्वाति, अनुराधा, मूल, उत्तराषाढ़ा, उत्तराभाद्रपद, रेवती)', DS + ' — विवाह प्रकरण', 'मनुस्मृति 3.4 — समावर्तन के बाद विवाह'] },
-  dwiragaman: { g: 'viv', t: '🛺 द्विरागमन', al: 'गौना / मुकलावा / बहू की दूसरी विदाई', nak: 'अश्विनी,रोहिणी,मृग,पुष्य,हस्त,चित्रा,स्वाति,अनुराधा,मूल,उफा,उषा,उभा,श्रवण,धनिष्ठा,रेवती,पुनर्वसु', tt: [1, 2, 3, 5, 7, 10, 11, 13, 15], vr: 's,b,g,sk', sun: [0, 1, 7, 10], asta: 1, mal: 1, sk: 1, time: 'day',
-    age: 'विवाह के बाद विषम वर्ष (1, 3, 5) में', nt: ['सूर्य मेष, वृषभ, वृश्चिक या कुंभ में।', 'शुक्र सम्मुख या दाहिने हो तो यात्रा वर्जित (शुक्र-दोष) — यात्रा की दिशा ऊपर चुनकर शुद्ध दिन देखें।'],
-    pr: [MCS + ' — द्विरागमन / वधूप्रवेश प्रकरण'] },
-  maika: { g: 'viv', t: '🏡 बहू का मायके जाना', al: 'बहू को पीहर / नैहर / मायके भेजना / पितृगृह गमन / बेटी-बहू की विदाई', nak: 'अश्विनी,मृग,पुनर्वसु,पुष्य,हस्त,चित्रा,स्वाति,अनुराधा,श्रवण,धनिष्ठा,रेवती', tt: [2, 3, 5, 7, 10, 11, 13], vr: 's,b,g,sk', sp: 'dir', rk: 1, lp: CHARL, time: 'day',
-    age: 'विवाह के बाद पहली बार (गौना) हो तो "द्विरागमन" कार्ड भी देखें; बाद की यात्राओं के लिए यही कार्ड',
-    nt: ['"यात्रा की दिशा" में मायके की दिशा चुनें (ससुराल से मायका किस दिशा में है) — दिशाशूल व चंद्र-वास अपने आप जाँचे जाएँगे।', 'ऊपर "वधू" वाले खाने में बहू की जन्म राशि/नक्षत्र भरें — चंद्र बल व तारा बल देखा जाएगा। साथ जा रही छोटी बच्ची की राशि भी भरनी हो तो उसे दूसरे खाने में डालें (वर वाले खाने में)।', 'मंगलवार, रविवार व शनिवार से बचना श्रेष्ठ; कई क्षेत्रों में वधू-प्रवेश में भी मंगल-रवि अशुभ माने जाते हैं।', 'रिक्ता तिथि (4, 9, 14), अमावस्या, भद्रा और राहुकाल में प्रस्थान न करें; पंचक में दक्षिण दिशा की यात्रा वर्जित।', 'चातुर्मास, अधिक मास, पितृपक्ष में कई परिवार भेजना टालते हैं — यह कुल/क्षेत्र की परंपरा है, शास्त्र का कठोर नियम नहीं; परंपरा पूछ लें।', 'दिशाशूल के परिहार: रवि-घी, सोम-दूध, मंगल-गुड़, बुध-तिल, गुरु-दही, शुक्र-जौ, शनि-उड़द खाकर निकलें।'],
-    pr: [MCS + ' — यात्रा प्रकरण (नक्षत्र, दिशाशूल, चंद्र-वास) व द्विरागमन प्रकरण', 'बहू की मायके-यात्रा के लिए अलग श्लोक नहीं मिलता; यात्रा और द्विरागमन के नियम ही लागू होते हैं। स्थानीय पंचांग व कुल-परंपरा से अंतर संभव।'] },
+  dwiragaman: { g: 'viv', t: '🛺 द्विरागमन / बहू का मायके जाना', al: 'गौना / मुकलावा / बहू की विदाई / पीहर-नैहर-मायके भेजना / पितृगृह गमन', nak: 'अश्विनी,रोहिणी,मृग,पुष्य,हस्त,चित्रा,स्वाति,अनुराधा,मूल,उफा,उषा,उभा,श्रवण,धनिष्ठा,रेवती,पुनर्वसु', tt: [1, 2, 3, 5, 7, 10, 11, 13, 15], vr: 's,b,g,sk', sun: [0, 1, 7, 10], asta: 1, mal: 1, sk: 1, rk: 1, sp: 'dw', time: 'day',
+    age: 'पहली विदाई (गौना): विवाह के बाद विषम वर्ष (1, 3, 5) में • बाद में मायके आना-जाना: कभी भी, यात्रा-शुद्धि देखकर',
+    nt: ['ऊपर के फ़ॉर्म में ससुराल और मायका दोनों स्थान चुनें — दिशा, दूरी, दिशाशूल व चंद्र-वास अपने आप जाँचे जाते हैं।', 'पहली विदाई (गौना) में सूर्य मेष, वृषभ, वृश्चिक या कुंभ राशि में हो; गुरु-शुक्र अस्त, अधिक मास व संक्रांति वर्जित। बाद के आने-जाने में ये बंधन नहीं — केवल यात्रा-शुद्धि।', 'प्रतिशुक्र (शुक्र सम्मुख या दाहिने) — गौने में विशेष विचार; शुक्र रेवती से कृत्तिका के प्रथम चरण तक "अंध" हो तो दोष नहीं; एक ही नगर/गाँव के भीतर यात्रा में दिशा-दोष नहीं देखा जाता।', '🟢 उत्तम = सब शुद्ध। 🟡 मध्यम = केवल हल्के दोष (दिशाशूल, चंद्र-वास, तारा बल, प्रतिशुक्र) — परिहार करके निकल सकते हैं; मुख्य दोष (भद्रा, रिक्ता, अमावस्या, राहुकाल, व्यतीपात-वैधृति, अशुभ नक्षत्र) किसी में नहीं।', 'दिशाशूल के परिहार: रवि-घी/पान, सोम-दूध/दर्पण देखकर, मंगल-गुड़, बुध-तिल/धनिया, गुरु-दही, शुक्र-जौ/राई, शनि-उड़द/अदरक खाकर निकलें।', 'चातुर्मास, पितृपक्ष में कई परिवार भेजना टालते हैं — यह कुल/क्षेत्र की परंपरा है।'],
+    pr: [MCS + ' — द्विरागमन / वधूप्रवेश प्रकरण (सूर्य-राशि, नक्षत्र, वार)', MCS + ' — यात्रा प्रकरण (दिशाशूल, नक्षत्र-शूल, चंद्र-वास, प्रतिशुक्र)', 'दिशाशूल — "सोम शनिचर पूरब न चालू, मंगल बुध उत्तर दिसि कालू…" (लोक-प्रसिद्ध नियम, मुहूर्त ग्रंथों पर आधारित); विदिशा शूल — आग्नेय सोम-गुरु, नैऋत्य रवि-शुक्र, वायव्य मंगल, ईशान बुध-शनि', 'बाद में मायके आने-जाने के लिए अलग श्लोक नहीं — यात्रा प्रकरण के नियम लागू; स्थानीय पंचांग व कुल-परंपरा से अंतर संभव।'] },
   vadhu: { g: 'viv', t: '👰 वधू प्रवेश', al: 'बहू का गृह प्रवेश / नववधू आगमन', nak: cl('dhruv', 'mridu', 'kship') + ',श्रवण,धनिष्ठा,मूल,मघा,स्वाति', tt: GOOD_T, vr: 'r,s,b,g,sk', time: 'any',
     age: 'विवाह के बाद 16 दिनों के भीतर सम दिन में मुहूर्त विचार आवश्यक नहीं', nt: ['विवाह के 16 दिन बाद प्रवेश हो तो यह मुहूर्त देखें।'],
     pr: [MCS + ' — वधूप्रवेश प्रकरण'] },
@@ -251,6 +275,22 @@ for (const k in EV) { const e = EV[k]; if (e.info) continue; e.nakI = nk(e.nak);
 const DIRS = ['पूर्व', 'दक्षिण', 'पश्चिम', 'उत्तर'];
 const DSHOOL = { 0: [1, 6], 3: [2, 3], 2: [0, 5], 1: [4] };                 // दिशा → वार
 const NSHOOL = { 0: 17, 1: 24, 2: 3, 3: 11 };                               // दिशा → नक्षत्र
+/* द्विरागमन / मायके यात्रा — 8 दिशाएँ (0 पूर्व, 1 आग्नेय, 2 दक्षिण, 3 नैऋत्य, 4 पश्चिम, 5 वायव्य, 6 उत्तर, 7 ईशान) */
+const D8 = ['पूर्व', 'आग्नेय (दक्षिण-पूर्व)', 'दक्षिण', 'नैऋत्य (दक्षिण-पश्चिम)', 'पश्चिम', 'वायव्य (उत्तर-पश्चिम)', 'उत्तर', 'ईशान (उत्तर-पूर्व)'];
+const SHOOL8 = [[1, 6], [1, 4], [4], [0, 5], [0, 5], [2], [2, 3], [3, 6]];    // दिशा → शूल वार (विदिशा शूल सहित)
+const CARD8 = [[0], [0, 1], [1], [1, 2], [2], [2, 3], [3], [3, 0]];          // 8 → 4 (DIRS क्रम: पूर्व, दक्षिण, पश्चिम, उत्तर)
+const SH_PAR = ['घी या पान', 'दूध (या दर्पण देखकर)', 'गुड़', 'तिल या धनिया', 'दही', 'जौ या राई', 'उड़द या अदरक'];
+const shukraDir = lon => { const k = Math.floor(lon / NK) % 27; return k >= 2 && k <= 8 ? 0 : k >= 9 && k <= 15 ? 1 : k >= 16 && k <= 21 ? 2 : 3; };   // कृत्तिकादि 7 पूर्व, मघादि दक्षिण, अनुराधादि पश्चिम, धनिष्ठादि उत्तर
+const shukraAndh = lon => lon >= 346.667 || lon < 33.333;                         // रेवती से कृत्तिका प्रथम चरण
+function geo(a, b) {
+  const r = Math.PI / 180, f1 = a.lat * r, f2 = b.lat * r, dl = (b.lon - a.lon) * r;
+  const km = 6371 * 2 * Math.asin(Math.sqrt(Math.sin((f2 - f1) / 2) ** 2 + Math.cos(f1) * Math.cos(f2) * Math.sin(dl / 2) ** 2));
+  const brg = (Math.atan2(Math.sin(dl) * Math.cos(f2), Math.cos(f1) * Math.sin(f2) - Math.sin(f1) * Math.cos(f2) * Math.cos(dl)) / r + 360) % 360;
+  return { km, brg, d8: [0, 7, 6, 5, 4, 3, 2, 1][Math.round(((90 - brg + 360) % 360) / 45) % 8] };   // कोण (उत्तर से घड़ी की दिशा) → D8
+}
+let DW = Object.assign({ first: 1, d8m: '' }, store.get('av_mu_dw', {}));
+const dwSave = () => store.set('av_mu_dw', { first: DW.first, d8m: DW.d8m, bn: DW.bn, br: DW.br, bk: DW.bk, cn: DW.cn, cr: DW.cr, ck: DW.ck });
+let pfFrom = null, pfTo = null;
 const ANG = [['सिर / मस्तिष्क / चेहरा', 0], ['मुख / गला / आँख / दाँत', 1], ['छाती / कंधा / फेफड़े', 2], ['हृदय / स्तन', 3], ['पेट / उदर / आमाशय', 4], ['कमर / आँतें / पाचन', 5], ['नाभि के नीचे / गुर्दे / मूत्राशय', 6], ['गुप्तांग / गुदा / प्रोस्टेट / गर्भाशय', 7], ['जाँघ / कूल्हा', 8], ['घुटना / हड्डी-जोड़', 9], ['पिंडली / टखना', 10], ['पैर / तलवा', 11]];
 const GEMS = [['माणिक्य (सूर्य)', 0, 'Sun'], ['मोती (चंद्र)', 1, 'Moon'], ['मूंगा (मंगल)', 2, 'Mars'], ['पन्ना (बुध)', 3, 'Mercury'], ['पुखराज (गुरु)', 4, 'Jupiter'], ['हीरा / ओपल (शुक्र)', 5, 'Venus'], ['नीलम (शनि)', 6, 'Saturn'], ['गोमेद (राहु)', 6, 'Saturn'], ['लहसुनिया (केतु)', 2, 'Mars']];
 const HORD = ['Sun', 'Venus', 'Mercury', 'Moon', 'Saturn', 'Jupiter', 'Mars'], DL = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
@@ -258,7 +298,7 @@ const HORD = ['Sun', 'Venus', 'Mercury', 'Moon', 'Saturn', 'Jupiter', 'Mars'], D
 const SSY = { 0: nk('हस्त,मूल,उफा,उषा,उभा,पुष्य,अश्विनी'), 1: nk('श्रवण,रोहिणी,मृग,पुष्य,अनुराधा'), 2: nk('अश्विनी,उभा,कृत्तिका,आश्लेषा'), 3: nk('रोहिणी,अनुराधा,हस्त,कृत्तिका,मृग'), 4: nk('रेवती,अनुराधा,अश्विनी,पुनर्वसु,पुष्य'), 5: nk('रेवती,अनुराधा,अश्विनी,पुनर्वसु,श्रवण'), 6: nk('श्रवण,रोहिणी,स्वाति') };
 const AMR = nk('हस्त,मृग,अश्विनी,अनुराधा,पुष्य,रेवती,रोहिणी');
 /* ===== स्थिति ===== */
-let E = store.get('av_mu_ev', 'vivah'); if (!EV[E]) E = 'vivah';
+let E = store.get('av_mu_ev', 'vivah'); if (E === 'maika') E = 'dwiragaman'; if (!EV[E]) E = 'vivah';
 let G = EV[E].g, now = new Date(), Y = now.getFullYear(), M = now.getMonth() + 1, res = [], SPV = store.get('av_mu_sp', {});
 [['jr', 'jn', 'pn1', ''], ['jr2', 'jn2', 'pn2', '2']].forEach(([r, n, nm, x]) => {
   $(r).innerHTML = '<option value="">— चुनें —</option>' + N.SIGN.map((s, i) => `<option value="${i}">${s}</option>`).join('');
@@ -310,12 +350,58 @@ function info() {
   $('inf').innerHTML = h;
   // विशेष इनपुट
   const sp = e.sp, v = SPV[sp];
+  $('pdet').style.display = sp === 'dw' ? 'none' : '';
+  if (sp === 'dw') return dwForm();
   $('spec').innerHTML = sp === 'dir' ? `<label class="l">यात्रा की दिशा</label><select id="spv">${DIRS.map((d, i) => `<option value="${i}">${d}</option>`).join('')}</select>`
     : sp === 'ang' ? `<label class="l">किस अंग का ऑपरेशन?</label><select id="spv"><option value="">— चुनें —</option>${ANG.map((a, i) => `<option value="${i}">${a[0]} (${N.SIGN[a[1]]})</option>`).join('')}</select>`
     : sp === 'ratna' ? `<label class="l">कौन सा रत्न?</label><select id="spv">${GEMS.map((g, i) => `<option value="${i}">${g[0]}</option>`).join('')}</select>`
     : sp === 'garbh' ? `<label class="l">मासिक धर्म आरंभ की तिथि (वैकल्पिक — ऋतु रात्रि गणना हेतु)</label><input type="date" id="spv">`
     : '';
   if ($('spv')) { if (v != null) $('spv').value = v; $('spv').onchange = () => { SPV[sp] = $('spv').value; store.set('av_mu_sp', SPV); run(); }; }
+}
+
+/* ===== द्विरागमन / मायके यात्रा का फ़ॉर्म (कुंडली फ़ॉर्म जैसा) ===== */
+function dwForm() {
+  const opt = (arr, v) => '<option value="">— चुनें —</option>' + arr.map((x, i) => `<option value="${i}"${String(v) === String(i) ? ' selected' : ''}>${x}</option>`).join('');
+  $('spec').innerHTML = `<div class="dwf">
+    <div class="fc-h"><div class="fc-ic">🛺</div><div><b>बहू की विदाई / मायके जाना</b><small>स्थान चुनें — दिशाशूल, चंद्र-वास अपने आप</small></div></div>
+    <div class="bd">
+      <div class="seg" id="dwSeg"><button type="button" data-f="1" class="${DW.first ? 'on' : ''}">पहली विदाई<small>गौना / द्विरागमन</small></button><button type="button" data-f="0" class="${DW.first ? '' : 'on'}">बाद में मायके<small>सामान्य आना-जाना</small></button></div>
+      <div class="fld"><i>👰</i><div class="in2"><label>बहू का नाम (राशि अपने आप)</label><input id="dwBn" placeholder="जैसे: Priya या प्रिया" value="${AVUI.esc(DW.bn || '')}"></div></div>
+      <div class="g2"><div class="fld"><i>🌙</i><div class="in2"><label>बहू की राशि</label><select id="dwBr">${opt(N.SIGN, DW.br)}</select></div></div>
+        <div class="fld"><i>⭐</i><div class="in2"><label>बहू का नक्षत्र</label><select id="dwBk">${opt(N.NAK, DW.bk)}</select></div></div></div>
+      <div class="fld"><i>🏠</i><div class="in2"><label>कहाँ से — ससुराल</label><div class="pfw" id="dwFrom"></div></div></div>
+      <div class="fld"><i>🏡</i><div class="in2"><label>कहाँ जाना है — मायका</label><div class="pfw" id="dwTo"></div></div></div>
+      <div class="route" id="dwRoute"></div>
+      <details${DW.cn || DW.cr ? ' open' : ''}><summary>👧 साथ में बच्ची / और कोई (वैकल्पिक)</summary>
+        <div class="fld" style="margin-top:8px"><i>👧</i><div class="in2"><label>नाम</label><input id="dwCn" placeholder="जैसे: Anaya" value="${AVUI.esc(DW.cn || '')}"></div></div>
+        <div class="g2" style="margin-top:8px"><div class="fld"><i>🌙</i><div class="in2"><label>राशि</label><select id="dwCr">${opt(N.SIGN, DW.cr)}</select></div></div>
+          <div class="fld"><i>⭐</i><div class="in2"><label>नक्षत्र</label><select id="dwCk">${opt(N.NAK, DW.ck)}</select></div></div></div>
+        <p class="note" style="margin:6px 0 0">बच्ची का चंद्र-तारा बल उत्तम मुहूर्त में देखा जाता है; मुख्य विचार बहू का ही।</p>
+      </details>
+    </div></div>`;
+  $('dwSeg').onclick = ev => { const b = ev.target.closest('button'); if (!b) return; DW.first = +b.dataset.f; [...$('dwSeg').children].forEach(x => x.classList.toggle('on', x === b)); dwSave(); run(); };
+  const nameBind = (n, r, k, kn, kr, kk) => {
+    let t; $(n).oninput = () => { const v = $(n).value.trim(), a = AVAkshar.fromName(v); if (a) { $(r).value = a.sign; $(k).value = a.n; } else if (!v) { $(r).value = ''; $(k).value = ''; } clearTimeout(t); t = setTimeout(sv, 500); };
+    const sv = () => { DW[kn] = $(n).value.trim(); DW[kr] = $(r).value; DW[kk] = $(k).value; dwSave(); run(); };
+    $(r).onchange = sv; $(k).onchange = sv;
+  };
+  nameBind('dwBn', 'dwBr', 'dwBk', 'bn', 'br', 'bk'); nameBind('dwCn', 'dwCr', 'dwCk', 'cn', 'cr', 'ck');
+  pfFrom = AVUI.placeField($('dwFrom'), { key: 'av_mu_from', gps: true, hint: 'शहर/गाँव लिखकर सूची से चुनें', onPick: () => { dwRoute(); run(); } });
+  pfTo = AVUI.placeField($('dwTo'), { key: 'av_mu_to', gps: false, hint: 'शहर/गाँव लिखकर सूची से चुनें', onPick: () => { dwRoute(); run(); } });
+  dwRoute();
+}
+function dwRoute() {
+  const a = pfFrom && pfFrom.get(), b = pfTo && pfTo.get(), el = $('dwRoute');
+  DW.km = null; DW.d8 = null;
+  if (a && b) {
+    const g = geo(a, b); DW.km = g.km; DW.d8 = g.km < 8 ? null : g.d8;
+    el.innerHTML = `<div class="cmp">उ<i style="transform:rotate(${g.brg.toFixed(0)}deg)"></i></div><div><b>${g.km < 8 ? 'एक ही नगर / पास में' : 'मायका ' + D8[g.d8] + ' दिशा में'}</b><small>${a.name} → ${b.name} • लगभग ${g.km < 10 ? g.km.toFixed(1) : Math.round(g.km)} किमी • ${g.brg.toFixed(0)}°${g.km < 8 ? '<br>नगर/गाँव की सीमा के भीतर दिशाशूल व प्रतिशुक्र नहीं देखे जाते' : ''}</small></div>`;
+    return;
+  }
+  el.innerHTML = `<div class="cmp">🧭</div><div style="flex:1"><b>दिशा</b><small>दोनों स्थान चुनें — या सीधे दिशा चुनें:</small><select class="in" id="dwD8" style="margin-top:6px;padding:8px 10px"><option value="">— दिशा नहीं पता —</option>${D8.map((x, i) => `<option value="${i}"${String(DW.d8m) === String(i) ? ' selected' : ''}>${x}</option>`).join('')}</select></div>`;
+  $('dwD8').onchange = () => { DW.d8m = $('dwD8').value; dwSave(); run(); };
+  DW.d8 = DW.d8m === '' || DW.d8m == null ? null : +DW.d8m;
 }
 $('pv').onclick = () => { M--; if (M < 1) { M = 12; Y--; } run(); };
 $('nx').onclick = () => { M++; if (M > 12) { M = 1; Y++; } run(); };
@@ -388,8 +474,17 @@ function scanDay(d, nextRise, e, L, ctx) {
     if (rk && jd >= rk[0] && jd < rk[1]) return 0;
     const ms = Math.floor(sm.moon / 30);
     for (const pp of PS) {
+      if (ctx.relax && pp.soft) continue;
       if (pp.jr != null) { const h = ((ms - pp.jr + 12) % 12) + 1; if (![1, 3, 6, 7, 10, 11].includes(h)) return W('चंद्र बल नहीं (' + pp.who + ')'); }
-      if (pp.jn != null) { const tb = ((nak - pp.jn + 27) % 27) % 9 + 1; if ([3, 5, 7].includes(tb)) return W('तारा बल नहीं (' + pp.who + ')'); }
+      if (pp.jn != null && !ctx.relax) { const tb = ((nak - pp.jn + 27) % 27) % 9 + 1; if ([3, 5, 7].includes(tb)) return W('तारा बल नहीं (' + pp.who + ')'); }
+    }
+    if (e.sp === 'dw' && ctx.d8 != null) {
+      const cs = CARD8[ctx.d8];
+      if (ctx.d8 >= 1 && ctx.d8 <= 3 && sm.moon >= 293.333) return 0;                       // पंचक में दक्षिण की ओर यात्रा वर्जित (हमेशा)
+      if (!ctx.relax) {
+        const md = ms % 4; if (!cs.some(c => md === c || md === (c + 1) % 4)) return 0;          // चंद्र सम्मुख या दाहिने
+        if (cs.length === 1 && nak === NSHOOL[cs[0]]) return 0;                                  // नक्षत्र शूल
+      }
     }
     if (e.sp === 'ang' && ctx.ang != null && ms === ctx.ang) return 0;
     if (e.sp === 'dir') { const md = ms % 4 /* चंद्र वास: मेष-सिंह-धनु पूर्व, वृषभ-कन्या-मकर दक्षिण, मिथुन-तुला-कुंभ पश्चिम, कर्क-वृश्चिक-मीन उत्तर */, dir = ctx.dir; if (!(md === dir || md === (dir + 1) % 4)) return 0; if (nak === NSHOOL[dir]) return 0; if (dir === 1 && sm.moon >= 293.333) return 0; }
@@ -430,12 +525,14 @@ function scanDay(d, nextRise, e, L, ctx) {
 }
 function chaturmas(d) { return (d.maas === 3 && d.tithi > 11) || [4, 5, 6].includes(d.maas) || (d.maas === 7 && d.tithi < 11); }
 function run() {
-  $('mt').textContent = MN[M - 1] + ' ' + Y; if ($('ym')) $('ym').value = Y + '-' + String(M).padStart(2, '0'); const e = EV[E];
+  $('mt').textContent = MN[M - 1] + ' ' + Y; if ($('ym')) $('ym').value = Y + '-' + String(M).padStart(2, '0');
+  const e = EV[E].sp === 'dw' && !DW.first ? Object.assign({}, EV[E], { sun: null, asta: 0, mal: 0, sk: 0 }) : EV[E];
   if (e.info) { $('out').className = ''; $('out').innerHTML = `<div class="info">${e.info}</div>`; res = []; return; }
   $('out').className = 'empty'; $('out').textContent = 'गणना हो रही है… (हर दिन का लग्न-दर-लग्न विचार)';
   setTimeout(() => {
     const L = loc(), days = AVCal.month(Y, M, L), nx = A.dayInfo(...(M === 12 ? [Y + 1, 1, 1] : [Y, M + 1, 1]), L), blocks = {}; res = [];
     const sv = SPV[e.sp], gv = id => $(id).value === '' ? null : +$(id).value, ctx = { P: [{ jr: gv('jr'), jn: gv('jn'), who: $('pn1').value.trim() || 'वर' }, { jr: gv('jr2'), jn: gv('jn2'), who: $('pn2').value.trim() || 'वधू' }].filter(p => p.jr != null || p.jn != null), dir: e.sp === 'dir' ? +(sv || 0) : 0, ang: e.sp === 'ang' && sv !== '' && sv != null ? ANG[+sv][1] : null };
+    if (e.sp === 'dw') { const gn = v => v === '' || v == null ? null : +v; ctx.P = [{ jr: gn(DW.br), jn: gn(DW.bk), who: DW.bn || 'बहू' }, { jr: gn(DW.cr), jn: gn(DW.ck), who: DW.cn || 'बच्ची', soft: 1 }].filter(p => p.jr != null || p.jn != null); ctx.d8 = DW.d8; }
     let ritu = null; if (e.sp === 'garbh' && sv) { const [ry, rm, rd] = sv.split('-').map(Number); ritu = Date.UTC(ry, rm - 1, rd); }
     let gemV = null; if (e.sp === 'ratna') { const g = GEMS[+(sv || 0)]; gemV = g[1]; ctx.gemP = g[2]; }
     const B = (r, x) => { blocks[r] = (blocks[r] || 0) + 1; }, rej = [];
@@ -456,6 +553,16 @@ function run() {
       if (e.sk && MODE !== 'rk' && d.sank != null) return B('☀️ संक्रांति का दिन');
       if (ritu != null) { const n = Math.round((Date.UTC(d.y, d.m - 1, d.d) - ritu) / 864e5) + 1; if (n < 5 || n > 16 || n === 11 || n === 13) return; d.ritu = n; }
       if (e.asta || e.sg) { const a = asta(d.jdRise); if (e.asta && a.guru) return B('🟡 गुरु अस्त (तारा डूबा)'); if (e.asta && a.shukra) return B('💎 शुक्र अस्त (तारा डूबा)'); if (e.sg && Math.floor(a.p.Jupiter / 30) === 4) d.sgW = 1; }
+      if (e.sp === 'dw') {                    // उत्तम (सब शुद्ध) → नहीं तो मध्यम (हल्के दोष, परिहार सहित)
+        const why = [], shool = ctx.d8 != null && SHOOL8[ctx.d8].includes(d.vaar);
+        if (DW.first && ctx.d8 != null) { const vl = asta(d.jdRise).p.Venus, sd = shukraDir(vl), cs = CARD8[ctx.d8]; if (!shukraAndh(vl) && cs.some(c => sd === c || sd === (c + 1) % 4)) why.push('प्रतिशुक्र (शुक्र ' + DIRS[sd] + ' में — ' + (cs.includes(sd) ? 'सम्मुख' : 'दाहिने') + ')'); }
+        ctx.relax = false; let w = scanDay(d, nextRise, e, L, ctx);
+        if (!w.length) { ctx.relax = true; w = scanDay(d, nextRise, e, L, ctx); ctx.relax = false; if (w.length) why.push('चंद्र-वास / तारा बल पूर्ण नहीं'); }
+        if (w.length && shool) why.unshift('दिशाशूल (' + N.VAAR[d.vaar] + ' — ' + SH_PAR[d.vaar] + ' खाकर निकलें)');
+        if (w.length) res.push({ d, w, godh: 0, pm, tier: why.length ? 'm' : 'u', why });
+        else if (shool) B('🧭 दिशाशूल — ' + N.VAAR[d.vaar] + ' को ' + D8[ctx.d8] + ' दिशा');
+        return;
+      }
       const w = scanDay(d, nextRise, e, L, ctx);
       if (w.length) res.push({ d, w, godh: ctx.godh, pm });
       else if (RKV && Object.keys(ctx.why).length) rej.push({ d, why: Object.keys(ctx.why) });
@@ -465,9 +572,10 @@ function run() {
     const bl = Object.keys(blocks);
     let h = bl.length && !res.length ? bl.map(b => `<div class="blk">${b}<small>इस माह ${blocks[b]} दिन इस कारण से छूटे</small></div>`).join('') : '';
     if (res.length) {
-      h += `<div class="note" style="margin:0 0 6px">${e.t} — ${MN[M - 1]} में <b>${res.length} शुभ दिन</b>${bl.length ? ' • कुछ दिन ' + [...new Set(bl.map(b => b.split(' ')[0]))].join(' ') + ' के कारण छूटे' : ''}</div>`;
-      h += res.map(({ d, w, godh, pm }) => {
-        const bd = []; if (SSY[d.vaar].includes(d.nak)) bd.push('<span class="bdg g">सर्वार्थ सिद्धि</span>'); if (AMR[d.vaar] === d.nak) bd.push('<span class="bdg g">अमृत सिद्धि</span>');
+      if (e.sp === 'dw') { const u = res.filter(r => r.tier === 'u').length; h += `<div class="note" style="margin:0 0 6px">🟢 उत्तम: <b>${u}</b> • 🟡 मध्यम (परिहार सहित): <b>${res.length - u}</b>${DW.d8 == null && !(DW.km != null && DW.km < 8) ? ' • ⚠️ दिशा नहीं चुनी — दिशाशूल नहीं जाँचा' : ''}</div>`; res.sort((a, b) => (a.tier === b.tier ? a.d.d - b.d.d : a.tier === 'u' ? -1 : 1)); }
+      else h += `<div class="note" style="margin:0 0 6px">${e.t} — ${MN[M - 1]} में <b>${res.length} शुभ दिन</b>${bl.length ? ' • कुछ दिन ' + [...new Set(bl.map(b => b.split(' ')[0]))].join(' ') + ' के कारण छूटे' : ''}</div>`;
+      h += res.map(({ d, w, godh, pm, tier, why }) => {
+        const bd = []; if (tier) bd.push(tier === 'u' ? '<span class="tier u">🟢 उत्तम</span>' : `<span class="tier m">🟡 मध्यम — ${why.join(', ')}</span>`); if (SSY[d.vaar].includes(d.nak)) bd.push('<span class="bdg g">सर्वार्थ सिद्धि</span>'); if (AMR[d.vaar] === d.nak) bd.push('<span class="bdg g">अमृत सिद्धि</span>');
         if (d.nak === 7 && (d.vaar === 0 || d.vaar === 4)) bd.push(`<span class="bdg">${d.vaar ? 'गुरु' : 'रवि'}-पुष्य</span>`);
         if (d.sgW && MODE !== 'rk') bd.push('<span class="bdg">⚠️ सिंहस्थ गुरु — गंगा-गोदावरी के मध्य क्षेत्र में वर्जित</span>');
         if (d.ritu) bd.push(`<span class="bdg">ऋतु रात्रि ${d.ritu} — ${d.ritu % 2 ? 'अयुग्म (कन्या योग)' : 'युग्म (पुत्र योग)'}</span>`);
