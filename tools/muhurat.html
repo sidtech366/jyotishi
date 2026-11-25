@@ -65,6 +65,7 @@
 .dwf .route .cmp i{position:absolute;left:50%;top:50%;width:4px;height:24px;margin:-24px 0 0 -2px;background:linear-gradient(#ee6f16,#6b1418);border-radius:4px;transform-origin:50% 100%}
 .dwf .route b{color:var(--mar);font-size:16px}.dwf .route small{display:block;color:var(--mut);font-size:12.5px;line-height:1.4}
 .dwf details summary{font-size:13.5px;color:var(--mar);font-weight:700;cursor:pointer}
+.pon{display:none;background:#fff4d6;border:1px solid #f0d28f;border-radius:10px;padding:8px 10px;margin:8px 0;font-size:13px}.pon button{margin-left:6px;border:1px solid #c9a24a;background:#fff;border-radius:8px;padding:3px 10px;font-weight:700;color:#7a1f1f}
 .tier{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 9px;margin:4px 4px 0 0}
 .tier.u{background:#e7f6ec;color:#1d7d4b;border:1px solid #b5dfc4}.tier.m{background:#fff4d6;color:#8a5a00;border:1px solid #f0d28f}
 @media(max-width:360px){.dwf .g2{grid-template-columns:1fr}}
@@ -82,11 +83,12 @@
 <div class="av-card">
   <div id="pl"></div>
   <div class="spec" id="spec"></div>
-  <details class="det" id="pdet"><summary>👤 नाम या राशि / नक्षत्र से छाँटें (वर-वधू दोनों का चंद्र बल, तारा बल)</summary>
+  <div id="pon" class="pon"></div>
+  <details class="det" id="pdet"><summary id="psum">👤 नाम या राशि / नक्षत्र से छाँटें (चंद्र बल, तारा बल)</summary>
     <label class="l">👦 वर / यजमान का नाम (हिंदी या Hinglish)</label><input class="in" id="pn1" placeholder="जैसे: Vikas या विकास">
     <div class="pers"><div><label class="l">जन्म राशि (चंद्र)</label><select id="jr"></select></div><div><label class="l">जन्म नक्षत्र</label><select id="jn"></select></div></div>
-    <label class="l" style="margin-top:10px">👧 वधू का नाम (विवाह/सगाई हेतु — वैकल्पिक)</label><input class="in" id="pn2" placeholder="जैसे: Priya या प्रिया">
-    <div class="pers"><div><label class="l">जन्म राशि (चंद्र)</label><select id="jr2"></select></div><div><label class="l">जन्म नक्षत्र</label><select id="jn2"></select></div></div>
+    <div id="p2w"><label class="l" style="margin-top:10px">👧 वधू का नाम (विवाह/सगाई हेतु — वैकल्पिक)</label><input class="in" id="pn2" placeholder="जैसे: Priya या प्रिया">
+    <div class="pers"><div><label class="l">जन्म राशि (चंद्र)</label><select id="jr2"></select></div><div><label class="l">जन्म नक्षत्र</label><select id="jn2"></select></div></div></div>
     <p class="note">जन्म नक्षत्र पता न हो तो नाम लिखें — नाम के पहले अक्षर (नामाक्षर) से राशि-नक्षत्र अपने आप भर जाएँगे; पता हो तो स्वयं चुनें। विवाह में जन्म-राशि ज्ञात न हो तो नाम-राशि से मुहूर्त देखने का शास्त्रीय विधान है।</p>
     <p class="note">भरने पर केवल वही समय दिखेगा जिसमें आपके लिए चंद्र बल (चंद्र 1,3,6,7,10,11 भाव में) और तारा बल (विपत्, प्रत्यरि, वध तारा नहीं) दोनों शुद्ध हों।</p>
   </details>
@@ -308,6 +310,15 @@ let G = EV[E].g, now = new Date(), Y = now.getFullYear(), M = now.getMonth() + 1
   $(r).onchange = sv; $(n).onchange = sv;
   let tmr; $(nm).oninput = () => { const a = AVAkshar.fromName($(nm).value.trim()); if (a) { $(r).value = a.sign; $(n).value = a.n; } else if (!$(nm).value.trim()) { $(r).value = ''; $(n).value = ''; } clearTimeout(tmr); tmr = setTimeout(sv, 500); };
 });
+function pSum() {               // छाँट भरी हो तो बंद हिस्से के बाहर भी दिखे
+  const e = EV[E], VV = e.g === 'viv', sn = (r, n) => [$(r).value !== '' ? N.SIGN[+$(r).value] : '', $(n).value !== '' ? N.NAK[+$(n).value] : ''].filter(Boolean).join(' / ');
+  const a = [[$('pn1').value.trim() || (VV ? 'वर' : 'यजमान'), sn('jr', 'jn')]].concat(VV ? [[$('pn2').value.trim() || 'वधू', sn('jr2', 'jn2')]] : []).filter(x => x[1]);
+  $('p2w').style.display = VV ? '' : 'none';
+  $('psum').textContent = VV ? '👤 नाम या राशि / नक्षत्र से छाँटें (वर-वधू दोनों का चंद्र बल, तारा बल)' : '👤 यजमान के नाम या राशि / नक्षत्र से छाँटें (चंद्र बल, तारा बल)';
+  const pn = $('pon'); pn.style.display = a.length ? 'block' : 'none';
+  pn.innerHTML = a.length ? '✅ छाँट लगी है: ' + a.map(x => `<b>${x[0]}</b> (${x[1]})`).join(', ') + ' — केवल इनके चंद्र/तारा बल वाले दिन दिखेंगे<button onclick="pClear()">✖ हटाएँ</button>' : '';
+}
+function pClear() { ['jr', 'jn', 'pn1', 'jr2', 'jn2', 'pn2'].forEach(id => $(id).value = ''); ['', '2'].forEach(x => { store.set('av_mu_jr' + x, ''); store.set('av_mu_jn' + x, ''); store.set('av_mu_pn' + x, ''); }); run(); }
 const pf = AVUI.placeField($('pl'), { onPick: () => run(), hint: 'स्थान चुनें (डिफ़ॉल्ट: वाराणसी)' });
 const loc = () => { const L = pf.get(); return L ? { lat: L.lat, lon: L.lon, tz: pf.tz() } : { lat: 25.31, lon: 83.01, tz: 5.5 }; };
 function drawGroups() {
@@ -467,6 +478,8 @@ function scanDay(d, nextRise, e, L, ctx) {
     if (RKV || RKL) {
       if (RKV && e.sun && !e.sun.includes(Math.floor(sm.sun / 30))) return W('सूर्य संक्रांति दोष');
       if (RKV && Math.floor(sm.sun % 30) % 9 === 1) return W('मृत्युबाण');
+    }
+    if (RKV) {          // युति, सप्तशलाका वेध, सूर्यभोग्य — विवाह के दश दोष, केवल विवाह/वाग्दान में
       for (const p of ['Sun', 'Mars', 'Saturn', 'Rahu', 'Ketu']) if (Math.floor((p === 'Sun' ? sm.sun : DP[p]) / NK) === nak) return W(PHN[p] + ' युति');
       const vp = vedha28(n28(sm.moon)); for (const p of ['Sun', 'Mars', 'Saturn', 'Rahu']) if (n28(p === 'Sun' ? sm.sun : DP[p]) === vp) return W(PHN[p] + ' वेध');
       if (nak === (Math.floor(sm.sun / NK) + 1) % 27) return W('सूर्यभोग्य नक्षत्र');
@@ -524,19 +537,21 @@ function scanDay(d, nextRise, e, L, ctx) {
   }).filter(Boolean);
 }
 function chaturmas(d) { return (d.maas === 3 && d.tithi > 11) || [4, 5, 6].includes(d.maas) || (d.maas === 7 && d.tithi < 11); }
+let PFB = '';
 function run() {
+  PFB = ''; pSum();
   $('mt').textContent = MN[M - 1] + ' ' + Y; if ($('ym')) $('ym').value = Y + '-' + String(M).padStart(2, '0');
   const e = EV[E].sp === 'dw' && !DW.first ? Object.assign({}, EV[E], { sun: null, asta: 0, mal: 0, sk: 0 }) : EV[E];
   if (e.info) { $('out').className = ''; $('out').innerHTML = `<div class="info">${e.info}</div>`; res = []; return; }
   $('out').className = 'empty'; $('out').textContent = 'गणना हो रही है… (हर दिन का लग्न-दर-लग्न विचार)';
   setTimeout(() => {
     const L = loc(), days = AVCal.month(Y, M, L), nx = A.dayInfo(...(M === 12 ? [Y + 1, 1, 1] : [Y, M + 1, 1]), L), blocks = {}; res = [];
-    const sv = SPV[e.sp], gv = id => $(id).value === '' ? null : +$(id).value, ctx = { P: [{ jr: gv('jr'), jn: gv('jn'), who: $('pn1').value.trim() || 'वर' }, { jr: gv('jr2'), jn: gv('jn2'), who: $('pn2').value.trim() || 'वधू' }].filter(p => p.jr != null || p.jn != null), dir: e.sp === 'dir' ? +(sv || 0) : 0, ang: e.sp === 'ang' && sv !== '' && sv != null ? ANG[+sv][1] : null };
+    const sv = SPV[e.sp], gv = id => $(id).value === '' ? null : +$(id).value, VV = e.g === 'viv', ctx = { P: [{ jr: gv('jr'), jn: gv('jn'), who: $('pn1').value.trim() || (VV ? 'वर' : 'यजमान') }].concat(VV ? [{ jr: gv('jr2'), jn: gv('jn2'), who: $('pn2').value.trim() || 'वधू' }] : []).filter(p => p.jr != null || p.jn != null), dir: e.sp === 'dir' ? +(sv || 0) : 0, ang: e.sp === 'ang' && sv !== '' && sv != null ? ANG[+sv][1] : null };
     if (e.sp === 'dw') { const gn = v => v === '' || v == null ? null : +v; ctx.P = [{ jr: gn(DW.br), jn: gn(DW.bk), who: DW.bn || 'बहू' }, { jr: gn(DW.cr), jn: gn(DW.ck), who: DW.cn || 'बच्ची', soft: 1 }].filter(p => p.jr != null || p.jn != null); ctx.d8 = DW.d8; }
     let ritu = null; if (e.sp === 'garbh' && sv) { const [ry, rm, rd] = sv.split('-').map(Number); ritu = Date.UTC(ry, rm - 1, rd); }
     let gemV = null; if (e.sp === 'ratna') { const g = GEMS[+(sv || 0)]; gemV = g[1]; ctx.gemP = g[2]; }
     const B = (r, x) => { blocks[r] = (blocks[r] || 0) + 1; }, rej = [];
-    days.forEach((d, i) => {
+    const pass = () => days.forEach((d, i) => {
       const nextRise = (days[i + 1] || nx).jdRise, sun = Math.floor(d.sun / 30), vr = gemV != null ? [gemV] : e.vrI, RKV = MODE === 'rk' && e.rkv;
       const pm = MODE === 'rk' && d.tithi > 15 ? (d.maas + 1) % 12 : d.maas;   // ऋषिकेश (उत्तर भारत) — पूर्णिमांत मास
       if (!vr.includes(d.vaar)) return;
@@ -567,11 +582,19 @@ function run() {
       if (w.length) res.push({ d, w, godh: ctx.godh, pm });
       else if (RKV && Object.keys(ctx.why).length) rej.push({ d, why: Object.keys(ctx.why) });
     });
+    pass();
+    if (!res.length && ctx.P.length && e.sp !== 'dw') {          // भरे राशि/नक्षत्र से एक भी दिन नहीं बचा — बिना छाँट वाले दिन मध्यम रूप में दिखाएँ
+      const nm = ctx.P.map(p => p.who).join(', ');
+      ctx.P = []; for (const k in blocks) delete blocks[k]; rej.length = 0; pass();
+      res.forEach(r => { r.tier = 'm'; r.why = ['चंद्र/तारा बल नहीं (' + nm + ')']; });
+      if (res.length) PFB = nm;
+    }
     const tz = L.tz; TZ = tz;
     $('out').className = '';
     const bl = Object.keys(blocks);
     let h = bl.length && !res.length ? bl.map(b => `<div class="blk">${b}<small>इस माह ${blocks[b]} दिन इस कारण से छूटे</small></div>`).join('') : '';
     if (res.length) {
+      if (PFB) h += `<div class="pon" style="display:block">⚠️ <b>${PFB}</b> के लिए इस माह चंद्र बल + तारा बल वाला एक भी दिन नहीं बना। नीचे के दिन पंचांग से शुद्ध हैं, बस चंद्र/तारा बल नहीं — परिहार (दान, इष्ट-स्मरण) सहित लिए जा सकते हैं।<button onclick="pClear()">✖ नाम-राशि हटाएँ</button></div>`;
       if (e.sp === 'dw') { const u = res.filter(r => r.tier === 'u').length; h += `<div class="note" style="margin:0 0 6px">🟢 उत्तम: <b>${u}</b> • 🟡 मध्यम (परिहार सहित): <b>${res.length - u}</b>${DW.d8 == null && !(DW.km != null && DW.km < 8) ? ' • ⚠️ दिशा नहीं चुनी — दिशाशूल नहीं जाँचा' : ''}</div>`; res.sort((a, b) => (a.tier === b.tier ? a.d.d - b.d.d : a.tier === 'u' ? -1 : 1)); }
       else h += `<div class="note" style="margin:0 0 6px">${e.t} — ${MN[M - 1]} में <b>${res.length} शुभ दिन</b>${bl.length ? ' • कुछ दिन ' + [...new Set(bl.map(b => b.split(' ')[0]))].join(' ') + ' के कारण छूटे' : ''}</div>`;
       h += res.map(({ d, w, godh, pm, tier, why }) => {
