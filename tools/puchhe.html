@@ -49,6 +49,13 @@ body{margin:0;background:#fbf3e6;overflow:hidden}
 @keyframes bl{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}
 /* नीचे: सुझाव + इनपुट */
 .dock{flex:0 0 auto;background:#fffaf2;border-top:1px solid #f1e2c6;padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
+.fq{margin-top:8px;white-space:normal}.fq .tb{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding-bottom:6px}.fq .tb::-webkit-scrollbar{display:none}
+.fq .tb b{flex:0 0 auto;padding:6px 11px;border-radius:999px;font-size:12.5px;background:#fff7ea;border:1px solid #f5e1bd;color:#6b3a1c;cursor:pointer;font-weight:600}.fq .tb b.on{background:linear-gradient(135deg,#8a1c1f,#5a1013);color:#fff;border-color:transparent}
+.fq .gd{display:grid;grid-template-columns:1fr 1fr;gap:6px}.fq .gd span{display:flex;align-items:center;gap:7px;padding:9px 9px;border-radius:12px;background:#fff;border:1px solid #f0dcb6;font-size:12.8px;font-weight:600;color:#4a2814;line-height:1.3;cursor:pointer;box-shadow:0 2px 8px -6px #8a4a1c66;text-align:left}
+.fq .gd span i{font-style:normal;font-size:17px;flex:none}.fq .gd span:active{transform:scale(.97);background:#fff3df}
+.fq .nok{grid-column:1/-1;font-size:12.5px;color:#7a5a40;background:#fff7ea;border-radius:10px;padding:9px;text-align:center}
+.fqb{position:fixed;inset:0;background:#2a0d0599;z-index:50;display:none;align-items:flex-end}.fqb.on{display:flex}.fqb .bx{background:#fffaf2;width:100%;max-height:78vh;overflow:auto;border-radius:20px 20px 0 0;padding:12px 12px 18px}.fqb h4{margin:0 0 6px;color:#7a1c1c;display:flex;justify-content:space-between;align-items:center}.fqb h4 button{border:0;background:#f3e3c4;border-radius:50%;width:30px;height:30px;font-size:15px}
+.sug span.all{background:linear-gradient(135deg,#8a1c1f,#5a1013);color:#fff;border-color:transparent}
 .sug{display:flex;gap:6px;overflow-x:auto;padding:0 2px 8px;scrollbar-width:none}.sug::-webkit-scrollbar{display:none}
 .sug span{flex:0 0 auto;padding:6px 12px;border-radius:999px;background:#fff;border:1px solid #f3c98b;color:var(--sd);font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
 .sug span:active{background:#fff1e0}
@@ -67,7 +74,8 @@ body{margin:0;background:#fbf3e6;overflow:hidden}
 <header class="top"><div class="av">सि</div><div class="nm"><b>सिद्धांत</b><small>● ऑनलाइन • ज्योतिष सहायक</small></div><span class="br">ASTRO VIKASS</span></header>
 <div id="kbx"></div>
 <div class="chat" id="chat"><div class="msg b wel"><b class="h">🙏 नमस्ते, मैं सिद्धांत हूँ</b>हिंदी या Hinglish में कुछ भी पूछिए —
-<div class="cap"><span data-ask="आज का पंचांग"><i>🌅</i>पंचांग</span><span data-ask="अगली एकादशी का पारण कब है?"><i>🪔</i>व्रत-त्योहार</span><span data-ask="गृह प्रवेश का शुभ मुहूर्त"><i>⏳</i>मुहूर्त</span><span data-ask="मेरी कुंडली के दोष"><i>🔯</i>कुंडली</span><span data-ask="हनुमान जी का ध्यान मंत्र"><i>📿</i>मंत्र-पूजा</span><span data-ask="नौकरी के लिए उपाय"><i>🌿</i>उपाय-वास्तु</span></div><small class="meta">जैसे: “karwa chauth ki puja vidhi”, “सपने में बैल देखना”</small></div></div>
+<div class="fq" id="fqW"></div><small class="meta">नीचे से प्रश्न चुनें — तुरंत सटीक उत्तर। या अपना प्रश्न लिखें।</small></div></div>
+<div class="fqb" id="fqB"><div class="bx"><h4>❓ प्रश्न चुनें — एक क्लिक में उत्तर<button id="fqX">✕</button></h4><div class="fq" id="fqS"></div></div></div>
 <div class="dock">
   <div class="sug" id="sug"></div>
   <div class="inp"><textarea id="q" rows="1" placeholder="अपना प्रश्न लिखें…"></textarea><button id="go" aria-label="भेजें">➤</button></div>
@@ -154,10 +162,37 @@ if (KD) {
   $('kbx').innerHTML = `<div class="kb">🪔 <div><b>${esc(KD.n)}</b> की कुंडली<br><small>${esc(KD.d)} • ${esc(KD.t)} • ${esc(KD.p || '')}</small></div><label><input type="checkbox" id="uk" ${useK ? 'checked' : ''}> शामिल करें</label></div>`;
   $('uk').onchange = () => useK = $('uk').checked;
 } else $('kbx').innerHTML = `<div class="kb">🪔 <div>अपनी कुंडली के बारे में पूछना है? पहले <a href="../kundli/?embed=1" style="color:#a8321e;font-weight:700">कुंडली बनाएं</a> — फिर यहाँ अपने आप जुड़ जाएगी।</div></div>`;
-const SUG = (KD ? ['मेरी कुंडली में कौन से योग हैं?', 'मेरी अभी कौन सी महादशा चल रही है?', 'मेरे लिए कौन सा उपाय करूँ?'] : [])
-  .concat(['आज का पंचांग', 'अगली एकादशी का पारण कब है?', 'करवा चौथ की पूजा विधि', 'दीपावली पूजन सामग्री', 'सत्यनारायण कथा', 'पूजा घर किस दिशा में हो?', 'सपने में साँप देखना', 'हनुमान जी का ध्यान मंत्र', 'नौकरी के लिए उपाय']);
-$('sug').innerHTML = SUG.map(s => `<span>${s}</span>`).join('');
-$('sug').onclick = e => { const s = e.target.closest('span'); if (s) ask(s.textContent); };
+/* ===== अक्सर पूछे जाने वाले प्रश्न — बटन दबाते ही सटीक उत्तर (हर प्रश्न सीधे गणना/ज्ञान भंडार से, AI पर निर्भर नहीं) ===== */
+const FAQ = [
+  ['🧿 मेरी कुंडली', 'k', [['🌅', 'मेरा लग्न', 'मेरा लग्न क्या है'], ['🌙', 'मेरी राशि', 'मेरी राशि क्या है'], ['⭐', 'मेरा नक्षत्र', 'मेरा जन्म नक्षत्र कौन सा है'], ['🔤', 'नाम का अक्षर', 'मेरे नाम का अक्षर क्या है'],
+    ['🎂', 'जन्म विवरण', 'मेरी जन्म तिथि जन्म समय और जन्म स्थान'], ['📋', 'अवकहड़ा चक्र', 'मेरा अवकहड़ा चक्र'], ['🔱', 'गण • नाड़ी • योनि', 'मेरा गण नाड़ी योनि'], ['🪐', 'सभी ग्रह स्थिति', 'मेरी कुंडली में सभी ग्रहों की स्थिति'],
+    ['✨', 'मेरे योग', 'मेरी कुंडली में कौन से योग हैं'], ['⏳', 'अभी की दशा', 'मेरी अभी कौन सी महादशा चल रही है'], ['📜', 'दशा क्रम', 'मेरी सभी दशा का क्रम'], ['🔴', 'क्या मैं मांगलिक हूँ', 'क्या मैं मांगलिक हूँ'],
+    ['🛡️', 'मेरे दोष', 'मेरी कुंडली के दोष'], ['🪐', 'साढ़ेसाती / ढैय्या', 'मेरी साढ़ेसाती चल रही है क्या'], ['💎', 'मेरा रत्न', 'मेरे लिए कौन सा रत्न'], ['🙏', 'मेरे इष्ट देव', 'मेरे इष्ट देव कौन हैं'],
+    ['🪔', 'मेरे उपाय', 'मेरे लिए उपाय'], ['💍', '7वाँ भाव (विवाह)', 'मेरे 7वें भाव में कौन से ग्रह हैं'], ['💼', '10वाँ भाव (कर्म)', 'मेरे 10वें भाव में कौन से ग्रह हैं'], ['💰', '2रा भाव (धन)', 'मेरे 2रे भाव में कौन से ग्रह हैं']]],
+  ['🌅 आज', 't', [['🌅', 'आज का पंचांग', 'आज का पंचांग'], ['🌙', 'आज की तिथि', 'आज की तिथि'], ['⭐', 'आज का नक्षत्र', 'आज का नक्षत्र'], ['⛔', 'आज राहुकाल', 'आज राहुकाल कब है'],
+    ['🕐', 'आज का चौघड़िया', 'आज का चौघड़िया'], ['✨', 'अभिजित मुहूर्त', 'आज अभिजित मुहूर्त'], ['⚠️', 'आज भद्रा', 'आज भद्रा कब है'], ['🧭', 'आज दिशा शूल', 'आज दिशा शूल किस दिशा में'],
+    ['🌄', 'सूर्योदय-सूर्यास्त', 'आज सूर्योदय सूर्यास्त'], ['⏭️', 'कल का पंचांग', 'कल का पंचांग']]],
+  ['🪔 व्रत-त्योहार', 'v', [['🪔', 'अगली एकादशी', 'अगली एकादशी कब है'], ['🍽️', 'एकादशी पारण', 'अगली एकादशी का पारण कब है'], ['🌕', 'अगली पूर्णिमा', 'अगली पूर्णिमा कब है'], ['🌑', 'अगली अमावस्या', 'अगली अमावस्या कब है'],
+    ['🔱', 'प्रदोष व्रत', 'अगला प्रदोष व्रत कब है'], ['🐘', 'संकष्टी चतुर्थी', 'संकष्टी चतुर्थी कब है'], ['🌙', 'मासिक शिवरात्रि', 'मासिक शिवरात्रि कब है'], ['☀️', 'मकर संक्रांति', 'मकर संक्रांति कब है'],
+    ['📚', 'वसंत पंचमी', 'वसंत पंचमी कब है'], ['🕉️', 'महाशिवरात्रि', 'महाशिवरात्रि कब है'], ['🎨', 'होली', 'होली कब है'], ['🪷', 'नवरात्रि', 'नवरात्रि कब है']]],
+  ['🛕 पूजा-विधि', 'p', [['📖', 'सत्यनारायण कथा', 'सत्यनारायण कथा'], ['🪔', 'एकादशी व्रत विधि', 'एकादशी व्रत की विधि'], ['📋', 'एकादशी के नियम', 'एकादशी व्रत के नियम'], ['🌕', 'पूर्णिमा व्रत विधि', 'पूर्णिमा व्रत की विधि'],
+    ['🔱', 'प्रदोष व्रत कथा', 'प्रदोष व्रत कथा'], ['🪔', 'दीपावली पूजन सामग्री', 'दीपावली पूजन सामग्री'], ['🌙', 'करवा चौथ विधि', 'करवा चौथ की पूजा विधि'], ['🐒', 'हनुमान ध्यान मंत्र', 'हनुमान जी का ध्यान मंत्र'],
+    ['🔱', 'शिव ध्यान मंत्र', 'शिव जी का ध्यान मंत्र'], ['🪷', 'लक्ष्मी ध्यान मंत्र', 'महालक्ष्मी का ध्यान मंत्र']]],
+  ['🌿 उपाय-वास्तु', 'u', [['🛕', 'पूजा घर की दिशा', 'पूजा घर किस दिशा में हो'], ['💼', 'नौकरी के उपाय', 'नौकरी के लिए उपाय'], ['💰', 'धन के उपाय', 'पैसे की तंगी के उपाय'], ['💍', 'विवाह में देरी', 'विवाह में देरी के उपाय'],
+    ['🪐', 'शनि के उपाय', 'शनि की साढ़ेसाती के उपाय'], ['🛏️', 'शयन कक्ष वास्तु', 'बेडरूम किस दिशा में हो'], ['🍳', 'रसोई वास्तु', 'रसोई किस दिशा में हो'], ['🐍', 'सपने में साँप', 'सपने में साँप देखना']]]];
+let FQT = KD ? 'k' : 't';
+function fqHtml() {
+  const g = FAQ.find(x => x[1] === FQT);
+  return `<div class="tb">${FAQ.map(x => `<b data-t="${x[1]}" class="${x[1] === FQT ? 'on' : ''}">${x[0]}</b>`).join('')}</div><div class="gd">${g[1] === 'k' && !KD ? '<div class="nok">🪔 अपनी कुंडली के प्रश्नों के लिए पहले <a href="../kundli/?embed=1" style="color:#a8321e;font-weight:700">कुंडली बनाएं</a> — फिर ये सभी बटन आपकी कुंडली से उत्तर देंगे।</div>' : g[2].map(x => `<span data-q="${esc(x[2])}"><i>${x[0]}</i>${esc(x[1])}</span>`).join('')}</div>`;
+}
+function fqDraw() { $('fqW').innerHTML = fqHtml(); $('fqS').innerHTML = fqHtml(); }
+fqDraw();
+const fqClick = e => { const t = e.target.closest('[data-t]'); if (t) { FQT = t.dataset.t; fqDraw(); return; } const q = e.target.closest('[data-q]'); if (q) { $('fqB').classList.remove('on'); if (q.dataset.q.startsWith('मेर') || /^क्या मैं/.test(q.dataset.q)) { useK = true; if ($('uk')) $('uk').checked = true; } ask(q.dataset.q); } };
+$('fqW').onclick = fqClick; $('fqS').onclick = fqClick;
+$('fqX').onclick = () => $('fqB').classList.remove('on'); $('fqB').onclick = e => { if (e.target.id === 'fqB') $('fqB').classList.remove('on'); };
+$('sug').innerHTML = '<span class="all">❓ सभी प्रश्न</span>' + (KD ? ['मेरी राशि', 'अभी की दशा', 'मेरे योग', 'मेरा रत्न'] : []).concat(['आज का पंचांग', 'अगली एकादशी', 'आज राहुकाल']).map(t => `<span>${t}</span>`).join('');
+$('sug').onclick = e => { const s = e.target.closest('span'); if (!s) return; if (s.classList.contains('all')) { fqDraw(); $('fqB').classList.add('on'); return; }
+  const m = FAQ.flatMap(x => x[2]).find(x => x[1] === s.textContent); ask(m ? m[2] : s.textContent); };
 /* ---------- चैट ---------- */
 const chat = $('chat');
 function add(cls, html) { const d = document.createElement('div'); d.className = 'msg ' + cls; d.innerHTML = html; chat.appendChild(d); down(); return d; }
@@ -198,7 +233,7 @@ function kFacts(q) {
   if (T(/राशि|rashi|raashi|moon ?sign|chandra ?rashi/i) && !T(/राशिफल|rashifal|नाम ?राशि/i)) out.push(`🌙 <b>राशि (चंद्र राशि):</b> ${esc(S.rashi || '—')}${mi >= 0 ? ` • राशि स्वामी: ${KF_SL[mi]}` : ''}`);
   if (T(/नक्षत्र|nakshatra|nakshtra|nakchatra|charan|चरण/i)) out.push(`⭐ <b>जन्म नक्षत्र:</b> ${esc(S.nak || '—')}${S.pada ? `, ${S.pada} चरण` : ''}${ni >= 0 ? ` • नक्षत्र स्वामी: ${KF_NL[ni % 9]}` : ''}`);
   if (T(/अक्षर|akshar|akshr|letter|नाम ?(का|के)? ?पहला|pehla ?akshar|naamakshar|नामाक्षर/i) && ni >= 0) out.push(`🔤 <b>नाम अक्षर:</b> ${S.pada ? `<b>${KF_AKS[ni][S.pada - 1]}</b> (${S.nak} ${S.pada} चरण) • ` : ''}${S.nak} नक्षत्र के चारों अक्षर: ${KF_AKS[ni].join(', ')}`);
-  if (T(/\bगण\b|\bgan\b|\bgana\b/i) && ni >= 0) out.push(`🔱 <b>गण:</b> ${KF_GAN[ni]} गण`);
+  if (T(/(^|[\s,।])गण($|[\s,।?])|\bgan\b|\bgana\b/i) && ni >= 0) out.push(`🔱 <b>गण:</b> ${KF_GAN[ni]} गण`);
   if (T(/नाड़ी|नाडी|\bnadi\b|naadi|nari\b/i) && ni >= 0) out.push(`💠 <b>नाड़ी:</b> ${KF_NADI[ni]} नाड़ी`);
   if (T(/योनि|yoni/i) && ni >= 0) out.push(`🐾 <b>योनि:</b> ${KF_YONI[ni]}`);
   if (T(/वर्ण|varna|varn\b/i) && mi >= 0) out.push(`🕉️ <b>वर्ण:</b> ${KF_VARNA[mi % 4]}`);
@@ -215,7 +250,7 @@ function kFacts(q) {
       out.push((allQ ? '🪐 <b>सभी ग्रहों की स्थिति</b>\n' : '') + L.map(x => `🪐 <b>${x.hi}</b>: ${x.s} राशि में ${x.d.toFixed(1)}°, ${ord(x.h)} भाव • ${x.nk} नक्षत्र ${x.pd} चरण${x.dg ? ' • ' + x.dg : ''}${x.r && !/राहु|केतु/.test(x.hi) ? ' • वक्री' : ''}${x.c ? ' • अस्त' : ''}`).join('\n')); }
   }
   // भाव में कौन-से ग्रह
-  const hm = qq.match(/(\d{1,2}) ?(वें|वे|वा|th|st|nd|rd|ला|रा|था)? ?(भाव|घर|bhav|ghar|house)/i);
+  const hm = qq.match(/(\d{1,2}) ?(वें|वे|वा|वाँ|th|st|nd|rd|ला|रा|रे|री|था|थे)? ?(भाव|घर|bhav|ghar|house)/i);
   if (hm && S.pl && +hm[1] >= 1 && +hm[1] <= 12) { const h = +hm[1], L = S.pl.filter(x => x.h === h); out.push(`🏠 <b>${ord(h)} भाव:</b> ${li >= 0 ? A.N.SIGN[(li + h - 1) % 12] + ' राशि, स्वामी ' + KF_SL[(li + h - 1) % 12] + ' • ' : ''}${L.length ? 'ग्रह: ' + L.map(x => x.hi).join(', ') : 'कोई ग्रह नहीं (खाली भाव)'}`); }
   if (T(/योग|yog\b|yoga|yogas/i) && !T(/योगिनी|yogini|दशा/i)) out.push(S.yog ? (S.yog.length ? `✨ <b>आपकी कुंडली के योग (${S.yog.length}):</b>\n` + S.yog.map((y, i) => `${i + 1}. <b>${y.n}</b> — ${y.how}\n   फल: ${y.f}`).join('\n') : '✨ कुंडली में कोई प्रमुख राजयोग/महापुरुष योग नहीं बन रहा।') : '✨ योग ' + need2);
   if (T(/मांगलिक|मंगली|manglik|mangalik|mangli/i)) { const d = (S.dosh || []).find(x => /मांगलिक|मंगल दोष/.test(x.n)); out.push(d ? `🔴 <b>हाँ, मांगलिक दोष है</b>${d.st === 'mild' ? ' (आंशिक/शमित)' : ''}\n• स्थिति: ${d.how}\n• उपाय: ${d.u}` : '✅ <b>नहीं, आप मांगलिक नहीं हैं।</b>'); }
@@ -335,14 +370,29 @@ function chogTxt(I) { const nd = monthC(I.m === 12 && I.d === 31 ? I.y + 1 : I.y
   const row = (st, len, s0) => [...Array(8).keys()].map(i => { const a = st + i * len / 8, b = a + len / 8, n = CHO[(s0 + i) % 7]; return `${CGOOD[n]} ${n}: ${A.fmtH(a)}–${A.fmtH(b)}${hr >= a && hr < b ? ' ⬅ अभी' : ''}`; }).join('\n');
   return `<b>☀️ दिन का चौघड़िया</b>\n${row(I.rise, dl, sD)}\n\n<b>🌙 रात्रि का चौघड़िया</b>\n${row(I.set, nl, sN)}`; }
 function todayAns(q) {
-  if (!/आज|अभी|कल\b|aaj|aj\b|abhi|today|kal\b|tomorrow/i.test(q)) return null;
+  if (KD && useK && /मेरी|मेरा|मेरे|मुझे|meri|mera|mere|mujhe|मैं\b/i.test(q) && !/पंचांग|panchang/i.test(q)) return null;   // ‘मेरी राशि…’ ➜ कुंडली से, आज के पंचांग से नहीं
+  if (!/आज|अभी|(^|\s)कल($|\s|का|की|के)|aaj|aj\b|abhi|today|kal\b|tomorrow/i.test(q)) return null;
   if (!/तिथि|राहु|सूर्योदय|सूर्यास्त|नक्षत्र|पंचांग|चौघड़िया|योग|करण|चंद्र|राशि|मुहूर्त|अभिजित|भद्रा|पंचक|दिशा|tithi|rahu|sunrise|sunset|nakshatra|panchang|choghadiya|chaughadiya|yog|karan|chandra|rashi|muhurat|abhijit|bhadra|panchak|disha|vrat|व्रत|त्योहार|tyohar|festival/i.test(q)) return null;
-  const L = locP(), n = new Date(); if (/कल\b|kal\b|tomorrow/i.test(q)) n.setDate(n.getDate() + 1);
+  const L = locP(), n = new Date(); if (/(^|\s)कल($|\s|का|की|के)|kal\b|tomorrow/i.test(q)) n.setDate(n.getDate() + 1);
   const y = n.getFullYear(), m = n.getMonth() + 1, d = n.getDate(), I = monthC(y, m, L)[d - 1], N = A.N, tz = L.tz;
   const seg = (I.set - I.rise) / 8, rs = I.rise + (RAHU[I.vaar] - 1) * seg, dm = (I.set - I.rise) / 15, ab = I.rise + 7 * dm;
   const te = A.nextChange(I.jdRise, A.tithiNo, .02), ne = A.nextChange(I.jdRise, A.nakNo, .02);
   const ds = ['पश्चिम', 'पूर्व', 'उत्तर', 'उत्तर', 'दक्षिण', 'पश्चिम', 'पूर्व'][I.vaar];
   const ev = (I.events || []).map(e => e[0] + ' ' + e[1]).join(', ');
+  // जो पूछा वही — केवल राहुकाल / अभिजित / भद्रा / दिशा शूल / सूर्योदय / तिथि / नक्षत्र
+  const F = [], has = re => re.test(q), hd = `<b>🌞 ${d} ${MN[m - 1]} ${y}, ${WD[I.vaar]}</b> (${esc(L.name)})`;
+  if (!has(/पंचांग|panchang/i)) {
+    if (has(/तिथि|tithi/i)) F.push(`🌙 तिथि: <b>${A.tithiName(I.tithi)}</b> — ${A.fmtJd(te, tz)} तक`);
+    if (has(/नक्षत्र|nakshatra/i)) F.push(`⭐ नक्षत्र: <b>${N.NAK[A.nakNo(I.jdRise)]}</b> — ${A.fmtJd(ne, tz)} तक`);
+    if (has(/राहु|rahu/i)) F.push(`⛔ राहुकाल: <b>${A.fmtH(rs)} – ${A.fmtH(rs + seg)}</b> — इस समय नया शुभ कार्य आरंभ न करें।`);
+    if (has(/अभिजित|abhijit/i)) F.push(I.vaar === 3 ? '✨ अभिजित मुहूर्त: <b>बुधवार को वर्जित</b> — आज न लें।' : `✨ अभिजित मुहूर्त: <b>${A.fmtH(ab)} – ${A.fmtH(ab + dm)}</b> — दिन का सबसे शुभ मुहूर्त।`);
+    if (has(/दिशा|disha|शूल|shool/i)) F.push(`🚫 दिशा शूल: <b>${ds}</b> — आज इस दिशा में यात्रा टालें; जाना ही हो तो ${['घी', 'दर्पण देखकर', 'गुड़', 'तिल', 'दही', 'जौ', 'उड़द'][I.vaar]} खाकर/करके निकलें।`);
+    if (has(/सूर्योदय|सूर्यास्त|sunrise|sunset/i)) F.push(`🌄 सूर्योदय: <b>${A.fmtH(I.rise)}</b> • 🌇 सूर्यास्त: <b>${A.fmtH(I.set)}</b>`);
+    if (has(/भद्रा|bhadra/i)) { const sp = []; let c = I.jdRise; const end = I.jdRise + 1;
+      while (c < end && sp.length < 4) { const k = A.karanaNo(c + 1e-5), nx = A.nextChange(c, A.karanaNo, .02); if (k >= 2 && k <= 57 && (k - 2) % 7 === 6) sp.push(A.fmtJd(c, tz) + ' से ' + A.fmtJd(Math.min(nx, end + .5), tz) + ' तक'); if (!(nx > c)) break; c = nx; }
+      F.push(sp.length ? `⚠️ भद्रा: <b>${sp.join('; ')}</b> — भद्रा में शुभ कार्य वर्जित।` : '✅ आज (सूर्योदय से अगले सूर्योदय तक) भद्रा नहीं है।'); }
+    if (F.length) return { h: hd + '\n\n' + F.join('\n'), src: '<div class="src"><a href="../tools/panchang.html">🌞 पूरा पंचांग, चौघड़िया, लग्न</a></div>', I, L };
+  }
   return { h: `<b>🌞 ${d} ${MN[m - 1]} ${y}, ${WD[I.vaar]}</b> (${esc(L.name)})\n\n• तिथि: <b>${A.tithiName(I.tithi)}</b> — ${A.fmtJd(te, tz)} तक\n• नक्षत्र: <b>${N.NAK[A.nakNo(I.jdRise)]}</b> — ${A.fmtJd(ne, tz)} तक\n• मास: ${(I.adhik ? 'अधिक ' : '') + N.MAAS[I.maas]} (अमांत)\n• चंद्र राशि: ${N.SIGN[Math.floor(A.sunMoon(I.jdRise).moon / 30)]}\n• सूर्योदय ${A.fmtH(I.rise)} • सूर्यास्त ${A.fmtH(I.set)}\n• ✨ अभिजित्: ${I.vaar === 3 ? 'बुधवार — वर्जित' : A.fmtH(ab) + '–' + A.fmtH(ab + dm)}\n• ⛔ राहुकाल: ${A.fmtH(rs)}–${A.fmtH(rs + seg)}\n• 🚫 दिशा शूल: ${ds}` + (ev ? `\n\n🙏 <b>व्रत-त्योहार:</b> ${ev}` : ''),
     src: '<div class="src"><a href="../tools/panchang.html">🌞 पूरा पंचांग, चौघड़िया, लग्न</a></div>', I, L };
 }
@@ -370,8 +420,9 @@ async function ask(qq) {
   await new Promise(r => setTimeout(r, 30));
   let a = null;
   try {
-    a = vratAns(q);                                          // 1. व्रत-त्योहार (तिथि, मुहूर्त, विधि, कथा…)
-    if (!a) { a = todayAns(q); if (a && /चौघड़िया|choghadiya|chaughadiya|choghdiya/i.test(q)) a.h = chogTxt(a.I) + '\n\n' + a.h.split('\n').slice(0, 1).join(''); }   // 2. आज/कल का पंचांग
+    if (/^(आज|कल)(\s|$)/.test(q)) a = todayAns(q);          // ‘आज …/कल …’ ➜ पहले आज का पंचांग
+    if (!a) a = vratAns(q);                                          // 1. व्रत-त्योहार (तिथि, मुहूर्त, विधि, कथा…)
+    if (!a || a.I) { a = a || todayAns(q); if (a && /चौघड़िया|choghadiya|chaughadiya|choghdiya/i.test(q)) a.h = chogTxt(a.I) + '\n\n' + a.h.split('\n').slice(0, 1).join(''); }   // 2. आज/कल का पंचांग
     if (!a && !KD && /मेरी|मेरा|मेरे|मुझे|meri|mera|mere|mujhe/i.test(q) && /कुंडली|kundli|kundali|लग्न|lagna|दशा|dasha|रत्न|ratna|ratn|इष्ट|isht|दोष|dosh|मांगलिक|manglik/i.test(q)) a = { h: '🪔 आपकी व्यक्तिगत जानकारी (रत्न, दशा, दोष, इष्ट) के लिए पहले अपनी कुंडली बनाएं — फिर मैं उसी से सटीक उत्तर दूँगा।', src: '<div class="src"><a href="../kundli/?embed=1">🪔 कुंडली बनाएं</a></div>' };
     if (!a && KD && useK) { const KFa = (PERS.test(q) || /जन्म|janm|janam|birth|\bdob\b|पैदा|paida/i.test(q)) ? kFacts(q) : null, LA = PERS.test(q) && (!KFa || /रत्न|ratn|इष्ट|isht|उपाय|upay|दशा|dasha|दोष|dosh/i.test(q)) ? localAns(q) : null;   // 3. अपनी कुंडली — जो पूछा वही तथ्य
       let h = [KFa, LA].filter(Boolean).join('\n\n━━━━━━\n\n'); if (!h && PERS.test(q)) h = kSearch(q);

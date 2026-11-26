@@ -79,9 +79,8 @@
   <label class="l">✍️ लग्न लेखक (पंडित जी) <small id="pauto" style="color:#1d7d4b;font-weight:600"></small></label>
   <div class="av-row"><div><input class="in" id="pn" placeholder="पं. … शास्त्री"></div><div><input class="in" id="pm" type="tel" inputmode="numeric" maxlength="10" placeholder="📞 मोबाइल"></div></div>
   <input class="in" id="pa" placeholder="पंडित जी का स्थान / पता" style="margin-top:6px">
-  <details class="xtra"><summary>🎉 स्वागतकर्ता व बाल संवाद (वैकल्पिक)</summary>
+  <details class="xtra"><summary>🙏 स्वागतकर्ता (वैकल्पिक)</summary>
     <label class="l">🙏 स्वागतकर्ता — नाम (हर नाम नई पंक्ति में या कॉमा से)</label><textarea class="in" id="sw" rows="3" placeholder="जैसे: श्री राकेश मिश्र, श्री दिनेश मिश्र, श्री अजय पांडेय"></textarea>
-    <label class="l">🧒 बाल संवाद — घर के छोटे बच्चों की ओर से</label><textarea class="in" id="bs" rows="3" placeholder="जैसे: मेरे चाचू की शादी में ज़रूर-ज़रूर आना… — छोटी गुड़िया, आरव"></textarea>
   </details>
   <label class="l">मुहूर्त कब से खोजें</label><div class="av-row"><div><input class="in" type="date" id="from"></div><div><select class="in" id="span"><option value="6">अगले 6 महीने</option><option value="12" selected>अगले 12 महीने</option><option value="3">अगले 3 महीने</option></select></div></div>
   <button class="btn blk" id="go">🔍 गुण मिलान व विवाह मुहूर्त निकालें</button>
@@ -97,7 +96,7 @@
 const { $, esc, store, share, toast } = AVUI, A = AVAstro, N = A.N;
 /* ---------- फ़ॉर्म ---------- */
 const S = store.get('av_lp', {});
-const FK = ['vn', 'vf', 'vmo', 'vg', 'va', 'vmb', 'kn', 'kf', 'kmo', 'kg', 'ka', 'kmb', 'pn', 'pa', 'pm', 'sw', 'bs'], DK = ['vfd', 'vmd', 'kfd', 'kmd'];
+const FK = ['vn', 'vf', 'vmo', 'vg', 'va', 'vmb', 'kn', 'kf', 'kmo', 'kg', 'ka', 'kmb', 'pn', 'pa', 'pm', 'sw'], DK = ['vfd', 'vmd', 'kfd', 'kmd'];
 FK.forEach(k => { if (S[k]) $(k).value = S[k]; $(k).addEventListener('change', () => { S[k] = $(k).value.trim(); store.set('av_lp', S); }); });
 DK.forEach(k => { $(k).checked = !!S[k]; $(k).addEventListener('change', () => { S[k] = $(k).checked; store.set('av_lp', S); if (PICK != null) render(); }); });
 /* लग्न लेखक — लॉगिन किए पंडित जी की प्रोफ़ाइल से अपने-आप */
@@ -350,7 +349,7 @@ function render() {
     <br>रविबल ${U(r.sb[0])} त्रिबल ${U(trib)} • ${U(r.nak)} नक्षत्रे (${U(r.lagna)} लग्न) शुद्धौ लत्तादि दशदोष रहितम् पाणिग्रहणम् शुभम्॥</div>`;
   else body = head + nimBody(r, pc, tm, trib, U, vS, kS, d, m, y);
   const swl = String(S.sw || '').split(/[\n,]+/).map(x => x.trim()).filter(Boolean);
-  const xb = (swl.length ? `<div class="bx"><h5>🙏 स्वागतकर्ता</h5><div class="sw2">${swl.map(x => `<span>${esc(x)}</span>`).join('')}</div></div>` : '') + (S.bs ? `<div class="bx bal"><h5>🧒 बाल संवाद</h5>${esc(S.bs).replace(/\n/g, '<br>')}</div>` : '');
+  const xb = (swl.length ? `<div class="bx"><h5>🙏 स्वागतकर्ता</h5><div class="sw2">${swl.map(x => `<span>${esc(x)}</span>`).join('')}</div></div>` : '');
   const lek = `<div style="text-align:right">लग्न लेखक:<br><b>${esc(S.pn || '…')}</b>${S.pa ? `<br><small>${esc(S.pa)}</small>` : ''}${S.pm ? `<br><small>📞 ${esc(S.pm)}</small>` : ''}</div>`;
   const nv = KIND === 'nim' && !(TPL === 'photo' && SIDE === 'k') ? SIDE : 'k';
   const sig = xb + (KIND === 'lagna' ? `<div class="shubh">॥ शुभमस्तु ॥</div><div class="sig"><div></div>${lek}</div>` : `<div class="sig"><div>निवेदक:<br><b>${esc(addressee(nv).replace(/ जी/g, '') || '…')}</b>${S[nv + 'a'] ? `<br><small>${esc(S[nv + 'a'])}</small>` : ''}${S[nv + 'mb'] ? `<br><small>📞 ${esc(S[nv + 'mb'])}</small>` : ''}</div>${lek}</div>`);
@@ -373,7 +372,7 @@ function render() {
   $('pdf').onclick = savePdf;
   $('img').onclick = saveImg;
   $('wa').onclick = () => { const n = ($('wn').value || '').replace(/\D/g, ''); if (n && n.length !== 10) { toast('10 अंक का मोबाइल नंबर लिखें'); return; } S.wn = n; store.set('av_lp', S); window.open(AVUI.waUrl(waTxt(), n), '_blank'); };
-  const waTxt = () => (`${KIND === 'lagna' ? '📜 *लग्न-पत्रिका*' : '💌 *शुभ विवाह निमंत्रण*'}\n\n💍 चि. ${B.name}${parents('v') ? ' (सुपुत्र ' + parents('v') + ')' : ''}\n      संग\n💍 सौ. कु. ${G.name}${parents('k') ? ' (सुपुत्री ' + parents('k') + ')' : ''}\n🔸 संवत् ${pc.vs}, ${pc.maas} ${pc.paksha} ${pc.tithi}, ${pc.vaar}\n🔸 ${hiD(r.date)} • ${r.lagna} लग्न • ${tm}\n🔸 गुण मिलान: ${ML.tot}/36\n\n*मांगलिक कार्यक्रम*\n${ras.map(x => `• ${x.n}: ${wd(x.d)}, ${hiD(x.d)} — ${x.main ? tm : t12(x.t)}`).join('\n')}${S.sw ? '\n\n🙏 *स्वागतकर्ता:* ' + String(S.sw).split(/[\n,]+/).map(x => x.trim()).filter(Boolean).join(', ') : ''}${S.bs ? '\n\n🧒 *बाल संवाद:* ' + S.bs : ''}${KIND === 'lagna' ? '\n\n॥ शुभमस्तु ॥' : '\n\nनिवेदक: ' + addressee(SIDE).replace(/ जी/g, '') + (S[SIDE + 'mb'] ? ' 📞 ' + S[SIDE + 'mb'] : '')}${S.pn ? '\nलग्न लेखक: ' + S.pn + (S.pa ? ' (' + S.pa + ')' : '') + (S.pm ? ' 📞 ' + S.pm : '') : ''}`);
+  const waTxt = () => (`${KIND === 'lagna' ? '📜 *लग्न-पत्रिका*' : '💌 *शुभ विवाह निमंत्रण*'}\n\n💍 चि. ${B.name}${parents('v') ? ' (सुपुत्र ' + parents('v') + ')' : ''}\n      संग\n💍 सौ. कु. ${G.name}${parents('k') ? ' (सुपुत्री ' + parents('k') + ')' : ''}\n🔸 संवत् ${pc.vs}, ${pc.maas} ${pc.paksha} ${pc.tithi}, ${pc.vaar}\n🔸 ${hiD(r.date)} • ${r.lagna} लग्न • ${tm}\n🔸 गुण मिलान: ${ML.tot}/36\n\n*मांगलिक कार्यक्रम*\n${ras.map(x => `• ${x.n}: ${wd(x.d)}, ${hiD(x.d)} — ${x.main ? tm : t12(x.t)}`).join('\n')}${S.sw ? '\n\n🙏 *स्वागतकर्ता:* ' + String(S.sw).split(/[\n,]+/).map(x => x.trim()).filter(Boolean).join(', ') : ''}${KIND === 'lagna' ? '\n\n॥ शुभमस्तु ॥' : '\n\nनिवेदक: ' + addressee(SIDE).replace(/ जी/g, '') + (S[SIDE + 'mb'] ? ' 📞 ' + S[SIDE + 'mb'] : '')}${S.pn ? '\nलग्न लेखक: ' + S.pn + (S.pa ? ' (' + S.pa + ')' : '') + (S.pm ? ' 📞 ' + S.pm : '') : ''}`);
   $('dia').onclick = () => {
     if (window.parent === window) { toast('डायरी में जोड़ने के लिए यह टूल मुख्य ऐप में लॉगिन करके खोलें'); return; }
     window.parent.postMessage({ avDiary: 1, items: ras.map(x => ({ t: x.n.replace(/^\W+\s*/, '').trim() + ' — ' + B.name + ' संग ' + G.name, s: x.d, n: 1, tm: x.main ? r.f24 : x.t, yn: S.kf || '', pl: S.ka || '', note: 'लग्न पत्रिका से' })) }, '*');

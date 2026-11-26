@@ -234,6 +234,14 @@ function openFromHash() {
   showView(c.title, `<iframe src="${esc(c.path)}" allow="clipboard-write; camera; geolocation; accelerometer; gyroscope; magnetometer; screen-wake-lock"></iframe>`);
 }
 window.addEventListener('hashchange', () => { $('vTitle').dataset.id = ''; openFromHash(); });
+/* टूल ⇄ मुख्य ऐप संदेश-पुल: ऐप के अंदर टूल इस होमपेज के iframe में खुलते हैं — उनके संदेश (फ़ाइल शेयर, प्रोफ़ाइल, AI, डायरी, ट्रैकिंग)
+   ऊपर मुख्य ऐप तक, और ऐप के जवाब नीचे टूल तक पहुँचाएँ */
+if (window.parent !== window) window.addEventListener('message', e => {
+  const d = e.data; if (!d || typeof d !== 'object' || !Object.keys(d).some(k => /^av[A-Z]/.test(k))) return;
+  const f = $('vBody').querySelector('iframe'), cw = f && f.contentWindow;
+  if (cw && e.source === cw) window.parent.postMessage(d, '*');
+  else if (cw && e.source === window.parent) cw.postMessage(d, '*');
+});
 load();
 /* ऐप शेयर: ऐप के अंदर = ऐप की फ़ाइल सीधे शेयर; ब्राउज़र में = ऐप डाउनलोड लिंक */
 (function () {
