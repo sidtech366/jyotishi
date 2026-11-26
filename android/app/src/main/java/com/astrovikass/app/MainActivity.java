@@ -60,6 +60,10 @@ public class MainActivity extends Activity {
     String pendingGeoOrigin;
     static final int REQ_FILE = 11, REQ_CAM = 12, REQ_LOC = 13, REQ_NOTIF = 14;
 
+    Updater upd;
+
+    @Override protected void onResume() { super.onResume(); if (upd != null) upd.onResume(); }
+
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
@@ -81,6 +85,8 @@ public class MainActivity extends Activity {
 
         setup();
         DailyReceiver.schedule(this);
+        upd = new Updater(this);
+        web.postDelayed(new Runnable() { @Override public void run() { upd.check(false); } }, 5000);   // नया वर्ज़न ➜ पॉपअप
         if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQ_NOTIF);
 
@@ -197,7 +203,10 @@ public class MainActivity extends Activity {
         @JavascriptInterface public void shareFile(final String name, final String mime, final String b64, final String phone, final String text) {
             new Thread(new Runnable() { @Override public void run() { doShareFile(name, mime, b64, phone, text); } }).start();
         }
-        @JavascriptInterface public int ver() { return 2; }
+        @JavascriptInterface public int ver() { return 3; }
+        /** वेबसाइट से "अपडेट देखें" बटन — window.AVApp.checkUpdate() */
+        @JavascriptInterface public void checkUpdate() { runOnUiThread(new Runnable() { @Override public void run() { if (upd != null) upd.check(true); } }); }
+        @JavascriptInterface public String appVer() { return upd != null ? upd.myName() : ""; }
     }
 
     void doSave(String name, String mime, String b64) {

@@ -36,6 +36,7 @@ public class ShareProvider extends ContentProvider {
 
     static String mimeOf(String n) {
         String l = n.toLowerCase();
+        if (l.endsWith(".apk")) return "application/vnd.android.package-archive";
         if (l.endsWith(".pdf")) return "application/pdf";
         if (l.endsWith(".png")) return "image/png";
         if (l.endsWith(".jpg") || l.endsWith(".jpeg")) return "image/jpeg";
