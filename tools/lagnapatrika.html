@@ -37,6 +37,11 @@
 .paper .bd{font-size:14.5px;line-height:2.05;text-align:justify}.paper .bd u{text-decoration:none;border-bottom:1px dotted #7a1c1c;font-weight:700;color:#8b1a1a;padding:0 2px}
 .paper table{width:100%;border-collapse:collapse;margin:12px 0 4px;font-size:13.5px}.paper th{background:#7a1c1c;color:#fff;padding:6px;font-weight:700}.paper td{border:1px solid #e3c88f;padding:6px;text-align:center;background:#fffaf0}
 .paper .sig{display:flex;justify-content:space-between;gap:10px;margin-top:16px;font-size:13px}.paper .sig div{flex:1}.paper .sig b{color:#7a1c1c}
+.paper .pk{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.paper .pk>div{background:#fffaf0;border:1px solid #e3c88f;border-radius:10px;padding:8px 9px;font-size:13px;line-height:1.65}
+.paper .pk h4{margin:0 0 4px;text-align:center;color:#fff;background:#7a1c1c;border-radius:6px;padding:3px 0;font-size:13.5px}.paper .pk b{color:#8b1a1a}
+.paper table.lt td{text-align:left}.paper table.lt td:first-child{width:38%;font-weight:700;color:#7a1c1c;background:#fbefd6}
+.paper .intro{text-align:center;font-size:14px;line-height:1.85;margin:6px 0}.paper .shubh{text-align:center;font-family:'Yatra One',serif;color:#8b1a1a;font-size:20px;margin-top:8px}
+.kind{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#f6e8c9;padding:4px;border-radius:14px;margin-bottom:8px}.kind button{border:0;border-radius:11px;padding:9px 6px;font:700 14px 'Noto Sans Devanagari',sans-serif;background:transparent;color:#6b1418;cursor:pointer;line-height:1.25}.kind button small{display:block;font-weight:500;font-size:11.5px;color:#8a6a4a}.kind button.on{background:#fff;box-shadow:0 3px 10px -4px #6b141855}
 .paper .mand{text-align:center;font-size:30px;margin-top:6px}
 .paper .gb{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:8px 0}.paper .gb span{background:#fff;border:1px solid #e3c88f;border-radius:999px;padding:2px 10px;font-size:12.5px}
 @media print{body *{visibility:hidden}#pat,#pat *{visibility:visible}#pat{position:absolute;left:0;top:0;width:100%}.noprint{display:none!important}}</style>
@@ -223,7 +228,7 @@ function nightScan(s, L, B, G) {
   return { date: s, from: hm(jS, L), to: hm(jE, L), f24: H24(jS, L), lagna: N.SIGN[w.lg], nak: N.NAK[w.nk], all: W.slice(0, 3).map(x => N.SIGN[x.lg] + ' ' + hm(jdLocal(y, m, d, x.s, L), L) + '–' + hm(jdLocal(y, m, d, x.e + 1 / 6, L), L)), sb, gb, cbV, cbK, grade, pure: w.pure, late: w.s >= 24, tt: w.tt };
 }
 /* ---------- चलाएँ ---------- */
-let B = null, G = null, ML = null, LIST = [], PICK = null, RAS = [], TPL = store.get('av_lp_tpl', 'photo'), DES = store.get('av_lp_des', 'scroll');
+let KIND = store.get('av_lp_kind', 'lagna'), B = null, G = null, ML = null, LIST = [], PICK = null, RAS = [], TPL = store.get('av_lp_tpl', 'photo'), DES = store.get('av_lp_des', 'scroll');
 $('go').onclick = async () => {
   for (const [id, t] of [['vn', 'वर का नाम'], ['vf', 'वर के पिता का नाम'], ['kn', 'कन्या का नाम'], ['kf', 'कन्या के पिता का नाम']]) if (!$(id).value.trim()) { toast(t + ' लिखें'); $(id).focus(); return; }
   B = person('v'); if (!B) return; G = person('k'); if (!G) return;
@@ -285,6 +290,16 @@ function drawRasm() {
 }
 const t12 = t => { if (!t) return ''; const [H, M] = t.split(':').map(Number); return `${H % 12 || 12}:${String(M).padStart(2, '0')} ${H < 12 ? 'AM' : 'PM'}`; };
 /* ---------- पत्रिका ---------- */
+function lagnaBody(head, r, pc, tm, trib, U, vS, kS, cbV, cbK, d, m, y) {   // साझा लग्न-पत्रिका — किसी पक्ष की ओर से नहीं
+  const side = (p, X, nm, rel, extra) => `<div><h4>${p === 'v' ? '🤵 वर पक्ष' : '👰 कन्या पक्ष'}</h4>${nm} <b>${esc(X.name)}</b>${S[p + 'g'] ? `<br>गोत्र: <b>${esc(S[p + 'g'])}</b>` : ''}${parents(p) ? `<br>${rel}: ${esc(parents(p))}` : ''}${S[p + 'a'] ? `<br>निवास: ${esc(S[p + 'a'])}` : ''}<br>राशि: <b>${esc(N.SIGN[X.sign])}</b> • नक्षत्र: <b>${esc(N.NAK[X.nak])}</b><br>${extra}</div>`;
+  const intro = TPL === 'photo'
+    ? `<div class="sl">जननी जन्म सौख्यानां वर्द्धनी कुलसम्पदाम्।<br>पदवी पूर्वपुण्यानां लिख्यते विवाहपत्रिका॥</div><div class="intro">स्वस्ति श्री गणेशाम्बिका कृपया शास्त्रोक्त विधिना निम्नलिखित वर-कन्ययोः शुभ पाणिग्रहण संस्कारस्य लग्नं निश्चितम्।</div>`
+    : `<div class="sl">वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ।<br>निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥</div><div class="intro">श्री गणेश जी एवं कुलदेवता की कृपा से निम्नलिखित वर-कन्या के शुभ विवाह का लग्न ज्योतिष-शास्त्र के अनुसार निश्चित हुआ है।</div>`;
+  const rows = [['विक्रम संवत्', pc.vs], ['मास व पक्ष', pc.maas + ' मास, ' + pc.paksha + ' पक्ष'], ['तिथि (लग्न समय पर)', pc.tithi], ['वार व दिनांक', pc.vaar + ', ' + hiD(r.date)], ['नक्षत्र', r.nak], ['विवाह लग्न', r.lagna + ' लग्न'], ['शुभ समय', tm], ['त्रिबल', trib], ['गुण मिलान', ML.tot + ' / 36 गुण']];
+  return head + intro + `<div class="pk">${side('v', B, 'चिरंजीव', 'सुपुत्र', `सूर्यबल: <b>${esc(r.sb[0])}</b><br>चंद्रबल: <b>${esc(cbV[0])}</b>`)}${side('k', G, 'सौभाग्यकांक्षिणी कुमारी', 'सुपुत्री', `गुरुबल: <b>${esc(r.gb[0])}</b><br>चंद्रबल: <b>${esc(cbK[0])}</b>`)}</div>
+    <div style="text-align:center;font-weight:800;color:#7a1c1c;margin-top:6px">🪔 शुभ विवाह लग्न</div><table class="lt">${rows.map(x => `<tr><td>${x[0]}</td><td>${esc(String(x[1]))}</td></tr>`).join('')}</table>
+    <div class="intro" style="font-size:13px">${TPL === 'photo' ? 'लत्तादि दशदोष रहितं शुद्ध लग्ने पाणिग्रहणं शुभम्।' : 'यह लग्न लत्ता आदि दस दोषों से रहित, शुद्ध है।'}</div>`;
+}
 function render() {
   const r = LIST[PICK]; if (!r) return; const L = LOC(), pc = tithiAt(panchOf(r.date, L), r.tt), [y, m, d] = r.date.split('-').map(Number), U = x => `<u>${esc(x || '…………')}</u>`;
   const vS = N.SIGN[B.sign], kS = N.SIGN[G.sign], cbV = r.cbV, cbK = r.cbK;
@@ -292,9 +307,10 @@ function render() {
   const tm = r.late ? `रात्रि शेष ${r.from} से ${r.to} (${hiD(addD(r.date, 1)).replace(/ \d{4}$/, '')} की भोर)` : `${r.from} से ${r.to}`;
   const ras = RAS.filter(x => x.n && x.d).sort((a, b) => (a.d + a.t) < (b.d + b.t) ? -1 : 1);
   const tbl = `<table><tr><th>कार्यक्रम</th><th>दिन व तारीख़</th><th>समय</th></tr>${ras.map(x => `<tr><td><b>${esc(x.n)}</b></td><td>${esc(wd(x.d))}, ${esc(hiD(x.d))}</td><td>${x.main ? esc(tm) : esc(t12(x.t))}</td></tr>`).join('')}</table>`;
-  const head = `<div class="bells"><span>🔔</span><span>🔔</span><span>🔔</span><span>🔔</span><span>🔔</span></div><div class="toran"></div><div class="om">ॐ</div><div style="text-align:center;color:#7a1c1c;font-weight:800;font-size:13px;margin-top:4px">॥ श्री गणेशाय नमः ॥</div><h2>लग्न-पत्रिका</h2>`;
+  const head = `<div class="bells"><span>🔔</span><span>🔔</span><span>🔔</span><span>🔔</span><span>🔔</span></div><div class="toran"></div><div class="om">ॐ</div><div style="text-align:center;color:#7a1c1c;font-weight:800;font-size:13px;margin-top:4px">॥ श्री गणेशाय नमः ॥</div><h2>${KIND === 'lagna' ? 'लग्न-पत्रिका' : 'शुभ विवाह निमंत्रण'}</h2>`;
   let body;
-  if (TPL === 'photo') body = head + `<div class="sl">जननी जन्म सौख्यानां वर्द्धनी कुलसम्पदाम्।<br>पदवी पूर्वपुण्यानां लिख्यते विवाहपत्रिका॥</div>
+  if (KIND === 'lagna') body = lagnaBody(head, r, pc, tm, trib, U, vS, kS, cbV, cbK, d, m, y);
+  else if (TPL === 'photo') body = head + `<div class="sl">जननी जन्म सौख्यानां वर्द्धनी कुलसम्पदाम्।<br>पदवी पूर्वपुण्यानां लिख्यते विवाहपत्रिका॥</div>
     <div class="sw">ॐ सिद्ध श्री सर्वोपरि विराजमान सकल गुण निधान गंगाजल निर्मल।<br>यमुनाजल शीतल पावन पवित्र शुभ चरित्र षट्कर्म सावधान॥</div>
     <div class="bd">शुभस्थान ${U(S.va)} धर्ममूर्ति धर्मावतार ${U(addressee('v'))} तथा समस्त सज्जनों को इतः योग लिखितं ${U(S.ka)} से ${U(addressee('k'))} तथा समस्त सज्जनों का राम-राम यथायोग्य बंचना। अत्र कुशलम् तत्रास्तु। अग्रे वृत्तान्तम् वाच्यम्।
     सम्वत् ${U(pc.vs)} मासानां मासोत्तमे मासे ${U(pc.maas)} मासे शुभे ${U(pc.paksha)} पक्षे शुभ तिथौ ${U(pc.tithi)} ${U(pc.vaar.replace('वार', ''))} वासरे तदनुसार तारीख़ ${U(d)} महीना ${U(MONH[m - 1])} सन् ${U(y)} को ${U(tm)} का विवाह श्रेष्ठ बनता है, सो आप स्वीकार करें।
@@ -307,9 +323,10 @@ function render() {
     ज्योतिष-गणना अनुसार शुभ विवाह का लग्न विक्रम संवत् ${U(pc.vs)}, ${U(pc.maas)} मास, ${U(pc.paksha)} पक्ष, ${U(pc.tithi)} तिथि, ${U(pc.vaar)}, दिनांक ${U(hiD(r.date))} को ${U(r.nak)} नक्षत्र, ${U(r.lagna)} लग्न में ${U(tm)} निश्चित किया गया है।
     <br>वर की राशि ${U(vS)} (सूर्यबल ${U(r.sb[0])}), कन्या की राशि ${U(kS)} (गुरुबल ${U(r.gb[0])}), त्रिबल ${U(trib)}। गुण मिलान: ${U(ML.tot + ' / 36')}।
     <br>अतः आप इस लग्न-पत्रिका को स्वीकार कर निर्धारित तिथि पर बारात सहित पधारकर शोभा बढ़ाएँ।</div>`;
-  const sig = `<div class="sig"><div>निवेदक:<br><b>${esc(addressee('k').replace(/ जी/g, '') || '…')}</b><br><small>${esc(S.ka || '')}</small></div><div style="text-align:right">लग्न लेखक:<br><b>${esc(S.pn || '…')}</b><br><small>${esc(S.pa || '')}</small></div></div>`;
+  const sig = KIND === 'lagna' ? `<div class="shubh">॥ शुभमस्तु ॥</div><div class="sig"><div></div><div style="text-align:right">लग्न लेखक:<br><b>${esc(S.pn || '…')}</b><br><small>${esc(S.pa || '')}</small></div></div>` : `<div class="sig"><div>निवेदक:<br><b>${esc(addressee('k').replace(/ जी/g, '') || '…')}</b><br><small>${esc(S.ka || '')}</small></div><div style="text-align:right">लग्न लेखक:<br><b>${esc(S.pn || '…')}</b><br><small>${esc(S.pa || '')}</small></div></div>`;
   const P = `<div class="scroll" id="pat"><div class="rod"></div><div class="paper ${DES === 'scroll' ? '' : DES}">${body}<div style="text-align:center;font-weight:800;color:#7a1c1c;margin-top:10px">📋 मांगलिक कार्यक्रम</div>${tbl}${sig}<div class="mand">🛕</div></div><div class="rod"></div></div>`;
-  $('r4').innerHTML = `<div class="av-card noprint"><div class="stp"><b>5</b><h3>लग्न-पत्रिका</h3></div>
+  $('r4').innerHTML = `<div class="av-card noprint"><div class="stp"><b>5</b><h3>${KIND === 'lagna' ? 'लग्न-पत्रिका' : 'निमंत्रण पत्र'}</h3></div>
+    <div class="kind" id="kd"><button data-v="lagna" class="${KIND === 'lagna' ? 'on' : ''}">📜 लग्न पत्रिका<small>दोनों पक्षों का साझा विवरण</small></button><button data-v="nim" class="${KIND === 'nim' ? 'on' : ''}">💌 निमंत्रण पत्र<small>कन्या पक्ष की ओर से</small></button></div>
     <label class="l" style="margin-top:0">पाठ</label><div class="tg2" id="tp"><button data-v="photo" class="${TPL === 'photo' ? 'on' : ''}">पारंपरिक (संस्कृत युक्त)</button><button data-v="prach" class="${TPL === 'prach' ? 'on' : ''}">प्रचलित (सरल हिंदी)</button></div>
     <label class="l">डिज़ाइन</label><div class="tg2" id="ds"><button data-v="scroll" class="${DES === 'scroll' ? 'on' : ''}">📜 स्क्रॉल</button><button data-v="mar" class="${DES === 'mar' ? 'on' : ''}">🟥 मैरून</button><button data-v="plain" class="${DES === 'plain' ? 'on' : ''}">⬜ सादा</button></div></div>
     ${P}
@@ -317,12 +334,13 @@ function render() {
     <label class="l">💬 WhatsApp पर सीधे भेजें</label><div class="wbox"><input class="in" id="wn" type="tel" inputmode="numeric" maxlength="10" placeholder="मोबाइल नंबर (10 अंक)" value="${esc(S.wn || '')}"><button class="btn ok" id="wa">भेजें</button></div>
     <p class="note" style="margin-top:4px">नंबर पर पत्रिका का पूरा विवरण टेक्स्ट में जाएगा; फ़ोटो/PDF भी भेजनी हो तो 🖼️ HD इमेज या 📄 PDF बनाकर “शेयर” से WhatsApp चुनें।</p>
     <button class="btn ghost blk" id="dia">📖 सभी रस्में अनुष्ठान डायरी में जोड़ें</button></div>`;
+  $('kd').onclick = e => { const x = e.target.closest('button'); if (!x) return; KIND = x.dataset.v; store.set('av_lp_kind', KIND); render(); };
   $('tp').onclick = e => { const x = e.target.closest('button'); if (!x) return; TPL = x.dataset.v; store.set('av_lp_tpl', TPL); render(); };
   $('ds').onclick = e => { const x = e.target.closest('button'); if (!x) return; DES = x.dataset.v; store.set('av_lp_des', DES); render(); };
   $('pdf').onclick = savePdf;
   $('img').onclick = saveImg;
   $('wa').onclick = () => { const n = ($('wn').value || '').replace(/\D/g, ''); if (n && n.length !== 10) { toast('10 अंक का मोबाइल नंबर लिखें'); return; } S.wn = n; store.set('av_lp', S); window.open(AVUI.waUrl(waTxt(), n), '_blank'); };
-  const waTxt = () => (`📜 *लग्न-पत्रिका*\n\n💍 चि. ${B.name} संग सौ. कु. ${G.name}\n🔸 संवत् ${pc.vs}, ${pc.maas} ${pc.paksha} ${pc.tithi}, ${pc.vaar}\n🔸 ${hiD(r.date)} • ${r.lagna} लग्न • ${tm}\n🔸 गुण मिलान: ${ML.tot}/36\n\n*मांगलिक कार्यक्रम*\n${ras.map(x => `• ${x.n}: ${wd(x.d)}, ${hiD(x.d)} — ${x.main ? tm : t12(x.t)}`).join('\n')}\n\nनिवेदक: ${addressee('k').replace(/ जी/g, '')}${S.pn ? '\nलग्न लेखक: ' + S.pn + (S.pa ? ' (' + S.pa + ')' : '') : ''}`);
+  const waTxt = () => (`${KIND === 'lagna' ? '📜 *लग्न-पत्रिका*' : '💌 *शुभ विवाह निमंत्रण*'}\n\n💍 चि. ${B.name}${parents('v') ? ' (सुपुत्र ' + parents('v') + ')' : ''}\n      संग\n💍 सौ. कु. ${G.name}${parents('k') ? ' (सुपुत्री ' + parents('k') + ')' : ''}\n🔸 संवत् ${pc.vs}, ${pc.maas} ${pc.paksha} ${pc.tithi}, ${pc.vaar}\n🔸 ${hiD(r.date)} • ${r.lagna} लग्न • ${tm}\n🔸 गुण मिलान: ${ML.tot}/36\n\n*मांगलिक कार्यक्रम*\n${ras.map(x => `• ${x.n}: ${wd(x.d)}, ${hiD(x.d)} — ${x.main ? tm : t12(x.t)}`).join('\n')}${KIND === 'lagna' ? '\n\n॥ शुभमस्तु ॥' : '\n\nनिवेदक: ' + addressee('k').replace(/ जी/g, '')}${S.pn ? '\nलग्न लेखक: ' + S.pn + (S.pa ? ' (' + S.pa + ')' : '') : ''}`);
   $('dia').onclick = () => {
     if (window.parent === window) { toast('डायरी में जोड़ने के लिए यह टूल मुख्य ऐप में लॉगिन करके खोलें'); return; }
     window.parent.postMessage({ avDiary: 1, items: ras.map(x => ({ t: x.n.replace(/^\W+\s*/, '').trim() + ' — ' + B.name + ' संग ' + G.name, s: x.d, n: 1, tm: x.main ? r.f24 : x.t, yn: S.kf || '', pl: S.ka || '', note: 'लग्न पत्रिका से' })) }, '*');
@@ -330,45 +348,68 @@ function render() {
 }
 function loadJs(src, test) { return test() ? Promise.resolve() : new Promise(ok => { const x = document.createElement('script'); x.src = src; x.onload = ok; x.onerror = ok; document.head.appendChild(x); }); }
 async function patCanvas() {
-  await loadJs('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', () => window.html2canvas);
+  await loadJs('lib/html2canvas.min.js', () => window.html2canvas);
+  if (!window.html2canvas) await loadJs('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', () => window.html2canvas);
   if (!window.html2canvas) throw new Error('इमेज टूल लोड नहीं हुआ — इंटरनेट जाँचें');
   try { await document.fonts.ready; } catch (e) { }
-  return html2canvas($('pat'), { scale: 2.5, backgroundColor: '#ffffff', useCORS: true, logging: false });
+  const el = $('pat'), ow = el.style.width;   // कागज़ जैसा चौड़ा रूप (A4 अनुपात) — PDF में कम पन्ने, पढ़ने में बड़ा
+  el.style.width = '680px';
+  try { return await html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false, windowWidth: 720 }); }
+  finally { el.style.width = ow; }
 }
-const fname = ext => ('लग्न-पत्रिका-' + (B.name || '') + '-' + (G.name || '')).replace(/[\\/:*?"<>|\s]+/g, '-') + '.' + ext;
+const fname = ext => ((KIND === 'lagna' ? 'लग्न-पत्रिका-' : 'निमंत्रण-') + (B.name || '') + '-' + (G.name || '')).replace(/[\\/:*?"<>|\s]+/g, '-') + '.' + ext;
+const TTL = () => KIND === 'lagna' ? 'लग्न-पत्रिका' : 'विवाह निमंत्रण';
+let ACK = 0; window.addEventListener('message', e => { if (e.data && e.data.avFilesOk) ACK = 1; });
 async function deliver(files) {
-  // मुख्य ऐप में खुला ➜ फ़ाइल वहीं भेजें (वहाँ से शेयर/डाउनलोड काम करता है)
+  // मुख्य ऐप में खुला ➜ फ़ाइल वहीं भेजें; 2.5 सेकंड में जवाब न आए तो यहीं डाउनलोड/सेव खिड़की
   if (window.parent !== window) {
     const arr = await Promise.all(files.map(f => new Promise(r => { const fr = new FileReader(); fr.onload = () => r({ name: f.name, type: f.type, data: fr.result }); fr.readAsDataURL(f); })));
-    window.parent.postMessage({ avFiles: 1, title: 'लग्न-पत्रिका', files: arr }, '*'); return;
+    ACK = 0; window.parent.postMessage({ avFiles: 1, title: TTL(), files: arr }, '*');
+    await new Promise(z => setTimeout(z, 2500)); if (ACK) return;
   }
-  try { if (navigator.canShare && navigator.canShare({ files })) { await navigator.share({ files, title: 'लग्न-पत्रिका' }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
-  files.forEach(f => { const a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); });
-  if (files[0].type.indexOf('image') === 0) showImg(URL.createObjectURL(files[0]));
-  toast('डाउनलोड शुरू ✅');
+  showFile(files[0]);
 }
-function showImg(url) { const d = document.createElement('div'); d.style.cssText = 'position:fixed;inset:0;background:#000d;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;gap:10px';
-  d.innerHTML = '<img src="' + url + '" style="max-width:100%;max-height:78vh;border-radius:10px"><div style="color:#fff;font-size:14px;text-align:center">डाउनलोड न हुई हो तो इमेज को दबाकर रखें ➜ “Download / Save image”</div><button class="btn" style="min-width:140px">बंद करें</button>';
-  d.querySelector('button').onclick = () => d.remove(); document.body.appendChild(d); }
+function showFile(f) {   // हर फ़ोन पर काम करने वाला तरीका: इमेज दिखाओ (दबाकर सेव) + डाउनलोड + शेयर
+  const url = URL.createObjectURL(f), img = f.type.indexOf('image') === 0, d = document.createElement('div');
+  d.style.cssText = 'position:fixed;inset:0;background:#000e;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;gap:10px;overflow:auto';
+  d.innerHTML = (img ? '<img src="' + url + '" style="max-width:100%;max-height:66vh;border-radius:10px;box-shadow:0 8px 30px #0008">' : '<div style="font-size:70px">📄</div>')
+    + '<div style="color:#fff;font-size:13.5px;text-align:center;max-width:340px">' + esc(f.name) + ' • ' + Math.round(f.size / 1024) + ' KB' + (img ? '<br>डाउनलोड न हो तो <b>इमेज को दबाकर रखें ➜ “Download / Save image”</b>' : '') + '</div>'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="btn ok" data-a="sh">📤 शेयर</button><a class="btn gold" data-a="dl" style="text-decoration:none" href="' + url + '" download="' + esc(f.name) + '">⬇️ डाउनलोड</a>' + (img ? '' : '<a class="btn" style="text-decoration:none" href="' + url + '" target="_blank" rel="noopener">👁️ खोलें</a>') + '<button class="btn" data-a="x" style="background:#fff;color:#6b1418;border:0">✖ बंद करें</button></div>';
+  d.onclick = async e => { const a = e.target.closest('[data-a]'); if (!a) return; if (a.dataset.a === 'x') d.remove();
+    if (a.dataset.a === 'sh') { try { if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: TTL() }); return; } } catch (er) { if (er && er.name === 'AbortError') return; } toast('यहाँ सीधा शेयर नहीं खुलता — ⬇️ डाउनलोड करके WhatsApp में भेजें'); }
+    if (a.dataset.a === 'dl') setTimeout(() => toast('डाउनलोड शुरू ✅ — न हो तो ऊपर इमेज दबाकर रखें'), 300); };
+  document.body.appendChild(d);
+}
 async function saveImg() {
   toast('HD इमेज बन रही है…');
-  try { const cv = await patCanvas(), b = await new Promise(r => cv.toBlob(r, 'image/jpeg', 0.93)); await deliver([new File([b], fname('jpg'), { type: 'image/jpeg' })]); }
+  try { const cv = await patCanvas(), b = await new Promise(r => cv.toBlob(r, 'image/jpeg', 0.93)); if (!b) throw new Error('इमेज बहुत बड़ी — दोबारा दबाएँ'); await deliver([new File([b], fname('jpg'), { type: 'image/jpeg' })]); }
   catch (e) { toast(e.message || 'इमेज नहीं बन सकी'); }
+}
+async function makePdf(cv) {   // बिना बाहरी लाइब्रेरी: A4 पन्नों में JPEG
+  const W = 595.28, H = 841.89, m = 17, full = cv.height * (W - 2 * m) / cv.width, one = full <= (H - 2 * m) * 1.6;   // थोड़ी लंबी हो तो एक ही पन्ने में फिट
+  const pw = one && full > H - 2 * m ? (W - 2 * m) * (H - 2 * m) / full : W - 2 * m, mx = (W - pw) / 2, sliceH = one ? cv.height : Math.floor(cv.width * (H - 2 * m) / pw), pages = [];
+  for (let y = 0; y < cv.height; y += sliceH) {
+    const c = document.createElement('canvas'); c.width = cv.width; c.height = Math.min(sliceH, cv.height - y);
+    const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(cv, 0, y, cv.width, c.height, 0, 0, cv.width, c.height);
+    const b = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.9)); pages.push({ w: c.width, h: c.height, d: new Uint8Array(await b.arrayBuffer()) });
+  }
+  const enc = new TextEncoder(), parts = [], offs = []; let len = 0;
+  const put = x => { const u = typeof x === 'string' ? enc.encode(x) : x; parts.push(u); len += u.length; };
+  const obj = (n, body) => { offs[n] = len; put(n + ' 0 obj\n'); body(); put('\nendobj\n'); };
+  put('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n'); const n = pages.length, kids = pages.map((_, i) => (3 + i * 3) + ' 0 R').join(' ');
+  obj(1, () => put('<< /Type /Catalog /Pages 2 0 R >>')); obj(2, () => put(`<< /Type /Pages /Kids [${kids}] /Count ${n} >>`));
+  pages.forEach((p, i) => { const po = 3 + i * 3, dh = p.h * pw / p.w, cs = `q ${pw.toFixed(2)} 0 0 ${dh.toFixed(2)} ${mx.toFixed(2)} ${(H - m - dh).toFixed(2)} cm /Im0 Do Q`;
+    obj(po, () => put(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /XObject << /Im0 ${po + 2} 0 R >> >> /Contents ${po + 1} 0 R >>`));
+    obj(po + 1, () => put(`<< /Length ${cs.length} >>\nstream\n${cs}\nendstream`));
+    obj(po + 2, () => { put(`<< /Type /XObject /Subtype /Image /Width ${p.w} /Height ${p.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.d.length} >>\nstream\n`); put(p.d); put('\nendstream'); }); });
+  const tot = 3 + n * 3, xo = len; put(`xref\n0 ${tot}\n0000000000 65535 f \n`); for (let i = 1; i < tot; i++) put(String(offs[i]).padStart(10, '0') + ' 00000 n \n');
+  put(`trailer\n<< /Size ${tot} /Root 1 0 R >>\nstartxref\n${xo}\n%%EOF`);
+  return new Blob(parts, { type: 'application/pdf' });
 }
 async function savePdf() {
   toast('PDF बन रही है…');
-  try {
-    const cv = await patCanvas();
-    await loadJs('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', () => window.jspdf);
-    if (!window.jspdf) throw new Error('PDF टूल लोड नहीं हुआ — इंटरनेट जाँचें');
-    const { jsPDF } = window.jspdf, pdf = new jsPDF({ unit: 'mm', format: 'a4', compress: true }), W = 210, H = 297, m = 6;
-    const pw = W - 2 * m, ph = cv.height * pw / cv.width, pageH = H - 2 * m, sliceH = Math.floor(cv.width * pageH / pw);
-    for (let y = 0, pg = 0; y < cv.height; y += sliceH, pg++) {     // लंबी पत्रिका को A4 पन्नों में बाँटें
-      const c = document.createElement('canvas'); c.width = cv.width; c.height = Math.min(sliceH, cv.height - y); c.getContext('2d').drawImage(cv, 0, y, cv.width, c.height, 0, 0, cv.width, c.height);
-      if (pg) pdf.addPage(); pdf.addImage(c.toDataURL('image/jpeg', 0.92), 'JPEG', m, m, pw, c.height * pw / cv.width);
-    }
-    await deliver([new File([pdf.output('blob')], fname('pdf'), { type: 'application/pdf' })]);
-  } catch (e) { toast(e.message || 'PDF नहीं बन सकी'); }
+  try { const cv = await patCanvas(); await deliver([new File([await makePdf(cv)], fname('pdf'), { type: 'application/pdf' })]); }
+  catch (e) { toast(e.message || 'PDF नहीं बन सकी'); }
 }
 </script>
 </body>
