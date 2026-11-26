@@ -95,7 +95,7 @@ const tTxt = t => { if (!t) return ''; let [h, m] = t.split(':').map(Number); co
 const evs = () => S.ev.filter(v => v.on && v.n.trim());
 function text() {
   const son = S.pk === 'v', E = evs(), main = son ? (S.vn || 'चि. ____') : (S.bn || 'सौ.कां. ____'), other = son ? (S.bn || 'सौ.कां. ____') : (S.vn || 'चि. ____');
-  return `॥ श्री गणेशाय नमः ॥\nवक्रतुण्ड महाकाय सूर्यकोटि समप्रभ।\nनिर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥\n\n💐 *शुभ विवाह निमंत्रण* 💐\n\nसादर सूचित करते हुए हर्ष हो रहा है कि परमपिता परमेश्वर की असीम कृपा से हमारे ${son ? 'सुपुत्र' : 'सुपुत्री'}\n\n*${main}*\n(${son ? S.vp || '' : S.bp || ''})\n\nका शुभ विवाह\n\n*${other}*\n(${son ? 'सुपुत्री ' + (S.bp || '') : 'सुपुत्र ' + (S.vp || '')})\n\nके साथ होना निश्चित हुआ है। इस मंगल अवसर पर आप सपरिवार सादर आमंत्रित हैं।\n\n🔸 *मांगलिक कार्यक्रम*\n` + E.map(v => `\n🔸 *${v.n}*\n   ${[dTxt(v.d), tTxt(v.t)].filter(Boolean).join(' • ') || '—'}${v.p ? '\n   📍 ' + v.p : ''}`).join('\n') + `\n\n📍 *स्थान:* ${S.adr || '—'}\n\n🙏 *दर्शनाभिलाषी:* ${S.nv || 'समस्त परिवार'}${S.bm ? `\n\n👧 *बाल मनुहार:* ${S.bm}` : ''}\n\n॥ शुभम् भवतु ॥`;
+  return `॥ श्री गणेशाय नमः ॥\nवक्रतुण्ड महाकाय कोटिसूर्य समप्रभ।\nनिर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥\n\n💐 *शुभ विवाह निमंत्रण* 💐\n\nसादर सूचित करते हुए हर्ष हो रहा है कि परमपिता परमेश्वर की असीम कृपा से हमारे ${son ? 'सुपुत्र' : 'सुपुत्री'}\n\n*${main}*\n(${son ? S.vp || '' : S.bp || ''})\n\nका शुभ विवाह\n\n*${other}*\n(${son ? 'सुपुत्री ' + (S.bp || '') : 'सुपुत्र ' + (S.vp || '')})\n\nके साथ होना निश्चित हुआ है। इस मंगल अवसर पर आप सपरिवार सादर आमंत्रित हैं।\n\n🔸 *मांगलिक कार्यक्रम*\n` + E.map(v => `\n🔸 *${v.n}*\n   ${[dTxt(v.d), tTxt(v.t)].filter(Boolean).join(' • ') || '—'}${v.p ? '\n   📍 ' + v.p : ''}`).join('\n') + `\n\n📍 *स्थान:* ${S.adr || '—'}\n\n🙏 *दर्शनाभिलाषी:* ${S.nv || 'समस्त परिवार'}${S.bm ? `\n\n👧 *बाल मनुहार:* ${S.bm}` : ''}\n\n॥ शुभम् भवतु ॥`;
 }
 /* ===== कार्ड (1080×1920) ===== */
 const TH = [['#5a0f14', '#8e1b1b', '#f3c96b', '#fff3d6'], ['#880e4f', '#c2185b', '#ffd1e3', '#fff0f6'], ['#1b4d1f', '#2e7d32', '#ffe066', '#fffbe0'], ['#0a1f52', '#283593', '#f3c96b', '#eef1ff']];
@@ -114,7 +114,7 @@ async function draw(H) {
   c.textAlign = 'center'; c.fillStyle = gold;
   c.font = '90px serif'; c.fillText('🐘', W / 2, 175);
   c.font = '38px "Noto Sans Devanagari",sans-serif'; c.fillText('॥ श्री गणेशाय नमः ॥', W / 2, 240);
-  c.font = '28px "Noto Sans Devanagari",sans-serif'; c.fillStyle = cream; c.fillText('वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥', W / 2, 290);
+  c.font = '28px "Noto Sans Devanagari",sans-serif'; c.fillStyle = cream; c.fillText('वक्रतुण्ड महाकाय कोटिसूर्य समप्रभ। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥', W / 2, 290);
   c.fillStyle = gold; c.font = '96px "Yatra One","Noto Sans Devanagari",serif'; c.fillText('शुभ विवाह', W / 2, 420);
   c.font = '34px serif'; c.fillText('✦ ❁ ✦', W / 2, 470);
   c.fillStyle = cream; c.font = '30px "Noto Sans Devanagari",sans-serif';

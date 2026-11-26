@@ -41,6 +41,10 @@
 .paper .pk h4{margin:0 0 4px;text-align:center;color:#fff;background:#7a1c1c;border-radius:6px;padding:3px 0;font-size:13.5px}.paper .pk b{color:#8b1a1a}
 .paper table.lt td{text-align:left}.paper table.lt td:first-child{width:38%;font-weight:700;color:#7a1c1c;background:#fbefd6}
 .paper .intro{text-align:center;font-size:14px;line-height:1.85;margin:6px 0}.paper .shubh{text-align:center;font-family:'Yatra One',serif;color:#8b1a1a;font-size:20px;margin-top:8px}
+.xtra{margin-top:10px;border:1px dashed #e6cf9f;border-radius:12px;padding:8px 10px;background:#fffaf0}.xtra summary{cursor:pointer;font-weight:700;color:#6b1418}.xtra textarea{width:100%;resize:vertical;font-family:inherit}
+.paper .bx{margin:10px 0 0;border:1px solid #e3c88f;border-radius:10px;background:#fffaf0;padding:8px 10px;font-size:13.5px;line-height:1.7}.paper .bx h5{margin:0 0 4px;color:#7a1c1c;font-size:14px;text-align:center}.paper .bx.bal{background:#fff5f8;border-color:#f3c3d3;text-align:center;font-style:italic;color:#8a2a4a}
+.paper .sw2{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px}
+.snd{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px}.snd .btn{padding:11px 4px;font-size:14px}
 .kind{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#f6e8c9;padding:4px;border-radius:14px;margin-bottom:8px}.kind button{border:0;border-radius:11px;padding:9px 6px;font:700 14px 'Noto Sans Devanagari',sans-serif;background:transparent;color:#6b1418;cursor:pointer;line-height:1.25}.kind button small{display:block;font-weight:500;font-size:11.5px;color:#8a6a4a}.kind button.on{background:#fff;box-shadow:0 3px 10px -4px #6b141855}
 .paper .mand{text-align:center;font-size:30px;margin-top:6px}
 .paper .gb{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:8px 0}.paper .gb span{background:#fff;border:1px solid #e3c88f;border-radius:999px;padding:2px 10px;font-size:12.5px}
@@ -57,6 +61,7 @@
       <div class="av-row"><div><label class="l">पिता का नाम *</label><input class="in" id="vf" placeholder="जैसे: रमेश मिश्र"><label class="dead"><input type="checkbox" id="vfd"> स्वर्गीय</label></div><div><label class="l">माता का नाम</label><input class="in" id="vmo" placeholder="जैसे: सुनीता देवी"><label class="dead"><input type="checkbox" id="vmd"> स्वर्गीया</label></div></div>
       <label class="l">गोत्र</label><input class="in" id="vg" placeholder="जैसे: कश्यप">
       <label class="l">गाँव / पता</label><input class="in" id="va" placeholder="ग्राम, पोस्ट, ज़िला">
+      <label class="l">📞 वर पक्ष का मोबाइल</label><input class="in" id="vmb" type="tel" inputmode="numeric" maxlength="10" placeholder="निमंत्रण में निवेदक का नंबर">
       <div class="tg2" id="vm"><button data-m="b" class="on">जन्म विवरण से</button><button data-m="n">नाम से (जन्म ज्ञात नहीं)</button></div>
       <div id="vb"></div><div id="vnk" class="note" style="display:none"></div>
     </div>
@@ -65,12 +70,19 @@
       <div class="av-row"><div><label class="l">पिता का नाम *</label><input class="in" id="kf" placeholder="जैसे: सुरेश पांडेय"><label class="dead"><input type="checkbox" id="kfd"> स्वर्गीय</label></div><div><label class="l">माता का नाम</label><input class="in" id="kmo" placeholder="जैसे: गीता देवी"><label class="dead"><input type="checkbox" id="kmd"> स्वर्गीया</label></div></div>
       <label class="l">गोत्र</label><input class="in" id="kg" placeholder="जैसे: भारद्वाज">
       <label class="l">गाँव / पता</label><input class="in" id="ka" placeholder="ग्राम, पोस्ट, ज़िला">
+      <label class="l">📞 कन्या पक्ष का मोबाइल</label><input class="in" id="kmb" type="tel" inputmode="numeric" maxlength="10" placeholder="निमंत्रण में निवेदक का नंबर">
       <div class="tg2" id="km"><button data-m="b" class="on">जन्म विवरण से</button><button data-m="n">नाम से (जन्म ज्ञात नहीं)</button></div>
       <div id="kb"></div><div id="knk" class="note" style="display:none"></div>
     </div>
   </div>
   <div id="vpl" style="margin-top:10px"></div>
-  <div class="av-row"><div><label class="l">लग्न लेखक (पंडित जी)</label><input class="in" id="pn" placeholder="पं. … शास्त्री"></div><div><label class="l">पंडित जी का पता / मोबाइल</label><input class="in" id="pa" placeholder="ग्राम … • 98…"></div></div>
+  <label class="l">✍️ लग्न लेखक (पंडित जी) <small id="pauto" style="color:#1d7d4b;font-weight:600"></small></label>
+  <div class="av-row"><div><input class="in" id="pn" placeholder="पं. … शास्त्री"></div><div><input class="in" id="pm" type="tel" inputmode="numeric" maxlength="10" placeholder="📞 मोबाइल"></div></div>
+  <input class="in" id="pa" placeholder="पंडित जी का स्थान / पता" style="margin-top:6px">
+  <details class="xtra"><summary>🎉 स्वागतकर्ता व बाल संवाद (वैकल्पिक)</summary>
+    <label class="l">🙏 स्वागतकर्ता — नाम (हर नाम नई पंक्ति में या कॉमा से)</label><textarea class="in" id="sw" rows="3" placeholder="जैसे: श्री राकेश मिश्र, श्री दिनेश मिश्र, श्री अजय पांडेय"></textarea>
+    <label class="l">🧒 बाल संवाद — घर के छोटे बच्चों की ओर से</label><textarea class="in" id="bs" rows="3" placeholder="जैसे: मेरे चाचू की शादी में ज़रूर-ज़रूर आना… — छोटी गुड़िया, आरव"></textarea>
+  </details>
   <label class="l">मुहूर्त कब से खोजें</label><div class="av-row"><div><input class="in" type="date" id="from"></div><div><select class="in" id="span"><option value="6">अगले 6 महीने</option><option value="12" selected>अगले 12 महीने</option><option value="3">अगले 3 महीने</option></select></div></div>
   <button class="btn blk" id="go">🔍 गुण मिलान व विवाह मुहूर्त निकालें</button>
 </div>
@@ -85,9 +97,14 @@
 const { $, esc, store, share, toast } = AVUI, A = AVAstro, N = A.N;
 /* ---------- फ़ॉर्म ---------- */
 const S = store.get('av_lp', {});
-const FK = ['vn', 'vf', 'vmo', 'vg', 'va', 'kn', 'kf', 'kmo', 'kg', 'ka', 'pn', 'pa'], DK = ['vfd', 'vmd', 'kfd', 'kmd'];
+const FK = ['vn', 'vf', 'vmo', 'vg', 'va', 'vmb', 'kn', 'kf', 'kmo', 'kg', 'ka', 'kmb', 'pn', 'pa', 'pm', 'sw', 'bs'], DK = ['vfd', 'vmd', 'kfd', 'kmd'];
 FK.forEach(k => { if (S[k]) $(k).value = S[k]; $(k).addEventListener('change', () => { S[k] = $(k).value.trim(); store.set('av_lp', S); }); });
 DK.forEach(k => { $(k).checked = !!S[k]; $(k).addEventListener('change', () => { S[k] = $(k).checked; store.set('av_lp', S); if (PICK != null) render(); }); });
+/* लग्न लेखक — लॉगिन किए पंडित जी की प्रोफ़ाइल से अपने-आप */
+window.addEventListener('message', e => { const w = e.data && e.data.avWhoR; if (!w) return;
+  [['pn', w.name], ['pm', String(w.mob || '').replace(/\D/g, '').slice(-10)], ['pa', w.place]].forEach(([k, v]) => { if (v && (!$(k).value.trim() || S['_a' + k] === $(k).value.trim())) { $(k).value = v; S[k] = v; S['_a' + k] = v; } });
+  store.set('av_lp', S); $('pauto').textContent = '✓ प्रोफ़ाइल से'; if (PICK != null) render(); });
+if (window.parent !== window) window.parent.postMessage({ avWho: 1 }, '*');
 /* नाम: जीवित ➜ श्रीमान्/श्रीमती … जी, स्वर्गीय ➜ स्व. श्री / स्व. श्रीमती */
 const clean = n => String(n || '').replace(/^(स्व\.?|स्वर्गीय|स्वर्गीया|श्रीमान्?|श्रीमती|श्री|पं\.?|Shri|Sri|Late|Mr\.?|Mrs\.?)\s*/gi, '').trim();
 const nmF = (n, dead) => n ? (dead ? 'स्व. श्री ' + clean(n) : 'श्रीमान् ' + clean(n) + ' जी') : '';
@@ -228,7 +245,7 @@ function nightScan(s, L, B, G) {
   return { date: s, from: hm(jS, L), to: hm(jE, L), f24: H24(jS, L), lagna: N.SIGN[w.lg], nak: N.NAK[w.nk], all: W.slice(0, 3).map(x => N.SIGN[x.lg] + ' ' + hm(jdLocal(y, m, d, x.s, L), L) + '–' + hm(jdLocal(y, m, d, x.e + 1 / 6, L), L)), sb, gb, cbV, cbK, grade, pure: w.pure, late: w.s >= 24, tt: w.tt };
 }
 /* ---------- चलाएँ ---------- */
-let KIND = store.get('av_lp_kind', 'lagna'), B = null, G = null, ML = null, LIST = [], PICK = null, RAS = [], TPL = store.get('av_lp_tpl', 'photo'), DES = store.get('av_lp_des', 'scroll');
+let SIDE = store.get('av_lp_side', 'k'), KIND = store.get('av_lp_kind', 'lagna'), B = null, G = null, ML = null, LIST = [], PICK = null, RAS = [], TPL = store.get('av_lp_tpl', 'photo'), DES = store.get('av_lp_des', 'scroll');
 $('go').onclick = async () => {
   for (const [id, t] of [['vn', 'वर का नाम'], ['vf', 'वर के पिता का नाम'], ['kn', 'कन्या का नाम'], ['kf', 'कन्या के पिता का नाम']]) if (!$(id).value.trim()) { toast(t + ' लिखें'); $(id).focus(); return; }
   B = person('v'); if (!B) return; G = person('k'); if (!G) return;
@@ -290,11 +307,25 @@ function drawRasm() {
 }
 const t12 = t => { if (!t) return ''; const [H, M] = t.split(':').map(Number); return `${H % 12 || 12}:${String(M).padStart(2, '0')} ${H < 12 ? 'AM' : 'PM'}`; };
 /* ---------- पत्रिका ---------- */
+function nimBody(r, pc, tm, trib, U, vS, kS, d, m, y) {   // निमंत्रण — चुने गए पक्ष (वर / कन्या) की ओर से
+  const V = SIDE === 'v', own = V ? `सुपुत्र <b>चिरंजीव ${U(B.name)}</b>` : `सुपुत्री <b>सौभाग्यकांक्षिणी कुमारी ${U(G.name)}</b>`,
+    oth = V ? `<b>सौभाग्यकांक्षिणी कुमारी ${U(G.name)}</b>${parents('k') ? ` (सुपुत्री ${esc(parents('k'))}${S.ka ? ', ' + esc(S.ka) : ''})` : ''}` : `<b>चिरंजीव ${U(B.name)}</b>${parents('v') ? ` (सुपुत्र ${esc(parents('v'))}${S.va ? ', ' + esc(S.va) : ''})` : ''}`;
+  const lag = `विक्रम संवत् ${U(pc.vs)}, ${U(pc.maas)} मास, ${U(pc.paksha)} पक्ष, ${U(pc.tithi)} तिथि, ${U(pc.vaar)}, दिनांक ${U(hiD(r.date))} को ${U(r.nak)} नक्षत्र, ${U(r.lagna)} लग्न में ${U(tm)}`;
+  const ask = V ? 'आप सपरिवार पधारकर बारात की शोभा बढ़ाएँ एवं वर-वधू को अपना शुभाशीर्वाद प्रदान करें।' : 'आप सपरिवार पधारकर इस मंगल कार्य की शोभा बढ़ाएँ एवं वर-वधू को अपना शुभाशीर्वाद प्रदान करें।';
+  if (TPL === 'photo') return `<div class="sl">मंगलं भगवान विष्णुः मंगलं गरुडध्वजः।<br>मंगलं पुण्डरीकाक्षः मंगलाय तनो हरिः॥</div>
+    <div class="bd">स्वस्ति श्री सर्वोपमायोग्य समस्त स्वजन एवं इष्ट-मित्रों को सादर जय श्री राम। श्री गणेशाम्बिका एवं कुलदेवता की असीम अनुकम्पा से हमारे ${own} का शुभ पाणिग्रहण संस्कार ${oth} के साथ शास्त्रोक्त विधि से होना निश्चित हुआ है।
+    <br>शुभ लग्न: ${lag} — लत्तादि दशदोष रहित शुद्ध लग्न।
+    <br>अतः इस मांगलिक अवसर पर ${ask} आपका शुभागमन प्रार्थनीय है॥</div>`;
+  return `<div class="sl">वक्रतुण्ड महाकाय कोटिसूर्य समप्रभ।<br>निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥</div>
+    <div class="bd">सादर आमंत्रण। परमपिता परमेश्वर की असीम कृपा से हमारे ${own} का शुभ विवाह ${oth} के साथ होना निश्चित हुआ है।
+    <br>ज्योतिष-गणना अनुसार शुभ विवाह का लग्न ${lag} निश्चित किया गया है।
+    <br>इस मंगल अवसर पर ${ask}</div>`;
+}
 function lagnaBody(head, r, pc, tm, trib, U, vS, kS, cbV, cbK, d, m, y) {   // साझा लग्न-पत्रिका — किसी पक्ष की ओर से नहीं
-  const side = (p, X, nm, rel, extra) => `<div><h4>${p === 'v' ? '🤵 वर पक्ष' : '👰 कन्या पक्ष'}</h4>${nm} <b>${esc(X.name)}</b>${S[p + 'g'] ? `<br>गोत्र: <b>${esc(S[p + 'g'])}</b>` : ''}${parents(p) ? `<br>${rel}: ${esc(parents(p))}` : ''}${S[p + 'a'] ? `<br>निवास: ${esc(S[p + 'a'])}` : ''}<br>राशि: <b>${esc(N.SIGN[X.sign])}</b> • नक्षत्र: <b>${esc(N.NAK[X.nak])}</b><br>${extra}</div>`;
+  const side = (p, X, nm, rel, extra) => `<div><h4>${p === 'v' ? '🤵 वर पक्ष' : '👰 कन्या पक्ष'}</h4>${nm} <b>${esc(X.name)}</b>${S[p + 'g'] ? `<br>गोत्र: <b>${esc(S[p + 'g'])}</b>` : ''}${parents(p) ? `<br>${rel}: ${esc(parents(p))}` : ''}${S[p + 'a'] ? `<br>निवास: ${esc(S[p + 'a'])}` : ''}${S[p + 'mb'] ? `<br>📞 ${esc(S[p + 'mb'])}` : ''}<br>राशि: <b>${esc(N.SIGN[X.sign])}</b> • नक्षत्र: <b>${esc(N.NAK[X.nak])}</b><br>${extra}</div>`;
   const intro = TPL === 'photo'
     ? `<div class="sl">जननी जन्म सौख्यानां वर्द्धनी कुलसम्पदाम्।<br>पदवी पूर्वपुण्यानां लिख्यते विवाहपत्रिका॥</div><div class="intro">स्वस्ति श्री गणेशाम्बिका कृपया शास्त्रोक्त विधिना निम्नलिखित वर-कन्ययोः शुभ पाणिग्रहण संस्कारस्य लग्नं निश्चितम्।</div>`
-    : `<div class="sl">वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ।<br>निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥</div><div class="intro">श्री गणेश जी एवं कुलदेवता की कृपा से निम्नलिखित वर-कन्या के शुभ विवाह का लग्न ज्योतिष-शास्त्र के अनुसार निश्चित हुआ है।</div>`;
+    : `<div class="sl">वक्रतुण्ड महाकाय कोटिसूर्य समप्रभ।<br>निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥</div><div class="intro">श्री गणेश जी एवं कुलदेवता की कृपा से निम्नलिखित वर-कन्या के शुभ विवाह का लग्न ज्योतिष-शास्त्र के अनुसार निश्चित हुआ है।</div>`;
   const rows = [['विक्रम संवत्', pc.vs], ['मास व पक्ष', pc.maas + ' मास, ' + pc.paksha + ' पक्ष'], ['तिथि (लग्न समय पर)', pc.tithi], ['वार व दिनांक', pc.vaar + ', ' + hiD(r.date)], ['नक्षत्र', r.nak], ['विवाह लग्न', r.lagna + ' लग्न'], ['शुभ समय', tm], ['त्रिबल', trib], ['गुण मिलान', ML.tot + ' / 36 गुण']];
   return head + intro + `<div class="pk">${side('v', B, 'चिरंजीव', 'सुपुत्र', `सूर्यबल: <b>${esc(r.sb[0])}</b><br>चंद्रबल: <b>${esc(cbV[0])}</b>`)}${side('k', G, 'सौभाग्यकांक्षिणी कुमारी', 'सुपुत्री', `गुरुबल: <b>${esc(r.gb[0])}</b><br>चंद्रबल: <b>${esc(cbK[0])}</b>`)}</div>
     <div style="text-align:center;font-weight:800;color:#7a1c1c;margin-top:6px">🪔 शुभ विवाह लग्न</div><table class="lt">${rows.map(x => `<tr><td>${x[0]}</td><td>${esc(String(x[1]))}</td></tr>`).join('')}</table>
@@ -310,37 +341,39 @@ function render() {
   const head = `<div class="bells"><span>🔔</span><span>🔔</span><span>🔔</span><span>🔔</span><span>🔔</span></div><div class="toran"></div><div class="om">ॐ</div><div style="text-align:center;color:#7a1c1c;font-weight:800;font-size:13px;margin-top:4px">॥ श्री गणेशाय नमः ॥</div><h2>${KIND === 'lagna' ? 'लग्न-पत्रिका' : 'शुभ विवाह निमंत्रण'}</h2>`;
   let body;
   if (KIND === 'lagna') body = lagnaBody(head, r, pc, tm, trib, U, vS, kS, cbV, cbK, d, m, y);
-  else if (TPL === 'photo') body = head + `<div class="sl">जननी जन्म सौख्यानां वर्द्धनी कुलसम्पदाम्।<br>पदवी पूर्वपुण्यानां लिख्यते विवाहपत्रिका॥</div>
+  else if (TPL === 'photo' && SIDE === 'k') body = head + `<div class="sl">जननी जन्म सौख्यानां वर्द्धनी कुलसम्पदाम्।<br>पदवी पूर्वपुण्यानां लिख्यते विवाहपत्रिका॥</div>
     <div class="sw">ॐ सिद्ध श्री सर्वोपरि विराजमान सकल गुण निधान गंगाजल निर्मल।<br>यमुनाजल शीतल पावन पवित्र शुभ चरित्र षट्कर्म सावधान॥</div>
     <div class="bd">शुभस्थान ${U(S.va)} धर्ममूर्ति धर्मावतार ${U(addressee('v'))} तथा समस्त सज्जनों को इतः योग लिखितं ${U(S.ka)} से ${U(addressee('k'))} तथा समस्त सज्जनों का राम-राम यथायोग्य बंचना। अत्र कुशलम् तत्रास्तु। अग्रे वृत्तान्तम् वाच्यम्।
     सम्वत् ${U(pc.vs)} मासानां मासोत्तमे मासे ${U(pc.maas)} मासे शुभे ${U(pc.paksha)} पक्षे शुभ तिथौ ${U(pc.tithi)} ${U(pc.vaar.replace('वार', ''))} वासरे तदनुसार तारीख़ ${U(d)} महीना ${U(MONH[m - 1])} सन् ${U(y)} को ${U(tm)} का विवाह श्रेष्ठ बनता है, सो आप स्वीकार करें।
     <br>वर नाम चिरंजीव ${U(B.name)}${S.vg ? ` (${esc(S.vg)} गोत्र)` : ''}${parents('v') ? ` सुपुत्र ${esc(parents('v'))}` : ''} तस्य राशिः ${U(vS)} — सूर्यबल ${U(r.sb[0])} चन्द्रबल ${U(cbV[0])}।
     <br>कन्या नाम सौभाग्यकांक्षिणी कुमारी ${U(G.name)}${S.kg ? ` (${esc(S.kg)} गोत्र)` : ''}${parents('k') ? ` सुपुत्री ${esc(parents('k'))}` : ''} तस्याः राशिः ${U(kS)} — गुरुबल ${U(r.gb[0])} चन्द्रबल ${U(cbK[0])}।
     <br>रविबल ${U(r.sb[0])} त्रिबल ${U(trib)} • ${U(r.nak)} नक्षत्रे (${U(r.lagna)} लग्न) शुद्धौ लत्तादि दशदोष रहितम् पाणिग्रहणम् शुभम्॥</div>`;
-  else body = head + `<div class="sl">वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ।<br>निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥</div>
-    <div class="bd">स्वस्ति श्री सर्वोपमायोग्य, धर्मनिष्ठ ${U(addressee('v'))}, ${U(S.va)} को ${U(S.ka)} से ${U(addressee('k'))} का सादर प्रणाम व जय श्री राम। यहाँ सब कुशल है, आपकी कुशलता ईश्वर से मनाते हैं।
-    <br>आगे समाचार यह है कि परमपिता परमेश्वर की असीम कृपा से <b>चिरंजीव ${U(B.name)}</b>${parents('v') ? ` (सुपुत्र ${esc(parents('v'))})` : ''} का शुभ विवाह <b>सौभाग्यवती कुमारी ${U(G.name)}</b>${parents('k') ? ` (सुपुत्री ${esc(parents('k'))})` : ''} के साथ होना निश्चित हुआ है।
-    ज्योतिष-गणना अनुसार शुभ विवाह का लग्न विक्रम संवत् ${U(pc.vs)}, ${U(pc.maas)} मास, ${U(pc.paksha)} पक्ष, ${U(pc.tithi)} तिथि, ${U(pc.vaar)}, दिनांक ${U(hiD(r.date))} को ${U(r.nak)} नक्षत्र, ${U(r.lagna)} लग्न में ${U(tm)} निश्चित किया गया है।
-    <br>वर की राशि ${U(vS)} (सूर्यबल ${U(r.sb[0])}), कन्या की राशि ${U(kS)} (गुरुबल ${U(r.gb[0])}), त्रिबल ${U(trib)}। गुण मिलान: ${U(ML.tot + ' / 36')}।
-    <br>अतः आप इस लग्न-पत्रिका को स्वीकार कर निर्धारित तिथि पर बारात सहित पधारकर शोभा बढ़ाएँ।</div>`;
-  const sig = KIND === 'lagna' ? `<div class="shubh">॥ शुभमस्तु ॥</div><div class="sig"><div></div><div style="text-align:right">लग्न लेखक:<br><b>${esc(S.pn || '…')}</b><br><small>${esc(S.pa || '')}</small></div></div>` : `<div class="sig"><div>निवेदक:<br><b>${esc(addressee('k').replace(/ जी/g, '') || '…')}</b><br><small>${esc(S.ka || '')}</small></div><div style="text-align:right">लग्न लेखक:<br><b>${esc(S.pn || '…')}</b><br><small>${esc(S.pa || '')}</small></div></div>`;
+  else body = head + nimBody(r, pc, tm, trib, U, vS, kS, d, m, y);
+  const swl = String(S.sw || '').split(/[\n,]+/).map(x => x.trim()).filter(Boolean);
+  const xb = (swl.length ? `<div class="bx"><h5>🙏 स्वागतकर्ता</h5><div class="sw2">${swl.map(x => `<span>${esc(x)}</span>`).join('')}</div></div>` : '') + (S.bs ? `<div class="bx bal"><h5>🧒 बाल संवाद</h5>${esc(S.bs).replace(/\n/g, '<br>')}</div>` : '');
+  const lek = `<div style="text-align:right">लग्न लेखक:<br><b>${esc(S.pn || '…')}</b>${S.pa ? `<br><small>${esc(S.pa)}</small>` : ''}${S.pm ? `<br><small>📞 ${esc(S.pm)}</small>` : ''}</div>`;
+  const nv = KIND === 'nim' && !(TPL === 'photo' && SIDE === 'k') ? SIDE : 'k';
+  const sig = xb + (KIND === 'lagna' ? `<div class="shubh">॥ शुभमस्तु ॥</div><div class="sig"><div></div>${lek}</div>` : `<div class="sig"><div>निवेदक:<br><b>${esc(addressee(nv).replace(/ जी/g, '') || '…')}</b>${S[nv + 'a'] ? `<br><small>${esc(S[nv + 'a'])}</small>` : ''}${S[nv + 'mb'] ? `<br><small>📞 ${esc(S[nv + 'mb'])}</small>` : ''}</div>${lek}</div>`);
   const P = `<div class="scroll" id="pat"><div class="rod"></div><div class="paper ${DES === 'scroll' ? '' : DES}">${body}<div style="text-align:center;font-weight:800;color:#7a1c1c;margin-top:10px">📋 मांगलिक कार्यक्रम</div>${tbl}${sig}<div class="mand">🛕</div></div><div class="rod"></div></div>`;
   $('r4').innerHTML = `<div class="av-card noprint"><div class="stp"><b>5</b><h3>${KIND === 'lagna' ? 'लग्न-पत्रिका' : 'निमंत्रण पत्र'}</h3></div>
-    <div class="kind" id="kd"><button data-v="lagna" class="${KIND === 'lagna' ? 'on' : ''}">📜 लग्न पत्रिका<small>दोनों पक्षों का साझा विवरण</small></button><button data-v="nim" class="${KIND === 'nim' ? 'on' : ''}">💌 निमंत्रण पत्र<small>कन्या पक्ष की ओर से</small></button></div>
+    <div class="kind" id="kd"><button data-v="lagna" class="${KIND === 'lagna' ? 'on' : ''}">📜 लग्न पत्रिका<small>दोनों पक्षों का साझा विवरण</small></button><button data-v="nim" class="${KIND === 'nim' ? 'on' : ''}">💌 निमंत्रण पत्र<small>वर या कन्या पक्ष की ओर से</small></button></div>
+    ${KIND === 'nim' ? `<label class="l" style="margin-top:0">किसकी ओर से निमंत्रण</label><div class="tg2" id="sd"><button data-v="v" class="${SIDE === 'v' ? 'on' : ''}">🤵 वर पक्ष की ओर से</button><button data-v="k" class="${SIDE === 'k' ? 'on' : ''}">👰 कन्या पक्ष की ओर से</button></div>` : ''}
     <label class="l" style="margin-top:0">पाठ</label><div class="tg2" id="tp"><button data-v="photo" class="${TPL === 'photo' ? 'on' : ''}">पारंपरिक (संस्कृत युक्त)</button><button data-v="prach" class="${TPL === 'prach' ? 'on' : ''}">प्रचलित (सरल हिंदी)</button></div>
     <label class="l">डिज़ाइन</label><div class="tg2" id="ds"><button data-v="scroll" class="${DES === 'scroll' ? 'on' : ''}">📜 स्क्रॉल</button><button data-v="mar" class="${DES === 'mar' ? 'on' : ''}">🟥 मैरून</button><button data-v="plain" class="${DES === 'plain' ? 'on' : ''}">⬜ सादा</button></div></div>
     ${P}
-    <div class="av-card noprint"><div class="grid2"><button class="btn" id="img">🖼️ HD इमेज</button><button class="btn gold" id="pdf">📄 PDF</button></div>
-    <label class="l">💬 WhatsApp पर सीधे भेजें</label><div class="wbox"><input class="in" id="wn" type="tel" inputmode="numeric" maxlength="10" placeholder="मोबाइल नंबर (10 अंक)" value="${esc(S.wn || '')}"><button class="btn ok" id="wa">भेजें</button></div>
-    <p class="note" style="margin-top:4px">नंबर पर पत्रिका का पूरा विवरण टेक्स्ट में जाएगा; फ़ोटो/PDF भी भेजनी हो तो 🖼️ HD इमेज या 📄 PDF बनाकर “शेयर” से WhatsApp चुनें।</p>
+    <div class="av-card noprint"><div class="stp"><b>6</b><h3>भेजें / सेव करें</h3></div>
+    <label class="l" style="margin-top:0">💬 WhatsApp नंबर (वैकल्पिक)</label><input class="in" id="wn" type="tel" inputmode="numeric" maxlength="10" placeholder="मोबाइल नंबर (10 अंक)" value="${esc(S.wn || '')}">
+    <div class="snd"><button class="btn ok" id="wa">💬 टेक्स्ट</button><button class="btn" id="img">🖼️ इमेज</button><button class="btn gold" id="pdf">📄 PDF</button></div>
+    <p class="note" style="margin-top:6px">💬 <b>टेक्स्ट</b> — नंबर डाला है तो सीधे उसी की चैट में पूरा विवरण जाएगा।<br>🖼️ <b>इमेज</b> / 📄 <b>PDF</b> — पूजन सामग्री सूची की तरह खिड़की खुलेगी: <b>📤 शेयर</b> (WhatsApp ➜ संपर्क चुनें) या <b>⬇️ डाउनलोड</b>। WhatsApp फ़ाइल को सीधे किसी नंबर पर भेजने की अनुमति नहीं देता, इसलिए फ़ाइल में संपर्क WhatsApp के अंदर चुनना होता है।</p>
     <button class="btn ghost blk" id="dia">📖 सभी रस्में अनुष्ठान डायरी में जोड़ें</button></div>`;
+  if ($('sd')) $('sd').onclick = e => { const x = e.target.closest('button'); if (!x) return; SIDE = x.dataset.v; store.set('av_lp_side', SIDE); render(); };
   $('kd').onclick = e => { const x = e.target.closest('button'); if (!x) return; KIND = x.dataset.v; store.set('av_lp_kind', KIND); render(); };
   $('tp').onclick = e => { const x = e.target.closest('button'); if (!x) return; TPL = x.dataset.v; store.set('av_lp_tpl', TPL); render(); };
   $('ds').onclick = e => { const x = e.target.closest('button'); if (!x) return; DES = x.dataset.v; store.set('av_lp_des', DES); render(); };
   $('pdf').onclick = savePdf;
   $('img').onclick = saveImg;
   $('wa').onclick = () => { const n = ($('wn').value || '').replace(/\D/g, ''); if (n && n.length !== 10) { toast('10 अंक का मोबाइल नंबर लिखें'); return; } S.wn = n; store.set('av_lp', S); window.open(AVUI.waUrl(waTxt(), n), '_blank'); };
-  const waTxt = () => (`${KIND === 'lagna' ? '📜 *लग्न-पत्रिका*' : '💌 *शुभ विवाह निमंत्रण*'}\n\n💍 चि. ${B.name}${parents('v') ? ' (सुपुत्र ' + parents('v') + ')' : ''}\n      संग\n💍 सौ. कु. ${G.name}${parents('k') ? ' (सुपुत्री ' + parents('k') + ')' : ''}\n🔸 संवत् ${pc.vs}, ${pc.maas} ${pc.paksha} ${pc.tithi}, ${pc.vaar}\n🔸 ${hiD(r.date)} • ${r.lagna} लग्न • ${tm}\n🔸 गुण मिलान: ${ML.tot}/36\n\n*मांगलिक कार्यक्रम*\n${ras.map(x => `• ${x.n}: ${wd(x.d)}, ${hiD(x.d)} — ${x.main ? tm : t12(x.t)}`).join('\n')}${KIND === 'lagna' ? '\n\n॥ शुभमस्तु ॥' : '\n\nनिवेदक: ' + addressee('k').replace(/ जी/g, '')}${S.pn ? '\nलग्न लेखक: ' + S.pn + (S.pa ? ' (' + S.pa + ')' : '') : ''}`);
+  const waTxt = () => (`${KIND === 'lagna' ? '📜 *लग्न-पत्रिका*' : '💌 *शुभ विवाह निमंत्रण*'}\n\n💍 चि. ${B.name}${parents('v') ? ' (सुपुत्र ' + parents('v') + ')' : ''}\n      संग\n💍 सौ. कु. ${G.name}${parents('k') ? ' (सुपुत्री ' + parents('k') + ')' : ''}\n🔸 संवत् ${pc.vs}, ${pc.maas} ${pc.paksha} ${pc.tithi}, ${pc.vaar}\n🔸 ${hiD(r.date)} • ${r.lagna} लग्न • ${tm}\n🔸 गुण मिलान: ${ML.tot}/36\n\n*मांगलिक कार्यक्रम*\n${ras.map(x => `• ${x.n}: ${wd(x.d)}, ${hiD(x.d)} — ${x.main ? tm : t12(x.t)}`).join('\n')}${S.sw ? '\n\n🙏 *स्वागतकर्ता:* ' + String(S.sw).split(/[\n,]+/).map(x => x.trim()).filter(Boolean).join(', ') : ''}${S.bs ? '\n\n🧒 *बाल संवाद:* ' + S.bs : ''}${KIND === 'lagna' ? '\n\n॥ शुभमस्तु ॥' : '\n\nनिवेदक: ' + addressee(SIDE).replace(/ जी/g, '') + (S[SIDE + 'mb'] ? ' 📞 ' + S[SIDE + 'mb'] : '')}${S.pn ? '\nलग्न लेखक: ' + S.pn + (S.pa ? ' (' + S.pa + ')' : '') + (S.pm ? ' 📞 ' + S.pm : '') : ''}`);
   $('dia').onclick = () => {
     if (window.parent === window) { toast('डायरी में जोड़ने के लिए यह टूल मुख्य ऐप में लॉगिन करके खोलें'); return; }
     window.parent.postMessage({ avDiary: 1, items: ras.map(x => ({ t: x.n.replace(/^\W+\s*/, '').trim() + ' — ' + B.name + ' संग ' + G.name, s: x.d, n: 1, tm: x.main ? r.f24 : x.t, yn: S.kf || '', pl: S.ka || '', note: 'लग्न पत्रिका से' })) }, '*');
