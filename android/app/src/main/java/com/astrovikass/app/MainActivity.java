@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -12,6 +13,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -166,7 +169,7 @@ public class MainActivity extends Activity {
         web.setDownloadListener(new DownloadListener() {
             @Override public void onDownloadStart(String url, String ua, String cd, String mime, long len) {
                 try {
-                    if (url.startsWith("blob:") || url.startsWith("data:")) { toast("यह फ़ाइल यहाँ सीधे सेव नहीं हो सकती"); return; }
+                    if (url.startsWith("blob:") || url.startsWith("data:")) { toast("ऐप में ⬇️ डाउनलोड बटन से सेव करें"); return; }
                     DownloadManager.Request r = new DownloadManager.Request(Uri.parse(url));
                     r.setMimeType(mime);
                     r.addRequestHeader("User-Agent", ua);
@@ -185,6 +188,78 @@ public class MainActivity extends Activity {
         @JavascriptInterface public boolean isApp() { return true; }
         @JavascriptInterface public void shareApp() {
             runOnUiThread(new Runnable() { @Override public void run() { doShareApp(); } });
+        }
+        /** फ़ाइल (base64) फ़ोन के Download/AstroVikass फ़ोल्डर में सेव — window.AVApp.saveFile(name, mime, b64) */
+        @JavascriptInterface public void saveFile(final String name, final String mime, final String b64) {
+            new Thread(new Runnable() { @Override public void run() { doSave(name, mime, b64); } }).start();
+        }
+        /** फ़ाइल शेयर — phone दिया हो तो सीधे उसी नंबर की WhatsApp चैट में: window.AVApp.shareFile(name, mime, b64, phone, text) */
+        @JavascriptInterface public void shareFile(final String name, final String mime, final String b64, final String phone, final String text) {
+            new Thread(new Runnable() { @Override public void run() { doShareFile(name, mime, b64, phone, text); } }).start();
+        }
+        @JavascriptInterface public int ver() { return 2; }
+    }
+
+    void doSave(String name, String mime, String b64) {
+        try {
+            byte[] data = Base64.decode(b64, Base64.DEFAULT);
+            String n = ShareProvider.clean(name), m = (mime == null || mime.isEmpty()) ? ShareProvider.mimeOf(n) : mime;
+            String where;
+            if (Build.VERSION.SDK_INT >= 29) {
+                ContentValues v = new ContentValues();
+                v.put(MediaStore.MediaColumns.DISPLAY_NAME, n);
+                v.put(MediaStore.MediaColumns.MIME_TYPE, m);
+                v.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/AstroVikass");
+                Uri u = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, v);
+                if (u == null) throw new Exception("no uri");
+                OutputStream os = getContentResolver().openOutputStream(u);
+                os.write(data); os.close();
+                where = "Download/AstroVikass";
+            } else {
+                File d = new File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "AstroVikass"); d.mkdirs();
+                OutputStream os = new FileOutputStream(new File(d, n)); os.write(data); os.close();
+                where = d.getAbsolutePath();
+            }
+            final String msg = "✅ सेव हो गई: " + where + "/" + n;
+            runOnUiThread(new Runnable() { @Override public void run() { Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show(); } });
+        } catch (Exception e) {
+            runOnUiThread(new Runnable() { @Override public void run() { toast("फ़ाइल सेव नहीं हो सकी"); } });
+        }
+    }
+
+    void doShareFile(String name, String mime, String b64, String phone, String text) {
+        try {
+            byte[] data = Base64.decode(b64, Base64.DEFAULT);
+            String n = ShareProvider.clean(name), m = (mime == null || mime.isEmpty()) ? ShareProvider.mimeOf(n) : mime;
+            File[] old = ShareProvider.dir(this).listFiles();
+            if (old != null) for (File f : old) if (System.currentTimeMillis() - f.lastModified() > 86400000L) f.delete();   // पुरानी फ़ाइलें साफ़
+            OutputStream os = new FileOutputStream(new File(ShareProvider.dir(this), n)); os.write(data); os.close();
+            final Uri uri = ShareProvider.uriOf(n);
+            final Intent send = new Intent(Intent.ACTION_SEND);
+            send.setType(m);
+            send.putExtra(Intent.EXTRA_STREAM, uri);
+            if (text != null && !text.isEmpty()) send.putExtra(Intent.EXTRA_TEXT, text);
+            send.setClipData(ClipData.newRawUri(n, uri));
+            send.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            String p = phone == null ? "" : phone.replaceAll("\\D", "");
+            if (p.length() == 10) p = "91" + p;
+            String wa = null;
+            if (p.length() >= 11) for (String pk : new String[]{"com.whatsapp", "com.whatsapp.w4b"}) {
+                try { getPackageManager().getPackageInfo(pk, 0); wa = pk; break; } catch (Exception e) { }
+            }
+            final String waPkg = wa, jid = p + "@s.whatsapp.net";
+            runOnUiThread(new Runnable() { @Override public void run() {
+                if (waPkg != null) {
+                    Intent w = new Intent(send);
+                    w.setPackage(waPkg);
+                    w.putExtra("jid", jid);          // सीधे उसी नंबर की चैट
+                    try { startActivity(w); return; } catch (Exception e) { }
+                }
+                try { startActivity(Intent.createChooser(send, "भेजें").addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)); }
+                catch (Exception e) { toast("शेयर नहीं हो सका"); }
+            } });
+        } catch (Exception e) {
+            runOnUiThread(new Runnable() { @Override public void run() { toast("फ़ाइल शेयर नहीं हो सकी"); } });
         }
     }
 

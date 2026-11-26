@@ -40,6 +40,12 @@
         </activity>
 
         <provider
+            android:name=".ShareProvider"
+            android:authorities="com.astrovikass.app.files"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
+        <provider
             android:name=".ApkProvider"
             android:authorities="com.astrovikass.app.apk"
             android:exported="false"

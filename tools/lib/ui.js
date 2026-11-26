@@ -89,7 +89,15 @@
     };
   }
   const foot = () => '<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>';
-  window.AVUI = { $, esc, store, toast, share, waUrl, iso, placeField, birthForm, foot };
+  /* Astro Vikass Android ऐप (WebView) में फ़ाइल सेव / शेयर — ब्राउज़र वाला डाउनलोड/शेयर वहाँ नहीं चलता */
+  const hasApp = () => { try { return !!(window.AVApp && typeof window.AVApp.shareFile === 'function'); } catch (e) { return false; } };
+  const b64Of = f => new Promise((r, j) => { const fr = new FileReader(); fr.onload = () => r(String(fr.result).split(',')[1] || ''); fr.onerror = j; fr.readAsDataURL(f); });
+  async function appFile(f, how, phone, text) {   // how: 'save' | 'share'
+    const b = await b64Of(f);
+    if (how === 'save') window.AVApp.saveFile(f.name, f.type || '', b);
+    else window.AVApp.shareFile(f.name, f.type || '', b, String(phone || '').replace(/\D/g, ''), text || '');
+  }
+  window.AVUI = { $, esc, store, toast, share, waUrl, iso, placeField, birthForm, foot, hasApp, appFile };
 })();
 /* 📊 AVTRK — मुख्य ऐप (Apps Script) के अंदर खुलने पर गतिविधि भेजें: क्या खोजा, क्या भरा (एडमिन लॉग, हर रविवार साफ़) */
 (function (W) {
