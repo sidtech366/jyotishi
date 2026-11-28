@@ -57,7 +57,7 @@ public class DailyReceiver extends BroadcastReceiver {
         if (Build.VERSION.SDK_INT >= 26 && nm.getNotificationChannel(CH) == null)
             nm.createNotificationChannel(new NotificationChannel(CH, "रोज़ का राशिफल", NotificationManager.IMPORTANCE_DEFAULT));
 
-        Intent open = new Intent(c, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        Intent open = new Intent(c, MainActivity.class).setData(android.net.Uri.parse(MainActivity.RASHIFAL)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);   // टैप ➜ सीधे आज का राशिफल
         PendingIntent pi = PendingIntent.getActivity(c, 7, open, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         Notification.Builder b = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(c, CH) : new Notification.Builder(c);
         b.setSmallIcon(R.drawable.ic_notification)

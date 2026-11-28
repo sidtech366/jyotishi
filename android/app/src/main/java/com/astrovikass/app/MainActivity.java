@@ -47,6 +47,7 @@ import java.util.List;
 /** Astro Vikass — apna full-screen browser (WebView). URL bar nahi, Chrome ki zaroorat nahi. */
 public class MainActivity extends Activity {
     static final String HOME = "https://sidtech366.vercel.app/astrovikas/";
+    static final String RASHIFAL = "https://sidtech366.github.io/jyotishi/tools/rashifal.html";   // सुबह के नोटिफ़िकेशन से खुलता है
     static final int NAVY = Color.parseColor("#14103A");
     /** Ye sites app ke andar hi khulti hain; baaki sab (WhatsApp, call, UPI, dusri site) phone ke apne app me. */
     static final List<String> INSIDE = Arrays.asList("sidtech366.vercel.app", "sidtech366.github.io", "script.google.com",
@@ -137,6 +138,12 @@ public class MainActivity extends Activity {
                     splash.animate().alpha(0f).setDuration(300).withEndAction(new Runnable() {
                         @Override public void run() { if (splash.getParent() != null) ((ViewGroup) splash.getParent()).removeView(splash); }
                     }).start();
+                }
+            }
+            @Override public void onReceivedHttpError(WebView v, WebResourceRequest r, android.webkit.WebResourceResponse res) {
+                // कोई पेज "नहीं मिला" (404) आए तो खाली पेज न दिखे — होम पर ले जाएँ
+                if (r.isForMainFrame() && res != null && res.getStatusCode() == 404 && !HOME.equals(r.getUrl().toString())) {
+                    toast("पेज नहीं मिला — होम खोल रहे हैं"); v.loadUrl(HOME);
                 }
             }
             @Override public void onReceivedError(WebView v, WebResourceRequest r, WebResourceError e) {
@@ -337,7 +344,9 @@ public class MainActivity extends Activity {
     }
 
     @Override public void onBackPressed() {
-        if (web.canGoBack()) web.goBack(); else super.onBackPressed();
+        if (web.canGoBack()) web.goBack();
+        else if (web.getUrl() != null && !web.getUrl().startsWith(HOME)) web.loadUrl(HOME);   // नोटिफ़िकेशन से खुला राशिफल ➜ पीछे = होम
+        else super.onBackPressed();
     }
 
     @Override protected void onPause() { CookieManager.getInstance().flush(); super.onPause(); }
