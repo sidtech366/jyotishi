@@ -48,11 +48,11 @@ public class Updater {
 
     void toast(final String t) { ui(new Runnable() { @Override public void run() { Toast.makeText(a, t, Toast.LENGTH_LONG).show(); } }); }
 
-    /** manual = उपयोगकर्ता ने ख़ुद "अपडेट देखें" दबाया; वरना ऐप खुलने पर (6 घंटे में एक बार) */
+    /** manual = उपयोगकर्ता ने ख़ुद "अपडेट देखें" दबाया; वरना ऐप खुलने/लौटने पर (10 मिनट में एक बार) */
     void check(final boolean manual) {
         if (busy) return;
         final SharedPreferences sp = a.getSharedPreferences("upd", 0);
-        if (!manual && System.currentTimeMillis() - sp.getLong("at", 0) < 6 * 3600000L) return;
+        if (!manual && System.currentTimeMillis() - sp.getLong("at", 0) < 10 * 60000L) return;   // हर बार खुलने पर (10 मिनट में एक बार)
         sp.edit().putLong("at", System.currentTimeMillis()).apply();
         if (manual) toast("नया अपडेट देखा जा रहा है…");
         new Thread(new Runnable() { @Override public void run() {
@@ -104,7 +104,7 @@ public class Updater {
 
     /** अनुमति देकर लौटे ➜ डाउनलोड शुरू */
     void onResume() {
-        if (!waitPerm) return;
+        if (!waitPerm) { check(false); return; }   // ऐप पर लौटते ही भी नया वर्ज़न देखें
         waitPerm = false;
         if (Build.VERSION.SDK_INT < 26 || a.getPackageManager().canRequestPackageInstalls()) download();
         else toast("अनुमति नहीं मिली — अपडेट के लिए अनुमति चालू करें");
