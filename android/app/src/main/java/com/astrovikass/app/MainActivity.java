@@ -86,6 +86,7 @@ public class MainActivity extends Activity {
 
         setup();
         DailyReceiver.schedule(this);
+        watchNetwork();
         upd = new Updater(this);
         web.postDelayed(new Runnable() { @Override public void run() { upd.check(false); } }, 5000);   // नया वर्ज़न ➜ पॉपअप
         if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
@@ -147,11 +148,9 @@ public class MainActivity extends Activity {
                 }
             }
             @Override public void onReceivedError(WebView v, WebResourceRequest r, WebResourceError e) {
-                if (!r.isForMainFrame()) return;
-                v.loadDataWithBaseURL(null, "<html><body style='margin:0;background:#14103A;color:#fff;font-family:sans-serif;text-align:center;padding:90px 24px'>" +
-                        "<div style='font-size:54px'>🔌</div><h2 style='color:#fad678'>इंटरनेट नहीं चल रहा</h2><p>कनेक्शन जाँचकर दोबारा कोशिश करें।</p>" +
-                        "<a href='" + HOME + "' style='display:inline-block;margin-top:18px;background:#deb048;color:#14103A;font-weight:700;padding:12px 28px;border-radius:99px;text-decoration:none'>दोबारा खोलें</a></body></html>",
-                        "text/html", "utf-8", null);
+                // इंटरनेट न हो तो Android/Chrome का अंग्रेज़ी error पेज (जिसमें सर्वर का पता दिखता है) कभी न दिखे —
+                // मुख्य पेज या अंदर का ऐप-पेज (Apps Script / GitHub) फेल हो तो अपना ब्रांडेड पेज दिखाएँ
+                if (r.isForMainFrame() || isAppFrame(r.getUrl())) showOffline();
             }
         });
 
@@ -197,8 +196,51 @@ public class MainActivity extends Activity {
 
 
     /** Website se bulaya jata hai: window.AVApp.shareApp() */
+
+    boolean offline = false;
+    /** ऐप के अपने पेज (जिनके फेल होने पर अंग्रेज़ी error पेज दिखता) — छोटी फ़ाइलें/फ़ोटो नहीं */
+    static boolean isAppFrame(Uri u) {
+        String h = u.getHost() == null ? "" : u.getHost(), p = u.getPath() == null ? "" : u.getPath();
+        if (h.equals("script.google.com")) return true;
+        if (h.endsWith("-script.googleusercontent.com")) return true;
+        if (h.equals("sidtech366.vercel.app")) return !p.matches(".*\\.(png|jpg|jpeg|webp|svg|ico|js|css|json|webmanifest)$");
+        if (h.equals("sidtech366.github.io")) return p.endsWith("/") || p.endsWith(".html");
+        return false;
+    }
+    void showOffline() {
+        if (offline) return;
+        offline = true;
+        web.stopLoading();
+        web.loadDataWithBaseURL("about:blank", "<html><head><meta name='viewport' content='width=device-width,initial-scale=1'></head>" +
+                "<body style='margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#14103A;color:#fff;font-family:sans-serif;text-align:center;padding:24px;box-sizing:border-box'>" +
+                "<div style='font-size:58px'>📶</div><h2 style='color:#fad678;margin:14px 0 6px'>इंटरनेट कनेक्शन नहीं है</h2>" +
+                "<p style='opacity:.85;line-height:1.6;margin:0'>नेटवर्क आते ही Astro Vikass अपने आप खुल जाएगा।<br>चाहें तो नीचे बटन दबाएँ।</p>" +
+                "<button onclick='AVApp.retry()' style='margin-top:22px;border:0;background:#deb048;color:#14103A;font-weight:700;font-size:16px;padding:13px 30px;border-radius:99px'>🔄 दोबारा खोलें</button>" +
+                "<p style='margin-top:30px;font-size:13px;opacity:.6'>Astro Vikass • लाल किताब • वैदिक ज्योतिष</p></body></html>",
+                "text/html", "utf-8", null);
+        web.clearHistory();
+    }
+    void retryHome() {
+        if (!offline) return;
+        offline = false;
+        web.loadUrl(HOME);
+    }
+    /** नेटवर्क लौटते ही अपने आप दोबारा खोलें */
+    void watchNetwork() {
+        try {
+            android.net.ConnectivityManager cm = (android.net.ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+            if (cm == null || Build.VERSION.SDK_INT < 24) return;
+            cm.registerDefaultNetworkCallback(new android.net.ConnectivityManager.NetworkCallback() {
+                @Override public void onAvailable(android.net.Network n) {
+                    web.postDelayed(new Runnable() { @Override public void run() { retryHome(); } }, 1200);
+                }
+            });
+        } catch (Exception ignored) { }
+    }
+
     class Bridge {
         @JavascriptInterface public boolean isApp() { return true; }
+        @JavascriptInterface public void retry() { runOnUiThread(new Runnable() { @Override public void run() { offline = true; retryHome(); } }); }
         @JavascriptInterface public void shareApp() {
             runOnUiThread(new Runnable() { @Override public void run() { doShareApp(); } });
         }
