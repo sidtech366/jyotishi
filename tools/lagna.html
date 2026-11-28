@@ -28,6 +28,10 @@
 const { $, share } = AVUI, A = AVAstro, N = A.N;
 const STH = ['चर', 'स्थिर', 'द्विस्वभाव'];
 const USE = ['यात्रा, नए काम की शुरुआत, वाहन खरीद', 'गृह प्रवेश, विवाह, नींव, स्थायी काम', 'शिक्षा, लेखन, व्यापार, बातचीत'];
+const LORD = ['मंगल', 'शुक्र', 'बुध', 'चंद्र', 'सूर्य', 'बुध', 'शुक्र', 'मंगल', 'गुरु', 'शनि', 'शनि', 'गुरु'];
+const TATVA = ['अग्नि', 'पृथ्वी', 'वायु', 'जल'];
+/* लग्न-स्वभाव अनुसार उपयुक्त कार्य (स्वामी ग्रह व तत्व के कारकत्व से) */
+const SUIT = ['साहसिक काम, वाहन-मशीन, खेल, पुलिस/सेना से जुड़े काम', 'कृषि, भूमि-भवन, गहने-वस्त्र खरीद, विवाह', 'पढ़ाई आरंभ, लेखन, व्यापार-अनुबंध, बातचीत', 'जल-दूध से जुड़े काम, यात्रा, माता-परिवार के काम', 'सरकारी काम, पद-ग्रहण, उद्घाटन, अधिकारी से भेंट', 'शिक्षा, हिसाब-किताब, शिल्प, चिकित्सा आरंभ', 'व्यापार, साझेदारी, विवाह, कला-संगीत', 'गृह प्रवेश, नींव, शल्य/ऑपरेशन, गुप्त विद्या', 'पूजा-अनुष्ठान, दीक्षा, विद्यारंभ, तीर्थ यात्रा', 'कृषि-भूमि के काम, यात्रा, नौकरी-व्यापार की नई शुरुआत', 'नींव, जल-स्रोत (कुआँ/बोरिंग), सेवा-समाज के काम', 'धार्मिक कार्य, विवाह, दान, जल-यात्रा'];
 const pf = AVUI.placeField($('pl'), { onPick: () => run() });
 $('d').value = AVUI.iso(new Date());
 $('go').onclick = run;
@@ -39,9 +43,15 @@ function run() {
   const rows = []; let jd = j0, s = asc(jd);
   while (jd < j1) { const nx = A.nextChange(jd, asc, 1 / 96) || j1, e = Math.min(nx, j1); rows.push({ s, a: jd, b: e }); jd = e; s = asc(jd + 1e-6); }
   const now = A.jdFromDate(new Date());
-  $('out').innerHTML = `<div class="av-card"><h3>${A.fmtDate(y, m, d)} — ${L.name}</h3><div class="note">सूर्योदय ${A.fmtH(rise)} से अगले सूर्योदय तक</div>
-    <div class="tbl-wrap" style="margin-top:10px"><table class="tbl"><tr><th>लग्न</th><th>समय</th><th>प्रकृति</th></tr>${rows.map(r => `<tr class="${now >= r.a && now < r.b ? 'now' : ''}"><td><b>${N.SIGN_IC[r.s]} ${N.SIGN[r.s]}</b>${now >= r.a && now < r.b ? '<br><small class="t-good">← अभी</small>' : ''}</td><td>${A.fmtJd(r.a, tz, false)} – ${A.fmtJd(r.b, tz, false)}</td><td>${STH[r.s % 3]}<br><small class="note">${USE[r.s % 3]}</small></td></tr>`).join('')}</table></div>
-    <p class="note">स्थिर लग्न (वृषभ, सिंह, वृश्चिक, कुंभ) गृह प्रवेश व विवाह जैसे स्थायी कार्यों के लिए श्रेष्ठ माने जाते हैं।</p><button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button></div>`;
+  const cur = rows.find(r => now >= r.a && now < r.b);
+  const curBox = cur ? `<div style="margin-top:10px;border-radius:14px;padding:11px 13px;background:linear-gradient(135deg,#fff3d6,#ffe6b5);border:1px solid #f0d28f"><small class="note">अभी का लग्न (${A.fmtJd(cur.a, tz, false)} – ${A.fmtJd(cur.b, tz, false)})</small><div style="font-size:19px;font-weight:700;color:var(--mar)">${N.SIGN_IC[cur.s]} ${N.SIGN[cur.s]} — ${STH[cur.s % 3]} लग्न</div><div style="font-size:14px;line-height:1.55">स्वामी ${LORD[cur.s]} • ${TATVA[cur.s % 4]} तत्व<br>✅ ${SUIT[cur.s]}<br>🔸 ${USE[cur.s % 3]}</div></div>` : '';
+  $('out').innerHTML = `<div class="av-card"><h3>${A.fmtDate(y, m, d)} — ${L.name}</h3><div class="note">सूर्योदय ${A.fmtH(rise)} से अगले सूर्योदय तक</div>${curBox}
+    <div class="tbl-wrap" style="margin-top:10px"><table class="tbl"><tr><th>लग्न</th><th>समय</th><th>प्रकृति / स्वामी</th></tr>${rows.map(r => `<tr class="${now >= r.a && now < r.b ? 'now' : ''}"><td><b>${N.SIGN_IC[r.s]} ${N.SIGN[r.s]}</b>${now >= r.a && now < r.b ? '<br><small class="t-good">← अभी</small>' : ''}</td><td>${A.fmtJd(r.a, tz, false)} – ${A.fmtJd(r.b, tz, false)}</td><td>${STH[r.s % 3]} • ${LORD[r.s]}<br><small class="note">${SUIT[r.s]}</small></td></tr>`).join('')}</table></div>
+    ${AVUI.kb([
+      ['🔸 चर, स्थिर, द्विस्वभाव लग्न — किसमें क्या करें', ['<b>चर लग्न</b> (मेष, कर्क, तुला, मकर) — यात्रा, वाहन, चलने-फिरने वाले काम, नया आरंभ; स्थायी काम (गृह प्रवेश, नींव) न करें।', '<b>स्थिर लग्न</b> (वृषभ, सिंह, वृश्चिक, कुंभ) — गृह प्रवेश, विवाह, नींव, नौकरी ज्वाइन, दुकान उद्घाटन — जो काम लंबा टिके; इसमें यात्रा आरंभ न करें।', '<b>द्विस्वभाव लग्न</b> (मिथुन, कन्या, धनु, मीन) — शिक्षा, लेखन, व्यापार, बातचीत, धार्मिक कार्य; मिला-जुला फल, अधिकतर कामों में चलता है।'], 1],
+      ['✅ लग्न-शुद्धि — शुभ काम से पहले देखें', ['लग्न से 8वाँ भाव खाली हो (कोई ग्रह न हो)।', 'चंद्रमा लग्न से 6, 8, 12 में न हो।', 'शुभ ग्रह (गुरु, शुक्र, बुध) केंद्र (1, 4, 7, 10) या त्रिकोण (5, 9) में हों तो श्रेष्ठ।', 'पाप ग्रह (शनि, मंगल, राहु, सूर्य) 3, 6, 11 में शुभ; लग्न या 7वें में न हों।', 'लग्नेश बली हो — अस्त, नीच या 6-8-12 में न हो।', 'पूरी लग्न-शुद्धि के साथ मुहूर्त चाहिए तो "शुभ मुहूर्त" टूल देखें।']],
+      ['❌ ध्यान रखें', ['लग्न के बिलकुल आरंभ व अंत के कुछ मिनट (संधि) में काम शुरू न करें — बीच का समय लें।', 'भद्रा, राहुकाल हो तो अच्छा लग्न भी छोड़ दें।', 'लग्न का समय स्थान बदलने पर बदलता है — अपना शहर ज़रूर चुनें।']]
+    ], ['मुहूर्त चिन्तामणि (दैवज्ञ रामाचार्य) — चर/स्थिर/द्विस्वभाव राशियों के कर्म व लग्न-शुद्धि', 'बृहत् पाराशर होरा शास्त्र — राशि स्वभाव व स्वामी'])}<button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button></div>`;
   $('sh').onclick = () => share(`🌅 *लग्न तालिका — ${A.fmtDate(y, m, d)} (${L.name})*\n` + rows.map(r => `${N.SIGN[r.s]}: ${A.fmtJd(r.a, tz, false)} – ${A.fmtJd(r.b, tz, false)}`).join('\n'));
 }
 run();

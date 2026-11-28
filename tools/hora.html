@@ -24,6 +24,8 @@
 const { $, share } = AVUI, A = AVAstro, N = A.N;
 const ORD = ['Sun', 'Venus', 'Mercury', 'Moon', 'Saturn', 'Jupiter', 'Mars'], DL = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
 const USE = { Sun: ['सरकारी काम, अधिकारी से मिलना, नौकरी के आवेदन', 'good'], Moon: ['यात्रा, जनसंपर्क, खरीदारी, जल-दूध संबंधी काम', 'good'], Mars: ['भूमि, मुकदमा, व्यायाम, सर्जरी — शुभ काम टालें', 'bad'], Mercury: ['व्यापार, लेखन, पढ़ाई, बैंक, अनुबंध', 'good'], Jupiter: ['पूजा, विवाह बात, शिक्षा, बड़े निर्णय — सर्वश्रेष्ठ', 'good'], Venus: ['प्रेम, कला, सौंदर्य, वाहन-आभूषण खरीद', 'good'], Saturn: ['मेहनत, मशीनरी, पुराने काम निपटाना — नए शुभ काम टालें', 'bad'] };
+const NOT = { Sun: 'उधार लेन-देन, विवाद, विवाह की बात', Moon: 'कृष्ण पक्ष में बड़े निर्णय, झगड़ा', Mars: 'विवाह-सगाई, नया व्यापार, उधार देना, यात्रा आरंभ', Mercury: 'झूठे वादे, जुआ-सट्टा, बिना पढ़े हस्ताक्षर', Jupiter: 'अपवित्र/उग्र काम, किसी का अपमान', Venus: 'झगड़ा, कठोर काम, ऑपरेशन', Saturn: 'नया व्यापार, गृह प्रवेश, विवाह बात, शुभ यात्रा' };
+const GEM = { Sun: 'माणिक्य', Moon: 'मोती', Mars: 'मूंगा', Mercury: 'पन्ना', Jupiter: 'पुखराज', Venus: 'हीरा/ओपल', Saturn: 'नीलम' };
 const pf = AVUI.placeField($('pl'), { onPick: () => run() });
 $('d').value = AVUI.iso(new Date()); $('go').onclick = run;
 function run() {
@@ -35,12 +37,17 @@ function run() {
   for (let k = 0; k < 24; k++) { const a = k < 12 ? r + k * (s - r) / 12 : s + (k - 12) * (r2 - s) / 12, b = k < 12 ? a + (s - r) / 12 : a + (r2 - s) / 12; rows.push({ p: ORD[(i + k) % 7], a, b, day: k < 12 }); }
   const nd = new Date(), isToday = AVUI.iso(nd) === $('d').value, nh = nd.getHours() + nd.getMinutes() / 60, h2 = nh < r ? nh + 24 : nh;
   const cur = isToday ? rows.find(x => h2 >= x.a && h2 < x.b) : null;
-  $('now').innerHTML = cur ? `<div class="av-card"><div class="box ${USE[cur.p][1]}"><small>अभी का होरा (${A.fmtH(cur.a)} – ${A.fmtH(cur.b)})</small><b>${N.PIC[cur.p]} ${N.P[cur.p]} होरा</b><div>${USE[cur.p][0]}</div></div></div>` : '';
+  $('now').innerHTML = cur ? `<div class="av-card"><div class="box ${USE[cur.p][1]}"><small>अभी का होरा (${A.fmtH(cur.a)} – ${A.fmtH(cur.b)})</small><b>${N.PIC[cur.p]} ${N.P[cur.p]} होरा</b><div>✅ ${USE[cur.p][0]}</div><div style="margin-top:4px;font-size:13.5px">❌ न करें: ${NOT[cur.p]}</div></div></div>` : '';
   const tr = x => `<tr class="${x === cur ? 'now' : ''}"><td><b>${N.PIC[x.p]} ${N.P[x.p]}</b></td><td>${A.fmtH(x.a)} – ${A.fmtH(x.b)}</td><td class="${USE[x.p][1] === 'good' ? 't-good' : 't-bad'}">${USE[x.p][0]}</td></tr>`;
   $('out').innerHTML = `<div class="av-card"><h3>${A.fmtDate(y, m, d)}, ${N.VAAR[w]}</h3><div class="note">${L.name} • सूर्योदय ${A.fmtH(r)} • सूर्यास्त ${A.fmtH(s)}</div>
     <h4>☀️ दिन के होरा</h4><div class="tbl-wrap"><table class="tbl"><tr><th>होरा</th><th>समय</th><th>किसके लिए</th></tr>${rows.filter(x => x.day).map(tr).join('')}</table></div>
     <h4>🌙 रात्रि के होरा</h4><div class="tbl-wrap"><table class="tbl"><tr><th>होरा</th><th>समय</th><th>किसके लिए</th></tr>${rows.filter(x => !x.day).map(tr).join('')}</table></div>
-    <p class="note">जिस काम का स्वामी ग्रह हो, उसी के होरा में काम शुरू करना शुभ माना जाता है — जैसे व्यापार बुध होरा में, पूजा गुरु होरा में।</p><button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button></div>`;
+    ${AVUI.kb([
+      ['📖 होरा क्या है?', ['सूर्योदय से सूर्यास्त तक दिन के 12 और सूर्यास्त से अगले सूर्योदय तक रात के 12 भाग — हर भाग एक होरा (लगभग 1 घंटा, मौसम के अनुसार छोटा-बड़ा)।', 'दिन का पहला होरा उसी वार के स्वामी का होता है (रविवार ➜ सूर्य, सोमवार ➜ चंद्र…)।', 'क्रम हमेशा: सूर्य ➜ शुक्र ➜ बुध ➜ चंद्र ➜ शनि ➜ गुरु ➜ मंगल — फिर दोहराता है।'], 1],
+      ['✅ किस काम के लिए कौन-सा होरा', Object.keys(USE).map(k => `<b>${N.P[k]} होरा</b> — ${USE[k][0]}`)],
+      ['❌ किस होरा में क्या न करें', Object.keys(NOT).map(k => `<b>${N.P[k]}</b> — ${NOT[k]}`)],
+      ['💎 रत्न-धारण व ग्रह-पूजा', ['रत्न उसी ग्रह के होरा में पहनना श्रेष्ठ — ' + Object.keys(GEM).map(k => `${GEM[k]}: ${N.P[k]} होरा`).join(', ') + '।', 'ग्रह-शांति का जप/दान भी उसी ग्रह के वार व होरा में अधिक फलदायी।', 'होरा अच्छा हो पर राहुकाल या भद्रा साथ हो तो काम टालें।']]
+    ], ['सूर्य सिद्धान्त — होरा-स्वामी क्रम से वारों का क्रम (मंद-गति क्रम: शनि, गुरु, मंगल, सूर्य, शुक्र, बुध, चंद्र)', 'बृहत् पाराशर होरा शास्त्र / मुहूर्त ग्रंथ — ग्रहों के कारकत्व के अनुसार कार्य', 'रत्न-धारण होरा: प्रचलित ज्योतिष परंपरा'])}<button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button></div>`;
   $('sh').onclick = () => share(`⏰ *होरा — ${A.fmtDate(y, m, d)} (${L.name})*\n` + rows.filter(x => x.day).map(x => `${N.P[x.p]}: ${A.fmtH(x.a)} – ${A.fmtH(x.b)}`).join('\n'));
 }
 run();

@@ -90,14 +90,35 @@
   }
   const foot = () => '<div class="foot"><b>Astro Vikass</b> • ☎ 7069492135<br>ज्योतिषीय गणना मार्गदर्शन हेतु है</div>';
   /* Astro Vikass Android ऐप (WebView) में फ़ाइल सेव / शेयर — ब्राउज़र वाला डाउनलोड/शेयर वहाँ नहीं चलता */
-  const hasApp = () => { try { return !!(window.AVApp && typeof window.AVApp.shareFile === 'function'); } catch (e) { return false; } };
+  const direct = () => { try { return !!(window.AVApp && typeof window.AVApp.shareFile === 'function'); } catch (e) { return false; } };
+  /* टूल कई iframe के अंदर खुलता है (ऐप ➜ मुख्य पेज ➜ टूल)। वहाँ AVApp न मिले तो सबसे ऊपर वाले ऐप-पेज से पूछें —
+     वह फ़ाइल लेकर ऐप का सेव/शेयर चलाता है (पूजन सामग्री जैसा) */
+  let TOP = 0;
+  if (!direct() && window.top !== window) {
+    window.addEventListener('message', e => { if (e.data && e.data.avAppPong) TOP = 1; });
+    try { window.top.postMessage({ avAppPing: 1 }, '*'); } catch (e) { }
+  }
+  const hasApp = () => direct() || !!TOP;
   const b64Of = f => new Promise((r, j) => { const fr = new FileReader(); fr.onload = () => r(String(fr.result).split(',')[1] || ''); fr.onerror = j; fr.readAsDataURL(f); });
   async function appFile(f, how, phone, text) {   // how: 'save' | 'share'
-    const b = await b64Of(f);
-    if (how === 'save') window.AVApp.saveFile(f.name, f.type || '', b);
-    else window.AVApp.shareFile(f.name, f.type || '', b, String(phone || '').replace(/\D/g, ''), text || '');
+    const b = await b64Of(f), ph = String(phone || '').replace(/\D/g, '');
+    if (direct()) {
+      if (how === 'save') window.AVApp.saveFile(f.name, f.type || '', b);
+      else window.AVApp.shareFile(f.name, f.type || '', b, ph, text || '');
+      return true;
+    }
+    if (!TOP) return false;
+    const id = Math.random().toString(36).slice(2);
+    const ok = new Promise(r => { const h = e => { if (e.data && e.data.avAppFileOk === id) { window.removeEventListener('message', h); r(true); } }; window.addEventListener('message', h); setTimeout(() => { window.removeEventListener('message', h); r(false); }, 6000); });
+    window.top.postMessage({ avAppFile: id, how: how, name: f.name, type: f.type || '', b64: b, phone: ph, text: text || '' }, '*');
+    const r = await ok; if (!r) toast('फ़ाइल नहीं भेज सके — ऐप अपडेट करें'); return r;
   }
-  window.AVUI = { $, esc, store, toast, share, waUrl, iso, placeField, birthForm, foot, hasApp, appFile };
+  /* 📚 जानकारी-बॉक्स: खुलने वाले खंड (क्या करें / न करें / नियम) + शास्त्र प्रमाण */
+  function kb(secs, pr) {
+    if (!document.getElementById('kbcss')) { const st = document.createElement('style'); st.id = 'kbcss'; st.textContent = '.kb{margin-top:12px;background:#fffaf1;border:1px solid var(--line,#efdcb6);border-radius:14px;padding:2px 12px 8px}.kb details{border-bottom:1px dashed var(--line,#efdcb6);padding:9px 0}.kb details:last-of-type{border:0}.kb summary{cursor:pointer;font-weight:700;color:var(--mar,#6b1418);font-size:15px}.kb ul{margin:7px 0 2px;padding-left:19px;font-size:14.2px;line-height:1.7}.kb li b{color:var(--mar3,#93301f)}.kb .kpr{background:#fff8e6;border:1px dashed #e2c47c;border-radius:10px;padding:8px 10px;font-size:13.2px;line-height:1.6;margin-top:8px}.kb .kpr b{color:var(--mar,#6b1418)}'; document.head.appendChild(st); }
+    return '<div class="kb">' + secs.map((x, i) => `<details${x[2] || (!i && secs.length < 3) ? ' open' : ''}><summary>${x[0]}</summary><ul>${x[1].map(li => '<li>' + li + '</li>').join('')}</ul></details>`).join('') + (pr && pr.length ? '<div class="kpr"><b>📜 शास्त्र प्रमाण</b><br>' + pr.map(x => '• ' + x).join('<br>') + '</div>' : '') + '</div>';
+  }
+  window.AVUI = { $, esc, store, toast, share, waUrl, iso, placeField, birthForm, foot, hasApp, appFile, kb };
 })();
 /* 📊 AVTRK — मुख्य ऐप (Apps Script) के अंदर खुलने पर गतिविधि भेजें: क्या खोजा, क्या भरा (एडमिन लॉग, हर रविवार साफ़) */
 (function (W) {

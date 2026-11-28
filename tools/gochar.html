@@ -12,6 +12,7 @@
 .gp:last-child{border:0}.gp .i{font-size:26px;flex:0 0 34px;text-align:center}
 .gp b{color:var(--mar);font-size:16.5px}
 .tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:99px;margin-left:4px;font-weight:700}
+.gf{margin-top:5px;font-size:13.6px;line-height:1.5;padding:5px 9px;border-radius:9px}.gf.g{background:#eef9f2;color:#1d6b42}.gf.b{background:#fdf0ee;color:#9b2d22}.sum{display:flex;gap:8px;margin:8px 0 2px}.sum div{flex:1;text-align:center;border-radius:12px;padding:8px 4px;font-size:13px}.sum b{display:block;font-size:22px;font-family:Poppins,sans-serif}
 .tag.r{background:#fde2ec;color:#a3245d}.tag.u{background:#e9f6ee;color:#1d7d4b}.tag.n{background:#fdecea;color:#b83227}</style>
 </head>
 <body>
@@ -19,6 +20,7 @@
 <main class="av-wrap">
 <div class="av-card">
   <div class="av-row"><div><label class="l">दिनांक</label><input class="in" type="date" id="d"></div><div><label class="l">समय</label><input class="in" type="time" id="t"></div></div>
+  <label class="l">आपकी जन्म राशि (चंद्र राशि) — शुभ/अशुभ गोचर देखने के लिए</label><select class="in" id="jr"></select>
   <button class="btn blk" id="go">🌌 गोचर देखें</button>
 </div>
 <div id="out"></div>
@@ -29,10 +31,25 @@
 <script src="lib/ui.js"></script>
 <script>
 const { $, share } = AVUI, A = AVAstro, N = A.N;
+$('jr').innerHTML = '<option value="">— राशि चुनें (वैकल्पिक) —</option>' + N.SIGN.map((x, i) => `<option value="${i}">${x}</option>`).join(''); $('jr').value = AVUI.store.get('av_gc_r', ''); $('jr').onchange = () => { AVUI.store.set('av_gc_r', $('jr').value); run(); };
 const now = new Date(); $('d').value = AVUI.iso(now); $('t').value = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
 const EX = { Sun: 0, Moon: 1, Mars: 9, Mercury: 5, Jupiter: 3, Venus: 11, Saturn: 6 }, OWN = { Sun: [4], Moon: [3], Mars: [0, 7], Mercury: [2, 5], Jupiter: [8, 11], Venus: [1, 6], Saturn: [9, 10] };
+/* गोचर में शुभ भाव (जन्म राशि से) — फलदीपिका गोचर अध्याय */
+const GS = { Sun: [3, 6, 10, 11], Moon: [1, 3, 6, 7, 10, 11], Mars: [3, 6, 11], Mercury: [2, 4, 6, 8, 10, 11], Jupiter: [2, 5, 7, 9, 11], Venus: [1, 2, 3, 4, 5, 8, 9, 11, 12], Saturn: [3, 6, 11], Rahu: [3, 6, 11], Ketu: [3, 6, 11] };
+const GF = { Sun: ['मान-सम्मान, सरकारी काम व अधिकारियों से लाभ', 'थकान, सिर/आँख की तकलीफ़, अधिकारियों से तनाव'], Moon: ['मन प्रसन्न, सुख, परिवार का साथ', 'मन बेचैन, चिंता, नींद में कमी'],
+  Mars: ['साहस, भूमि-संपत्ति लाभ, शत्रु पर विजय', 'क्रोध, चोट-दुर्घटना, विवाद — वाहन ध्यान से'], Mercury: ['बुद्धि तेज़, व्यापार-लेखन में लाभ, नए संपर्क', 'गलतफहमी, हिसाब-काग़ज़ में भूल'],
+  Jupiter: ['धन, विवाह-संतान के शुभ समाचार, गुरुजनों का आशीर्वाद', 'खर्च बढ़े, गलत सलाह, मान में कमी'], Venus: ['सुख-सुविधा, प्रेम-दांपत्य, वाहन-वस्त्र लाभ', 'विलासिता पर खर्च, संबंधों में खटास'],
+  Saturn: ['धीमा पर स्थिर लाभ, नौकरी-मशीन-मज़दूर से फ़ायदा', 'देरी, बाधा, थकान, पुराने रोग — धैर्य रखें'], Rahu: ['अचानक लाभ, विदेश/नई तकनीक से फ़ायदा', 'भ्रम, धोखा, अचानक हानि'], Ketu: ['आध्यात्मिक उन्नति, छिपे शत्रु शांत', 'अकारण चिंता, चोट, निर्णय में उलझन'] };
+const GU = { Sun: 'सूर्य को जल (अर्घ्य), गुड़-गेहूँ दान, आदित्य हृदय पाठ', Moon: 'शिवलिंग पर जल-दूध, माता का आशीर्वाद, चावल-दूध दान', Mars: 'हनुमान चालीसा, मंगलवार मसूर दाल या गुड़ दान', Mercury: 'गणेश पूजा, बुधवार हरी मूंग दान, गाय को हरा चारा', Jupiter: 'विष्णु/गुरु पूजा, गुरुवार चने की दाल-हल्दी दान', Venus: 'लक्ष्मी पूजा, शुक्रवार सफ़ेद मिठाई/वस्त्र दान', Saturn: 'शनिवार पीपल पर सरसों तेल का दीपक, उड़द-तेल दान, हनुमान पूजा', Rahu: 'दुर्गा पूजा, नारियल बहते जल में, सरसों दान', Ketu: 'गणेश पूजा, कुत्ते को रोटी, कंबल दान' };
 const STEP = { Sun: 1, Moon: 0.1, Mars: 1, Mercury: 0.5, Jupiter: 3, Venus: 0.5, Saturn: 5, Rahu: 5, Ketu: 5 };
+let JR = null, GOOD = 0, BAD = 0;
+function gv(k, s) {
+  if (JR == null) return '';
+  const h = ((s - JR + 12) % 12) + 1, ok = GS[k].includes(h); ok ? GOOD++ : BAD++;
+  return `<div class="gf ${ok ? 'g' : 'b'}">${ok ? '✅' : '⚠️'} आपकी राशि से ${h}वाँ भाव — ${GF[k][ok ? 0 : 1]}${ok ? '' : `<br><small>उपाय: ${GU[k]}</small>`}</div>`;
+}
 function run() {
+  JR = $('jr').value === '' ? null : +$('jr').value; GOOD = 0; BAD = 0;
   const [y, m, d] = $('d').value.split('-').map(Number), [hh, mm] = $('t').value.split(':').map(Number), jd = A.jdOf(y, m, d, hh + mm / 60 - 5.5), p = A.planets(jd);
   let txt = `🌌 *ग्रह गोचर — ${A.fmtDate(y, m, d)}*\n`;
   const rows = A.PL.map(k => {
@@ -41,9 +58,17 @@ function run() {
     const nx = A.nextChange(jd, j => Math.floor(A.planets(j)[k] / 30), STEP[k]);
     const ns = nx ? Math.floor(A.planets(nx + 0.01)[k] / 30) : null;
     txt += `${N.PIC[k]} ${N.P[k]}: ${N.SIGN[s]} ${Math.floor(deg)}°${rt && k !== 'Rahu' && k !== 'Ketu' ? ' (वक्री)' : ''}\n`;
-    return `<div class="gp"><div class="i">${N.PIC[k]}</div><div><b>${N.P[k]}</b> — ${N.SIGN_IC[s]} ${N.SIGN[s]} ${Math.floor(deg)}°${String(Math.floor((deg % 1) * 60)).padStart(2, '0')}′ ${rt && k !== 'Rahu' && k !== 'Ketu' ? '<span class="tag r">वक्री</span>' : ''}${dig}<br><small class="note">नक्षत्र: ${N.NAK[nk]} (चरण ${pada}) • स्वामी ${N.P[N.NAK_LORD[nk % 9]]}</small>${nx ? `<br><small>➡️ ${N.SIGN[ns]} में प्रवेश: <b style="font-size:13.5px">${A.fmtJd(nx, 5.5)}</b></small>` : ''}</div></div>`;
+    return `<div class="gp"><div class="i">${N.PIC[k]}</div><div><b>${N.P[k]}</b> — ${N.SIGN_IC[s]} ${N.SIGN[s]} ${Math.floor(deg)}°${String(Math.floor((deg % 1) * 60)).padStart(2, '0')}′ ${rt && k !== 'Rahu' && k !== 'Ketu' ? '<span class="tag r">वक्री</span>' : ''}${dig}<br><small class="note">नक्षत्र: ${N.NAK[nk]} (चरण ${pada}) • स्वामी ${N.P[N.NAK_LORD[nk % 9]]}</small>${nx ? `<br><small>➡️ ${N.SIGN[ns]} में प्रवेश: <b style="font-size:13.5px">${A.fmtJd(nx, 5.5)}</b></small>` : ''}${gv(k, s)}</div></div>`;
   }).join('');
-  $('out').innerHTML = `<div class="av-card"><h3>${A.fmtDate(y, m, d)} — ${$('t').value}</h3><div class="note">निरयण (लाहिरी) गणना • भारतीय समय</div>${rows}<button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button></div>`;
+  const SUMM = JR == null ? '<p class="note">👆 ऊपर अपनी राशि चुनें — हर ग्रह का आपके लिए शुभ/अशुभ फल और उपाय दिखेगा।</p>' : `<div class="sum"><div style="background:#eef9f2;color:#1d6b42"><b>${GOOD}</b>ग्रह शुभ</div><div style="background:#fdf0ee;color:#9b2d22"><b>${BAD}</b>ग्रह अशुभ</div></div><p class="note" style="margin:2px 0 6px">${N.SIGN[JR]} राशि के लिए — ${GOOD >= 5 ? 'समय कुल मिलाकर अनुकूल 🌟' : GOOD >= 3 ? 'मिला-जुला समय — अशुभ ग्रहों के उपाय करें' : 'सावधानी का समय — उपाय व धैर्य रखें'}</p>`;
+  if (JR != null) txt += `\n${N.SIGN[JR]} राशि: ${GOOD} ग्रह शुभ, ${BAD} अशुभ`;
+  $('out').innerHTML = `<div class="av-card"><h3>${A.fmtDate(y, m, d)} — ${$('t').value}</h3><div class="note">निरयण (लाहिरी) गणना • भारतीय समय</div>${SUMM}${rows}<button class="btn ok share" id="sh">💬 WhatsApp पर भेजें</button></div>`;
+  $('out').firstElementChild.insertAdjacentHTML('beforeend', AVUI.kb([
+    ['📖 गोचर क्या है?', ['ग्रह अभी आकाश में जिस राशि से गुज़र रहे हैं, उसे आपकी <b>जन्म राशि (चंद्र राशि)</b> से गिनकर फल देखा जाता है — इसे गोचर कहते हैं।', 'धीमे ग्रह (शनि, गुरु, राहु-केतु) का फल लंबा और गहरा; तेज़ ग्रह (चंद्र, बुध, शुक्र, सूर्य) का फल कुछ दिन का।', 'गोचर के साथ अपनी महादशा भी देखें — दशा शुभ हो तो अशुभ गोचर का असर कम होता है।']],
+    ['✅ किस भाव में ग्रह शुभ', ['सूर्य — 3, 6, 10, 11', 'चंद्र — 1, 3, 6, 7, 10, 11', 'मंगल, शनि, राहु, केतु — 3, 6, 11', 'बुध — 2, 4, 6, 8, 10, 11', 'गुरु — 2, 5, 7, 9, 11', 'शुक्र — 1, 2, 3, 4, 5, 8, 9, 11, 12', 'शुभ भाव में भी "वेध" हो (कोई दूसरा ग्रह वेध-स्थान पर) तो शुभ फल कम हो जाता है।']],
+    ['🙏 अशुभ गोचर के सरल उपाय', Object.keys(GU).map(x => `<b>${N.P[x]}</b> — ${GU[x]}`)],
+    ['🪐 विशेष', ['शनि जन्म राशि से 12, 1, 2 भाव में हो तो साढ़ेसाती; 4 या 8 में हो तो ढैय्या — "साढ़ेसाती-ढैय्या" टूल देखें।', 'गुरु का गोचर 2, 5, 7, 9, 11 भाव में विवाह, संतान व धन के लिए विशेष शुभ।']]
+  ], ['फलदीपिका (मन्त्रेश्वर) — गोचर फल अध्याय (ग्रहों के शुभ भाव व वेध)', 'मुहूर्त चिन्तामणि — गोचर प्रकरण', 'उपाय: लाल किताब व प्रचलित ग्रह-शांति परंपरा']));
   $('sh').onclick = () => share(txt);
 }
 $('go').onclick = run; run();
