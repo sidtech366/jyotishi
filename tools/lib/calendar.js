@@ -33,7 +33,9 @@ window.AVCal = (function () {
     const ev = [], has = t => I.tithis.includes(t), mo = I.maas;
     if (has(11)) ev.push(['🙏', (I.adhik ? 'पद्मिनी' : EK_S[mo]) + ' एकादशी', 'vrat']);
     if (has(26)) ev.push(['🙏', (I.adhik ? 'परमा' : EK_PK[(mo + 1) % 12]) + ' एकादशी', 'vrat']);
-    if (has(15)) ev.push(['🌕', 'पूर्णिमा', 'vrat']);
+    // पूर्णिमा व्रत (सत्यनारायण, चंद्र अर्घ्य) = जिस सायं पूर्णिमा हो; स्नान-दान = उदया पूर्णिमा। दोनों एक दिन हों तो एक ही
+    if (I.tithiSet === 15 && has(15)) ev.push(['🌕', 'पूर्णिमा', 'vrat']);
+    else { if (I.tithiSet === 15) ev.push(['🌕', 'पूर्णिमा व्रत', 'vrat']); if (has(15)) ev.push(['🌕', 'पूर्णिमा (स्नान-दान)', 'vrat']); }
     if (has(30)) ev.push(['🌑', 'अमावस्या', 'vrat']);
     if (I.tithiSet === 13 || I.tithiSet === 28) ev.push(['🔱', 'प्रदोष व्रत', 'vrat']);
     if (I.moonriseT === 19 && !(prev && prev.moonriseT === 19)) ev.push(['🐘', 'संकष्टी चतुर्थी', 'vrat']);

@@ -379,6 +379,11 @@ function todayAns(q) {
   const te = A.nextChange(I.jdRise, A.tithiNo, .02), ne = A.nextChange(I.jdRise, A.nakNo, .02);
   const ds = ['पश्चिम', 'पूर्व', 'उत्तर', 'उत्तर', 'दक्षिण', 'पश्चिम', 'पूर्व'][I.vaar];
   const ev = (I.events || []).map(e => e[0] + ' ' + e[1]).join(', ');
+  // चंद्र राशि: दिन में बदले तो समय सहित (सूर्योदय से अगले सूर्योदय तक); मास: ऋषिकेश = पूर्णिमांत
+  const rOf = j => Math.floor(A.sunMoon(j).moon / 30), r0 = rOf(I.jdRise), rc = A.nextChange(I.jdRise, rOf, 0.02);
+  const rInfo = rc && rc < I.jdRise + 1 ? `<b>${N.SIGN[r0]}</b> — ${A.fmtJd(rc, tz)} तक, फिर <b>${N.SIGN[rOf(rc + 1e-4)]}</b>` : `<b>${N.SIGN[r0]}</b> (पूरे दिन)`;
+  const KR = I.tithi > 15, pmM = A.mode && A.mode() === 'rk' ? (KR ? (I.maas + 1) % 12 : I.maas) : I.maas;
+  const mInfo = (I.adhik ? 'अधिक ' : '') + N.MAAS[pmM] + ' ' + (KR ? 'कृष्ण' : 'शुक्ल') + ' पक्ष' + (A.mode && A.mode() === 'rk' ? ' (पूर्णिमांत)' : ' (अमांत)');
   // जो पूछा वही — केवल राहुकाल / अभिजित / भद्रा / दिशा शूल / सूर्योदय / तिथि / नक्षत्र
   const F = [], has = re => re.test(q), hd = `<b>🌞 ${d} ${MN[m - 1]} ${y}, ${WD[I.vaar]}</b> (${esc(L.name)})`;
   if (!has(/पंचांग|panchang/i)) {
@@ -393,7 +398,7 @@ function todayAns(q) {
       F.push(sp.length ? `⚠️ भद्रा: <b>${sp.join('; ')}</b> — भद्रा में शुभ कार्य वर्जित।` : '✅ आज (सूर्योदय से अगले सूर्योदय तक) भद्रा नहीं है।'); }
     if (F.length) return { h: hd + '\n\n' + F.join('\n'), src: '<div class="src"><a href="../tools/panchang.html">🌞 पूरा पंचांग, चौघड़िया, लग्न</a></div>', I, L };
   }
-  return { h: `<b>🌞 ${d} ${MN[m - 1]} ${y}, ${WD[I.vaar]}</b> (${esc(L.name)})\n\n• तिथि: <b>${A.tithiName(I.tithi)}</b> — ${A.fmtJd(te, tz)} तक\n• नक्षत्र: <b>${N.NAK[A.nakNo(I.jdRise)]}</b> — ${A.fmtJd(ne, tz)} तक\n• मास: ${(I.adhik ? 'अधिक ' : '') + N.MAAS[I.maas]} (अमांत)\n• चंद्र राशि: ${N.SIGN[Math.floor(A.sunMoon(I.jdRise).moon / 30)]}\n• सूर्योदय ${A.fmtH(I.rise)} • सूर्यास्त ${A.fmtH(I.set)}\n• ✨ अभिजित्: ${I.vaar === 3 ? 'बुधवार — वर्जित' : A.fmtH(ab) + '–' + A.fmtH(ab + dm)}\n• ⛔ राहुकाल: ${A.fmtH(rs)}–${A.fmtH(rs + seg)}\n• 🚫 दिशा शूल: ${ds}` + (ev ? `\n\n🙏 <b>व्रत-त्योहार:</b> ${ev}` : ''),
+  return { h: `<b>🌞 ${d} ${MN[m - 1]} ${y}, ${WD[I.vaar]}</b> (${esc(L.name)})\n\n• तिथि: <b>${A.tithiName(I.tithi)}</b> — ${A.fmtJd(te, tz)} तक\n• नक्षत्र: <b>${N.NAK[A.nakNo(I.jdRise)]}</b> — ${A.fmtJd(ne, tz)} तक\n• मास: ${mInfo}\n• चंद्र राशि: ${rInfo}\n• सूर्योदय ${A.fmtH(I.rise)} • सूर्यास्त ${A.fmtH(I.set)}\n• ✨ अभिजित्: ${I.vaar === 3 ? 'बुधवार — वर्जित' : A.fmtH(ab) + '–' + A.fmtH(ab + dm)}\n• ⛔ राहुकाल: ${A.fmtH(rs)}–${A.fmtH(rs + seg)}\n• 🚫 दिशा शूल: ${ds}` + (ev ? `\n\n🙏 <b>व्रत-त्योहार:</b> ${ev}` : ''),
     src: '<div class="src"><a href="../tools/panchang.html">🌞 पूरा पंचांग, चौघड़िया, लग्न</a></div>', I, L };
 }
 /* ज्ञान भंडार से — केवल प्रश्न से मेल खाते वाक्य (सही उत्तर, ग़लत नहीं) */

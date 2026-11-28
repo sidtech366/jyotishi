@@ -57,7 +57,7 @@
   }
   /* सिर्फ़ सूर्य-चंद्र (तेज़) */
   let sunMoon = function (jd) { const d = dOf(jd), s = sunPos(d), m = moonPos(d, s), ay = ayanamsa(jd); return { sun: n360(s.lon - ay), moon: n360(m.lon - ay), moonLat: m.lat, sunTrop: s.lon, moonTrop: m.lon }; }
-  /* ===== ऋषिकेश (काशी) पंचांग पद्धति — सूर्य सिद्धान्त ===== डिफ़ॉल्ट; "दृक्" चुनने पर आधुनिक गणना */
+  /* ===== ऋषिकेश (काशी) पंचांग पद्धति — गणना दृक्, परंपरा काशी की ===== डिफ़ॉल्ट; "दृक्" चुनने पर आधुनिक गणना */
   const SSD = 1577917828, KALI = 588465.5 - 75.766 / 360, fr = x => x - Math.floor(x);
   const SREV = { Sun: 4320000, Moon: 57753336, MoonApo: 488203, Mars: 2296832, Jupiter: 364220 }, SAPO = { Sun: 77.2833, Mars: 130.0333, Jupiter: 171.30 };
   const SMP = { Sun: [14, 13 + 40 / 60], Moon: [32, 31 + 40 / 60], Mars: [75, 72], Jupiter: [33, 32] }, SSP = { Mars: [235, 232], Jupiter: [70, 72] };
@@ -68,8 +68,11 @@
   function ssSunMoon(jd) { const d = jd - KALI, ms = smean(SREV.Sun, d), mm = smean(SREV.Moon, d), ma = n360(90 + smean(SREV.MoonApo, d)); return { sun: n360(ms - mandaEq(ms, SAPO.Sun, SMP.Sun)), moon: n360(mm - mandaEq(mm, ma, SMP.Moon)), d, ms }; }
   let MODE = 'rk'; try { MODE = JSON.parse(localStorage.getItem('av_mode') || '"rk"') === 'drik' ? 'drik' : 'rk'; } catch (e) { }
   const sunMoonDrik = sunMoon, planetsDrik = planets;
-  sunMoon = function (jd) { const o = sunMoonDrik(jd); if (MODE !== 'rk') return o; const s = ssSunMoon(jd); o.sun = s.sun; o.moon = s.moon; return o; };
-  planets = function (jd) { const o = planetsDrik(jd); if (MODE !== 'rk') return o; const s = ssSunMoon(jd); o.Sun = s.sun; o.Moon = s.moon; o.Jupiter = ssStar('Jupiter', s.d, s.ms); o.Mars = ssStar('Mars', s.d, s.ms); o.Saturn = n360(o.Saturn - 3); return o; };
+  /* ग्रह-स्थिति दोनों पद्धतियों में दृक् (आधुनिक) + लाहिड़ी अयनांश से — छपा हुआ हृषीकेश (काशी विश्वनाथ) पंचांग भी दृक् गणना ही देता है।
+     पुराना शुद्ध सूर्य सिद्धान्त चंद्र 3-4° तक खिसकता था (राशि/नक्षत्र/तिथि 5-7 घंटे गलत) — केवल ssSunMoon() संदर्भ हेतु रखा है।
+     ‘ऋषिकेश’ चुनने पर काशी की परंपरा लागू: पूर्णिमांत मास, मुहूर्त में विवाह के दश दोष/पञ्चेष्ट आदि नियम। */
+  sunMoon = function (jd) { return sunMoonDrik(jd); };
+  planets = function (jd) { return planetsDrik(jd); };
   const mode = () => MODE, setMode = m => { MODE = m === 'drik' ? 'drik' : 'rk'; try { localStorage.setItem('av_mode', JSON.stringify(MODE)); } catch (e) { } };
   function retro(p, jd) { if (p === 'Rahu' || p === 'Ketu') return true; if (p === 'Sun' || p === 'Moon') return false; const a = planets(jd - 0.5)[p], b = planets(jd + 0.5)[p]; return ((b - a + 540) % 360) - 180 < 0; }
   function ascendant(jd, lat, lonE) {
